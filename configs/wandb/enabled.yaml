@@ -1,0 +1,7 @@
+project: torchdisorder
+entity: giresse
+#run_name: ${experiment.name}_${now:%H-%M-%S}
+#run_name: wandb_run_${now:%Y-%m-%d}_${now:%H-%M-%S}
+run_name: wandb_run
+mode: online
+log_every: 100

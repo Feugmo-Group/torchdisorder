@@ -1,0 +1,11 @@
+# Path configuration for experimental SiO2 data
+root_dir: ${oc.env:PROJECT_ROOT}/data-release/
+
+loss:
+  rho: 1e-4
+  rho_factor: 3.0
+  tol: 1e-5
+  update_every: 20
+  scale_scatt: 0.02
+
+

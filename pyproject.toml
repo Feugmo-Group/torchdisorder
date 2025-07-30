@@ -1,0 +1,219 @@
+[tool.poetry]
+#[project]
+name = "torchdisorder"
+version = "0.1.0"
+description = "Amorphous structure generator using PyTorch autograd to match target RDFs from XRD or neutron diffraction."
+
+authors = ["Xander Gouws <xander.gouws@uwaterloo.ca>"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.12,<3.14"
+ase = "^3.25.0"
+mace-torch = "^0.3.13"
+omegaconf = "^2.3.0"
+hydra-core = "^1.3.2"
+wandb = "^0.21.0"
+torch = "^2.7.1"
+pymatgen = "^2025.6.14"
+nvidia-ml-py3 = "^7.352.0"
+
+
+
+
+
+#requires-python = ">=3.12,<3.14"
+#
+#dependencies = [
+#  "torch>=2.7.1,<3.0.0",
+#  "torchsim>=0.0.3",
+#  "ase>=3.25.0,<4.0.0",
+#  "pymatgen>=2025.6.14,<2026.0.0",
+#  "nvidia-ml-py3>=7.352.0,<8.0.0"
+#]
+
+#[project.optional-dependencies]
+#test = [
+#    "ase>=3.24",
+#    "phonopy>=2.37.0",
+#    "psutil>=7.0.0",
+#    "pymatgen>=2024.11.3",
+#    "pytest-cov>=6",
+#    "pytest>=8",
+#]
+#io = ["ase>=3.24", "phonopy>=2.37.0", "pymatgen>=2024.11.3"]
+#mace = ["mace-torch>=0.3.12"]
+#mattersim = ["mattersim>=0.1.2"]
+#metatomic = ["metatomic-torch>=0.1.1,<0.2", "metatrain[pet]==2025.7"]
+#orb = ["orb-models>=0.5.2"]
+#sevenn = ["sevenn>=0.11.0"]
+#graphpes = ["graph-pes>=0.0.34", "mace-torch>=0.3.12"]
+#docs = [
+#    "autodoc_pydantic==2.2.0",
+#    "furo==2024.8.6",
+#    "ipython==8.34.0",
+#    "jsonschema[format]",
+#    "jupyterlab==4.3.4",
+#    "jupytext==1.16.7",
+#    "myst_parser==4.0.0",
+#    "nbsphinx>=0.9.7",
+#    "numpydoc==1.8.0",
+#    "sphinx-copybutton==0.5.2",
+#    "sphinx==8.1.3",
+#    "sphinx_design==0.6.1",
+#]
+
+
+
+
+#[tool.poetry.group.test.dependencies]
+#psutil = ">=7.0.0"
+#pytest = ">=8"
+#pytest-cov = ">=6"
+
+
+
+#[tool.poetry.group.mace.dependencies]
+#mace-torch = ">=0.3.12"
+#
+#[tool.poetry.group.mattersim.dependencies]
+#mattersim = ">=0.1.2"
+#
+#[tool.poetry.group.metatomic.dependencies]
+#metatomic-torch = ">=0.1.1,<0.2"
+#metatrain = { version = "==2025.7", extras = ["pet"] }
+#
+#[tool.poetry.group.orb.dependencies]
+#orb-models = ">=0.5.2"
+#
+#[tool.poetry.group.sevenn.dependencies]
+#sevenn = ">=0.11.0"
+#
+#[tool.poetry.group.graphpes.dependencies]
+#graph-pes = ">=0.0.34"
+#mace-torch = ">=0.3.12"
+#
+#[tool.poetry.group.docs.dependencies]
+#autodoc_pydantic = "==2.2.0"
+#furo = "==2024.8.6"
+#ipython = "==8.34.0"
+#jsonschema = { extras = ["format"] }
+#jupyterlab = "==4.3.4"
+#jupytext = "==1.16.7"
+#myst_parser = "==4.0.0"
+#nbsphinx = ">=0.9.7"
+#numpydoc = "==1.8.0"
+#sphinx-copybutton = "==0.5.2"
+#sphinx = "==8.1.3"
+#sphinx_design = "==0.6.1"
+#
+
+
+#[build-system]
+#requires = ["poetry-core"]
+#build-backend = "poetry.core.masonry.api"
+torch-sim-atomistic = "^0.2.2"
+pytorch-lightning = "^2.5.2"
+ipython = "^9.4.0"
+ipywidgets = "^8.1.7"
+anywidget = "^0.9.18"
+
+[build-system]
+requires = ["uv_build>=0.7.12"]
+build-backend = "uv_build"
+
+[project.urls]
+Repo = "https://github.com/feugmo-group/torchdisorder"
+
+
+requires = ["uv_build>=0.7.12"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "torchdisorder"
+module-root = ""
+
+[tool.ruff]
+target-version = "py312"
+line-length = 90
+output-format = "concise"
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "ANN002",  # Checks that *args arguments have type annotations.
+    "ANN003",  # Checks that **kwargs arguments have type annotations.
+    "ANN401",  # Allow use of type Any for function argument {name}
+    "C408",    # Unnecessary {obj_type} call (rewrite as a literal)
+    "COM812",  # missing-trailing-comma
+    "D205",    # 1 blank line required between summary line and description
+    "EM101",   # Exception must not use a string literal, assign to variable first
+    "EM102",   # Exception must not use an f-string literal, assign to variable first
+    "ERA001",  # Found commented-out code
+    "FIX002",  # Line contains TODO, consider resolving the issue
+    "N803",    # Variable name should be lowercase
+    "N806",    # Uppercase letters in variable names
+    "PLR0912", # too many branches
+    "PLR0913", # too many function arguments
+    "PLR2004", # Magic value used in comparison, consider replacing {value} with a constant variable
+    "PLW2901", # Outer for loop variable overwritten by inner assignment target
+    "PTH",     # flake8-use-pathlib
+    "S301",    # pickle and modules that wrap it can be unsafe, possible security issue
+    "S311",    # Standard pseudo-random generators are not suitable for cryptographic purposes
+    "SIM105",  # Use contextlib.suppress instead of try-except-pass
+    "TD",      # flake8-todos
+    "TRY003",  # Avoid specifying long messages outside the exception class
+]
+pydocstyle.convention = "google"
+isort.split-on-trailing-comma = false
+isort.lines-after-imports = 2
+pep8-naming.ignore-names = ["get_kT", "kT"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/*" = ["ANN201", "D", "INP001", "S101"]
+"examples/**/*" = ["B018", "T201"]
+"examples/tutorials/**/*" = ["ALL"]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.codespell]
+check-filenames = true
+ignore-words-list = ["convertor"]
+
+[tool.pytest.ini_options]
+addopts = ["-p no:warnings"]
+testpaths = ["tests"]
+
+[tool.uv]
+# make these dependencies mutually exclusive since they use incompatible e3nn versions
+# see https://docs.astral.sh/uv/concepts/projects/config/#conflicting-dependencies for more details
+conflicts = [
+    [
+        { extra = "graphpes" },
+        { extra = "mattersim" },
+    ],
+    [
+        { extra = "graphpes" },
+        { extra = "sevenn" },
+    ],
+    [
+        { extra = "mace" },
+        { extra = "mattersim" },
+    ],
+    [
+        { extra = "mace" },
+        { extra = "sevenn" },
+    ],
+]

@@ -1,0 +1,7 @@
+name: demo
+n_steps: 1000
+rdf_bins: 300
+save_every: 100
+
+log_every : 10
+#target_rdf_path: @data/SO2/data # data/rdf/SiO2_exp_rdf.csv

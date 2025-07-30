@@ -1,0 +1,19 @@
+#_target_: torchdisorder.model.loss.AugLagLoss
+# Configuration for loss function in training
+rho: 1e-3
+rho_factor: 5.0
+tol: 1e-4
+update_every: 10
+
+# Weighting for each component
+scale_scatt_init: 0.02    # scales neutron S(Q) χ²
+scale_q_init: 1.0         # set to 0 to disable tetrahedral q contribution
+
+# Target and uncertainty for q
+q_target: 1.0
+q_uncert: 0.05
+
+
+
+
+
