@@ -24,7 +24,7 @@ from torch_sim.optimizers import fire
 from torch_sim.models.mace import MaceModel, MaceUrls
 from mace.calculators.foundations_models import mace_mp
 from pathlib import Path
-from torchdisorder.engine.unconstrained import AugmentedLagrangian,AugLagNN
+from torchdisorder.engine.unconstrained import AugLagNN
 from torchdisorder.common.utils import OrderParameter
 from ase import Atoms
 from torchdisorder.viz.plotting import init_live_total_correlation, init_live_total_scattering, update_live_plot
@@ -91,7 +91,7 @@ def main(cfg: DictConfig) -> None:
     state =  atoms_to_state(atoms_list, device=cfg.accelerator, dtype=dtype)
     state.positions.requires_grad_(True)
     state.cell.requires_grad_(True)
-    print(state.cell)
+
     class StateWrapper:
         def __init__(self, original_state):
             self.__dict__.update(original_state.__dict__)
@@ -140,7 +140,7 @@ def main(cfg: DictConfig) -> None:
 
     def constraint_tetrahedral(order_model: nn.Module, threshold: float = 0.5) -> Callable:
         def constraint_fn(state) -> torch.Tensor:
-            values = order_model(state)["q_tet"]  # shape: [n_atoms]
+            values = order_model(state)["q"]  # shape: [n_atoms]
 
             return values - threshold  # want values < threshold ⇒ values - threshold ≤ 0
 
@@ -214,7 +214,7 @@ def main(cfg: DictConfig) -> None:
     order_model = OrderParameter( central=cfg.data.central,
                          neighbour=cfg.data.neighbour,
                          cutoff=torch.tensor(cfg.data.cutoff),
-                         compute_q_tet=True,
+                         compute_q_tetrahedral=True,
                          dtype=dtype,
                          device=cfg.accelerator).to(device)
 
@@ -248,25 +248,108 @@ def main(cfg: DictConfig) -> None:
     #                                 method="BFGS",
     #                                 )
 
-    aug_init = AugLagNN(objective=ChiSquaredObjective,
+    aug = AugLagNN(objective=ChiSquaredObjective,
                                    model=xdr_model,
                                    constraints_eq=[],
-                                   constraints_ineq=constraints,
+                                   constraints_ineq=[], #constraints,
                                    lam=lam,
                                    sigma=sigma,
                                     eta=eta,
                         mask=mask,
-                                   method="BFGS",
+                                   method="LBFGS",
                                    )
 
 
-    state = aug_init(state)
+    state = aug(state)
 
 
 
-    state = aug_init.step(state)
-
+    state = aug.step(state)
+    #
+    #
     print(state)
+    # steps = cfg.trainer.steps
+    # 1. Initialize the augmented Lagrangian optimizer
+    steps = 10
+    mace_relax_every = 0
+    mace_relax_steps = 0
+    use_wandb = False
+    log_every = 5
+    # 3. Optimization loop
+    for step in range(steps):
+        state = aug.step(state)
+        aux = state.diagnostics  # type: ignore[attr-defined]
+
+        # Optional: log progress
+        print(f"Step {step}: loss = {aux["loss"].item()}")
+
+        if cfg["output"]["write_trajectory"]:
+            #traj = Trajectory(cfg["output"]["trajectory_path"], mode='w')
+            # Ensure output directory exists
+            traj_path = Path(cfg.output.trajectory_path)
+            traj_path.mkdir(parents=True, exist_ok=True)
+            #traj_path.parent.mkdir(parents=True, exist_ok=True)
+            # Ensure trajectory path is a directory
+
+
+            # Create ASE Trajectory file
+            ase_path = traj_path / "trajectory.traj"
+            xdatcar_path = traj_path / "XDATCAR"
+            # traj = Trajectory(str(ase_path), mode='w')
+            # trajectory_writer = traj
+
+            atms = state_to_atoms(state)[0]
+
+            write_trajectories(atms, str(ase_path), str(xdatcar_path))
+
+            # Optionally initialize W&B
+            if cfg.wandb.mode != "disabled":
+                wandb.init(
+                    project=cfg.wandb.project,
+                    entity=cfg.wandb.entity,
+                    name=cfg.wandb.run_name,
+                    mode=cfg.wandb.mode,
+                    config=OmegaConf.to_container(cfg, resolve=True),
+                )
+
+            # ---- logging --------------------------------------------------------
+            if step % log_every == 0:
+                logger.info(
+                    f"step {step:4d} | loss = {aux['loss'].item():.6f} | "
+                    # f"χ²_corr={aux['chi2_corr'].item():.3e} | "
+                    # f"χ²_scatt={aux['chi2_scatt'].item():.3e} | q_loss={aux['q_loss'].item():.3e} | "
+                    # f"scale_q={aux['scale_q'].item():.3e} | scale_scatt={aux['scale_scatt'].item():.3e} | "
+                    # f"rho={aux['rho'].item():.3e} | lambda_corr={aux['lambda_corr'].item():.3e} | "
+
+                )
+
+            if use_wandb and wandb is not None:
+                if step % cfg.wandb.log_every == 0:
+                    wandb.log({
+                        "step": step,
+                        "loss": aux["loss"].item(),
+                        # "chi2_corr": aux["chi2_corr"].item(),
+                        # "chi2_scatt": aux["chi2_scatt"].item(),
+                        # "q_loss": aux["q_loss"].item(),
+                        # "scale_q": aux["scale_q"].item(),
+                        # "scale_scatt": aux["scale_scatt"].item(),
+                        # "rho": aux["rho"].item(),
+                        # "lambda_corr": aux["lambda_corr"].item(),
+                    })
+
+                    # wandb.log({
+                    #     "T_r_plot": wandb.Image(fig_T_r),
+                    #     "S_Q_plot": wandb.Image(fig_S_Q)
+                    # })
+
+            if cfg.output.save_plots:
+                plot_dir = Path(cfg.output.plots_dir)
+                plot_dir.mkdir(parents=True, exist_ok=True)
+
+        # # Optional: stopping criteria
+        # if state.grad_norm < 1e-5:
+        #     print("Converged.")
+        #     break
     # rresults = objective(state)
     # print(rresults)
 
@@ -280,37 +363,14 @@ def main(cfg: DictConfig) -> None:
 
 
 
-    # Initialize unit cell gradient descent optimizer
-    # init_fn, update_fn = aug_lag(model=xdr_model,loss_fn=AugLagLoss(),
-    #                              device=cfg.accelerator,
-    #                              optimize_cell=cfg.trainer.optimize_cell,
-    #                              lr=cfg.trainer.lr,
-    #                              scheduler=None,  # Add scheduler if needed
-    #                              lag_loss=None,  # Add AugLagLoss if needed
-    #                              dtype=dtype)
 
 
 
 
-    # # # Load Augmented Lagrangian hyperparameters
-    # hyper = AugLagHyper.from_yaml("../configs/trainer/AugLag.yaml")
-    # hyper.tol = float(hyper.tol)
-    # print("Type of self.hyper.tol:", float(hyper.tol))
-    # loss_fn = AugLagLoss(rdf_data, hyper, device=device).to(device)
-    #
-    # loss_dict = loss_fn(results)
-    # init_fn, update_fn = aug_lag(model=xdr_model,loss_fn=loss_fn,
-    #                              lag_loss=loss_fn,  # Add AugLagLoss if needed
-    #                              )
-    # #
-    # state = init_fn(state)
-    # steps = 500
-    #
-    # for step in range(steps):
-    #     state = update_fn(state)
-    #     aux = state.diagnostics  # type: ignore[attr-defined]
-
-
+    # # -- final structure back to ASE -----------------------------------------
+    # final_atoms = ts.io.state_to_atoms(state)[0]
+    # atoms.set_positions(final_atoms.positions)
+    # atoms.set_cell(final_atoms.cell)
 
 if __name__ == "__main__":
     main()

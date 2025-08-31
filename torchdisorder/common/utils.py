@@ -212,11 +212,11 @@ class OrderParameter(nn.Module):
             symbols_b = [chemical_symbols[z] for z in atomic_numbers[mask_b]]
 
             if self.compute_q_tet:
-                results.setdefault("q_tet", []).append(self.q_tet(pos_b, cell_b, symbols_b))
+                results.setdefault("q", []).append(self.q_tet(pos_b, cell_b, symbols_b))
             if self.compute_q_tetrahedral:
-                results.setdefault("q_tetrahedral", []).append(self.q_tetrahedral(pos_b, cell_b, symbols_b))
+                results.setdefault("q", []).append(self.q_tetrahedral(pos_b, cell_b, symbols_b))
             if self.compute_q_octahedral:
-                results.setdefault("q_octahedral", []).append(self.q_octahedral(pos_b, cell_b, symbols_b))
+                results.setdefault("q", []).append(self.q_octahedral(pos_b, cell_b, symbols_b))
 
         return {k: torch.cat(v) for k, v in results.items()}
 

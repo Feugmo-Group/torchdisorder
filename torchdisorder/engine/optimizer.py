@@ -33,7 +33,7 @@ class AugLagState(SimState):
     G_r: Optional[torch.Tensor] = None
     T_r: Optional[torch.Tensor] = None
     S_Q: Optional[torch.Tensor] = None
-    q_tet: Optional[torch.Tensor] = None
+    q: Optional[torch.Tensor] = None
     diagnostics: Optional[dict] = None
     system_idx: Optional[torch.Tensor] = None
     n_systems:Optional[torch.Tensor] = None
@@ -71,7 +71,7 @@ def aug_lag(
             G_r=desc.get("G_r", None),
             T_r=desc.get("T_r", None),
             S_Q=desc.get("S_Q", None),
-            q_tet=desc.get("q_tet", None),
+            q=desc.get("q", None),
             diagnostics=loss_dict,
         )
 
@@ -108,7 +108,7 @@ def aug_lag(
             G_r=desc.get("G_r", None),
             T_r=desc.get("T_r", None),
             S_Q=desc.get("S_Q", None),
-            q_tet=desc.get("q_tet", None),
+            q=desc.get("q", None),
             diagnostics=loss_dict,
         )
 
@@ -202,7 +202,7 @@ def aug_lagg(
             G_r=desc.get("G_r", None),
             T_r=desc.get("T_r", None),
             S_Q=desc.get("S_Q", None),
-            q_tet=desc.get("q_tet", None),
+            q=desc.get("q", None),
             diagnostics=loss_dict,
         )
 
@@ -239,7 +239,7 @@ def aug_lagg(
             G_r=desc.get("G_r", None),
             T_r=desc.get("T_r", None),
             S_Q=desc.get("S_Q", None),
-            q_tet=desc.get("q_tet", None),
+            q=desc.get("q", None),
             diagnostics=loss_dict,
         )
 

@@ -380,38 +380,6 @@ class QuasiNewton3D:
         self.sequence = torch.stack(self.sequence)
 
 
-#
-# class QuasiNewton_2:
-#     def __init__(self, func):
-#         self.func = func
-#
-#     def step(self, x: torch.Tensor, eps=1e-6, max_iter=100):
-#         """
-#         Quasi-Newton step for 3D Cartesian tensor of shape (N_atoms, 3).
-#         """
-#         N = x.numel()
-#         x = x.clone().detach().requires_grad_(True)
-#         H = torch.eye(N, dtype=x.dtype, device=x.device)
-#
-#         for _ in range(max_iter):
-#             grad = evaluate(self.func, x).view(-1, 1)  # Shape: (3N, 1)
-#             if torch.norm(grad) < eps:
-#                 break
-#
-#             d = -H @ grad  # Shape: (3N, 1)
-#             d = d.view_as(x)  # Shape: (N_atoms, 3)
-#
-#             alpha = gss(self.func, x, d, 0.0, 2.0, 1e-4)
-#             x_new = (x + alpha * d).clone().detach().requires_grad_(True)
-#
-#             grad_new = evaluate(self.func, x_new).view(-1, 1)
-#             s = (x_new.view(-1, 1) - x.view(-1, 1))  # (3N, 1)
-#             y = grad_new - grad  # (3N, 1)
-#
-#             H = self.update(H, s, y)
-#             x = x_new
-#
-#         return x.detach()
 
 
 class BFGS(QuasiNewton3D):
@@ -475,7 +443,7 @@ class BFGS(QuasiNewton3D):
         H_new = H + update
         return H_new
 
-class LBFGS3D(QuasiNewton3D):
+class LBFGS3D_batch(QuasiNewton3D):
     """
     Batched, periodic-aware L-BFGS optimizer for 3D systems.
 
@@ -522,8 +490,8 @@ class LBFGS3D(QuasiNewton3D):
         Search direction: Tensor of shape (B, N, 3)
         """
         s = x1 - x0
-        if self.cell is not None:
-            s = wrap_to_cell(s, self.cell)
+        # if self.cell is not None:
+        #     s = wrap_to_cell(s, self.cell)
 
         y = self.evaluate(x1) - g0
 
@@ -581,162 +549,121 @@ class LBFGS3D(QuasiNewton3D):
 
         return -r
 
-class DFP(QuasiNewton3D):
+
+
+class LBFGS3D(QuasiNewton3D):
     """
-    DFP (Davidon-Fletcher-Powell) Quasi-Newton optimizer for 3D atomic positions.
-
-    This class implements the DFP update formula to iteratively improve the inverse Hessian
-    approximation used for optimization.
-
-    The update modifies the Hessian approximation by adding curvature information based on
-    displacement and gradient differences.
-
-    Update formula:
-
-        H_new = H
-                + (s s^T) / (y^T s)
-                - (H y y^T H) / (y^T H y)
-
-    where:
-    - H: current inverse Hessian approximation (tensor)
-    - s: displacement vector (x1 - x0)
-    - y: gradient difference vector (grad(x1) - grad(x0))
-
-    Methods
-    -------
-    update(x1, x0, g, H)
-        Perform a DFP update on the inverse Hessian approximation.
-
-    Parameters
-    ----------
-    func : callable
-        Objective function to minimize.
-
-    ls : str, optional
-        Line search strategy, default is "exact".
-
-    sc : str, optional
-        Stopping criterion, default is "gradNorm".
-    """
-
-    def __init__(self, func, ls="exact", sc="gradNorm"):
-        super().__init__(func, ls, sc)
-
-    def update(self, x1, x0, g, H):
-        s = (x1 - x0).reshape(-1, 3, 1)
-        y = (evaluate(self.func, x1) - g).reshape(-1, 3, 1)
-
-        sT = s.transpose(1, 2)
-        yT = y.transpose(1, 2)
-
-        Hy = torch.bmm(H, y)
-
-        ssT = torch.bmm(s, sT)
-        ys = torch.bmm(yT, s)
-
-        HyHyT = torch.bmm(Hy, Hy.transpose(1, 2))
-        yHy = torch.bmm(yT, Hy)
-
-        H_new = H + ssT / ys - HyHyT / yHy
-        return H_new
-
-
-# class DFP(QuasiNewton):
-#     def update(self, H, s, y):
-#         sTy = s.T @ y
-#         if sTy.abs().item() < 1e-12:
-#             return H
-#         Hy = H @ y
-#         term1 = (s @ s.T) / sTy
-#         term2 = (Hy @ Hy.T) / (y.T @ Hy + 1e-12)
-#         return H + term1 - term2
-
-
-# class BFGS(QuasiNewton):
-#     def update(self, H, s, y):
-#         yTs = y.T @ s
-#         if yTs.abs().item() < 1e-12:
-#             return H
-#         rho = 1.0 / yTs
-#         I = torch.eye(H.shape[0], dtype=H.dtype, device=H.device)
-#         V = I - rho * s @ y.T
-#         return V @ H @ V.T + rho * s @ s.T
-
-class Broyden(QuasiNewton3D):
-    """
-    Broyden family Quasi-Newton optimizer for 3D atomic positions.
-
-    This optimizer implements a linear combination of the DFP and BFGS
-    inverse Hessian update formulas, controlled by the parameter `phi`.
-
-    The update formula is:
-
-        H_new = (1 - phi) * H_DFP + phi * H_BFGS
-
-    where:
-    - H_DFP: inverse Hessian approximation updated by DFP formula
-    - H_BFGS: inverse Hessian approximation updated by BFGS formula
-    - phi: weighting parameter (0 <= phi <= 1) balancing the two updates
+    Non-batched L-BFGS optimizer for 3D systems.
 
     Attributes
     ----------
-    phi : float
-        Weighting factor for the BFGS update in the combined formula.
-    dfp : DFP
-        Instance of the DFP updater.
-    bfgs : BFGS
-        Instance of the BFGS updater.
+    m : int
+        Number of (s, y) pairs to store.
+    s_list : list[Tensor] ->  x_{k+1} - x_k, shape (N, 3)
+    y_list : list[Tensor] -> ∇f_{k+1} - ∇f_k, shape (N, 3)
+    rho_list : list[float] -> 1 / (y · s)
 
-    Methods
-    -------
-    update(x1, x0, g, H)
-        Compute the combined Broyden update for the inverse Hessian approximation.
-
-    step(x0, H_init=None, eps=1e-6, max_iter=100)
-        Run the optimization starting from initial positions x0.
-
-    Parameters
+    Usage
     ----------
-    func : callable
-        Objective function to minimize, accepting positions tensor (N_atoms, 3).
-    phi : float, optional
-        Weight for BFGS update (default 0.5).
-    ls : str, optional
-        Line search strategy (default 'exact').
-    sc : str, optional
-        Stopping criterion (default 'gradNorm').
+    lbfgs = LBFGS3D(func=my_grad_fn, m=7)
+    x_opt = lbfgs.step(x0)
     """
 
-    def __init__(self, func, phi=0.5, ls="exact", sc="gradNorm"):
-        super().__init__(func, ls, sc)
-        self.phi = phi
-        self.dfp = DFP(func)
-        self.bfgs = BFGS(func)
+    def __init__(self, func, m=10, ls="exact", sc="gradNorm", cell=None):
+        self.func = func  # Gradient function
+        self.m = m  # History size
+        self.cell = cell  # Optional periodic cell (3, 3)
+        self.s_list = []
+        self.y_list = []
+        self.rho_list = []
 
-    def update(self, x1, x0, g, H):
-        # x0, x1 shape: (N, 3)
-        # Flatten positions to shape (3N, 1)
-        s = (x1 - x0).reshape(-1, 1)
-        y = (g(x1) - g(x0)).reshape(-1, 1)
+    def evaluate(self, x):
+        return self.func(x)
 
-        H_DFP = self.dfp.update(s, y, H)
-        H_BFGS = self.bfgs.update(s, y, H)
+    def update(self, x1, x0, g0, H=None):
+        """
+        Update history with new (s, y) pairs.
 
-        return (1 - self.phi) * H_DFP + self.phi * H_BFGS
+        Parameters
+        ----------
+        x1, x0 : Tensor, shape (N, 3)
+            Current and previous positions.
+        g0 : Tensor, shape (N, 3)
+            Previous gradient.
+        H : unused, for compatibility.
 
-    def step(self, x0, H_init=None, eps=1e-6, max_iter=100):
-        return super().step(x0, H_init=H_init, eps=eps, max_iter=max_iter)
+        Returns
+        -------
+        Search direction: Tensor of shape (N, 3)
+        """
+        s = x1 - x0
+        # if self.cell is not None:
+        #     s = wrap_to_cell(s, self.cell)
+
+        g1 = self.evaluate(x1)
+        y = g1 - g0
+
+        s_dot_y = torch.sum(s * y)
+        if s_dot_y < 1e-10:
+            return -g1  # fallback to gradient descent
+
+        rho = 1.0 / s_dot_y
+
+        if len(self.s_list) == self.m:
+            self.s_list.pop(0)
+            self.y_list.pop(0)
+            self.rho_list.pop(0)
+
+        self.s_list.append(s)
+        self.y_list.append(y)
+        self.rho_list.append(rho)
+
+        return self.two_loop_recursion(g1)
+
+    def two_loop_recursion(self, grad):
+        """
+        Compute the L-BFGS direction using two-loop recursion.
+
+        Parameters
+        ----------
+        grad : Tensor, shape (N, 3)
+
+        Returns
+        -------
+        Tensor of shape (N, 3)
+        """
+        q = grad.clone()
+        alpha_list = []
+
+        for s, y, rho in reversed(list(zip(self.s_list, self.y_list, self.rho_list))):
+            alpha = rho * torch.sum(s * q)
+            q = q - alpha * y
+            alpha_list.append(alpha)
+
+        if self.y_list:
+            s = self.s_list[-1]
+            y = self.y_list[-1]
+            scale = torch.sum(s * y) / torch.sum(y * y)
+            r = scale * q
+        else:
+            r = q
+
+        for s, y, rho, alpha in zip(self.s_list, self.y_list, self.rho_list, reversed(alpha_list)):
+            beta = rho * torch.sum(y * r)
+            r = r + s * (alpha - beta)
+
+        return -r
 
 
 
 
 @dataclass
 class AugLagState(SimState):
-    loss: Optional[torch.Tensor] = None
+    # loss: Optional[torch.Tensor] = None
     G_r: Optional[torch.Tensor] = None
     T_r: Optional[torch.Tensor] = None
     S_Q: Optional[torch.Tensor] = None
-    q_tet: Optional[torch.Tensor] = None
+    q: Optional[torch.Tensor] = None
     diagnostics: Optional[dict] = None
     system_idx: Optional[torch.Tensor] = None
     n_systems:Optional[torch.Tensor] = None
@@ -745,320 +672,45 @@ import torch
 from torch import nn
 
 
-class AugmentedLagrangian(nn.Module):
-    def __init__(self, objective, model, lam, sigma, constraints_eq=None,constraints_ineq=None, method="BFGS", phi=0.5, ls="exact", sc="gradNorm", device=None, dtype=torch.float32):
-        super().__init__()
-        self.objective = objective(model)
-        self.model = model
-        self.device = device or torch.device("cpu")
-        self.dtype = dtype
-        self.equality= constraints_eq
-        self.inequality = constraints_ineq
+class LBFGSWrapper1:
+    def __init__(self, func, positions, max_iter=100, eps=1e-6):
+        self.func = func
+        self.positions = positions
+        self.positions.requires_grad_(True)
+        self.optimizer = torch.optim.LBFGS([self.positions], max_iter=max_iter, tolerance_grad=eps)
 
-        self.lam = nn.Parameter(torch.tensor(lam, dtype=dtype, device=device), requires_grad=False)
-        self.sigma = nn.Parameter(torch.tensor(sigma, dtype=dtype, device=device), requires_grad=False)
-        self.eta = self.lam / self.sigma
+    def step(self, x, eps=1e-6, max_iter=100):
+        # x is ignored here — we already store positions internally
+        def closure():
+            self.optimizer.zero_grad()
+            loss = self.func(self.positions)
+            loss.backward()
+            return loss
 
-        self.method = method
-        self.phi = phi
-        self.ls = ls
-        self.sc = sc
-
-        self._base_state = None
-        self.out = None
-        self.lag = None
-        self.eps = None
-        self.max_iter = None
-
-    def forward(self, state: AugLagState):
-        self._base_state = state
-        return self._update_state(state.positions)
-
-    def step(self, state: AugLagState, eps=1e-6, max_iter=100):
-        #x = state.positions.clone().detach().requires_grad_(True)
-        x = state.positions
-
-
-        if self.method == "BFGS":
-            solver = BFGS(self.aug_func, ls=self.ls, sc=self.sc)
-        elif self.method == "DFP":
-            solver = DFP(self.aug_func, ls=self.ls, sc=self.sc)
-        elif self.method == "Broyden":
-            solver = Broyden(self.aug_func, phi=self.phi, ls=self.ls, sc=self.sc)
-        else:
-            raise ValueError(f"Unknown method: {self.method}")
-
-        x = solver.step(x, eps=eps, max_iter=max_iter)
-        updated_state = self._update_state(x)
-        self.update_lagrange_multipliers(updated_state)
-        self.sigma.data *= 10
-        self.eta = self.lam / self.sigma
-        return updated_state
-
-    def aug_func(self, x: torch.Tensor) -> torch.Tensor:
-        state = self._update_state(x)
-        lag = self.objective(state)
-
-        for i, c in enumerate(self.equality):
-            val = c(state)
-            lag += -self.lam[i] * val + 0.5 * self.sigma[i] * val ** 2
-
-        for j, (f, is_ge) in enumerate(self.inequality):
-            i = j + len(self.equality)
-            phi = f(state)
-            if is_ge:
-                val = torch.min(phi - self.eta[i], torch.tensor(0.0, device=x.device, dtype=self.dtype))
-            else:
-                val = torch.min(-phi - self.eta[i], torch.tensor(0.0, device=x.device, dtype=self.dtype))
-            lag += 0.5 * self.sigma[i] * (val ** 2 - self.eta[i] ** 2)
-
-        state.loss = lag
-        self.lag = lag
-        return lag
-
-    def update_lagrange_multipliers(self, state: AugLagState):
-        for i, c in enumerate(self.equality):
-            self.lam.data[i] -= self.sigma[i] * c(state).detach()
-
-        for j, (f, is_ge) in enumerate(self.inequality):
-            i = j + len(self.equality)
-            phi = f(state)
-            if is_ge:
-                self.lam.data[i] = -self.sigma[i] * torch.min(phi - self.eta[i], torch.tensor(0.0, device=phi.device, dtype=self.dtype)).detach()
-            else:
-                self.lam.data[i] = -self.sigma[i] * torch.min(-phi - self.eta[i], torch.tensor(0.0, device=phi.device, dtype=self.dtype)).detach()
-        self.eta = self.lam / self.sigma
-
-    def kkt_residual(self, state: AugLagState):
-        val = 0.0
-        for c in self.equality:
-            val += c(state).pow(2)
-        for j, (f, is_ge) in enumerate(self.inequality):
-            i = j + len(self.equality)
-            phi = f(state)
-            if is_ge:
-                val += torch.min(phi, self.eta[i]).pow(2)
-            else:
-                val += torch.min(-phi, self.eta[i]).pow(2)
-        return val.sqrt()
-
-    def _update_state(self, positions: torch.Tensor) -> AugLagState:
-        state = self._base_state
-        state.positions = positions
-
-        results = self.model(state)
-
-        return AugLagState(
-            positions=positions,
-            masses=state.masses,
-            cell=state.cell,
-            atomic_numbers=state.atomic_numbers,
-            system_idx=state.system_idx,
-            n_systems=state.n_systems,
-            pbc=state.pbc,
-            loss=self.lag,
-            G_r=results.get("G_r", None),
-            T_r=results.get("T_r", None),
-            S_Q=results.get("S_Q", None),
-            q_tet=results.get("q_tet", None),
-            diagnostics=results,
-        )
-class AugLagNNN(nn.Module):
-    def __init__(self, objective, model, lam, sigma, constraints_eq=None, constraints_ineq=None,
-                 method="BFGS", phi=0.5, ls="exact", sc="gradNorm", device=None, dtype=torch.float32):
-        super().__init__()
-        self.device = device or torch.device("cpu")
-        self.dtype = dtype
-
-        self.model = model
-        self.objective = objective(model)
-        self.equality = constraints_eq or []
-        self.inequality = [
-            (c, False) if not isinstance(c, tuple) else c
-            for c in (constraints_ineq or [])
-        ]
-
-        # Assume lam and sigma are initialized as [n_systems, n_constraints]
-        self.lam = nn.Parameter(torch.tensor(lam, dtype=dtype, device=self.device), requires_grad=False)
-        self.sigma = nn.Parameter(torch.tensor(sigma, dtype=dtype, device=self.device), requires_grad=False)
-        self.eta = self.lam / self.sigma
-
-        self.method = method
-        self.phi = phi
-        self.ls = ls
-        self.sc = sc
-
-        self._base_state = None
-        self.out = None
-        self.lag = None
-        self.eps = None
-        self.max_iter = None
-
-        self.plot = False
-        self.solver = None
-
-    def _update_state(self, positions: torch.Tensor):
-        state = self._base_state
-        state.positions = positions
-
-        results = self.model(state)
-
-        return AugLagState(
-            positions=positions,
-            masses=state.masses,
-            cell=state.cell,
-            atomic_numbers=state.atomic_numbers,
-            system_idx=state.system_idx,
-            n_systems=state.n_systems,
-            pbc=state.pbc,
-            loss=self.lag,
-            G_r=results.get("G_r", None),
-            T_r=results.get("T_r", None),
-            S_Q=results.get("S_Q", None),
-            q_tet=results.get("q_tet", None),
-            diagnostics=results,
-        )
-
-    def forward(self, state):
-        self._base_state = state
-        return self._update_state(state.positions)
-
-    def aug_func(self, x):
-        state = self._update_state(x)
-        base_loss = self.objective(state)
-        lag = base_loss.clone()
-
-        for b in range(state.n_systems):
-            mask = state.system_idx == b
-            sub_state = state.masked_select(mask)
-
-            for i, c in enumerate(self.equality):
-                val = c(sub_state)
-                lag += -self.lam[b, i] * val + 0.5 * self.sigma[b, i] * val ** 2
-
-            for j, (f, is_ge) in enumerate(self.inequality):
-                i = j + len(self.equality)
-                phi = f(sub_state)
-                if is_ge:
-                    val = torch.min(phi - self.eta[b, i], torch.tensor(0.0, device=self.device, dtype=self.dtype))
-                else:
-                    val = torch.min(-phi - self.eta[b, i], torch.tensor(0.0, device=self.device, dtype=self.dtype))
-                lag += 0.5 * self.sigma[b, i] * (val ** 2 - self.eta[b, i] ** 2)
-
-        state.loss = lag
-        self.lag = lag
-        return lag
-
-    def step(self, state: AugLagState, eps=1e-6, max_iter=100, epsilon=1e-6):
-        self._base_state = state
-        x = state.positions
-
-        if self.method == "BFGS":
-            self.solver = BFGS(self.aug_func, ls=self.ls, sc=self.sc)
-        elif self.method == "DFP":
-            self.solver = DFP(self.aug_func, ls=self.ls, sc=self.sc)
-        elif self.method == "Broyden":
-            self.solver = Broyden(self.aug_func, phi=self.phi, ls=self.ls, sc=self.sc)
-        else:
-            raise ValueError(f"Unknown method: {self.method}")
-
-        assert self.isFeasible(state), "Initial point isn't feasible"
-        count = 1
-        print(f"round {count}:")
-
-        x = self.solver.step(x, eps=eps ,max_iter=max_iter)
-
-        updated_state = self._update_state(x)
-        self.update_lam(updated_state)
-
-        while self.criteria(updated_state) > epsilon:
-            self.sigma.data *= 10
-            self.update_eta()
-            count += 1
-            print(f"round {count}:")
-
-            x = self.solver.step(updated_state.positions, eps=eps ,max_iter=max_iter)
-            updated_state = self._update_state(x)
-            self.update_lam(updated_state)
-
-        return updated_state
-
-    def isFeasible(self, state):
-        flag = True
-        for b in range(state.n_systems):
-            mask = state.system_idx == b
-            sub_state = state.masked_select(mask)
-
-            for eq in self.equality:
-                if not torch.allclose(eq(sub_state), torch.tensor(0., dtype=self.dtype, device=self.device), atol=1e-6):
-                    flag = False
-            for neq, is_pos in self.inequality:
-                val = neq(sub_state)
-                if is_pos:
-                    if not (val > 0).all():
-                        flag = False
-                else:
-                    if not (-val > 0).all():
-                        flag = False
-        return flag
-
-    def update_lam(self, state):
-        for b in range(state.n_systems):
-            mask = state.system_idx == b
-            sub_state = state.masked_select(mask)
-
-            for i, eq in enumerate(self.equality):
-                self.lam.data[b, i] -= self.sigma[b, i] * eq(sub_state).detach()
-
-            for j, (neq, is_pos) in enumerate(self.inequality):
-                i = j + len(self.equality)
-                val = neq(sub_state)
-                if is_pos:
-                    self.lam.data[b, i] = -self.sigma[b, i] * torch.min(val - self.eta[b, i], torch.tensor(0., device=self.device)).detach()
-                else:
-                    self.lam.data[b, i] = -self.sigma[b, i] * torch.min(-val - self.eta[b, i], torch.tensor(0., device=self.device)).detach()
-
-    def update_eta(self):
-        self.eta.data = self.lam.data / self.sigma
-
-    def criteria(self, state):
-        val = 0.0
-        for b in range(state.n_systems):
-            mask = state.system_idx == b
-            sub_state = state.masked_select(mask)
-
-            for i, eq in enumerate(self.equality):
-                val += eq(sub_state).pow(2).sum()
-
-            for j, (neq, is_pos) in enumerate(self.inequality):
-                i = j + len(self.equality)
-                phi = neq(sub_state)
-                if is_pos:
-                    val += torch.min(phi, self.eta[b, i]).pow(2).sum()
-                else:
-                    val += torch.min(-phi, self.eta[b, i]).pow(2).sum()
-
-        return val.sqrt()
+        self.optimizer.step(closure)
+        return self.positions
 
 
 
-class AugLagNN(nn.Module):
+
+
+class AugLagNNNN(nn.Module):
     def __init__(
-            self,
-            objective,
-            model,
-            lam,
-            sigma,
-            eta,
-            mask=None,
-            constraints_eq=None,
-            constraints_ineq=None,
-            method="BFGS",
-            phi=0.5,
-            ls="exact",
-            sc="gradNorm",
-            device=None,
-            dtype=torch.float32,
+        self,
+        objective,
+        model,
+        lam,
+        sigma,
+        eta,
+        mask=None,
+        constraints_eq=None,
+        constraints_ineq=None,
+        method="LBFGS",
+        phi=0.5,
+        ls="exact",
+        sc="gradNorm",
+        device=None,
+        dtype=torch.float32,
     ):
         super().__init__()
         self.device = device or torch.device("cpu")
@@ -1067,12 +719,13 @@ class AugLagNN(nn.Module):
         self.model = model
         self.objective = objective(model)
         self.equality = constraints_eq or []
-        self.inequality = constraints_ineq
-        # lam and sigma shape: (n_systems, max_atoms)
+        self.inequality = constraints_ineq or []
+
         self.lam = nn.Parameter(torch.tensor(lam, dtype=dtype, device=self.device), requires_grad=False)
         self.sigma = nn.Parameter(torch.tensor(sigma, dtype=dtype, device=self.device), requires_grad=False)
         self.eta = eta
-        self.mask = mask
+        self.mask = mask if mask is not None else torch.ones_like(torch.tensor(lam, dtype=torch.bool))
+
         self.method = method
         self.phi = phi
         self.ls = ls
@@ -1083,7 +736,6 @@ class AugLagNN(nn.Module):
         self.lag = None
         self.eps = None
         self.max_iter = None
-
         self.plot = False
         self.solver = None
 
@@ -1095,24 +747,24 @@ class AugLagNN(nn.Module):
         system_idx = state.system_idx
         pos = positions.clone()
         # Wrap positions into the unit cell
-        if pbc:
-            with torch.no_grad():
-                for b in range(state.n_systems):
-                    mask = system_idx == b
-                    pos_b = pos[mask]  # [n_atoms_b, 3]
-                    cell_b = cell[b]  # [3, 3]
-                    inv_cell_b = torch.inverse(cell_b)  # [3, 3]
-
-                    # Convert to fractional coordinates
-                    frac_b = torch.matmul(pos_b, inv_cell_b.T)
-
-                    # Apply PBC: wrap fractional coordinates to [0, 1)
-                    frac_b = frac_b % 1.0
-
-                    # Convert back to Cartesian
-                    pos[mask] = torch.matmul(frac_b, cell_b)
-
-            pos.requires_grad_(True)
+        # if pbc:
+        #     with torch.no_grad():
+        #         for b in range(state.n_systems):
+        #             mask = system_idx == b
+        #             pos_b = pos[mask]  # [n_atoms_b, 3]
+        #             cell_b = cell[b]  # [3, 3]
+        #             inv_cell_b = torch.inverse(cell_b)  # [3, 3]
+        #
+        #             # Convert to fractional coordinates
+        #             frac_b = torch.matmul(pos_b, inv_cell_b.T)
+        #
+        #             # Apply PBC: wrap fractional coordinates to [0, 1)
+        #             frac_b = frac_b % 1.0
+        #
+        #             # Convert back to Cartesian
+        #             pos[mask] = torch.matmul(frac_b, cell_b)
+        #
+        #     pos.requires_grad_(True)
 
         # Update base state positions
         state.positions = positions
@@ -1127,159 +779,20 @@ class AugLagNN(nn.Module):
             system_idx=state.system_idx,
             n_systems=state.n_systems,
             pbc=state.pbc,
-            loss=self.lag,
             G_r=results.get("G_r", None),
             T_r=results.get("T_r", None),
             S_Q=results.get("S_Q", None),
-            q_tet=results.get("q_tet", None),
-            diagnostics=results,
+            q=results.get("q", None),
+            diagnostics={},
         )
 
-    def forward(self, state):
-        self._base_state = state
-        return self._update_state(state.positions)
-
-    def aug_func(self, x):
-        """
-            Evaluate the augmented Lagrangian function for a given input `x`.
-
-            This function computes the total loss composed of:
-            - The base objective function `f(x)`
-            - Penalty and Lagrange multiplier terms for equality constraints: c_i(x) = 0
-            - Smoothed penalty terms for inequality constraints:
-              - f_j(x) >= 0 (if `is_ge` is True)
-              - f_j(x) <= 0 (if `is_ge` is False)
-
-            The augmented Lagrangian has the following structure:
-
-                L_aug(x) = f(x)
-                          + Σ_i [ -λ_i c_i(x) + 0.5 * σ_i * c_i(x)^2 ]
-                          + Σ_j [ -λ_j φ_j(x) + 0.5 * σ_j (φ_j(x)^2 - η_j^2) ]
-
-            where:
-            - c_i(x): equality constraint functions
-            - f_j(x): inequality constraint functions
-            - φ_j(x): smoothed constraint violation:
-                - φ_j(x) = min(f_j(x) - η_j, 0) if f_j(x) ≥ 0
-                - φ_j(x) = min(-f_j(x) - η_j, 0) if f_j(x) ≤ 0
-            - λ: Lagrange multipliers
-            - σ: penalty coefficients
-            - η: slack-like variables (for inequalities)
-
-            Masking is applied to allow constraint selection or per-system handling.
-
-            Parameters
-            ----------
-            x : torch.Tensor
-                The input optimization variable (usually flattened). It will be transformed into a `state` object internally.
-
-            Returns
-            -------
-            torch.Tensor
-                The scalar value of the augmented Lagrangian loss at the given input `x`. This can be minimized using any optimizer.
-            """
-        state = self._update_state(x)
-        base_loss = self.objective(state)
-        lag = base_loss.clone()
-
-        # Mask the per-atom parts (excluding index 0, which is for equality)
-        lam_masked = self.lam[self.mask]
-        eta_masked = self.eta[self.mask]
-        sigma_masked = self.sigma[self.mask]
-
-
-        for i, c in enumerate(self.equality):
-            val_eq = c(state)
-            lag += -lam_masked * val_eq + 0.5 * sigma_masked * val_eq ** 2
-
-        for j, (f, is_ge) in enumerate(self.inequality):
-            #i = j + len(self.equality)
-            phi = f(state)
-            if is_ge:
-                val = torch.min(phi - eta_masked, torch.zeros_like(phi))
-            else:
-                val = torch.min(-phi - eta_masked, torch.zeros_like(phi))
-            #lag += torch.sum(-lam_masked * val + 0.5 * sigma_masked * (val ** 2 - eta_masked ** 2))
-            lag += torch.sum(-lam_masked * val + 0.5 * sigma_masked * torch.norm(val - eta_masked, dim=-1)**2)
-
-
-        state.loss = lag
-        self.lag = lag
-        return lag
-
-
-
-
-
-    def step(self, state: 'AugLagState', eps=1e-6, max_iter=100, epsilon=1e-6):
-        self._base_state = state
-        if self.method == "LBFGS3D":
-            self.solver = LBFGS3D(self.aug_func, m=10, ls=self.ls, sc=self.sc, cell=state.cell)
-        if self.method == "BFGS":
-            self.solver = BFGS(self.aug_func, ls=self.ls, sc=self.sc)
-        elif self.method == "DFP":
-            self.solver = DFP(self.aug_func, ls=self.ls, sc=self.sc)
-        elif self.method == "Broyden":
-            self.solver = Broyden(self.aug_func, phi=self.phi, ls=self.ls, sc=self.sc)
-        else:
-            raise ValueError(f"Unknown method: {self.method}")
-
-        assert self.isFeasible(state), "Initial point isn't feasible"
-        count = 1
-        logger.info(f"round {count}:")
-
-        x = self.solver.step(state.positions, eps=eps, max_iter=max_iter)
-
-        updated_state = self._update_state(x)
-        self.update_lam(updated_state)
-
-        while self.criteria(updated_state) > epsilon:
-            self.sigma.data *= 10
-            self.update_eta()
-            count += 1
-            logger.info(f"round {count}:")
-
-            x = self.solver.step(updated_state.positions, eps=eps, max_iter=max_iter)
-            updated_state = self._update_state(x)
-            self.update_lam(updated_state)
-
-        return updated_state
-
     def isFeasible(self, state):
-
-        """
-            Check whether the current state satisfies all equality and inequality constraints.
-
-            This function evaluates:
-            - Equality constraints c_i(state) ≈ 0, using a numerical tolerance
-            - Inequality constraints:
-                - f_j(state) ≥ 0 if `is_pos` is True
-                - f_j(state) ≤ 0 if `is_pos` is False
-
-            A state is considered feasible if:
-            - All equality constraints are satisfied within a tolerance of 1e-6
-            - All inequality constraints are strictly satisfied (i.e., all elements > 0 or < 0 as required)
-
-            Note: The current implementation assumes scalar or elementwise constraints and does not handle batching.
-
-            Parameters
-            ----------
-            state : Any
-                A state object that provides values for the constraints when evaluated.
-
-            Returns
-            -------
-            bool
-                True if all constraints are satisfied, False otherwise.
-            """
         flag = True
-
         for eq in self.equality:
             if not torch.allclose(eq(state), torch.tensor(0., dtype=self.dtype, device=self.device), atol=1e-6):
                 flag = False
 
         for neq, is_pos in self.inequality:
-            #neq, is_pos  = self.inequality
             val = neq(state)
             if is_pos:
                 if not (val > 0).all():
@@ -1288,109 +801,100 @@ class AugLagNN(nn.Module):
                 if not (-val > 0).all():
                     flag = False
 
-            return flag
+        return flag if self.equality or self.inequality else True
+
+    def aug_func(self, x):
+        state = self._update_state(x)
+        base_loss = self.objective(state)
+        lag = base_loss.clone()
+        state.diagnostics["chi2"] = lag
+        if self.equality:
+            lam_masked = self.lam[self.mask]
+            sigma_masked = self.sigma[self.mask]
+            for i, c in enumerate(self.equality):
+                val_eq = c(state)
+                lag += -lam_masked * val_eq + 0.5 * sigma_masked * val_eq ** 2
+
+        if self.inequality:
+            lam_masked = self.lam[self.mask]
+            eta_masked = self.eta[self.mask]
+            sigma_masked = self.sigma[self.mask]
+            for j, (f, is_ge) in enumerate(self.inequality):
+                phi = f(state)
+                if is_ge:
+                    val = torch.min(phi - eta_masked, torch.zeros_like(phi))
+                else:
+                    val = torch.min(-phi - eta_masked, torch.zeros_like(phi))
+                lag += torch.sum(-lam_masked * val + 0.5 * sigma_masked * torch.norm(val - eta_masked, dim=-1) ** 2)
+
+        state.diagnostics["loss"] = lag
+        self.lag = lag
+        return lag
 
     def update_lam(self, state):
-        """
-            Update Lagrange multipliers (`lam`) for both equality and inequality constraints
-            based on the current state.
-
-            For equality constraints c_i(x) = 0:
-                λ_i ← λ_i - σ_i * c_i(x)
-
-            For inequality constraints:
-                If f_j(x) ≥ 0:
-                    λ_j ← -σ_j * min(f_j(x) - η_j, 0)
-                If f_j(x) ≤ 0:
-                    λ_j ← -σ_j * min(-f_j(x) - η_j, 0)
-
-            Only the masked subset of constraints (defined by `self.mask`) is updated.
-
-            Parameters
-            ----------
-            state : Any
-                The current simulation or optimization state used to evaluate constraint values.
-            """
-        # n_eq = len(self.equality)
-        #
-        # # Update equality constraints (assumed small number, usually 1)
-        # for i, eq in enumerate(self.equality):
-        #     # Optional: check mask on equality constraints if mask applies here
-        #     self.lam[i] -= self.sigma[i] * eq(state).detach()
-
-        # Get masked indices for inequalities (offset by n_eq)
-        masked_indices = torch.nonzero(self.mas, as_tuple=False).flatten()
-
+        masked_indices = torch.nonzero(self.mask, as_tuple=False).flatten()
         for j, (f, is_pos) in enumerate(self.inequality):
-
-            val = f(state) # Get function for this inequality
-            for  i, idx in enumerate(masked_indices):
-
+            val = f(state)
+            for i, idx in enumerate(masked_indices):
                 if is_pos:
-                    update_val = -self.sigma[idx] * torch.min(val[i] - self.eta[idx],
-                                                            torch.tensor(0., device=self.device)).detach()
+                    update_val = -self.sigma[idx] * torch.min(val[i] - self.eta[idx], torch.tensor(0., device=self.device)).detach()
                 else:
-                    update_val = -self.sigma[idx] * torch.min(-val[i] - self.eta[idx],
-                                                            torch.tensor(0., device=self.device)).detach()
-
+                    update_val = -self.sigma[idx] * torch.min(-val[i] - self.eta[idx], torch.tensor(0., device=self.device)).detach()
                 self.lam[idx] = update_val
 
     def update_eta(self):
-        """
-            Update slack-like variables (`eta`) for inequality constraints based on the current
-            values of Lagrange multipliers and penalty coefficients.
-
-            For masked inequality constraints:
-                η_j ← λ_j / σ_j
-
-            This update enables smooth handling of inequality constraint violations in the
-            augmented Lagrangian formulation.
-
-            Note
-            ----
-            Only constraints selected by `self.mask` are updated.
-            """
         self.eta[self.mask] = self.lam[self.mask] / self.sigma[self.mask]
 
     def criteria(self, state):
-        """
-            Compute the feasibility violation norm of all constraints at the given state.
-
-            The result is the root of the sum of squared residuals:
-                - For equality constraints: ∑ ||c_i(x)||²
-                - For inequality constraints:
-                    - If f_j(x) ≥ 0: ∑ ||min(f_j(x), η_j)||²
-                    - If f_j(x) ≤ 0: ∑ ||min(-f_j(x), η_j)||²
-
-            This metric serves as a convergence or feasibility check during optimization.
-
-            Parameters
-            ----------
-            state : Any
-                The current state from which to evaluate constraint values.
-
-            Returns
-            -------
-            torch.Tensor
-                A scalar value representing the total constraint violation norm.
-            """
         val = 0.0
-
-        for i, eq in enumerate(self.equality):
-            eq_val = eq(state)
-            val += eq_val.pow(2).sum()
-
+        for eq in self.equality:
+            val += eq(state).pow(2).sum()
         for j, (ineq, is_pos) in enumerate(self.inequality):
-            i_idx = j + len(self.equality)
             eta_masked = self.eta[self.mask]
             phi = ineq(state)
-            #eta = self.eta[i_idx]  # Only one system (index 0)
             if is_pos:
-                val += torch.min(phi,eta_masked).pow(2).sum()
+                val += torch.min(phi, eta_masked).pow(2).sum()
             else:
                 val += torch.min(-phi, eta_masked).pow(2).sum()
-
         return val.sqrt()
+
+    def forward(self, state):
+        self._base_state = state
+        return self._update_state(state.positions)
+
+
+    def step(self, state, eps=1e-6, max_iter=100, epsilon=1e-6):
+        self._base_state = state
+
+        if self.method == "LBFGS":
+            self.solver = LBFGSWrapper(self.aug_func, state.positions, max_iter=max_iter, eps=eps)
+        elif self.method == "LBFGS3D":
+            self.solver = LBFGS3D(self.aug_func, m=10, ls=self.ls, sc=self.sc, cell=state.cell)
+        elif self.method == "BFGS":
+            self.solver = BFGS(self.aug_func, ls=self.ls, sc=self.sc)
+
+        else:
+            raise ValueError(f"Unknown method: {self.method}")
+
+        assert self.isFeasible(state), "Initial point isn't feasible"
+        x = self.solver.step(state.positions, eps=eps, max_iter=max_iter)
+        logging.info(x)
+        updated_state = self._update_state(x)
+
+        if self.equality or self.inequality:
+            self.update_lam(updated_state)
+
+        count = 1
+        while self.equality or self.inequality and self.criteria(updated_state) > epsilon:
+            logger.info(f"round {count}:")
+            self.sigma.data *= 10
+            self.update_eta()
+            count += 1
+            x = self.solver.step(updated_state.positions, eps=eps, max_iter=max_iter)
+            updated_state = self._update_state(x)
+            self.update_lam(updated_state)
+
+        return updated_state
 
 # To use:
 # model = DummyModel(spec_calc, rdf_data)
@@ -1398,3 +902,233 @@ class AugLagNN(nn.Module):
 # x0 = torch.randn(num_atoms * 3, dtype=torch.float32)  # initial positions
 # aug = AugmentedLagrangian(objective, lam=[0, 0], sigma=[1, 1], constraints_eq=constraints, method="DFP")
 # x_opt = aug.optimize(x0)
+
+
+
+
+class AugLagNN:
+    def __init__(self, objective, model, constraints_eq=[], constraints_ineq=[],
+                 lam=None, sigma=None, eta=None, mask=None, method="LBFGS", max_iter=100, eps=1e-5):
+        self.objective = objective(model)
+        self.model = model
+        self.equality = constraints_eq
+        self.inequality = constraints_ineq
+        self.method = method
+        self.max_iter = max_iter
+        self.eps = eps
+
+        # Constraint parameters
+        self.lam = lam
+        self.sigma = sigma
+        self.eta = eta
+        self.mask = mask
+        self._base_state = None
+
+        # Initialize solver immediately
+        if method == "LBFGS":
+            self.solver = LBFGSWrapper(self.model , max_iter=max_iter, eps=eps)
+        else:
+            raise ValueError(f"Unknown optimization method: {method}")
+
+    #     self.solver = None  # Will be initialized once state is provided
+    #
+    def __call__(self, state: AugLagState):
+        self._base_state = state
+
+        # Initialize solver after state is known
+        if self.method == "LBFGS":
+            self.solver = LBFGSWrapper(self.objective,  max_iter=self.max_iter, eps=self.eps)
+        else:
+            raise ValueError(f"Unknown method: {self.method}")
+
+        return state
+
+    def aug_func(self, x):
+        state = self._update_state(x)
+        #base_loss = self.objective(state)
+        #lag = base_loss.clone()
+        lag = self.solver.last_loss
+        diagnostics = {"loss": lag, "lagrange": {}, "sigma": {}}
+        lam_masked = self.lam[self.mask]
+        eta_masked = self.eta[self.mask]
+        sigma_masked = self.sigma[self.mask]
+        for i, c in enumerate(self.equality):
+            val = c(state)
+            lag += -lam_masked * val + 0.5 * sigma_masked * val_eq ** 2
+            #lag += -self.lam[i] * val + 0.5 * self.sigma[i] * val ** 2
+            diagnostics["lagrange"][f"eq_{i}"] = val.item()
+            diagnostics["sigma"][f"eq_{i}"] = self.sigma[i].item()
+
+        for j, (f, is_ge) in enumerate(self.inequality):
+            val = f(state)
+            if not is_ge:
+                val = -val
+            #pos_val = torch.clamp(val, min=-self.eta[j])
+            pos_val = torch.clamp(val, min=-eta_masked)
+            #lag += -self.lam[len(self.equality) + j] * pos_val + 0.5 * self.sigma[len(self.equality) + j] * pos_val ** 2
+            lag += torch.sum(-lam_masked * pos_val + 0.5 * sigma_masked * torch.norm(pos_val - eta_masked, dim=-1) ** 2)
+            diagnostics["lagrange"][f"ineq_{j}"] = pos_val.item()
+            #diagnostics["sigma"][f"ineq_{j}"] = self.sigma[len(self.equality) + j].item()
+            diagnostics["sigma"][f"ineq_{j}"] = sigma_masked.item()
+
+
+        state.diagnostics = diagnostics
+        return lag
+
+    def _update_state(self, positions: torch.Tensor):
+        state = self._base_state
+        cell = state.cell
+        pbc = state.pbc
+        system_idx = state.system_idx
+
+        pos = positions.clone()
+        state.positions = pos
+
+        results = self.model(state)
+
+        return AugLagState(
+            positions=positions,
+            masses=state.masses,
+            cell=state.cell,
+            atomic_numbers=state.atomic_numbers,
+            system_idx=state.system_idx,
+            n_systems=state.n_systems,
+            pbc=state.pbc,
+            G_r=results.get("G_r", None),
+            T_r=results.get("T_r", None),
+            S_Q=results.get("S_Q", None),
+            q=results.get("q", None),
+            diagnostics={},
+        )
+
+    # def update_lam(self, state: AugLagState):
+    #
+    #
+    #     for i, c in enumerate(self.equality):
+    #         val = c(state).detach()
+    #         #self.lam[i] -= self.sigma[i] * val
+    #
+    #     for j, (f, is_ge) in enumerate(self.inequality):
+    #         val = f(state).detach()
+    #         if not is_ge:
+    #             val = -val
+    #         idx = len(self.equality) + j
+    #         self.lam[idx] = torch.clamp(self.lam[idx] - self.sigma[idx] * val, min=0)
+
+    def update_lam(self, state):
+        masked_indices = torch.nonzero(self.mask, as_tuple=False).flatten()
+        for j, (f, is_ge) in enumerate(self.inequality):
+            val = f(state)
+            for i, idx in enumerate(masked_indices):
+                if is_ge:
+                    update_val = -self.sigma[idx] * torch.min(val[i] - self.eta[idx],
+                                                              torch.tensor(0., device=self.device)).detach()
+                else:
+                    update_val = -self.sigma[idx] * torch.min(-val[i] - self.eta[idx],
+                                                              torch.tensor(0., device=self.device)).detach()
+                self.lam[idx] = update_val
+
+    def update_eta(self):
+
+        for j in range(len(self.inequality)):
+            idx = len(self.equality) + j
+
+            self.eta[j][self.mask] = max(self.eta[j][self.mask], -self.lam[idx][self.mask]/ self.sigma[idx][self.mask])
+
+    def criteria(self, state: AugLagState):
+        lam_masked = self.lam[self.mask]
+        eta_masked = self.eta[self.mask]
+        sigma_masked = self.sigma[self.mask]
+
+        val_eq = torch.stack([c(state) for c in self.equality]) if self.equality else torch.tensor(0.0)
+        val_ineq = []
+        for j, (f, is_ge) in enumerate(self.inequality):
+            val = f(state)
+            if not is_ge:
+                val = -val
+            #pos_val = torch.clamp(val, min=-self.eta[j])
+            pos_val = torch.clamp(val, min=-eta_masked)
+            val_ineq.append(pos_val)
+
+        val_ineq = torch.stack(val_ineq) if val_ineq else torch.tensor(0.0)
+        return torch.norm(val_eq) + torch.norm(val_ineq)
+
+
+
+
+    def isFeasible(self, state: AugLagState):
+        for c in self.equality:
+            if not torch.allclose(c(state), torch.tensor(0.0), atol=1e-5):
+                return False
+        for j, (f, is_ge) in enumerate(self.inequality):
+            val = f(state)
+            if not is_ge:
+                val = -val
+            if torch.any(val < -self.eta[j]):
+                return False
+        return True
+
+    def step(self, state: AugLagState):
+        assert self.isFeasible(state), "Initial point isn't feasible"
+
+        x = self.solver.step(state.positions , eps=self.eps, max_iter=self.max_iter)
+        aug_func(self, x)
+        logging.info(x)
+        updated_state = self._update_state(x)
+        # if self.equality or self.inequality:
+        #     self.update_lam(updated_state)
+
+        count = 1
+        while (self.equality or self.inequality) and self.criteria(updated_state) > self.eps:
+            logger.info(f"round {count}:")
+            self.sigma.data *= 10
+            self.update_eta()
+            count += 1
+            x = self.solver.step(updated_state.positions, eps=self.eps, max_iter=self.max_iter)
+            updated_state = self._update_state(x)
+            aug_func(self, x)
+            self.update_lam(updated_state)
+
+        return updated_state
+
+    class LBFGSWrapper:
+        def __init__(self, func, max_iter=100, eps=1e-6):
+            self.func = func
+            self.max_iter = max_iter
+            self.eps = eps
+            self.last_loss = None  # Optional: store last computed loss
+
+        def step(self, x, eps=None, max_iter=None, return_loss=False):
+            eps = eps if eps is not None else self.eps
+            max_iter = max_iter if max_iter is not None else self.max_iter
+
+            # x = x.detach().clone().requires_grad_(True)
+            optimizer = torch.optim.LBFGS([x], max_iter=max_iter, tolerance_grad=eps)
+
+            def closure():
+                optimizer.zero_grad()
+                loss = self.func(x)
+                logging.info(f"loss: {self.func}")
+                loss.backward()
+                self.last_loss = loss.detach()  # Store for inspection
+                return loss
+
+            optimizer.step(closure)
+
+            if return_loss:
+                return x, self.last_loss
+            return x
+
+
+# def augmented_lagrangian(x, lambda_, rho, g, f):
+#     penalty = rho / 2 * torch.relu(g(x)) ** 2
+#     lagrangian = f(x) + lambda_ * torch.relu(g(x)) + penalty
+#     return lagrangian
+# # Usage:
+# x = torch.tensor(3.0, requires_grad=True)
+# lambda_ = torch.tensor(1.0)
+# rho = 10.0
+# f = lambda x: x ** 2
+# g = lambda x: x - 2
+# loss = augmented_lagrangian(x, lambda_, rho, g, f)
+# loss.backward()
