@@ -1,0 +1,89 @@
+[2025-07-19 00:46:15,212][__main__][INFO] - — Optimising with AugLagLoss + FIRE —
+[2025-07-19 00:46:15,302][__main__][INFO] - step    0 | loss = 394358592.000000 | χ²_corr=2.346e+02 | χ²_scatt=1.971e+10 | q_loss=2.357e+05scale_q=1.000e+00 | scale_scatt=2.000e-02rho=1.000e-03 | lambda_corr=2.346e-01
+[2025-07-19 00:46:15,302][__main__][INFO] - [MACE] Relax block at outer step 0
+[2025-07-19 00:46:18,700][__main__][INFO] -     MACE sub‑step 00 | E = 302.639526 eV
+[2025-07-19 00:46:22,935][__main__][INFO] -     MACE sub‑step 03 | E = -586.667419 eV
+[2025-07-19 00:46:27,280][__main__][INFO] -     MACE sub‑step 06 | E = -1134.385742 eV
+[2025-07-19 00:46:31,626][__main__][INFO] -     MACE sub‑step 09 | E = -1447.618408 eV
+[2025-07-19 00:46:31,958][__main__][INFO] - step    5 | loss = 817181248.000000 | χ²_corr=2.401e+02 | χ²_scatt=4.085e+10 | q_loss=2.217e+05scale_q=1.000e+00 | scale_scatt=2.000e-02rho=1.000e-03 | lambda_corr=1.423e+00
+[2025-07-19 00:46:31,958][__main__][INFO] - [MACE] Relax block at outer step 5
+[2025-07-19 00:46:34,730][__main__][INFO] -     MACE sub‑step 00 | E = 103.944641 eV
+[2025-07-19 00:46:38,951][__main__][INFO] -     MACE sub‑step 03 | E = -162.363617 eV
+[2025-07-19 00:46:43,145][__main__][INFO] -     MACE sub‑step 06 | E = -316.688751 eV
+[2025-07-19 00:46:47,308][__main__][INFO] -     MACE sub‑step 09 | E = -430.981506 eV
+[2025-07-19 00:46:47,634][__main__][INFO] - step   10 | loss = 1988834623488.000000 | χ²_corr=2.781e+07 | χ²_scatt=2.857e+10 | q_loss=2.146e+05scale_q=2.236e+00 | scale_scatt=4.472e-02rho=5.000e-03 | lambda_corr=1.410e+05
+[2025-07-19 00:46:47,634][__main__][INFO] - [MACE] Relax block at outer step 10
+[2025-07-19 00:46:50,396][__main__][INFO] -     MACE sub‑step 00 | E = -839.628662 eV
+[2025-07-19 00:46:54,482][__main__][INFO] -     MACE sub‑step 03 | E = -1367.993774 eV
+[2025-07-19 00:46:58,632][__main__][INFO] -     MACE sub‑step 06 | E = -1457.188965 eV
+[2025-07-19 00:47:02,796][__main__][INFO] -     MACE sub‑step 09 | E = -1475.499512 eV
+[2025-07-19 00:47:02,924][__main__][INFO] - step   15 | loss = 29765859803136.000000 | χ²_corr=7.545e+02 | χ²_scatt=6.656e+14 | q_loss=4.000e+02scale_q=2.236e+00 | scale_scatt=4.472e-02rho=5.000e-03 | lambda_corr=1.410e+05
+[2025-07-19 00:47:02,924][__main__][INFO] - [MACE] Relax block at outer step 15
+[2025-07-19 00:47:04,336][__main__][INFO] -     MACE sub‑step 00 | E = -653.623657 eV
+[2025-07-19 00:47:06,396][__main__][INFO] -     MACE sub‑step 03 | E = -653.623657 eV
+[2025-07-19 00:47:08,462][__main__][INFO] -     MACE sub‑step 06 | E = -653.623657 eV
+[2025-07-19 00:47:10,525][__main__][INFO] -     MACE sub‑step 09 | E = -653.623657 eV
+[2025-07-19 00:47:10,599][__main__][INFO] - step   20 | loss = 66558349017088.000000 | χ²_corr=7.545e+02 | χ²_scatt=6.656e+14 | q_loss=4.000e+02scale_q=5.000e+00 | scale_scatt=1.000e-01rho=2.500e-02 | lambda_corr=1.410e+05
+[2025-07-19 00:47:10,599][__main__][INFO] - [MACE] Relax block at outer step 20
+[2025-07-19 00:47:11,966][__main__][INFO] -     MACE sub‑step 00 | E = -653.623657 eV
+[2025-07-19 00:47:14,058][__main__][INFO] -     MACE sub‑step 03 | E = -653.623657 eV
+[2025-07-19 00:47:16,138][__main__][INFO] -     MACE sub‑step 06 | E = -653.623657 eV
+[2025-07-19 00:47:18,275][__main__][INFO] -     MACE sub‑step 09 | E = -653.623657 eV
+[2025-07-19 00:47:18,360][__main__][INFO] - step   25 | loss = 66558349017088.000000 | χ²_corr=7.545e+02 | χ²_scatt=6.656e+14 | q_loss=4.000e+02scale_q=5.000e+00 | scale_scatt=1.000e-01rho=2.500e-02 | lambda_corr=1.411e+05
+[2025-07-19 00:47:18,360][__main__][INFO] - [MACE] Relax block at outer step 25
+[2025-07-19 00:47:19,812][__main__][INFO] -     MACE sub‑step 00 | E = -653.623657 eV
+[2025-07-19 00:47:21,905][__main__][INFO] -     MACE sub‑step 03 | E = -653.623657 eV
+[2025-07-19 00:47:24,080][__main__][INFO] -     MACE sub‑step 06 | E = -653.623657 eV
+[2025-07-19 00:47:26,244][__main__][INFO] -     MACE sub‑step 09 | E = -653.623657 eV
+[2025-07-19 00:47:26,313][__main__][INFO] - step   30 | loss = 148828871196672.000000 | χ²_corr=7.545e+02 | χ²_scatt=6.656e+14 | q_loss=4.000e+02scale_q=1.118e+01 | scale_scatt=2.236e-01rho=1.250e-01 | lambda_corr=1.413e+05
+[2025-07-19 00:47:26,313][__main__][INFO] - [MACE] Relax block at outer step 30
+[2025-07-19 00:47:27,701][__main__][INFO] -     MACE sub‑step 00 | E = -653.623657 eV
+[2025-07-19 00:47:29,770][__main__][INFO] -     MACE sub‑step 03 | E = -653.623657 eV
+[2025-07-19 00:47:31,848][__main__][INFO] -     MACE sub‑step 06 | E = -653.623657 eV
+[2025-07-19 00:47:33,895][__main__][INFO] -     MACE sub‑step 09 | E = -653.623657 eV
+[2025-07-19 00:47:33,970][__main__][INFO] - step   35 | loss = 148828871196672.000000 | χ²_corr=7.545e+02 | χ²_scatt=6.656e+14 | q_loss=4.000e+02scale_q=1.118e+01 | scale_scatt=2.236e-01rho=1.250e-01 | lambda_corr=1.418e+05
+[2025-07-19 00:47:33,970][__main__][INFO] - [MACE] Relax block at outer step 35
+[2025-07-19 00:47:35,330][__main__][INFO] -     MACE sub‑step 00 | E = -653.623657 eV
+[2025-07-19 00:47:37,359][__main__][INFO] -     MACE sub‑step 03 | E = -653.623657 eV
+[2025-07-19 00:47:39,469][__main__][INFO] -     MACE sub‑step 06 | E = -653.623657 eV
+[2025-07-19 00:47:41,551][__main__][INFO] -     MACE sub‑step 09 | E = -653.623657 eV
+[2025-07-19 00:47:41,618][__main__][INFO] - step   40 | loss = 332791346626560.000000 | χ²_corr=7.545e+02 | χ²_scatt=6.656e+14 | q_loss=4.000e+02scale_q=2.500e+01 | scale_scatt=5.000e-01rho=6.250e-01 | lambda_corr=1.426e+05
+[2025-07-19 00:47:41,618][__main__][INFO] - [MACE] Relax block at outer step 40
+[2025-07-19 00:47:42,994][__main__][INFO] -     MACE sub‑step 00 | E = -653.623657 eV
+[2025-07-19 00:47:45,081][__main__][INFO] -     MACE sub‑step 03 | E = -653.623657 eV
+[2025-07-19 00:47:47,126][__main__][INFO] -     MACE sub‑step 06 | E = -653.623657 eV
+[2025-07-19 00:47:49,226][__main__][INFO] -     MACE sub‑step 09 | E = -653.623657 eV
+[2025-07-19 00:47:49,293][__main__][INFO] - step   45 | loss = 332791346626560.000000 | χ²_corr=7.545e+02 | χ²_scatt=6.656e+14 | q_loss=4.000e+02scale_q=2.500e+01 | scale_scatt=5.000e-01rho=6.250e-01 | lambda_corr=1.450e+05
+[2025-07-19 00:47:49,293][__main__][INFO] - [MACE] Relax block at outer step 45
+[2025-07-19 00:47:50,693][__main__][INFO] -     MACE sub‑step 00 | E = -653.623657 eV
+[2025-07-19 00:47:52,801][__main__][INFO] -     MACE sub‑step 03 | E = -653.623657 eV
+[2025-07-19 00:47:54,952][__main__][INFO] -     MACE sub‑step 06 | E = -653.623657 eV
+[2025-07-19 00:47:57,078][__main__][INFO] -     MACE sub‑step 09 | E = -653.623657 eV
+[2025-07-19 00:47:57,160][__main__][INFO] - step   50 | loss = 744144020439040.000000 | χ²_corr=7.545e+02 | χ²_scatt=6.656e+14 | q_loss=4.000e+02scale_q=5.590e+01 | scale_scatt=1.118e+00rho=3.125e+00 | lambda_corr=1.492e+05
+[2025-07-19 00:47:57,160][__main__][INFO] - [MACE] Relax block at outer step 50
+[2025-07-19 00:47:58,585][__main__][INFO] -     MACE sub‑step 00 | E = -653.623657 eV
+[2025-07-19 00:48:00,693][__main__][INFO] -     MACE sub‑step 03 | E = -653.623657 eV
+[2025-07-19 00:48:02,755][__main__][INFO] -     MACE sub‑step 06 | E = -653.623657 eV
+[2025-07-19 00:48:04,842][__main__][INFO] -     MACE sub‑step 09 | E = -653.623657 eV
+[2025-07-19 00:48:04,914][__main__][INFO] - step   55 | loss = 744144020439040.000000 | χ²_corr=7.545e+02 | χ²_scatt=6.656e+14 | q_loss=4.000e+02scale_q=5.590e+01 | scale_scatt=1.118e+00rho=3.125e+00 | lambda_corr=1.610e+05
+[2025-07-19 00:48:04,914][__main__][INFO] - [MACE] Relax block at outer step 55
+[2025-07-19 00:48:06,319][__main__][INFO] -     MACE sub‑step 00 | E = -653.623657 eV
+[2025-07-19 00:48:08,418][__main__][INFO] -     MACE sub‑step 03 | E = -653.623657 eV
+[2025-07-19 00:48:10,513][__main__][INFO] -     MACE sub‑step 06 | E = -653.623657 eV
+[2025-07-19 00:48:12,559][__main__][INFO] -     MACE sub‑step 09 | E = -653.623657 eV
+[2025-07-19 00:48:12,627][__main__][INFO] - step   60 | loss = 1663956364034048.000000 | χ²_corr=7.545e+02 | χ²_scatt=6.656e+14 | q_loss=4.000e+02scale_q=1.250e+02 | scale_scatt=2.500e+00rho=1.563e+01 | lambda_corr=1.822e+05
+[2025-07-19 00:48:12,627][__main__][INFO] - [MACE] Relax block at outer step 60
+[2025-07-19 00:48:13,976][__main__][INFO] -     MACE sub‑step 00 | E = -653.623657 eV
+[2025-07-19 00:48:16,106][__main__][INFO] -     MACE sub‑step 03 | E = -653.623657 eV
+[2025-07-19 00:48:18,208][__main__][INFO] -     MACE sub‑step 06 | E = -653.623657 eV
+[2025-07-19 00:48:20,274][__main__][INFO] -     MACE sub‑step 09 | E = -653.623657 eV
+[2025-07-19 00:48:20,345][__main__][INFO] - step   65 | loss = 1663956364034048.000000 | χ²_corr=7.545e+02 | χ²_scatt=6.656e+14 | q_loss=4.000e+02scale_q=1.250e+02 | scale_scatt=2.500e+00rho=1.563e+01 | lambda_corr=2.412e+05
+[2025-07-19 00:48:20,345][__main__][INFO] - [MACE] Relax block at outer step 65
+[2025-07-19 00:48:21,820][__main__][INFO] -     MACE sub‑step 00 | E = -653.623657 eV
+[2025-07-19 00:48:24,004][__main__][INFO] -     MACE sub‑step 03 | E = -653.623657 eV
+[2025-07-19 00:48:26,123][__main__][INFO] -     MACE sub‑step 06 | E = -653.623657 eV
+[2025-07-19 00:48:28,840][__main__][INFO] -     MACE sub‑step 09 | E = -653.623657 eV
+[2025-07-19 00:48:28,936][__main__][INFO] - step   70 | loss = 3720719431106560.000000 | χ²_corr=7.545e+02 | χ²_scatt=6.656e+14 | q_loss=4.000e+02scale_q=2.795e+02 | scale_scatt=5.590e+00rho=7.813e+01 | lambda_corr=3.473e+05
+[2025-07-19 00:48:28,937][__main__][INFO] - [MACE] Relax block at outer step 70
+[2025-07-19 00:48:30,418][__main__][INFO] -     MACE sub‑step 00 | E = -653.623657 eV
+[2025-07-19 00:48:32,657][__main__][INFO] -     MACE sub‑step 03 | E = -653.623657 eV

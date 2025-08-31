@@ -1,0 +1,82 @@
+experiment:
+  name: demo
+  n_steps: 1000
+  rdf_bins: 300
+  save_every: 100
+  log_every: 10
+trainer:
+  rho: 0.001
+  rho_factor: 5.0
+  tol: 0.0001
+  update_every: 10
+  scale_scatt_init: 0.02
+  scale_q_init: 1.0
+  q_target: 1.0
+  q_uncert: 0.05
+  mace_relax_every: 20
+  mace_relax_steps: 10
+structure:
+  root_dir: ${oc.env:PROJECT_ROOT}/data-release
+  structure:
+    init: random_icp
+    n_atoms: 500
+    box_length: 25.0
+    species:
+    - Si
+    - O
+    stoichiometry:
+    - 167
+    - 333
+    cif_path: ${data.root_dir}/crystal-structures/c-SiO2.cif"
+    target_density: 2.2
+data:
+  root_dir: ${oc.env:PROJECT_ROOT}/data-release
+  data:
+    t_of_r_path: ${data.root_dir}/xrd_measurements/SiO2/T_of_r.csv
+    f_of_q_path: ${data.root_dir}/xrd_measurements/SiO2/F_of_Q.csv
+  kernel_width: 0.035
+  neutron_scattering_lengths:
+    Si: 4.1491
+    O: 5.803
+  xray_form_factor_params:
+    Si:
+      a:
+      - 6.2915
+      - 3.0353
+      - 1.9891
+      - 1.541
+      b:
+      - 2.4386
+      - 32.3337
+      - 0.6785
+      - 81.6937
+      c:
+      - 1.1407
+    O:
+      a:
+      - 3.0485
+      - 2.2868
+      - 1.5463
+      - 0.867
+      b:
+      - 13.2771
+      - 5.7011
+      - 0.3239
+      - 32.9089
+      c:
+      - 0.2508
+  central: Si
+  neighbour: O
+  cutoff: 4.0
+wandb:
+  project: null
+  entity: null
+  run_name: wandb_run
+  mode: disabled
+  log_every: 0
+accelerator: cpu
+output:
+  write_trajectory: true
+  trajectory_path: ${oc.env:OUTPUT_DIR,outputs/${experiment.name}/${now:%Y-%m-%d}/${now:%H-%M-%S}/traj/opt_trajectory.traj}
+  save_plots: true
+  plots_dir: ${oc.env:OUTPUT_DIR,outputs/${experiment.name}/${now:%Y-%m-%d}/${now:%H-%M-%S}/plots}
