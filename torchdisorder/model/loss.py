@@ -55,6 +55,7 @@ def chi_squared(estimate: torch.Tensor, target: torch.Tensor, uncertainty: torch
     if isinstance(uncertainty, (float, int)):
         uncertainty = torch.tensor(uncertainty, device=estimate.device, dtype=estimate.dtype)
     return torch.sum((estimate - target) ** 2 / (uncertainty ** 2))
+#normalize
 
 # -----------------------------------------------------------------------------
 # Hyper‑parameter dataclass

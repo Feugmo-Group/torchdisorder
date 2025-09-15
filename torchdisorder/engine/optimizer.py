@@ -385,3 +385,77 @@ def aug_lagg(
 #
 #     # plt.ioff()
 #     return state
+
+# Cooper state initial draft
+
+#Implementation of equation 10 from paper
+
+def get_neighbor_indices(central_pos, all_pos, num_neighbors=4):
+    # Compute distances to all atoms
+    dists = torch.norm(all_pos - central_pos, dim=1)
+    # Exclude self (assume at index 0 for per-atom; adapt as needed)
+    dists[0] = float('inf')
+    idx = torch.topk(dists, k=num_neighbors, largest=False).indices
+    return idx
+
+def tetrahedral_order_q(central_pos, all_pos):
+    """
+    Computes tetrahedral order parameter q for a single central atom,
+    given its position and a tensor of all atomic positions (including self at [0]).
+    """
+    neighbor_idx = get_neighbor_indices(central_pos, all_pos, num_neighbors=4)
+    neighbors = all_pos[neighbor_idx]  # shape [4,3]
+    qsum = 0.0
+    for i in range(3):
+        for k in range(i+1, 4):
+            # Vectors to neighbors
+            v1 = neighbors[i] - central_pos
+            v2 = neighbors[k] - central_pos
+            # Normalize
+            v1_norm = v1 / v1.norm()
+            v2_norm = v2 / v2.norm()
+            # Cosine of angle
+            cos_theta = torch.dot(v1_norm, v2_norm)
+            qsum += (1/3 + cos_theta).pow(2)
+    q = 1.0 - (3/8) * qsum
+    return q
+
+# Usage for all central atoms:
+# "positions" is shape [N_atoms, 3], Z is atomic numbers; apply filter for Si atoms if needed.
+# qs = [tetrahedral_order_q(positions[j], positions) for j in central_indices]
+
+import cooper
+from cooper import ConstraintState, CMPState
+
+class MyCMP(cooper.ConstrainedMinimizationProblem):
+    def __init__(self, ...):
+        ...
+        # Define constraints here
+        ...
+
+    def compute_cmp_state(self, pos, cell):
+        # Baseline loss (e.g., energy from model)
+        loss = my_energy_function(pos, cell, ...)
+
+        # --- Structure Factor Calculation ---
+        # Q-grid, S(Q)
+        Q, S_Q = compute_structure_factor(pos, cell, ...)
+
+        # --- Chi^2 with some target S(Q) ---
+        chi2 = ((S_Q - S_target_Q) ** 2).mean()  # Adapt for available data
+
+        # --- Oxygen Tetragonal Order Metric ---
+        tetr_order = calc_tetrahedral_order(pos, Z, cell, ...)  # Implement as needed
+
+        # --- Constraints ---
+        violation = ...
+        observed_constraints = {self.constraint: ConstraintState(violation=violation)}
+
+        # Package diagnostics (these will be visible in roll.cmp_state.misc)
+        misc = dict(
+            S_Q=S_Q.detach().cpu(),
+            Q=Q.detach().cpu(),
+            chi2=chi2.detach().cpu(),
+            tetr_order=tetr_order.detach().cpu()
+        )
+        return CMPState(loss=loss, observed_constraints=observed_constraints, misc=misc)
