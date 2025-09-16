@@ -52,9 +52,9 @@ def ase_atoms_to_tensors(atoms):
 
 def mace_energy(pos, cell, Z):
     atoms_tmp = Atoms(
-        numbers=Z.detach().cpu().numpy(),
-        positions=pos.detach().cpu().numpy(),
-        cell=cell.detach().cpu().numpy(),
+        numbers=Z.detach().gpu().numpy(),
+        positions=pos.detach().gpu().numpy(),
+        cell=cell.detach().gpu().numpy(),
         pbc=True,
     )
     atoms_tmp.calc = calc_global

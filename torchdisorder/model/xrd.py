@@ -26,16 +26,23 @@ from torchdisorder.common.target_rdf import TargetRDFData
 
 from typing import Callable, Optional, Dict, Tuple
 
+# @dataclass
+# class AugLagState(SimState):
+#     loss: torch.Tensor
+#     G_r: Optional[torch.Tensor] = None
+#     T_r: Optional[torch.Tensor] = None
+#     S_Q: Optional[torch.Tensor] = None
+#     q_tet: Optional[torch.Tensor] = None
+#     diagnostics: Optional[dict] = None
+
 @dataclass
 class AugLagState(SimState):
     loss: torch.Tensor
-    G_r: Optional[torch.Tensor] = None
-    T_r: Optional[torch.Tensor] = None
-    S_Q: Optional[torch.Tensor] = None
-    q_tet: Optional[torch.Tensor] = None
-    diagnostics: Optional[dict] = None
-
-
+    T_r: torch.Tensor = torch.tensor([])
+    G_r: torch.Tensor = torch.tensor([])
+    S_q: torch.Tensor = torch.tensor([])
+    q_text: torch.Tensor = torch.tensor([])
+    diagnostics: Optional[Dict] = None
 
 class XRDModel(nn.Module):
     """Compute G(r), T(r), S(Q),  from SimState tensors."""

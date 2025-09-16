@@ -22,6 +22,10 @@ import torch.nn as nn
 import wandb
 import matplotlib.pyplot as plt
 
+import torch_sim as ts
+import cooper
+
+
 
 
 
@@ -387,75 +391,34 @@ def aug_lagg(
 #     return state
 
 # Cooper state initial draft
+# Needs to be a state
 
-#Implementation of equation 10 from paper
 
-def get_neighbor_indices(central_pos, all_pos, num_neighbors=4):
-    # Compute distances to all atoms
-    dists = torch.norm(all_pos - central_pos, dim=1)
-    # Exclude self (assume at index 0 for per-atom; adapt as needed)
-    dists[0] = float('inf')
-    idx = torch.topk(dists, k=num_neighbors, largest=False).indices
-    return idx
 
-def tetrahedral_order_q(central_pos, all_pos):
-    """
-    Computes tetrahedral order parameter q for a single central atom,
-    given its position and a tensor of all atomic positions (including self at [0]).
-    """
-    neighbor_idx = get_neighbor_indices(central_pos, all_pos, num_neighbors=4)
-    neighbors = all_pos[neighbor_idx]  # shape [4,3]
-    qsum = 0.0
-    for i in range(3):
-        for k in range(i+1, 4):
-            # Vectors to neighbors
-            v1 = neighbors[i] - central_pos
-            v2 = neighbors[k] - central_pos
-            # Normalize
-            v1_norm = v1 / v1.norm()
-            v2_norm = v2 / v2.norm()
-            # Cosine of angle
-            cos_theta = torch.dot(v1_norm, v2_norm)
-            qsum += (1/3 + cos_theta).pow(2)
-    q = 1.0 - (3/8) * qsum
-    return q
 
-# Usage for all central atoms:
-# "positions" is shape [N_atoms, 3], Z is atomic numbers; apply filter for Si atoms if needed.
-# qs = [tetrahedral_order_q(positions[j], positions) for j in central_indices]
+#Defining the cooper problem
+class StructureFactorCMP(cooper.ConstrainedMinimizationProblem):
+    def __init__(self, model, base_state, target_vec: torch.Tensor, target_kind: str, q_bins: torch.Tensor, chi_squared_fn):
+        super().__init__()
+        self.model = model
+        self.base_state = base_state  # SimState-like, mutated with new pos/cell
+        self.target = target_vec
+        self.kind = target_kind        # "S_Q" or "F_Q"
+        self.q_bins = q_bins
+        self.chi_squared_fn = chi_squared_fn
 
-import cooper
-from cooper import ConstraintState, CMPState
+    def compute_cmp_state(self, positions: torch.Tensor, cell: torch.Tensor) -> cooper.CMPState:
+        # Update primal variables on the base state and run forward
+        self.base_state.positions = positions
+        self.base_state.cell = cell
+        out: Dict[str, torch.Tensor] = self.model(self.base_state)
+        pred = out[self.kind]  # predicted "S_Q" or "F_Q"
+        chi2 = self.chi_squared_fn(pred, self.target)  # Call your custom function
 
-class MyCMP(cooper.ConstrainedMinimizationProblem):
-    def __init__(self, ...):
-        ...
-        # Define constraints here
-        ...
-
-    def compute_cmp_state(self, pos, cell):
-        # Baseline loss (e.g., energy from model)
-        loss = my_energy_function(pos, cell, ...)
-
-        # --- Structure Factor Calculation ---
-        # Q-grid, S(Q)
-        Q, S_Q = compute_structure_factor(pos, cell, ...)
-
-        # --- Chi^2 with some target S(Q) ---
-        chi2 = ((S_Q - S_target_Q) ** 2).mean()  # Adapt for available data
-
-        # --- Oxygen Tetragonal Order Metric ---
-        tetr_order = calc_tetrahedral_order(pos, Z, cell, ...)  # Implement as needed
-
-        # --- Constraints ---
-        violation = ...
-        observed_constraints = {self.constraint: ConstraintState(violation=violation)}
-
-        # Package diagnostics (these will be visible in roll.cmp_state.misc)
         misc = dict(
-            S_Q=S_Q.detach().cpu(),
-            Q=Q.detach().cpu(),
+            Q=self.q_bins.detach().cpu(),
+            Y=pred.detach().cpu(),
             chi2=chi2.detach().cpu(),
-            tetr_order=tetr_order.detach().cpu()
+            kind=self.kind,
         )
-        return CMPState(loss=loss, observed_constraints=observed_constraints, misc=misc)
+        return cooper.CMPState(loss=chi2, observed_constraints={}, misc=misc)
