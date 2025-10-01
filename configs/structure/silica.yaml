@@ -1,9 +1,19 @@
+#root_dir: ${oc.env:PROJECT_ROOT}/data-release
+#structure:
+#  init: "random_icp"          # or "from_cif" or pymatgen
+#  n_atoms: 500
+#  box_length: 25.0
+#  species: [Si, O]
+#  stoichiometry: [167, 333]
+#  cif_path: ${data.root_dir}/crystal-structures/c-SiO2.cif"
+#  target_density: 2.20        # used only in `from_cif` mode
+
 root_dir: ${oc.env:PROJECT_ROOT}/data-release
 structure:
   init: "random_icp"          # or "from_cif" or pymatgen
   n_atoms: 500
   box_length: 25.0
-  species: [Si, O]
-  stoichiometry: [167, 333]
-  cif_path: ${data.root_dir}/crystal-structures/c-SiO2.cif"
+  species: [Si]
+  stoichiometry: [167]
+  cif_path: ${data.root_dir}/crystal-structures/c-Si.cif"
   target_density: 2.20        # used only in `from_cif` mode

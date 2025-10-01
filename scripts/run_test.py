@@ -57,7 +57,8 @@ def main(cfg: DictConfig) -> None:
 
     # Run optimization
     dtype = torch.float32
-    device = torch.device(cfg.accelerator)
+    device = tor
+    ch.device(cfg.accelerator)
     # Load experimental RDF/SF targets
     rdf_data = TargetRDFData.from_dict(cfg.data.data, device=cfg.accelerator)
 

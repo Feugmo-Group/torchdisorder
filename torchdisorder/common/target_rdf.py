@@ -42,6 +42,7 @@ class TargetRDFData:
         F_q = torch.tensor(df_F["F"].to_numpy(dtype="float32")[::stride_q], device=device)
         dF_q = torch.tensor(df_F["dF"].to_numpy(dtype="float32")[::stride_q], device=device)
 
+
         return cls(r_bins, T_r, q_bins, F_q, dF_q, device)
 
     def to(self, new_device: str | torch.device) -> "TargetRDFData":
@@ -56,4 +57,4 @@ class TargetRDFData:
         )
 
     def as_tuple(self) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
-        return self.T_r_target, self.F_q_target, self.F_q_uncert, self.q_bins, self.r_bins
+        return self.T_r_target, self.F_q_target, self.q_bins, self.r_bins, self.F_q_uncert

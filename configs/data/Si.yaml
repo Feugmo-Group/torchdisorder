@@ -1,0 +1,20 @@
+# Path configuration for experimental Si data
+root_dir: ${oc.env:PROJECT_ROOT}/data-release
+data:
+  t_of_r_path: ${data.root_dir}/xrd_measurements/Si/annealed-J-of-R.csv
+  f_of_q_path: ${data.root_dir}/xrd_measurements/Si/annealed-S-of-Q.csv
+
+kernel_width: 0.035  # Use same or Si-specific value if needed
+
+neutron_scattering_lengths:
+  Si: 4.1491         # Single element for Si data
+
+xray_form_factor_params:
+  Si:
+    a: [6.2915, 3.0353, 1.9891, 1.541]
+    b: [2.4386, 32.3337, 0.6785, 81.6937]
+    c: [1.1407]
+
+central: 'Si'
+neighbour: 'Si'      # For elemental Si, both central and neighbor are Si
+cutoff: 12.0

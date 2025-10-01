@@ -6,13 +6,12 @@ from pathlib import Path
 from typing import Any
 from torch import nn
 import torch
-
 import torch_sim as ts
 from torch_sim.models.interface import ModelInterface
 from torch_sim.neighbors import vesin_nl_ts
 from torch_sim.typing import StateDict
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Dict, List
 from torchdisorder.common.target_rdf import TargetRDFData
 from torchdisorder.model.rdf import SpectrumCalculator
@@ -25,24 +24,18 @@ from torchdisorder.model.loss import AugLagLoss
 from torchdisorder.common.target_rdf import TargetRDFData
 
 from typing import Callable, Optional, Dict, Tuple
-
-# @dataclass
-# class AugLagState(SimState):
-#     loss: torch.Tensor
-#     G_r: Optional[torch.Tensor] = None
-#     T_r: Optional[torch.Tensor] = None
-#     S_Q: Optional[torch.Tensor] = None
-#     q_tet: Optional[torch.Tensor] = None
-#     diagnostics: Optional[dict] = None
-
+#
 @dataclass
-class AugLagState(SimState):
+class CooperState(SimState):
     loss: torch.Tensor
-    T_r: torch.Tensor = torch.tensor([])
-    G_r: torch.Tensor = torch.tensor([])
-    S_q: torch.Tensor = torch.tensor([])
-    q_text: torch.Tensor = torch.tensor([])
-    diagnostics: Optional[Dict] = None
+    G_r: Optional[torch.Tensor] = None
+    T_r: Optional[torch.Tensor] = None
+    S_Q: Optional[torch.Tensor] = None
+    q_tet: Optional[torch.Tensor] = None
+    diagnostics: Optional[dict] = None
+  #                                           THIS NEEDS TO BE FIXED``````
+
+
 
 class XRDModel(nn.Module):
     """Compute G(r), T(r), S(Q),  from SimState tensors."""
@@ -57,6 +50,10 @@ class XRDModel(nn.Module):
             device: str | torch.device = "cpu",
             system_idx: torch.Tensor | None = None,
             atomic_numbers: torch.Tensor | None = None,
+            compute_q_tet: bool = True,  # Constraint Parameters
+            central: str = "Si",
+            neighbour: str = "O",
+            cutoff: float = 1.8,
 
     ) -> None:
         super().__init__()
@@ -70,6 +67,12 @@ class XRDModel(nn.Module):
         self.device = device
         self._memory_scales_with = "n_atoms"
         self.neighbor_list_fn = neighbor_list_fn
+        #adding the constraint stuff
+        self.neighbor_list_fn = neighbor_list_fn
+        self._compute_q_tet = compute_q_tet  # Set flag
+        self.central = central  # Central atom type
+        self.neighbour = neighbour  # Neighbor atom type
+        self.cutoff = cutoff  # Cutoff for neighbors
 
         # Set up batch information if atomic numbers are provided
         # Store flag to track if atomic numbers were provided at init
@@ -156,7 +159,7 @@ class XRDModel(nn.Module):
 
 
         results = {}
-        G_r_list, T_r_list, S_Q_list= [], [], []
+        G_r_list, T_r_list, S_Q_list, q_tet_list= [], [], [], []
 
         # --- Batched descriptor computation ---
         for b in range(state.n_systems):
@@ -181,6 +184,7 @@ class XRDModel(nn.Module):
             G_r_list.append(G_r)
             T_r_list.append(T_r)
             S_Q_list.append(S_Q)
+            # #Uncommenting the constraint line
             # if self._compute_q_tet:
             #     q_tet = self.mean_tetrahedral_q(
             #         pos=pos_b, cell=cell_b, symbols=symbols_b
@@ -195,7 +199,68 @@ class XRDModel(nn.Module):
         #     results["q_tet"] = torch.stack([q for q in q_tet_list])
 
         return results
+    #my version of the q_tet
+    def mean_tetrahedral_q(
+            self, pos: torch.Tensor, cell: torch.Tensor, symbols: list[str],
+            delta_theta=10.0, theta0=109.47
+    ) -> torch.Tensor:
+        device = pos.device
+        cent_idx = torch.tensor(
+            [i for i, s in enumerate(symbols) if s == self.central],
+            device=device,
+            dtype=torch.long,
+        )
+        neigh_mask = torch.tensor(
+            [s == self.neighbour for s in symbols],
+            device=device,
+            dtype=torch.bool,
+        )
 
+        cutoff_tensor = torch.tensor(self.cutoff, device=device, dtype=pos.dtype)
+        edge_idx, shifts_idx = self.neighbor_list_fn(
+            positions=pos,
+            cell=cell,
+            pbc=True,
+            cutoff=cutoff_tensor,
+        )
+
+        shifts = torch.mm(shifts_idx.to(dtype=pos.dtype), cell)
+        i, j = edge_idx
+        rij = pos[j] + shifts - pos[i]
+
+        theta0_rad = theta0 * torch.pi / 180.0
+        delta_theta_rad = delta_theta * torch.pi / 180.0
+
+        q_vals = []
+
+        for ic in cent_idx:
+            mask = (i == ic) & neigh_mask[j]
+            vecs = rij[mask]
+            n = vecs.size(0)
+            if n < 3:
+                continue
+
+            acc = 0.0
+            for idx1 in range(n):
+                for idx2 in range(idx1 + 1, n):
+                    v1 = vecs[idx1]
+                    v2 = vecs[idx2]
+                    cos_theta = torch.nn.functional.cosine_similarity(v1.view(1, -1), v2.view(1, -1))
+                    cos_theta = torch.clamp(cos_theta, -1.0, 1.0)
+                    theta = torch.acos(cos_theta)
+                    weight = torch.exp(-((theta - theta0_rad) ** 2) / (2 * delta_theta_rad ** 2))
+                    acc += weight
+
+            norm = 2.0 / (n * (n - 1))
+            q_val = acc * norm
+            q_vals.append(q_val)
+
+        if not q_vals:
+            return torch.zeros((), device=device, dtype=pos.dtype, requires_grad=True)
+
+        return torch.stack(q_vals).mean()
+
+    # #Original version
     # def mean_tetrahedral_q(
     #         self, pos: torch.Tensor, cell: torch.Tensor, symbols: list[str]
     # ) -> torch.Tensor:
@@ -213,12 +278,13 @@ class XRDModel(nn.Module):
     #     )
     #
     #     q_vals = []
-    #
+    #     #Neighbour list argument needs to be tensor not float
+    #     cutoff_tensor = torch.tensor(self.cutoff, device=pos.device, dtype=pos.dtype)
     #     edge_idx, shifts_idx = self.neighbor_list_fn(
     #         positions=pos,
     #         cell=cell,
     #         pbc=True,  # Assume fully periodic
-    #         cutoff=self.cutoff,
+    #         cutoff=cutoff_tensor,
     #     )
     #
     #     shifts = torch.mm(shifts_idx.to(dtype=dtype), cell)
@@ -244,69 +310,69 @@ class XRDModel(nn.Module):
     #         return torch.zeros((), device=device, dtype=dtype, requires_grad=True)
     #
     #     return torch.stack(q_vals).mean()
-    #
-    #
-    #
-    # def q_tetrahedral(self,
-    #         pos: torch.Tensor,
-    #         cell: torch.Tensor,
-    #         symbols: list[str],
-    #         central: str,
-    #         neighbour: str,
-    #         neighbor_list_fn,
-    #         cutoff=3.5,
-    #         delta_theta=10.0,
-    #         theta0=109.47,
-    # ) -> torch.Tensor:
-    #     device = pos.device
-    #
-    #     cent_idx = torch.tensor(
-    #         [i for i, s in enumerate(symbols) if s == central],
-    #         device=device,
-    #         dtype=torch.long,
-    #     )
-    #     neigh_mask = torch.tensor(
-    #         [s == neighbour for s in symbols],
-    #         device=device,
-    #         dtype=torch.bool,
-    #     )
-    #
-    #     edge_idx, shifts = neighbor_list_fn(
-    #         positions=pos,
-    #         cell=cell,
-    #         pbc=True,
-    #         cutoff=cutoff,
-    #     )
-    #     i, j = edge_idx
-    #     rij = pos[j] + shifts @ cell - pos[i]
-    #
-    #     q_vals = []
-    #     theta0_rad = torch.tensor(theta0 * torch.pi / 180.0, device=device)
-    #     delta_theta_rad = torch.tensor(delta_theta * torch.pi / 180.0, device=device)
-    #
-    #     for idx in cent_idx:
-    #         nbr_mask = (i == idx) & neigh_mask[j]
-    #         r_ij = rij[nbr_mask]
-    #         n = r_ij.shape[0]
-    #
-    #         if n < 3:
-    #             q_vals.append(torch.tensor(0.0, dtype=pos.dtype, device=device))
-    #             continue
-    #
-    #         acc = 0.0
-    #         for j1 in range(n):
-    #             for j2 in range(j1 + 1, n):
-    #                 v1 = r_ij[j1]
-    #                 v2 = r_ij[j2]
-    #                 cos_theta = torch.nn.functional.cosine_similarity(v1.view(1, -1), v2.view(1, -1)).clamp(-1.0, 1.0)
-    #                 theta = torch.acos(cos_theta)
-    #                 weight = torch.exp(-((theta - theta0_rad) ** 2) / (2 * delta_theta_rad ** 2))
-    #                 acc += weight
-    #
-    #         norm = 1.0 / (n * (n - 1) / 2)
-    #         q_vals.append(norm * acc)
-    #
-    #     return torch.stack(q_vals).mean()
+
+
+
+    def q_tetrahedral(self,
+            pos: torch.Tensor,
+            cell: torch.Tensor,
+            symbols: list[str],
+            central: str,
+            neighbour: str,
+            neighbor_list_fn,
+            cutoff=3.5,
+            delta_theta=10.0,
+            theta0=109.47,
+    ) -> torch.Tensor:
+        device = pos.device
+
+        cent_idx = torch.tensor(
+            [i for i, s in enumerate(symbols) if s == central],
+            device=device,
+            dtype=torch.long,
+        )
+        neigh_mask = torch.tensor(
+            [s == neighbour for s in symbols],
+            device=device,
+            dtype=torch.bool,
+        )
+
+        edge_idx, shifts = neighbor_list_fn(
+            positions=pos,
+            cell=cell,
+            pbc=True,
+            cutoff=cutoff,
+        )
+        i, j = edge_idx
+        rij = pos[j] + shifts @ cell - pos[i]
+
+        q_vals = []
+        theta0_rad = torch.tensor(theta0 * torch.pi / 180.0, device=device)
+        delta_theta_rad = torch.tensor(delta_theta * torch.pi / 180.0, device=device)
+
+        for idx in cent_idx:
+            nbr_mask = (i == idx) & neigh_mask[j]
+            r_ij = rij[nbr_mask]
+            n = r_ij.shape[0]
+
+            if n < 3:
+                q_vals.append(torch.tensor(0.0, dtype=pos.dtype, device=device))
+                continue
+
+            acc = 0.0
+            for j1 in range(n):
+                for j2 in range(j1 + 1, n):
+                    v1 = r_ij[j1]
+                    v2 = r_ij[j2]
+                    cos_theta = torch.nn.functional.cosine_similarity(v1.view(1, -1), v2.view(1, -1)).clamp(-1.0, 1.0)
+                    theta = torch.acos(cos_theta)
+                    weight = torch.exp(-((theta - theta0_rad) ** 2) / (2 * delta_theta_rad ** 2))
+                    acc += weight
+
+            norm = 1.0 / (n * (n - 1) / 2)
+            q_vals.append(norm * acc)
+
+        return torch.stack(q_vals).mean()
     #
     # def _heaviside(self, x: torch.Tensor) -> torch.Tensor:
     #     return (x > 0).float()

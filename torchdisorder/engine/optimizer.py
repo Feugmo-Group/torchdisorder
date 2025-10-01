@@ -23,6 +23,7 @@ import wandb
 import matplotlib.pyplot as plt
 
 import torch_sim as ts
+from torch_sim.io import atoms_to_state, state_to_atoms
 import cooper
 
 
@@ -397,28 +398,146 @@ def aug_lagg(
 
 
 #Defining the cooper problem
+
 class StructureFactorCMP(cooper.ConstrainedMinimizationProblem):
-    def __init__(self, model, base_state, target_vec: torch.Tensor, target_kind: str, q_bins: torch.Tensor, chi_squared_fn):
+    def __init__(self, model, base_state, target_vec: torch.Tensor, target_kind: str, q_bins: torch.Tensor, loss_fn):
         super().__init__()
         self.model = model
-        self.base_state = base_state  # SimState-like, mutated with new pos/cell
+        self.base_state = base_state  # This is for the simstate
         self.target = target_vec
-        self.kind = target_kind        # "S_Q" or "F_Q"
+        self.kind = target_kind  # "S_Q" or "F_Q"
         self.q_bins = q_bins
-        self.chi_squared_fn = chi_squared_fn
+        self.loss_fn = loss_fn  # callable returning scalar loss
 
-    def compute_cmp_state(self, positions: torch.Tensor, cell: torch.Tensor) -> cooper.CMPState:
-        # Update primal variables on the base state and run forward
+    def compute_cmp_state(self, positions: torch.Tensor, cell: torch.Tensor) -> tuple:
         self.base_state.positions = positions
         self.base_state.cell = cell
-        out: Dict[str, torch.Tensor] = self.model(self.base_state)
-        pred = out[self.kind]  # predicted "S_Q" or "F_Q"
-        chi2 = self.chi_squared_fn(pred, self.target)  # Call your custom function
+        out = self.model(self.base_state)
+        loss_dict = self.loss_fn(out)
+        loss = loss_dict["loss"]
 
         misc = dict(
             Q=self.q_bins.detach().cpu(),
-            Y=pred.detach().cpu(),
-            chi2=chi2.detach().cpu(),
+            Y=out[self.kind].detach().cpu(),
+            loss=loss.detach().cpu(),
             kind=self.kind,
         )
-        return cooper.CMPState(loss=chi2, observed_constraints={}, misc=misc)
+        cmp_state = cooper.CMPState(loss=loss, observed_constraints={}, misc=misc)
+
+        return cmp_state
+
+
+#Optimizer for the cooper constraint
+#contains init and update functions
+#helps for iterative gradient updates
+
+def cooper_optimizer(
+    cmp_problem: cooper.ConstrainedMinimizationProblem,
+    lr: float = 1e-6,
+    max_steps: int = 1000,
+    tol: float = 1e-6,
+    optimize_cell: bool = False,
+    verbose: bool = True,
+):
+    def init_fn(state: SimState) -> cooper.CMPState:
+        state.positions.requires_grad_(True)
+        return cmp_problem.compute_cmp_state(state.positions, state.cell)
+
+    def update_fn(cmp_state: cooper.CMPState, sim_state: SimState) -> tuple:
+        base_state = cmp_problem.base_state
+
+        base_state.positions.requires_grad_(True)
+        if optimize_cell:
+            base_state.cell.requires_grad_(True)
+
+        # Compute loss and descriptors
+        cmp_state = cmp_problem.compute_cmp_state(base_state.positions, base_state.cell)
+        updated_state = cmp_problem.base_state  # Access the updated simulation state
+
+        loss = cmp_state.loss
+        print(f"Loss before backward: {loss.item()}")
+
+        max_norm = 100  # tune this value as needed
+
+        loss.backward()
+        torch.nn.utils.clip_grad_norm_(base_state.positions, max_norm)
+
+        pos_grad_norm = base_state.positions.grad.norm().item() if base_state.positions.grad is not None else float(
+            'nan')
+        print(f"Gradient norm positions: {pos_grad_norm}")
+
+        if optimize_cell:
+            cell_grad_norm = base_state.cell.grad.norm().item() if base_state.cell.grad is not None else float('nan')
+            print(f"Gradient norm cell: {cell_grad_norm}")
+
+        with torch.no_grad():
+            base_state.positions -= lr * base_state.positions.grad
+            if optimize_cell:
+                base_state.cell -= lr * base_state.cell.grad
+
+            base_state.positions.grad = None
+            if optimize_cell:
+                base_state.cell.grad = None
+
+        print(f"Position norm after update: {base_state.positions.norm().item()}")
+
+        if verbose:
+            print(f"Loss: {loss.item():.6f}")
+
+        return cmp_state, updated_state
+
+    return init_fn, update_fn
+
+
+#Defining the FIRE MACE relaxation every few steps
+# Updated relaxation function
+def perform_fire_relaxation(sim_state, mace_model, device, dtype, max_steps=1000):
+    """
+    Performs FIRE relaxation on the current simulation state using the MACE model.
+
+    Args:
+        sim_state: The current simulation state (with positions, cell, atomic numbers).
+        mace_model: Pre-loaded MaceModel used for relaxation.
+        device: Torch device.
+        dtype: Torch dtype.
+        max_steps: Maximum steps for the FIRE optimizer.
+
+    Returns:
+        Updated simulation state with relaxed atomic positions and cell.
+    """
+    atoms_list_curr = state_to_atoms(sim_state)  # Convert current sim state to ASE atoms list
+    print(f"Starting FIRE relaxation for {len(atoms_list_curr)} structures...")
+
+    relaxed_atoms_list = []
+    for i, atoms in enumerate(atoms_list_curr):
+        print(f"Relaxing structure {i + 1}...")
+        relaxed_state = ts.optimize(
+            system=atoms,
+            model=mace_model,
+            optimizer=ts.frechet_cell_fire,
+            max_steps=max_steps,
+            autobatcher=False,
+        )
+        print(f"Structure {i + 1} relaxation complete.")
+        # Append single Atoms or extend if list
+        new_atoms = relaxed_state.to_atoms()
+        if isinstance(new_atoms, list):
+            relaxed_atoms_list.extend(new_atoms)  # Flatten if list of atoms
+        else:
+            relaxed_atoms_list.append(new_atoms)
+
+    # Convert relaxed ASE atoms back to simulation state
+    new_state = atoms_to_state(relaxed_atoms_list, device=device, dtype=dtype)
+    new_state.positions.requires_grad_(True)
+    new_state.cell.requires_grad_(True)
+
+    print("Performed FIRE relaxation with MACE.")
+    print(f"Updated positions norm: {new_state.positions.norm().item()}")
+    print(f"Updated cell tensor: {new_state.cell}")
+
+    return new_state
+
+
+
+
+

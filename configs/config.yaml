@@ -4,7 +4,7 @@ defaults:
   - trainer: AugLag
   - trainer/mace
   - structure: silica
-  - data: SiO2
+  - data: Si
   - wandb: disabled
   - _self_
 
@@ -20,3 +20,8 @@ output:
   trajectory_path: ${oc.env:OUTPUT_DIR,outputs/${experiment.name}/${now:%Y-%m-%d}/${now:%H-%M-%S}/trajectory}
   save_plots: true
   plots_dir: ${oc.env:OUTPUT_DIR,outputs/${experiment.name}/${now:%Y-%m-%d}/${now:%H-%M-%S}/plots}
+
+max_steps: 8000
+optimize_cell: false
+lr: 1e-6
+tol: 1e-6
