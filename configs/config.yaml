@@ -4,7 +4,7 @@ defaults:
   - trainer: AugLag
   - trainer/mace
   - structure: silica
-  - data: Si
+  - data: SiO2
   - wandb: disabled
   - _self_
 

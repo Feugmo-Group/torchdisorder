@@ -64,41 +64,41 @@ def main(cfg: DictConfig) -> None:
     print("CFG DATA DATA", cfg.data.data)
     print("Plots Dir",cfg.output.plots_dir)
 
-    # if cfg.output.save_plots:
-    #     plot_dir = Path(cfg.output.plots_dir)
-    #     plot_dir.mkdir(parents=True, exist_ok=True)
-    # filename = Path(cfg.output.plots_dir) / "T_r_initial_plots.html"
-    # fig_T_r, trace_T_r = init_live_total_correlation(r_bins=rdf_data.r_bins, T_target=rdf_data.T_r_target, out_path=filename)
-    # filename = Path(cfg.output.plots_dir) / "S_Q_initial_plots.html"
-    # fig_S_Q, trace_S_Q = init_live_total_scattering(q_bins=rdf_data.q_bins, F_target=rdf_data.F_q_target, out_path=filename)
-    # print(cfg.output.plots_dir)
-
-    #If we are testing silicon
     if cfg.output.save_plots:
         plot_dir = Path(cfg.output.plots_dir)
         plot_dir.mkdir(parents=True, exist_ok=True)
+    filename = Path(cfg.output.plots_dir) / "T_r_initial_plots.html"
+    fig_T_r, trace_T_r = init_live_total_correlation(r_bins=rdf_data.r_bins, T_target=rdf_data.T_r_target, out_path=filename)
+    filename = Path(cfg.output.plots_dir) / "S_Q_initial_plots.html"
+    fig_S_Q, trace_S_Q = init_live_total_scattering(q_bins=rdf_data.q_bins, F_target=rdf_data.F_q_target, out_path=filename)
+    print(cfg.output.plots_dir)
 
-    # Loading the RDF and structure factor target data
-    rdf_data = TargetRDFData.from_dict(cfg.data.data, device=cfg.accelerator)
-    print("rdf_data", rdf_data)
-
-    # Plot G(r) target data
-    filename_G_r = Path(cfg.output.plots_dir) / "G_r_initial_plots.html"
-    fig_G_r, trace_G_r = init_live_total_correlation(
-        r_bins=rdf_data.r_bins,
-        T_target=rdf_data.T_r_target,  # Assuming this is G(r)
-        out_path=filename_G_r
-    )
-
-    # Plot S(Q) target data
-    filename_S_Q = Path(cfg.output.plots_dir) / "S_Q_initial_plots.html"
-    fig_S_Q, trace_S_Q = init_live_total_scattering(
-        q_bins=rdf_data.q_bins,
-        F_target=rdf_data.F_q_target,  # Assuming this is S(Q)
-        out_path=filename_S_Q
-    )
-
-    print(f"Plots saved to: {cfg.output.plots_dir}")
+    # #If we are testing silicon
+    # if cfg.output.save_plots:
+    #     plot_dir = Path(cfg.output.plots_dir)
+    #     plot_dir.mkdir(parents=True, exist_ok=True)
+    #
+    # # Loading the RDF and structure factor target data
+    # rdf_data = TargetRDFData.from_dict(cfg.data.data, device=cfg.accelerator)
+    # print("rdf_data", rdf_data)
+    #
+    # # Plot G(r) target data
+    # filename_G_r = Path(cfg.output.plots_dir) / "G_r_initial_plots.html"
+    # fig_G_r, trace_G_r = init_live_total_correlation(
+    #     r_bins=rdf_data.r_bins,
+    #     T_target=rdf_data.T_r_target,  # Assuming this is G(r)
+    #     out_path=filename_G_r
+    # )
+    #
+    # # Plot S(Q) target data
+    # filename_S_Q = Path(cfg.output.plots_dir) / "S_Q_initial_plots.html"
+    # fig_S_Q, trace_S_Q = init_live_total_scattering(
+    #     q_bins=rdf_data.q_bins,
+    #     F_target=rdf_data.F_q_target,  # Assuming this is S(Q)
+    #     out_path=filename_S_Q
+    # )
+    #
+    # print(f"Plots saved to: {cfg.output.plots_dir}")
 
 
     spec_calc = SpectrumCalculator.from_config_dict(cfg.data)
@@ -219,25 +219,25 @@ def main(cfg: DictConfig) -> None:
         #     )
         #     fig_T_r.write_html(str(Path(cfg.output.plots_dir) / "T_r_final_plot.html"))
 
-        # pred_S_Q = cmp_state.misc.get("Y")
-        # if pred_S_Q is not None:
-        #     pred_S_Q = pred_S_Q.detach().cpu().numpy()
-        #     if pred_S_Q.ndim > 1:
-        #         pred_S_Q = pred_S_Q.flatten()
-        #     fig_S_Q.add_trace(
-        #         go.Scatter(x=rdf_data.q_bins.cpu().numpy(), y=pred_S_Q, mode="lines+markers", name="Predicted S(Q)")
-        #     )
-        #     fig_S_Q.write_html(str(Path(cfg.output.plots_dir) / "S_Q_final_plot.html"))
-        #
-        pred_G_r = cmp_state.misc.get("Y")
-        if pred_G_r is not None:
-            pred_G_r = pred_G_r.detach().cpu().numpy()
-            if pred_G_r.ndim > 1:
-                pred_G_r = pred_G_r.flatten()
-            fig_G_r.add_trace(
-                go.Scatter(x=rdf_data.q_bins.cpu().numpy(), y=pred_G_r, mode="lines+markers", name="Predicted G_r")
+        pred_S_Q = cmp_state.misc.get("Y")
+        if pred_S_Q is not None:
+            pred_S_Q = pred_S_Q.detach().cpu().numpy()
+            if pred_S_Q.ndim > 1:
+                pred_S_Q = pred_S_Q.flatten()
+            fig_S_Q.add_trace(
+                go.Scatter(x=rdf_data.q_bins.cpu().numpy(), y=pred_S_Q, mode="lines+markers", name="Predicted S(Q)")
             )
-            fig_S_Q.write_html(str(Path(cfg.output.plots_dir) / "G_r_final_plot.html"))
+            fig_S_Q.write_html(str(Path(cfg.output.plots_dir) / "S_Q_final_plot.html"))
+        #
+        # pred_G_r = cmp_state.misc.get("Y")
+        # if pred_G_r is not None:
+        #     pred_G_r = pred_G_r.detach().cpu().numpy()
+        #     if pred_G_r.ndim > 1:
+        #         pred_G_r = pred_G_r.flatten()
+        #     fig_G_r.add_trace(
+        #         go.Scatter(x=rdf_data.q_bins.cpu().numpy(), y=pred_G_r, mode="lines+markers", name="Predicted G_r")
+        #     )
+        #     fig_S_Q.write_html(str(Path(cfg.output.plots_dir) / "G_r_final_plot.html"))
 
 
 

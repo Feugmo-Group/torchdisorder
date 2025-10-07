@@ -184,19 +184,19 @@ class XRDModel(nn.Module):
             G_r_list.append(G_r)
             T_r_list.append(T_r)
             S_Q_list.append(S_Q)
-            # #Uncommenting the constraint line
-            # if self._compute_q_tet:
-            #     q_tet = self.mean_tetrahedral_q(
-            #         pos=pos_b, cell=cell_b, symbols=symbols_b
-            #     )
-            #     q_tet_list.append(q_tet)
+            #Uncommenting the constraint line
+            if self._compute_q_tet:
+                q_tet = self.mean_tetrahedral_q(
+                    pos=pos_b, cell=cell_b, symbols=symbols_b
+                )
+                q_tet_list.append(q_tet)
 
         # Stack and detach all results
         results["G_r"] = torch.stack([g for g in G_r_list])
         results["T_r"] = torch.stack([t for t in T_r_list])
         results["S_Q"] = torch.stack([s for s in S_Q_list])
-        # if self._compute_q_tet:
-        #     results["q_tet"] = torch.stack([q for q in q_tet_list])
+        if self._compute_q_tet:
+            results["q_tet"] = torch.stack([q for q in q_tet_list])
 
         return results
     #my version of the q_tet
