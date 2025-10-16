@@ -35,12 +35,14 @@ from IPython.display import display
 from plotly.subplots import make_subplots
 from torchdisorder.engine.optimizer import StructureFactorCMP
 from torchdisorder.engine.optimizer import cooper_optimizer, perform_fire_relaxation
+from torchdisorder.engine.optimizer import apply_sequential_tetrahedral_constraint
 from ase.io import Trajectory
 from torch_sim.io import state_to_atoms
 from pathlib import Path
 
 from torch_sim.models.mace import MaceModel
 from mace.calculators.foundations_models import mace_mp
+from torchdisorder.engine.optimizer import compute_mace_energy
 
 @hydra.main(config_path=str(MODELS_PROJECT_ROOT / "configs"), config_name="config", version_base="1.3")
 def main(cfg: DictConfig) -> None:
@@ -53,10 +55,10 @@ def main(cfg: DictConfig) -> None:
     # Load pretrained MACE model
     mace_raw = mace_mp(model="small", return_raw_model=True)
     mace_model = MaceModel(model=mace_raw, device=device).eval()
-
+    #
     # Relaxation parameters
-    RELAX_INTERVAL = 2000  # How often to perform relaxation (every 5 steps)
-    FIRE_STEPS = 10 # Max FIRE steps during relaxation
+    RELAX_INTERVAL = 50000  # How often to perform relaxation (every 5 steps)
+    FIRE_STEPS = 50 # Max FIRE steps during relaxation
 
     rdf_data = TargetRDFData.from_dict(cfg.data.data, device=cfg.accelerator)
     print(cfg)
@@ -73,32 +75,7 @@ def main(cfg: DictConfig) -> None:
     fig_S_Q, trace_S_Q = init_live_total_scattering(q_bins=rdf_data.q_bins, F_target=rdf_data.F_q_target, out_path=filename)
     print(cfg.output.plots_dir)
 
-    # #If we are testing silicon
-    # if cfg.output.save_plots:
-    #     plot_dir = Path(cfg.output.plots_dir)
-    #     plot_dir.mkdir(parents=True, exist_ok=True)
-    #
-    # # Loading the RDF and structure factor target data
-    # rdf_data = TargetRDFData.from_dict(cfg.data.data, device=cfg.accelerator)
-    # print("rdf_data", rdf_data)
-    #
-    # # Plot G(r) target data
-    # filename_G_r = Path(cfg.output.plots_dir) / "G_r_initial_plots.html"
-    # fig_G_r, trace_G_r = init_live_total_correlation(
-    #     r_bins=rdf_data.r_bins,
-    #     T_target=rdf_data.T_r_target,  # Assuming this is G(r)
-    #     out_path=filename_G_r
-    # )
-    #
-    # # Plot S(Q) target data
-    # filename_S_Q = Path(cfg.output.plots_dir) / "S_Q_initial_plots.html"
-    # fig_S_Q, trace_S_Q = init_live_total_scattering(
-    #     q_bins=rdf_data.q_bins,
-    #     F_target=rdf_data.F_q_target,  # Assuming this is S(Q)
-    #     out_path=filename_S_Q
-    # )
-    #
-    # print(f"Plots saved to: {cfg.output.plots_dir}")
+
 
 
     spec_calc = SpectrumCalculator.from_config_dict(cfg.data)
@@ -136,6 +113,7 @@ def main(cfg: DictConfig) -> None:
     results = xdr_model(state)
     print("Results:", results)
 
+
     cooper_loss = CooperLoss(target_data=rdf_data, device=cfg.accelerator)
 
     def loss_fn(desc: dict) -> dict:
@@ -158,7 +136,7 @@ def main(cfg: DictConfig) -> None:
 
     init_fn, update_fn = cooper_optimizer(
         cmp_problem=cooper_problem,
-        lr=1e-5,
+        lr=1e-4,
         max_steps=cfg.max_steps,
         optimize_cell=cfg.optimize_cell,
         verbose=True,
@@ -173,31 +151,57 @@ def main(cfg: DictConfig) -> None:
 
     prev_loss = None  # Initialize prev_loss for first loop check
 
+
+    #Defining the parameters for the sequential optimization
+    SEQUENTIAL_INTERVAL = 500  # Apply every 500 steps
+    SEQUENTIAL_STEPS_PER_ATOM = 100
+    SEQUENTIAL_Q_THRESHOLD = 0.85
+    SEQUENTIAL_LR = 0.01
+    SEQUENTIAL_FREEZE = "soft"  # Options: "none", "central", "soft"
+
     # Updated optimization loop
+
     for step in range(cfg.max_steps):
-        cmp_state, base_sim_state = update_fn(cmp_state, base_sim_state) # Unpack both cmp_state and updated sim state
-        # Incremental trajectory saving after each step
+        cmp_state, base_sim_state = update_fn(cmp_state, base_sim_state)
+
+        # Trajectory saving after each step
         if cfg.output.write_trajectory:
             traj_path = Path(cfg.output.trajectory_path)
             traj_path.mkdir(parents=True, exist_ok=True)
-
             ase_path = traj_path / "trajectory.traj"
             xdatcar_path = traj_path / "XDATCAR"
+            xyz_path = traj_path / "trajectory.xyz"  # Add XYZ path
 
             atoms_list_curr = state_to_atoms(base_sim_state)
-            # print("Current list: ", atoms_list_curr)
-
             for atoms_obj in atoms_list_curr:
                 write_trajectories(atoms_obj, str(ase_path), str(xdatcar_path))
 
-            print(f"Step {step}: saved structure to trajectory.")
+                # Append to XYZ trajectory (use 'append' mode after first write)
+                write(str(xyz_path), atoms_obj, format='xyz', append=(step > 0))
 
-        # Perform periodic FIRE relaxation every RELAX_INTERVAL steps
+            print(f"Step {step}: saved structure to trajectory (including XYZ).")
+
+        # Apply FIRE relaxation periodically (different interval than sequential)
         if step > 0 and step % RELAX_INTERVAL == 0:
             base_sim_state = perform_fire_relaxation(
                 base_sim_state, mace_model, device, dtype, max_steps=FIRE_STEPS
             )
             print(f"Step {step}: performed FIRE relaxation.")
+
+        # Apply sequential tetrahedral constraint periodically
+        if step > 0 and step % SEQUENTIAL_INTERVAL == 0:
+            base_sim_state = apply_sequential_tetrahedral_constraint(
+                sim_state=base_sim_state,
+                xrd_model=xdr_model,
+                device=device,
+                dtype=dtype,
+                max_steps_per_atom=SEQUENTIAL_STEPS_PER_ATOM,
+                q_threshold=SEQUENTIAL_Q_THRESHOLD,
+                lr=SEQUENTIAL_LR,
+                freeze_strategy=SEQUENTIAL_FREEZE,
+                verbose=True
+            )
+            print(f"Step {step}: applied sequential tetrahedral constraint.")
 
         # Early stopping based on loss tolerance
         if step > 0 and abs(cmp_state.loss.item() - prev_loss) < cfg.tol:

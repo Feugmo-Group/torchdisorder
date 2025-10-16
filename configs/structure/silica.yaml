@@ -1,11 +1,11 @@
 root_dir: ${oc.env:PROJECT_ROOT}/data-release
 structure:
-  init: "random_icp"          # or "from_cif" or pymatgen
+  init: "from_cif"          # or "from_cif" or pymatgen
   n_atoms: 500
-  box_length: 25.0
+  box_length: 25.0 #Trying a smaller box to see if that helps
   species: [Si, O]
   stoichiometry: [167, 333]
-  cif_path: ${data.root_dir}/crystal-structures/c-SiO2.cif"
+  cif_path: ${data.root_dir}/crystal-structures/c-SiO2.cif
   target_density: 2.20        # used only in `from_cif` mode
 
 #root_dir: ${oc.env:PROJECT_ROOT}/data-release

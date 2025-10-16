@@ -433,7 +433,7 @@ class StructureFactorCMP(cooper.ConstrainedMinimizationProblem):
 
 def cooper_optimizer(
     cmp_problem: cooper.ConstrainedMinimizationProblem,
-    lr: float = 1e-6,
+    lr: float = 1e-4,
     max_steps: int = 1000,
     tol: float = 1e-6,
     optimize_cell: bool = False,
@@ -537,7 +537,134 @@ def perform_fire_relaxation(sim_state, mace_model, device, dtype, max_steps=1000
 
     return new_state
 
+#Function to optimize atom per atom as per the sequential constraint
+def apply_sequential_tetrahedral_constraint(
+        sim_state,
+        xrd_model,
+        device,
+        dtype,
+        max_steps_per_atom: int = 100,
+        q_threshold: float = 0.85,
+        lr: float = 0.01,
+        freeze_strategy: str = "soft",
+        verbose: bool = True
+):
+    """
+    Apply sequential tetrahedral optimization to all systems in sim_state.
+    """
+    from ase.data import chemical_symbols
 
+    print("\n" + "=" * 60)
+    print("APPLYING SEQUENTIAL TETRAHEDRAL CONSTRAINT")
+    print("=" * 60)
+
+    # Handle n_systems attribute - check if it exists, otherwise assume single system
+    n_systems = getattr(sim_state, 'n_systems', 1)
+
+    # Detach positions to avoid gradient issues
+    positions_updated = sim_state.positions.detach().clone()
+
+    # Apply sequential optimization to each system
+    for b in range(n_systems):
+        if verbose:
+            print(f"\n--- System {b + 1}/{n_systems} ---")
+
+        # Handle single vs multi-system cases
+        if n_systems == 1:
+            batch_mask = torch.ones(len(sim_state.positions), dtype=torch.bool, device=device)
+            pos_b = positions_updated
+            cell_b = sim_state.cell[0] if sim_state.cell.dim() > 2 else sim_state.cell
+            atomic_numbers = sim_state.atomic_numbers.detach().cpu().numpy()
+        else:
+            batch_mask = sim_state.system_idx == b
+            pos_b = positions_updated[batch_mask]
+            cell_b = sim_state.cell[b] if sim_state.cell.dim() > 2 else sim_state.cell
+            atomic_numbers = sim_state.atomic_numbers[batch_mask].detach().cpu().numpy()
+
+        # Get symbols for this system
+        symbols_b = [chemical_symbols[z] for z in atomic_numbers]
+
+        # Apply sequential optimization
+        pos_optimized = xrd_model.sequential_tetrahedral_optimization(
+            pos=pos_b,
+            cell=cell_b,
+            symbols=symbols_b,
+            max_steps_per_atom=max_steps_per_atom,
+            q_threshold=q_threshold,
+            lr=lr,
+            freeze_strategy=freeze_strategy,
+            verbose=verbose,
+        )
+
+        # Update in the cloned tensor
+        if n_systems == 1:
+            positions_updated = pos_optimized
+        else:
+            positions_updated[batch_mask] = pos_optimized
+
+    # Replace the entire positions tensor (not in-place)
+    sim_state.positions = positions_updated.requires_grad_(True)
+
+    print("=" * 60)
+    print("SEQUENTIAL CONSTRAINT COMPLETE")
+    print("=" * 60 + "\n")
+
+    return sim_state
+
+
+def compute_mace_energy(sim_state, mace_calculator, device, dtype):
+    """
+    Compute MACE potential energy for structures in sim_state.
+    Returns a differentiable torch tensor.
+
+    Args:
+        sim_state: SimState object with positions, cell, atomic_numbers
+        mace_calculator: MACE calculator instance
+        device: torch device
+        dtype: torch dtype
+
+    Returns:
+        energy_tensor: Total energy in eV as torch tensor with gradients
+    """
+    from ase import Atoms
+    import torch
+
+    # Convert sim_state to ASE Atoms
+    positions = sim_state.positions.detach().cpu().numpy()
+    cell = sim_state.cell.detach().cpu().numpy()
+    atomic_numbers = sim_state.atomic_numbers.detach().cpu().numpy()
+
+    # Handle batched vs single structure
+    if cell.ndim == 3:
+        cell = cell[0]  # Take first system if batched
+
+    # Create ASE Atoms object
+    atoms = Atoms(
+        numbers=atomic_numbers,
+        positions=positions,
+        cell=cell,
+        pbc=True
+    )
+
+    # Attach MACE calculator
+    atoms.calc = mace_calculator
+
+    # Get energy and forces (forces give gradients)
+    energy = atoms.get_potential_energy()  # In eV
+    forces = atoms.get_forces()  # In eV/Å
+
+    # Convert to torch tensors
+    energy_tensor = torch.tensor(
+        energy,
+        device=device,
+        dtype=dtype,
+        requires_grad=True
+    )
+
+    # Store forces for gradient computation if needed
+    # (Cooper optimizer will handle this through autograd)
+
+    return energy_tensor
 
 
 

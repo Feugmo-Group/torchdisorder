@@ -21,7 +21,7 @@ output:
   save_plots: true
   plots_dir: ${oc.env:OUTPUT_DIR,outputs/${experiment.name}/${now:%Y-%m-%d}/${now:%H-%M-%S}/plots}
 
-max_steps: 8000
+max_steps: 2000
 optimize_cell: false
-lr: 1e-6
+lr: 1e-4
 tol: 1e-6

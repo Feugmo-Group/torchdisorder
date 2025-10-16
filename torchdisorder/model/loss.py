@@ -52,9 +52,16 @@ from torchdisorder.model.rdf import (
 # -----------------------------------------------------------------------------
 
 def chi_squared(estimate: torch.Tensor, target: torch.Tensor, uncertainty: torch.Tensor | float) -> torch.Tensor:
+    """
+    Compute the normalized (reduced) chi-squared statistic.
+    χ²_norm = χ² / N
+    """
     if isinstance(uncertainty, (float, int)):
         uncertainty = torch.tensor(uncertainty, device=estimate.device, dtype=estimate.dtype)
-    return torch.sum((estimate - target) ** 2 / (uncertainty ** 2))
+    chi2 = torch.sum((estimate - target) ** 2 / (uncertainty ** 2))
+    N = estimate.numel()  # Number of data points
+    return chi2 / N
+
 #normalize
 
 # -----------------------------------------------------------------------------
@@ -372,37 +379,48 @@ def q_octahedral(
 
 
 
+# def chi_squared(estimate: torch.Tensor, target: torch.Tensor, uncertainty: torch.Tensor | float) -> torch.Tensor:
+#     """
+#         Compute the unnormalized chi-squared statistic between estimated and target values.
+#
+#         The chi-squared value is calculated as:
+#
+#             χ² = Σ [(estimate - target)² / uncertainty²]
+#
+#         where each squared deviation is normalized by the square of the uncertainty.
+#         This metric is commonly used to evaluate the goodness-of-fit of a model to experimental data,
+#         accounting for the variance in measurements.
+#
+#         Parameters
+#         ----------
+#         estimate : torch.Tensor
+#             Predicted values (e.g., from a model), shape (...,).
+#         target : torch.Tensor
+#             Ground truth or observed values to compare against, same shape as `estimate`.
+#         uncertainty : torch.Tensor or float
+#             Measurement uncertainty. Can be:
+#             - A scalar, applied uniformly
+#             - A tensor of the same shape as `estimate`, for pointwise uncertainty
+#
+#         Returns
+#         -------
+#         torch.Tensor
+#             A scalar tensor containing the total chi-squared loss.
+#         """
+#     if isinstance(uncertainty, (float, int)):
+#         uncertainty = torch.tensor(uncertainty, device=estimate.device, dtype=estimate.dtype)
+#     return torch.sum((estimate - target) ** 2 / (uncertainty ** 2))
+
 def chi_squared(estimate: torch.Tensor, target: torch.Tensor, uncertainty: torch.Tensor | float) -> torch.Tensor:
     """
-        Compute the unnormalized chi-squared statistic between estimated and target values.
-
-        The chi-squared value is calculated as:
-
-            χ² = Σ [(estimate - target)² / uncertainty²]
-
-        where each squared deviation is normalized by the square of the uncertainty.
-        This metric is commonly used to evaluate the goodness-of-fit of a model to experimental data,
-        accounting for the variance in measurements.
-
-        Parameters
-        ----------
-        estimate : torch.Tensor
-            Predicted values (e.g., from a model), shape (...,).
-        target : torch.Tensor
-            Ground truth or observed values to compare against, same shape as `estimate`.
-        uncertainty : torch.Tensor or float
-            Measurement uncertainty. Can be:
-            - A scalar, applied uniformly
-            - A tensor of the same shape as `estimate`, for pointwise uncertainty
-
-        Returns
-        -------
-        torch.Tensor
-            A scalar tensor containing the total chi-squared loss.
-        """
+    Compute the normalized (reduced) chi-squared statistic.
+    χ²_norm = χ² / N
+    """
     if isinstance(uncertainty, (float, int)):
         uncertainty = torch.tensor(uncertainty, device=estimate.device, dtype=estimate.dtype)
-    return torch.sum((estimate - target) ** 2 / (uncertainty ** 2))
+    chi2 = torch.sum((estimate - target) ** 2 / (uncertainty ** 2))
+    N = estimate.numel()  # Number of data points
+    return chi2 / N
 
 
 @dataclass
@@ -576,7 +594,8 @@ class CooperLoss(nn.Module):
         print(f"q_tet value: {desc['q_tet'].item():.4f}, q_loss contribution: {q_loss.item():.6e}")
 
 
-        total_loss = chi2_scatt * 0.02 + chi2_corr * 1.0 + q_loss * 0.1
+        # total_loss = chi2_corr * 1.0 + q_loss * 0.001
+        total_loss = chi2_scatt  * 1.0 + q_loss * 0.001
         # total_loss = chi2_corr
 
    # for T_r
@@ -588,4 +607,5 @@ class CooperLoss(nn.Module):
             "chi2_scatt": chi2_scatt,
             "q_loss": q_loss,
         }
+
 
