@@ -34,15 +34,15 @@ from torchdisorder.model.loss import ChiSquaredObjective, ConstraintChiSquared, 
 from IPython.display import display
 from plotly.subplots import make_subplots
 from torchdisorder.engine.optimizer import StructureFactorCMP
-from torchdisorder.engine.optimizer import cooper_optimizer, perform_fire_relaxation
-from torchdisorder.engine.optimizer import apply_sequential_tetrahedral_constraint
+from torchdisorder.engine.optimizer import cooper_optimizer
 from ase.io import Trajectory
 from torch_sim.io import state_to_atoms
 from pathlib import Path
 
 from torch_sim.models.mace import MaceModel
 from mace.calculators.foundations_models import mace_mp
-from torchdisorder.engine.optimizer import compute_mace_energy
+import cooper
+
 
 @hydra.main(config_path=str(MODELS_PROJECT_ROOT / "configs"), config_name="config", version_base="1.3")
 def main(cfg: DictConfig) -> None:
@@ -82,6 +82,7 @@ def main(cfg: DictConfig) -> None:
 
     atoms = generate_atoms_from_config(cfg.structure)
     atoms_list = [atoms]
+    print("Atoms: ", atoms_list)
     state = atoms_to_state(atoms_list, device=cfg.accelerator, dtype=dtype)
     state.positions.requires_grad_(True)
     state.cell.requires_grad_(True)
@@ -101,7 +102,6 @@ def main(cfg: DictConfig) -> None:
     state.atomic_numbers = torch.tensor(
         [chemical_symbols.index(a.symbol) for a in atoms_list[0]], dtype=torch.int64, device=device
     )
-    # print("State Atomic Numbers: ", state.atomic_numbers)
 
     xdr_model = XRDModel(
         spectrum_calc=spec_calc,
@@ -110,9 +110,14 @@ def main(cfg: DictConfig) -> None:
         device=cfg.accelerator,
     )
 
-    results = xdr_model(state)
-    print("Results:", results)
-
+    try:
+        results = xdr_model(state)
+        print(results)
+        print("XRD model completed successfully!")
+    except Exception as e:
+        print(f"ERROR: {type(e).__name__}: {e}")
+        import traceback
+        traceback.print_exc()
 
     cooper_loss = CooperLoss(target_data=rdf_data, device=cfg.accelerator)
 
@@ -125,92 +130,108 @@ def main(cfg: DictConfig) -> None:
     target_vec = rdf_data.F_q_target
     q_bins = rdf_data.q_bins
 
+    # Create Cooper problem
     cooper_problem = StructureFactorCMP(
         model=xdr_model,
         base_state=base_sim_state,
         target_vec=target_vec,
-        target_kind="S_Q",  #Can switch between S_Q and T_r
+        target_kind="S_Q",
         q_bins=q_bins,
         loss_fn=loss_fn,
+        q_threshold=0.8,
+        device=cfg.accelerator,
+        penalty_rho = 1.0
     )
 
-    init_fn, update_fn = cooper_optimizer(
-        cmp_problem=cooper_problem,
-        lr=1e-4,
-        max_steps=cfg.max_steps,
-        optimize_cell=cfg.optimize_cell,
-        verbose=True,
+    # Setup parameters
+    base_sim_state.positions.requires_grad_(True)
+    primal_params = [base_sim_state.positions]
+
+    if cfg.optimize_cell:
+        base_sim_state.cell.requires_grad_(True)
+        primal_params.append(base_sim_state.cell)
+
+    # CREATE OPTIMIZERS
+    primal_optimizer = torch.optim.Adam(primal_params, lr=1e-4)
+    dual_optimizer = torch.optim.SGD(
+        cooper_problem.dual_parameters(),
+        lr=1e-2,
+        maximize=True
     )
 
-    cmp_state = init_fn(state)
-    # print("CMP state:", cmp_state)
-    # print("cmp_state attributes:")
-    # for attr in dir(cmp_state):
-    #     val = getattr(cmp_state, attr)
-    #     print(f"Attribute: {attr}, Type: {type(val)}")
+    # CREATE COOPER OPTIMIZER
+    cooper_opt = cooper.optim.SimultaneousOptimizer(
+        cmp=cooper_problem,
+        primal_optimizers=primal_optimizer,
+        dual_optimizers=dual_optimizer
+    )
 
-    prev_loss = None  # Initialize prev_loss for first loop check
-
-
-    #Defining the parameters for the sequential optimization
-    SEQUENTIAL_INTERVAL = 500  # Apply every 500 steps
-    SEQUENTIAL_STEPS_PER_ATOM = 100
-    SEQUENTIAL_Q_THRESHOLD = 0.85
-    SEQUENTIAL_LR = 0.01
-    SEQUENTIAL_FREEZE = "soft"  # Options: "none", "central", "soft"
-
-    # Updated optimization loop
+    # MAIN TRAINING LOOP
+    prev_loss = None
 
     for step in range(cfg.max_steps):
-        cmp_state, base_sim_state = update_fn(cmp_state, base_sim_state)
+        # COOPER OPTIMIZATION STEP
+        roll_out = cooper_opt.roll(
+            compute_cmp_state_kwargs={
+                "positions": base_sim_state.positions,
+                "cell": base_sim_state.cell
+            }
+        )
 
-        # Trajectory saving after each step
+        # Extract results
+        cmp_state = roll_out.cmp_state
+        loss = cmp_state.loss
+        violations = list(cmp_state.observed_constraints.values())[0].violation
+
+        # Logging every step
+        avg_violation = violations.mean().item()
+        max_violation = violations.max().item()
+        num_violated = (violations > 0).sum().item()
+        print(f"Step {step}: Loss={loss.item():.6f}, "
+              f"Avg q_tet violation={avg_violation:.6f}, "
+              f"Max violation={max_violation:.6f}, "
+              f"Atoms violated={num_violated}/{len(violations)}")
+
+        # Trajectory saving
         if cfg.output.write_trajectory:
             traj_path = Path(cfg.output.trajectory_path)
             traj_path.mkdir(parents=True, exist_ok=True)
             ase_path = traj_path / "trajectory.traj"
             xdatcar_path = traj_path / "XDATCAR"
-            xyz_path = traj_path / "trajectory.xyz"  # Add XYZ path
+            xyz_path = traj_path / "trajectory.xyz"
 
             atoms_list_curr = state_to_atoms(base_sim_state)
             for atoms_obj in atoms_list_curr:
                 write_trajectories(atoms_obj, str(ase_path), str(xdatcar_path))
-
-                # Append to XYZ trajectory (use 'append' mode after first write)
                 write(str(xyz_path), atoms_obj, format='xyz', append=(step > 0))
 
-            print(f"Step {step}: saved structure to trajectory (including XYZ).")
+            print(f"Step {step}: saved structure to trajectory.")
 
-        # Apply FIRE relaxation periodically (different interval than sequential)
-        if step > 0 and step % RELAX_INTERVAL == 0:
-            base_sim_state = perform_fire_relaxation(
-                base_sim_state, mace_model, device, dtype, max_steps=FIRE_STEPS
-            )
-            print(f"Step {step}: performed FIRE relaxation.")
+        # if step > 0 and step % SEQUENTIAL_INTERVAL == 0:
+        #     base_sim_state = apply_sequential_tetrahedral_constraint(
+        #         sim_state=base_sim_state,
+        #         xrd_model=xdr_model,
+        #         device=device,
+        #         dtype=dtype,
+        #         max_steps_per_atom=SEQUENTIAL_STEPS_PER_ATOM,
+        #         q_threshold=SEQUENTIAL_Q_THRESHOLD,
+        #         lr=SEQUENTIAL_LR,
+        #         freeze_strategy=SEQUENTIAL_FREEZE,
+        #         verbose=True
+        #     )
+        #     print(f"Step {step}: applied sequential tetrahedral constraint.")
 
-        # Apply sequential tetrahedral constraint periodically
-        if step > 0 and step % SEQUENTIAL_INTERVAL == 0:
-            base_sim_state = apply_sequential_tetrahedral_constraint(
-                sim_state=base_sim_state,
-                xrd_model=xdr_model,
-                device=device,
-                dtype=dtype,
-                max_steps_per_atom=SEQUENTIAL_STEPS_PER_ATOM,
-                q_threshold=SEQUENTIAL_Q_THRESHOLD,
-                lr=SEQUENTIAL_LR,
-                freeze_strategy=SEQUENTIAL_FREEZE,
-                verbose=True
-            )
-            print(f"Step {step}: applied sequential tetrahedral constraint.")
-
-        # Early stopping based on loss tolerance
-        if step > 0 and abs(cmp_state.loss.item() - prev_loss) < cfg.tol:
+        # Early stopping
+        if prev_loss is not None and abs(loss.item() - prev_loss) < cfg.tol:
             print(f"Converged at step {step}")
             break
 
-        prev_loss = cmp_state.loss.item()
+        prev_loss = loss.item()
 
     print("Optimization completed.")
+
+    # Final structure
+    final_atoms = state_to_atoms(base_sim_state)
 
     if cfg.output.save_plots:
         # pred_T_r = cmp_state.misc.get("Y")

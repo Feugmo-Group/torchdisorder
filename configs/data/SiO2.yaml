@@ -22,5 +22,5 @@ xray_form_factor_params:
 
 central : 'Si'
 neighbour : 'O'  # Define the central atom as 'Si' and the neighbour atom as 'O'
-cutoff : 12.0  # Define the cutoff distance for the neighbour atoms
+cutoff : 2.0  # Define the cutoff distance for the neighbour atoms
 

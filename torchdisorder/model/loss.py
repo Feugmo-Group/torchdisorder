@@ -580,22 +580,20 @@ def make_objective_and_constraints(rdf_data,desc):
 #returns the chi^2 loss
 #modeled off the AugLagLoss
 class CooperLoss(nn.Module):
-    def __init__(self, target_data, q_target=0.7, scale_q=0.2, device="gpu"):
+    def __init__(self, target_data, q_target=0.7, device="gpu"):
         super().__init__()
         self.target = target_data
         self.q_target = torch.tensor(q_target, device=device)
-        self.scale_q = scale_q
+
         self.device = torch.device(device)
 
     def forward(self, desc: dict) -> dict:
         chi2_corr = chi_squared(desc["T_r"], self.target.T_r_target, 0.05) / desc["T_r"].numel()
         chi2_scatt = chi_squared(desc["S_Q"], self.target.F_q_target, self.target.F_q_uncert) / desc["S_Q"].numel()
-        q_loss = chi_squared(desc["q_tet"], self.q_target, 0.05)  # You could adjust uncertainty if needed
-        print(f"q_tet value: {desc['q_tet'].item():.4f}, q_loss contribution: {q_loss.item():.6e}")
 
 
         # total_loss = chi2_corr * 1.0 + q_loss * 0.001
-        total_loss = chi2_scatt  * 1.0 + q_loss * 0.001
+        total_loss = chi2_scatt
         # total_loss = chi2_corr
 
    # for T_r
@@ -605,7 +603,6 @@ class CooperLoss(nn.Module):
             "loss": total_loss,
             "chi2_corr": chi2_corr,
             "chi2_scatt": chi2_scatt,
-            "q_loss": q_loss,
         }
 
 
