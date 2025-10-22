@@ -533,7 +533,6 @@ def cooper_optimizer(
 
     return base_state
 
-
 # Remove the init_fn, update_fn pattern - Cooper handles it!
 
 

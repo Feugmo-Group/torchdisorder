@@ -25,7 +25,7 @@ from torchdisorder.common.utils import OrderParameter
 from ase import Atoms
 from torchdisorder.model.xrd import XRDModel
 from torchdisorder.viz.plotting import init_live_total_correlation, init_live_total_scattering, update_live_plot
-from torchdisorder.viz.plotting import plot_total_correlation, plot_total_scattering
+from torchdisorder.viz.plotting import plot_total_correlation, plot_total_scattering, LivePlotMonitor
 from torchdisorder.common.utils import write_trajectories
 from torch_sim.state import DeformGradMixin, SimState
 import plotly.graph_objects as go
@@ -42,6 +42,7 @@ from pathlib import Path
 from torch_sim.models.mace import MaceModel
 from mace.calculators.foundations_models import mace_mp
 import cooper
+import time
 
 
 @hydra.main(config_path=str(MODELS_PROJECT_ROOT / "configs"), config_name="config", version_base="1.3")
@@ -52,13 +53,6 @@ def main(cfg: DictConfig) -> None:
     dtype = torch.float32
     device = torch.device(cfg.accelerator)
 
-    # Load pretrained MACE model
-    mace_raw = mace_mp(model="small", return_raw_model=True)
-    mace_model = MaceModel(model=mace_raw, device=device).eval()
-    #
-    # Relaxation parameters
-    RELAX_INTERVAL = 50000  # How often to perform relaxation (every 5 steps)
-    FIRE_STEPS = 50 # Max FIRE steps during relaxation
 
     rdf_data = TargetRDFData.from_dict(cfg.data.data, device=cfg.accelerator)
     print(cfg)
@@ -140,7 +134,7 @@ def main(cfg: DictConfig) -> None:
         loss_fn=loss_fn,
         q_threshold=0.8,
         device=cfg.accelerator,
-        penalty_rho = 1.0
+        penalty_rho = 1.0,
     )
 
     # Setup parameters
@@ -166,6 +160,14 @@ def main(cfg: DictConfig) -> None:
         dual_optimizers=dual_optimizer
     )
 
+    monitor = LivePlotMonitor(
+        q_bins_np=q_bins.cpu().numpy(),
+        target_sq_np=target_vec.cpu().numpy(),
+        port=8050
+    )
+    monitor.start_server()
+    time.sleep(2)  # Give server time to start
+    PLOT_UPDATE_INTERVAL = 1
     # MAIN TRAINING LOOP
     prev_loss = None
 
@@ -191,6 +193,18 @@ def main(cfg: DictConfig) -> None:
               f"Avg q_tet violation={avg_violation:.6f}, "
               f"Max violation={max_violation:.6f}, "
               f"Atoms violated={num_violated}/{len(violations)}")
+
+        # live dashboard update
+        if step % PLOT_UPDATE_INTERVAL == 0:
+            pred_sq = cmp_state.misc.get("Y")
+            if pred_sq is not None:
+                pred_sq_np = pred_sq.detach().cpu().numpy().flatten()
+                monitor.update_data(
+                    step=step,
+                    loss=loss.item(),
+                    pred_sq=pred_sq_np,
+                    num_violated=num_violated
+                )
 
         # Trajectory saving
         if cfg.output.write_trajectory:
