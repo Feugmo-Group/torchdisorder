@@ -1,0 +1,25 @@
+# Path configuration for experimental GeO2 data
+root_dir: ${oc.env:PROJECT_ROOT}/data-release
+data:
+  t_of_r_path: ${data.root_dir}/xrd_measurements/GeO2/T_of_r.csv
+  f_of_q_path: ${data.root_dir}/xrd_measurements/GeO2/F_of_Q.csv
+
+
+kernel_width: 0.035
+neutron_scattering_lengths:
+  Ge: 8.185
+  O: 5.803
+xray_form_factor_params:
+  Ge:
+    a: [16.0816, 6.3747, 3.7068, 3.683]
+    b: [2.8509, 0.2516, 11.4468, 54.7625]
+    c: [2.1313]
+  O:
+    a: [3.0485, 2.2868, 1.5463, 0.867]
+    b: [13.2771, 5.7011, 0.3239, 32.9089]
+    c: [0.2508]
+
+
+central : 'Ge'  # Define the central atom as 'Ge' and the neighbour atom as 'O'
+neighbour : 'O'
+cutoff : 2.0  # Define the cutoff distance for the neighbour atoms
