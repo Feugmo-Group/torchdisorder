@@ -51,9 +51,9 @@ class XRDModel(nn.Module):
             system_idx: torch.Tensor | None = None,
             atomic_numbers: torch.Tensor | None = None,
             compute_q_tet: bool = True,  # Constraint Parameters
-            central: str = "Si",
+            central: str = "Ge",  #NEED TO CHANGE THESE
             neighbour: str = "O",
-            cutoff: float = 3.9, #cutoff distance for finding neighbours, trying 3.0 even though it may not be correct
+            cutoff: float = 4.5, #FOR GEO2
 
     ) -> None:
         super().__init__()
@@ -173,7 +173,6 @@ class XRDModel(nn.Module):
             G_r = self.spec.compute_neutron_rdf(
                 symbols_b, pos_b, cell_b, self.rdf_data.r_bins
             )
-
             T_r = self.spec.compute_neutron_correlation(
                 G_r, self.rdf_data.r_bins, symbols_b, cell_b
             )

@@ -3,8 +3,8 @@ defaults:
   - experiment: basic
   - trainer: AugLag
   - trainer/mace
-  - structure: silica
-  - data: SiO2
+  - structure: germanium_oxide
+  - data: GeO2
   - wandb: disabled
   - _self_
 
@@ -23,5 +23,5 @@ output:
 
 max_steps: 10000
 optimize_cell: false
-lr: 1e-4
+lr: 1e-2
 tol: 1e-6

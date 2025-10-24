@@ -56,6 +56,7 @@ def main(cfg: DictConfig) -> None:
 
     rdf_data = TargetRDFData.from_dict(cfg.data.data, device=cfg.accelerator)
     print(cfg)
+    print("CFG.data")
     print(cfg.data)
     print("CFG DATA DATA", cfg.data.data)
     print("Plots Dir",cfg.output.plots_dir)
@@ -69,10 +70,32 @@ def main(cfg: DictConfig) -> None:
     fig_S_Q, trace_S_Q = init_live_total_scattering(q_bins=rdf_data.q_bins, F_target=rdf_data.F_q_target, out_path=filename)
     print(cfg.output.plots_dir)
 
-
-
-
     spec_calc = SpectrumCalculator.from_config_dict(cfg.data)
+
+    # DEBUG: Check what spec_calc actually has
+    print("\n=== SpectrumCalculator Configuration ===")
+    print(f"Type: {type(spec_calc)}")
+
+    # Check neutron scattering lengths (correct attribute name!)
+    print(f"Has neutron_scattering_lengths: {hasattr(spec_calc, 'neutron_scattering_lengths')}")
+    if hasattr(spec_calc, 'neutron_scattering_lengths'):
+        print(f"Neutron scattering lengths: {spec_calc.neutron_scattering_lengths}")
+        print(f"Has Ge: {'Ge' in spec_calc.neutron_scattering_lengths}")
+    else:
+        print("ERROR: No neutron_scattering_lengths attribute!")
+
+    # Check x-ray form factors (correct attribute name!)
+    print(f"Has xray_form_factor_params: {hasattr(spec_calc, 'xray_form_factor_params')}")
+    if hasattr(spec_calc, 'xray_form_factor_params'):
+        print(f"X-ray form factor params keys: {list(spec_calc.xray_form_factor_params.keys())}")
+        print(f"Has Ge: {'Ge' in spec_calc.xray_form_factor_params}")
+    else:
+        print("ERROR: No xray_form_factor_params attribute!")
+
+    # Check kernel width
+    print(f"Kernel width: {spec_calc.kernel_width if hasattr(spec_calc, 'kernel_width') else 'MISSING'}")
+
+
 
     atoms = generate_atoms_from_config(cfg.structure)
     atoms_list = [atoms]
@@ -96,6 +119,13 @@ def main(cfg: DictConfig) -> None:
     state.atomic_numbers = torch.tensor(
         [chemical_symbols.index(a.symbol) for a in atoms_list[0]], dtype=torch.int64, device=device
     )
+
+    # Right before calling xrd_model
+    print(f"\nQ bins debug:")
+    print(f"  Min Q: {rdf_data.q_bins.min()}")
+    print(f"  Max Q: {rdf_data.q_bins.max()}")
+    print(f"  First 5 Q: {rdf_data.q_bins[:5]}")
+    print(f"  Has Q=0: {(rdf_data.q_bins == 0).any()}")
 
     xdr_model = XRDModel(
         spectrum_calc=spec_calc,

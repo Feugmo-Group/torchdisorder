@@ -410,6 +410,7 @@ class ConstantPenalty(PenaltyCoefficient):
         """Return the constant penalty value."""
         return self.init  # Returns the tensor
 
+
 class StructureFactorCMP(cooper.ConstrainedMinimizationProblem):
     def __init__(self, model, base_state, target_vec, target_kind, q_bins, loss_fn,
                  q_threshold=0.8, device='cuda', penalty_rho=1.0):
@@ -422,22 +423,23 @@ class StructureFactorCMP(cooper.ConstrainedMinimizationProblem):
         self.loss_fn = loss_fn
         self.q_threshold = q_threshold
 
-        # Count Si atoms for per-atom constraints
+        # Count Ge atoms for per-atom constraints
         symbols = [chemical_symbols[int(z)] for z in base_state.atomic_numbers.cpu()]
-        num_si = sum(1 for s in symbols if s == 'Si')
+        num_si = sum(1 for s in symbols if s == 'Ge')
         print(num_si)
 
         # CREATE MULTIPLIER (λ tensor)
         multiplier = cooper.multipliers.DenseMultiplier(
-            num_constraints=num_si,  # One λ per Si atom
+            num_constraints=num_si,
             device=device
         )
         penalty_coeff = ConstantPenalty(penalty_rho)
+
         # CREATE CONSTRAINT
         self.q_tet_constraint = cooper.Constraint(
             multiplier=multiplier,
             constraint_type=cooper.ConstraintType.INEQUALITY,
-            formulation_type=cooper.formulations.AugmentedLagrangian,  #this should be the correct formulation type!
+            formulation_type=cooper.formulations.AugmentedLagrangian,
             penalty_coefficient=penalty_coeff,
         )
 
@@ -445,23 +447,24 @@ class StructureFactorCMP(cooper.ConstrainedMinimizationProblem):
         self.base_state.positions = positions
         self.base_state.cell = cell
         out = self.model(self.base_state)
-        loss_dict = self.loss_fn(out)
 
-        # PURE S(Q) LOSS - NO q_tet penalty!
-        loss = loss_dict["chi2_scatt"]  # Just S(Q) matching
+        # NO MASKING - Use predicted S(Q) directly
+        pred_sq = out[self.kind].squeeze()
+
+        # Call loss_fn with unmodified output
+        loss_dict = self.loss_fn(out)
+        loss = loss_dict["chi2_scatt"]
 
         # COMPUTE CONSTRAINT VIOLATION
-        q_tet_per_atom = out['q_tet']  # Per-Si-atom q_tet values
-        violation = self.q_threshold - q_tet_per_atom  # g(x) = 0.7 - q_tet <= 0
+        q_tet_per_atom = out['q_tet']
+        violation = self.q_threshold - q_tet_per_atom
 
         q_tet_state = cooper.ConstraintState(violation=violation)
-
-        # ADD CONSTRAINT (NOT EMPTY!)
         observed_constraints = {self.q_tet_constraint: q_tet_state}
 
         misc = dict(
             Q=self.q_bins.detach().cpu(),
-            Y=out[self.kind].detach().cpu(),
+            Y=pred_sq.detach().cpu(),
             loss=loss.detach().cpu(),
             kind=self.kind,
             qtet=q_tet_per_atom.detach().cpu()
@@ -470,10 +473,12 @@ class StructureFactorCMP(cooper.ConstrainedMinimizationProblem):
         return cooper.CMPState(loss=loss, observed_constraints=observed_constraints, misc=misc)
 
 
+
 #Optimizer for the cooper constraint
 #contains init and update functions
 #helps for iterative gradient updates
 
+#Cooper optimizer for Adam
 def cooper_optimizer(
         cmp_problem: cooper.ConstrainedMinimizationProblem,
         base_state: SimState,
@@ -533,7 +538,102 @@ def cooper_optimizer(
 
     return base_state
 
-# Remove the init_fn, update_fn pattern - Cooper handles it!
+
+
+
+
+
+
+# #Cooper optimizer with LBFG
+# def cooper_optimizer(
+#         cmp_problem: cooper.ConstrainedMinimizationProblem,
+#         base_state: SimState,
+#         primal_lr: float = 1.0,  #LFBG
+#         dual_lr: float = 1e-2,
+#         max_steps: int = 1000,
+#         optimize_cell: bool = False,
+#         verbose: bool = True,
+# ):
+#     """Proper Cooper optimizer using SimultaneousOptimizer and LBFG."""
+#
+#     # Setup parameters
+#     base_state.positions.requires_grad_(True)
+#     primal_params = [base_state.positions]
+#
+#     if optimize_cell:
+#         base_state.cell.requires_grad_(True)
+#         primal_params.append(base_state.cell)
+#
+#     # CREATE PRIMAL OPTIMIZER for LBFG
+#     primal_optimizer = torch.optim.LBFGS(
+#         primal_params,
+#         lr=primal_lr,
+#         max_iter=20,  # Max line search iterations per step [web:247]
+#         history_size=10,  # How many previous gradients to store [web:247]
+#         line_search_fn="strong_wolfe"  # Better line search [web:247]
+#     )
+#
+#     # CREATE DUAL OPTIMIZER (for λ)
+#     dual_optimizer = torch.optim.SGD(
+#         cmp_problem.dual_parameters(),  # Gets λ automatically!
+#         lr=dual_lr,
+#         maximize=True  # CRITICAL: dual is maximization
+#     )
+#
+#     # CREATE COOPER OPTIMIZER
+#     cooper_opt = cooper.optim.SimultaneousOptimizer(
+#         cmp=cmp_problem,
+#         primal_optimizers=primal_optimizer,
+#         dual_optimizers=dual_optimizer
+#     )
+#
+#     # TRAINING LOOP
+#     # ↓↓↓ MODIFIED TRAINING LOOP for L-BFGS
+#     for step in range(max_steps):
+#         # L-BFGS needs a closure that re-evaluates the model
+#         def closure():
+#             # Zero gradients
+#             primal_optimizer.zero_grad()
+#             dual_optimizer.zero_grad()
+#
+#             # Compute CMP state
+#             cmp_state = cmp_problem.compute_cmp_state(
+#                 positions=base_state.positions,
+#                 cell=base_state.cell
+#             )
+#
+#             # Get Lagrangian (loss + penalty)
+#             lagrangian = cooper_opt.compute_lagrangian(cmp_state)
+#
+#             # Backward pass
+#             lagrangian.backward()
+#
+#             return lagrangian
+#
+#         # Step with closure
+#         primal_optimizer.step(closure)
+#
+#         # Dual step (standard, no closure needed)
+#         dual_optimizer.step()
+#
+#         # Get current state for logging
+#         with torch.no_grad():
+#             cmp_state = cmp_problem.compute_cmp_state(
+#                 positions=base_state.positions,
+#                 cell=base_state.cell
+#             )
+#             loss = cmp_state.loss
+#             violations = list(cmp_state.observed_constraints.values())[0].violation
+#
+#         if verbose and step % 100 == 0:
+#             avg_violation = violations.mean().item()
+#             max_violation = violations.max().item()
+#             print(f"Step {step}: Loss={loss.item():.6f}, "
+#                   f"Avg q_tet violation={avg_violation:.6f}, "
+#                   f"Max q_tet violation={max_violation:.6f}")
+#
+#     return base_state
+
 
 
 # #Defining the FIRE MACE relaxation every few steps
