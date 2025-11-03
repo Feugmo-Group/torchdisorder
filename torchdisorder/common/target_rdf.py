@@ -24,13 +24,13 @@ class TargetRDFData:
     device: torch.device
 
     @classmethod
-    def from_yaml(cls, path: str | Path, *, device: str | torch.device = "cpu", stride_r: int = 4, stride_q: int = 8) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    def from_yaml(cls, path: str | Path, *, device: str | torch.device = "cuda", stride_r: int = 4, stride_q: int = 8) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         with open(path, "r") as f:
             cfg: Dict[str, Any] = yaml.safe_load(f)
         return cls.from_dict(cfg, device=device, stride_r=stride_r, stride_q=stride_q).as_tuple()
 
     @classmethod
-    def from_dict(cls, cfg: Dict[str, Any], *, device: str | torch.device = "cpu", stride_r: int = 4, stride_q: int = 8) -> "TargetRDFData":
+    def from_dict(cls, cfg: Dict[str, Any], *, device: str | torch.device = "cuda", stride_r: int = 4, stride_q: int = 8) -> "TargetRDFData":
         device = torch.device(device)
         df_T = pd.read_csv(cfg["t_of_r_path"])
         df_F = pd.read_csv(cfg["f_of_q_path"])

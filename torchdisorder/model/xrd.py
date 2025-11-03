@@ -51,10 +51,10 @@ class XRDModel(nn.Module):
             system_idx: torch.Tensor | None = None,
             atomic_numbers: torch.Tensor | None = None,
             compute_q_tet: bool = True,  # Constraint Parameters
-            central: str = "Ge",  #NEED TO CHANGE THESE
+            central: str = "Si",  #NEED TO CHANGE THESE
             neighbour: str = "O",
-            cutoff: float = 4.5, #FOR GEO2
-
+            # cutoff: float = 5.7, #FOR GeO2
+            cutoff: float = 3.9,
     ) -> None:
         super().__init__()
         self._device = device or torch.device(
@@ -153,8 +153,8 @@ class XRDModel(nn.Module):
 
         pos = state.positions
         cell = state.cell
-        atomic_numbers = state.atomic_numbers.detach().cpu().numpy()
-        system_idx = state.system_idx.detach().cpu().numpy()
+        atomic_numbers = state.atomic_numbers.detach()   #got rid of cpu and numpy to make compatible with cuda
+        system_idx = state.system_idx.detach()
 
 
 

@@ -1,5 +1,3 @@
-optim:
-  max_steps: 300        # maximum number of optimization steps
-  optimize_cell: false  # whether to optimize the simulation cell
-  lr: 0.01              # learning rate for optimizer
-  tol: 1e-6             # tolerance for convergence (optional)
+loss:
+  q_target: 0.7
+  device: cuda

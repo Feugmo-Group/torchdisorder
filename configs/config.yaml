@@ -1,15 +1,15 @@
 
 defaults:
   - experiment: basic
-  - trainer: AugLag
+  - trainer: cooper
   - trainer/mace
-  - structure: germanium_oxide
-  - data: GeO2
+  - structure: silica
+  - data: SiO2
   - wandb: disabled
   - _self_
 
 #minimiser: ${trainer.mace}  # Path to separate AugLag hyperparameter file
-accelerator: 'cpu'  # Use 'gpu' if you have a GPU available
+accelerator: 'cuda'  # Use 'gpu' if you have a GPU available
 hydra:
   run:
     dir:  ${oc.env:OUTPUT_DIR,outputs/${experiment.name}/${now:%Y-%m-%d}/${now:%H-%M-%S}/${wandb.run_name}}
@@ -21,7 +21,7 @@ output:
   save_plots: true
   plots_dir: ${oc.env:OUTPUT_DIR,outputs/${experiment.name}/${now:%Y-%m-%d}/${now:%H-%M-%S}/plots}
 
-max_steps: 10000
+max_steps: 40000
 optimize_cell: false
-lr: 1e-2
-tol: 1e-6
+lr: 0.05
+tol: 1e-2

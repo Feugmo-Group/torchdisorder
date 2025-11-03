@@ -59,8 +59,8 @@ def chi_squared(estimate: torch.Tensor, target: torch.Tensor, uncertainty: torch
     if isinstance(uncertainty, (float, int)):
         uncertainty = torch.tensor(uncertainty, device=estimate.device, dtype=estimate.dtype)
     chi2 = torch.sum((estimate - target) ** 2 / (uncertainty ** 2))
-    N = estimate.numel()  # Number of data points
-    return chi2 / N
+    # N = estimate.numel()  # Number of data points
+    return chi2
 
 #normalize
 
@@ -580,7 +580,7 @@ def make_objective_and_constraints(rdf_data,desc):
 #returns the chi^2 loss
 #modeled off the AugLagLoss
 class CooperLoss(nn.Module):
-    def __init__(self, target_data, q_target=0.7, device="gpu"):
+    def __init__(self, target_data, q_target=0.8, device="gpu"):
         super().__init__()
         self.target = target_data
         self.q_target = torch.tensor(q_target, device=device)

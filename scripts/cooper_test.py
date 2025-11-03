@@ -39,11 +39,13 @@ from ase.io import Trajectory
 from torch_sim.io import state_to_atoms
 from pathlib import Path
 
-from torch_sim.models.mace import MaceModel
+from torch_sim.models.mace import MaceModel, MaceUrls
 from mace.calculators.foundations_models import mace_mp
 import cooper
+from cooper.optim import AlternatingPrimalDualOptimizer
 import time
 
+torch.cuda.empty_cache()
 
 @hydra.main(config_path=str(MODELS_PROJECT_ROOT / "configs"), config_name="config", version_base="1.3")
 def main(cfg: DictConfig) -> None:
@@ -52,6 +54,13 @@ def main(cfg: DictConfig) -> None:
 
     dtype = torch.float32
     device = torch.device(cfg.accelerator)
+
+    mace = mace_mp(
+        model="small",
+        return_raw_model=True,
+        default_dtype="float32"  # ← Add this to use float32
+    )
+    mace_model = MaceModel(model=mace, device=device, dtype=torch.float32)
 
 
     rdf_data = TargetRDFData.from_dict(cfg.data.data, device=cfg.accelerator)
@@ -65,36 +74,12 @@ def main(cfg: DictConfig) -> None:
         plot_dir = Path(cfg.output.plots_dir)
         plot_dir.mkdir(parents=True, exist_ok=True)
     filename = Path(cfg.output.plots_dir) / "T_r_initial_plots.html"
-    fig_T_r, trace_T_r = init_live_total_correlation(r_bins=rdf_data.r_bins, T_target=rdf_data.T_r_target, out_path=filename)
+    fig_T_r, trace_T_r = init_live_total_correlation(r_bins=rdf_data.r_bins.cpu(), T_target=rdf_data.T_r_target.cpu(), out_path=filename)
     filename = Path(cfg.output.plots_dir) / "S_Q_initial_plots.html"
-    fig_S_Q, trace_S_Q = init_live_total_scattering(q_bins=rdf_data.q_bins, F_target=rdf_data.F_q_target, out_path=filename)
+    fig_S_Q, trace_S_Q = init_live_total_scattering(q_bins=rdf_data.q_bins.cpu(), F_target=rdf_data.F_q_target.cpu(), out_path=filename)
     print(cfg.output.plots_dir)
 
     spec_calc = SpectrumCalculator.from_config_dict(cfg.data)
-
-    # DEBUG: Check what spec_calc actually has
-    print("\n=== SpectrumCalculator Configuration ===")
-    print(f"Type: {type(spec_calc)}")
-
-    # Check neutron scattering lengths (correct attribute name!)
-    print(f"Has neutron_scattering_lengths: {hasattr(spec_calc, 'neutron_scattering_lengths')}")
-    if hasattr(spec_calc, 'neutron_scattering_lengths'):
-        print(f"Neutron scattering lengths: {spec_calc.neutron_scattering_lengths}")
-        print(f"Has Ge: {'Ge' in spec_calc.neutron_scattering_lengths}")
-    else:
-        print("ERROR: No neutron_scattering_lengths attribute!")
-
-    # Check x-ray form factors (correct attribute name!)
-    print(f"Has xray_form_factor_params: {hasattr(spec_calc, 'xray_form_factor_params')}")
-    if hasattr(spec_calc, 'xray_form_factor_params'):
-        print(f"X-ray form factor params keys: {list(spec_calc.xray_form_factor_params.keys())}")
-        print(f"Has Ge: {'Ge' in spec_calc.xray_form_factor_params}")
-    else:
-        print("ERROR: No xray_form_factor_params attribute!")
-
-    # Check kernel width
-    print(f"Kernel width: {spec_calc.kernel_width if hasattr(spec_calc, 'kernel_width') else 'MISSING'}")
-
 
 
     atoms = generate_atoms_from_config(cfg.structure)
@@ -109,7 +94,6 @@ def main(cfg: DictConfig) -> None:
             self.__dict__.update(original_state.__dict__)
             self.system_idx = None
             self.n_systems = None
-
     state = StateWrapper(state)
     state.n_systems = torch.tensor(len(atoms_list))
     atoms_per_system = torch.tensor([len(a) for a in atoms_list], device=device)
@@ -151,20 +135,21 @@ def main(cfg: DictConfig) -> None:
     base_sim_state = state
     print("base_sim_state:", base_sim_state)
 
-    target_vec = rdf_data.F_q_target
     q_bins = rdf_data.q_bins
 
     # Create Cooper problem
     cooper_problem = StructureFactorCMP(
         model=xdr_model,
         base_state=base_sim_state,
-        target_vec=target_vec,
+        target_vec=rdf_data,
         target_kind="S_Q",
         q_bins=q_bins,
         loss_fn=loss_fn,
-        q_threshold=0.8,
+        q_threshold=0.7,
         device=cfg.accelerator,
-        penalty_rho = 1.0,
+        penalty_rho=10,
+        mace_model=mace_model,  # Pass MACE model
+        energy_weight=50,
     )
 
     # Setup parameters
@@ -190,9 +175,33 @@ def main(cfg: DictConfig) -> None:
         dual_optimizers=dual_optimizer
     )
 
+    # # Create monitor
+    # monitor = LivePlotMonitor(
+    #     q_bins_np=q_bins.cpu().numpy(),
+    #     target_sq_np=target_vec.cpu().numpy(),
+    #     port=8050
+    # )
+    # monitor.start_server()
+    # time.sleep(2)
+
+    # # Run optimization with monitor
+    # optimized_state = cooper_optimizer(
+    #     cmp_problem=cooper_problem,
+    #     base_state=base_sim_state,
+    #     monitor=monitor,  # ← Pass monitor
+    #     primal_lr=1.0,
+    #     dual_lr=1e-2,
+    #     max_steps=cfg.max_steps,
+    #     optimize_cell=cfg.optimize_cell,
+    #     verbose=True
+    # )
+    #
+    # print("Optimization completed.")
+
+
     monitor = LivePlotMonitor(
         q_bins_np=q_bins.cpu().numpy(),
-        target_sq_np=target_vec.cpu().numpy(),
+        target_sq_np=rdf_data.F_q_target.cpu().numpy(),
         port=8050
     )
     monitor.start_server()
@@ -206,13 +215,17 @@ def main(cfg: DictConfig) -> None:
         roll_out = cooper_opt.roll(
             compute_cmp_state_kwargs={
                 "positions": base_sim_state.positions,
-                "cell": base_sim_state.cell
+                "cell": base_sim_state.cell,
+                "step": step
             }
         )
 
         # Extract results
         cmp_state = roll_out.cmp_state
         loss = cmp_state.loss
+        misc = cmp_state.misc
+        energy_loss = misc['energy_loss']
+        chi2_loss = misc['chi2_loss']
         violations = list(cmp_state.observed_constraints.values())[0].violation
 
         # Logging every step
@@ -222,7 +235,9 @@ def main(cfg: DictConfig) -> None:
         print(f"Step {step}: Loss={loss.item():.6f}, "
               f"Avg q_tet violation={avg_violation:.6f}, "
               f"Max violation={max_violation:.6f}, "
-              f"Atoms violated={num_violated}/{len(violations)}")
+              f"Atoms violated={num_violated}/{len(violations)},"
+              f"Energy loss={energy_loss.item():.6f}, "
+              f"Chi2 loss={chi2_loss.item():.6f}")
 
         # live dashboard update
         if step % PLOT_UPDATE_INTERVAL == 0:
@@ -251,24 +266,11 @@ def main(cfg: DictConfig) -> None:
 
             print(f"Step {step}: saved structure to trajectory.")
 
-        # if step > 0 and step % SEQUENTIAL_INTERVAL == 0:
-        #     base_sim_state = apply_sequential_tetrahedral_constraint(
-        #         sim_state=base_sim_state,
-        #         xrd_model=xdr_model,
-        #         device=device,
-        #         dtype=dtype,
-        #         max_steps_per_atom=SEQUENTIAL_STEPS_PER_ATOM,
-        #         q_threshold=SEQUENTIAL_Q_THRESHOLD,
-        #         lr=SEQUENTIAL_LR,
-        #         freeze_strategy=SEQUENTIAL_FREEZE,
-        #         verbose=True
-        #     )
-        #     print(f"Step {step}: applied sequential tetrahedral constraint.")
 
-        # Early stopping
-        if prev_loss is not None and abs(loss.item() - prev_loss) < cfg.tol:
-            print(f"Converged at step {step}")
-            break
+        # # Early stopping (removing for now because I want to see the full 20000
+        # if prev_loss is not None and abs(loss.item() - prev_loss) < cfg.tol:
+        #     print(f"Converged at step {step}")
+        #     break
 
         prev_loss = loss.item()
 
