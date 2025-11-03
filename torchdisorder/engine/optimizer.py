@@ -402,26 +402,24 @@ class ConstantPenalty(PenaltyCoefficient):
     """Constant penalty coefficient for AugmentedLagrangian."""
 
     def __init__(self, value: float, device='cuda'):
-        # Convert float to torch tensor on correct device
         super().__init__(init=torch.tensor(value, device=device))
         self.expects_constraint_features = False
 
     def __call__(self, constraint_features=None):
         """Return the constant penalty value."""
-        return self.init  # Returns the tensor on correct device
+        return self.init
 
 
 class StructureFactorCMP(cooper.ConstrainedMinimizationProblem):
     def __init__(self, model, base_state, target_vec, target_kind, q_bins, loss_fn,
-                 q_threshold=0.7, device='cuda', penalty_rho=10.0,
-                 mace_model=None, energy_weight=0.01):  # ← Added MACE parameters
+                 q_threshold=0.7, device='cuda', penalty_rho=10.0):
         super().__init__()
         self.model = model
         self.base_state = base_state
 
         # Store both target values and uncertainty from rdf_data object
-        self.target = target_vec.F_q_target  # The actual S(Q) or F(Q) values
-        self.target_uncert = target_vec.F_q_uncert  # The dF uncertainty values
+        self.target = target_vec.F_q_target
+        self.target_uncert = target_vec.F_q_uncert
 
         self.kind = target_kind
         self.q_bins = q_bins
@@ -429,18 +427,14 @@ class StructureFactorCMP(cooper.ConstrainedMinimizationProblem):
         self.q_threshold = q_threshold
         self.device = device
 
-        # MACE energy regularization
-        self.mace_model = mace_model  # ← Store MACE model
-        self.energy_weight = energy_weight  # ← Store weight
-
         # Detect placeholder region (where dF was originally zero)
         self.placeholder_mask = (self.target_uncert < 1e-6).to(device)
         n_placeholder = self.placeholder_mask.sum().item()
         print(f"Found {n_placeholder} placeholder points where dF = 1e-7")
 
-        # Count Ge atoms for per-atom constraints
+        # Count Si atoms for per-atom constraints
         symbols = [chemical_symbols[int(z)] for z in base_state.atomic_numbers.cpu()]
-        num_central = sum(1 for s in symbols if s == 'Si')  # CHANGE FOR WHATEVER SYMBOL
+        num_central = sum(1 for s in symbols if s == 'Si')
         print(f"Number of central atoms: {num_central}")
 
         # CREATE MULTIPLIER (λ tensor)
@@ -476,35 +470,10 @@ class StructureFactorCMP(cooper.ConstrainedMinimizationProblem):
         # Call loss_fn with clamped output (placeholder region contributes 0 to chi²)
         loss_dict = self.loss_fn(out)
         chi2_loss = loss_dict["chi2_scatt"]
-        # chi2_loss = loss_dict["chi2_corr"]              #for when you want to get the T(r)
+        # chi2_loss = loss_dict["chi2_corr"]  # Uncomment for T(r) optimization
 
-        energy_loss = torch.tensor(0.0, device=self.device)
-        effective_energy_weight = self.energy_weight
-
-        if self.mace_model is not None:
-            # Create a copy of base_state with updated positions/cell
-            from copy import copy
-            mace_state = copy(self.base_state)
-            mace_state.positions = positions
-            mace_state.cell = cell
-
-            # Add row_vector_cell if missing
-            if not hasattr(mace_state, 'row_vector_cell'):
-                mace_state.row_vector_cell = cell.T.unsqueeze(0) if cell.ndim == 2 else cell
-
-            mace_out = self.mace_model(mace_state)
-            energy = mace_out["energy"]
-            energy_per_atom = energy / len(positions)
-            energy_loss = energy_per_atom
-
-            # Anneal energy weight: 5 before step 1500, then 100 after
-            if step is not None and step >= 2000:
-                effective_energy_weight = 100.0
-            else:
-                effective_energy_weight = 5.0
-
-        # Combined loss
-        total_loss = chi2_loss + effective_energy_weight * energy_loss
+        # Total loss is just chi²
+        total_loss = chi2_loss
 
         # COMPUTE CONSTRAINT VIOLATION
         q_tet_per_atom = out['q_tet']
@@ -518,13 +487,12 @@ class StructureFactorCMP(cooper.ConstrainedMinimizationProblem):
             Y=pred_sq_clamped,
             loss=total_loss,
             chi2_loss=chi2_loss,
-            energy_loss=energy_loss,
-            energy_weight=effective_energy_weight,
             kind=self.kind,
             qtet=q_tet_per_atom
         )
 
         return cooper.CMPState(loss=total_loss, observed_constraints=observed_constraints, misc=misc)
+
 
 
 #Optimizer for the cooper constraint

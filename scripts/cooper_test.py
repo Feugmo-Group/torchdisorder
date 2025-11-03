@@ -145,11 +145,11 @@ def main(cfg: DictConfig) -> None:
         target_kind="S_Q",
         q_bins=q_bins,
         loss_fn=loss_fn,
-        q_threshold=0.7,
+        q_threshold=0.8,
         device=cfg.accelerator,
         penalty_rho=10,
-        mace_model=mace_model,  # Pass MACE model
-        energy_weight=50,
+        # mace_model=mace_model,  # Pass MACE model
+        # energy_weight=50,
     )
 
     # Setup parameters
@@ -161,13 +161,32 @@ def main(cfg: DictConfig) -> None:
         primal_params.append(base_sim_state.cell)
 
     # CREATE OPTIMIZERS
-    primal_optimizer = torch.optim.Adam(primal_params, lr=1e-4)
+    primal_optimizer = torch.optim.Adam(primal_params, lr=1e-3)
     dual_optimizer = torch.optim.SGD(
         cooper_problem.dual_parameters(),
         lr=1e-2,
         maximize=True
     )
 
+    # #adding dynamic schedulers
+    # # Reduce LR when loss plateaus
+    # primal_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+    #     primal_optimizer,
+    #     mode='min',
+    #     factor=0.3,  # More aggressive: reduce to 30% (was 50%)
+    #     patience=20,  # React faster: 20 steps (was 50)
+    #     threshold=1e-3,  # Lower threshold: 0.001 (was 0.01)
+    #     min_lr=1e-7,  # Allow ultra-fine tuning
+    # )
+    #
+    # dual_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+    #     dual_optimizer,
+    #     mode='min',
+    #     factor=0.3,
+    #     patience=20,
+    #     threshold=1e-3,
+    #     min_lr=1e-6,
+    # )
     # CREATE COOPER OPTIMIZER
     cooper_opt = cooper.optim.SimultaneousOptimizer(
         cmp=cooper_problem,
@@ -224,7 +243,9 @@ def main(cfg: DictConfig) -> None:
         cmp_state = roll_out.cmp_state
         loss = cmp_state.loss
         misc = cmp_state.misc
-        energy_loss = misc['energy_loss']
+        # primal_scheduler.step(cmp_state.loss)
+        # dual_scheduler.step(cmp_state.loss)
+        # energy_loss = misc['energy_loss']
         chi2_loss = misc['chi2_loss']
         violations = list(cmp_state.observed_constraints.values())[0].violation
 
@@ -236,7 +257,6 @@ def main(cfg: DictConfig) -> None:
               f"Avg q_tet violation={avg_violation:.6f}, "
               f"Max violation={max_violation:.6f}, "
               f"Atoms violated={num_violated}/{len(violations)},"
-              f"Energy loss={energy_loss.item():.6f}, "
               f"Chi2 loss={chi2_loss.item():.6f}")
 
         # live dashboard update
@@ -267,7 +287,7 @@ def main(cfg: DictConfig) -> None:
             print(f"Step {step}: saved structure to trajectory.")
 
 
-        # # Early stopping (removing for now because I want to see the full 20000
+        # # Small minimization
         # if prev_loss is not None and abs(loss.item() - prev_loss) < cfg.tol:
         #     print(f"Converged at step {step}")
         #     break
