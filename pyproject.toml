@@ -4,7 +4,7 @@ name = "torchdisorder"
 version = "0.1.0"
 description = "Amorphous structure generator using PyTorch autograd to match target RDFs from XRD or neutron diffraction."
 
-authors = ["Xander Gouws <xander.gouws@uwaterloo.ca>"]
+authors = ["Advait Gore <agore@uwaterloo.ca>"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",

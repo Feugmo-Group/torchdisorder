@@ -1,0 +1,40 @@
+# Path configuration for experimental NaTaCl6 data
+root_dir: ${oc.env:PROJECT_ROOT}/data-release
+
+data:
+  # Ensure these paths point to your actual NaTaCl6 data files
+  t_of_r_path: ${data.root_dir}/xrd_measurements/NaTaCl6/T_of_r.csv
+  f_of_q_path: ${data.root_dir}/xrd_measurements/NaTaCl6/F_of_Q.csv
+
+kernel_width: 0.035  # Adjust based on experimental resolution
+
+# Coherent Neutron Scattering Lengths (in fm)
+# Source: NIST Center for Neutron Research
+neutron_scattering_lengths:
+  Na: 3.63
+  Ta: 6.91
+  Cl: 9.577
+
+# X-ray Form Factor Parameters (Waasmaier-Kirfel approximated)
+# These coefficients (a1-a4, b1-b4, c) fit the atomic scattering factor f(s)
+xray_form_factor_params:
+  Na:
+    # Na+ ion is often used for electrolytes, but neutral Na provided here just in case.
+    # Using Neutral Na parameters:
+    a: [3.2565, 3.9362, 1.3998, 1.0032]
+    b: [2.6671, 6.1153, 0.2001, 140.4201]
+    c: [1.3981]
+  Ta:
+    # Neutral Ta parameters:
+    a: [29.6897, 19.6833, 11.7281, 5.8351]
+    b: [0.5367, 4.6667, 16.2017, 84.1681]
+    c: [6.0471]
+  Cl:
+    # Neutral Cl parameters:
+    a: [6.0858, 2.3966, 2.8706, 0.0000]
+    b: [1.6732, 23.0223, 0.5129, 0.0000]
+    c: [5.6513]
+
+central: 'Ta'         # Ta is the center of the octahedra
+neighbour: 'Cl'       # Analyze Cl coordination around Ta (the octahedron)
+cutoff: 3.0           # Ta-Cl bond is approx 2.3-2.4 Å, so 3.0 Å captures the first shell comfortably

@@ -24,6 +24,8 @@ from torchdisorder.model.loss import AugLagLoss
 from torchdisorder.common.target_rdf import TargetRDFData
 
 from typing import Callable, Optional, Dict, Tuple
+
+import math
 #
 @dataclass
 class CooperState(SimState):
@@ -47,14 +49,16 @@ class XRDModel(nn.Module):
             *,
             neighbor_list_fn: Callable = vesin_nl_ts,
             dtype:torch.dtype,
-            device: str | torch.device = "cpu",
+            device: str | torch.device = "cuda",
             system_idx: torch.Tensor | None = None,
             atomic_numbers: torch.Tensor | None = None,
             compute_q_tet: bool = True,  # Constraint Parameters
-            central: str = "Si",  #NEED TO CHANGE THESE
-            neighbour: str = "O",
+            central: str = "Fe",  #NEED TO CHANGE THESE
+            neighbour: str = "O",  #Need to change
+            # neighbour: str=["O", "N"],
             # cutoff: float = 5.7, #FOR GeO2
-            cutoff: float = 3.9,
+            cutoff: float = 4.1, #For FeO3
+            # cutoff: float = 3.9, #for SiO2
     ) -> None:
         super().__init__()
         self._device = device or torch.device(
@@ -184,603 +188,166 @@ class XRDModel(nn.Module):
             T_r_list.append(T_r)
             S_Q_list.append(S_Q)
             #Uncommenting the constraint line
+            # if self._compute_q_tet:
+            #     q_tet = self.tetrahedral_q(
+            #         pos=pos_b, cell=cell_b, symbols=symbols_b
+            #     )
+            #     q_tet_list.append(q_tet)
             if self._compute_q_tet:
-                q_tet = self.tetrahedral_q(
+                q_tet = self.octahedral_q(
                     pos=pos_b, cell=cell_b, symbols=symbols_b
                 )
                 q_tet_list.append(q_tet)
-
 
         # Stack and detach all results
         results["G_r"] = torch.stack([g for g in G_r_list])
         results["T_r"] = torch.stack([t for t in T_r_list])
         results["S_Q"] = torch.stack([s for s in S_Q_list])
+        # if self._compute_q_tet:
+        #     # Get per-atom q_tet values
+        #     q_tet = self.tetrahedral_q(
+        #         pos=pos_b, cell=cell_b, symbols=symbols_b
+        #     )
+        #     results['q_tet'] = q_tet # Shape: (num_Si_atoms,)
         if self._compute_q_tet:
             # Get per-atom q_tet values
-            q_tet = self.tetrahedral_q(
+            q_tet = self.octahedral_q(
                 pos=pos_b, cell=cell_b, symbols=symbols_b
             )
             results['q_tet'] = q_tet # Shape: (num_Si_atoms,)
         return results
 
-    #Q_tet with the sequential optimization
-    # def single_atom_tetrahedral_q(
-    #         self, pos: torch.Tensor, cell: torch.Tensor, symbols: list[str],
-    #         central_idx: int
-    # ) -> torch.Tensor:
-    #     """
-    #     Compute tetrahedral order parameter for a single central atom using:
-    #     q = 1 - (3/8) * sum_{j=1}^3 sum_{k=j+1}^4 (cos(psi_jk) + 1/3)^2
-    #
-    #     where psi_jk is the angle between lines joining the central atom to
-    #     its 4 nearest neighbors j and k.
-    #
-    #     Returns q=1 for perfect tetrahedral, q=0 for random arrangement.
-    #     """
-    #     device = pos.device
-    #     neigh_mask = torch.tensor(
-    #         [s == self.neighbour for s in symbols],
-    #         device=device,
-    #         dtype=torch.bool,
-    #     )
-    #
-    #     cutoff_tensor = torch.tensor(self.cutoff, device=device, dtype=pos.dtype)
-    #     edge_idx, shifts_idx = self.neighbor_list_fn(
-    #         positions=pos,
-    #         cell=cell,
-    #         pbc=True,
-    #         cutoff=cutoff_tensor,
-    #     )
-    #
-    #
-    #     shifts = torch.mm(shifts_idx.to(dtype=pos.dtype), cell)
-    #     i, j = edge_idx
-    #     rij = pos[j] + shifts - pos[i]
-    #
-    #     # Get neighbors for this central atom
-    #     mask = (i == central_idx) & neigh_mask[j]
-    #     vecs = rij[mask]
-    #     n = vecs.size(0)
-    #
-    #     if n < 4:
-    #         # Not enough neighbors - return 0  This could be a problem
-    #         return torch.tensor(0.0, device=device, dtype=pos.dtype, requires_grad=True)
-    #
-    #     # Select exactly 4 nearest neighbors
-    #     distances = torch.norm(vecs, dim=1)
-    #     nearest_4_indices = torch.argsort(distances)[:4]
-    #     vecs_4 = vecs[nearest_4_indices]
-    #
-    #     # Compute q using exact formula from paper
-    #     # Sum over j=1..3, k=j+1..4 (6 angle pairs total)
-    #     acc = 0.0
-    #     for j_idx in range(3):
-    #         for k_idx in range(j_idx + 1, 4):
-    #             v_j = vecs_4[j_idx]
-    #             v_k = vecs_4[k_idx]
-    #
-    #             # Compute cosine of angle between vectors
-    #             cos_psi = torch.nn.functional.cosine_similarity(
-    #                 v_j.view(1, -1), v_k.view(1, -1)
-    #             )
-    #             cos_psi = torch.clamp(cos_psi, -1.0, 1.0)
-    #
-    #             # Formula: (cos(psi_jk) + 1/3)^2
-    #             term = (cos_psi + 1.0 / 3.0) ** 2
-    #             acc += term
-    #
-    #     # q = 1 - (3/8) * sum of 6 terms
-    #     q = 1.0 - (3.0 / 8.0) * acc
-    #     return q
 
-    #Zimmerman paper tetrahedral constraint implementation for the single atom constraint application
-    # def single_atom_tetrahedral_q(
-    #         self, pos: torch.Tensor, cell: torch.Tensor, symbols: list[str],
-    #         central_idx: int, delta_theta: float = 12.0
-    # ) -> torch.Tensor:
-    #     """
-    #     Numerically stable Zimmermann formula with NaN protection.
-    #     """
-    #     device = pos.device
-    #     eps = 1e-6  # Increased epsilon for numerical stability
-    #
-    #     neigh_mask = torch.tensor(
-    #         [s == self.neighbour for s in symbols],
-    #         device=device,
-    #         dtype=torch.bool,
-    #     )
-    #
-    #     cutoff_tensor = torch.tensor(self.cutoff, device=device, dtype=pos.dtype)
-    #     edge_idx, shifts_idx = self.neighbor_list_fn(
-    #         positions=pos, cell=cell, pbc=True, cutoff=cutoff_tensor,
-    #     )
-    #
-    #     shifts = torch.mm(shifts_idx.to(dtype=pos.dtype), cell)
-    #     i, j = edge_idx
-    #     rij = pos[j] + shifts - pos[i]
-    #
-    #     # Get neighbors for this central atom
-    #     mask = (i == central_idx) & neigh_mask[j]
-    #     vecs = rij[mask]
-    #     n_ngh = vecs.size(0)
-    #
-    #     if n_ngh < 3:
-    #         return torch.tensor(0.0, device=device, dtype=pos.dtype, requires_grad=True)
-    #
-    #     # Normalize vectors with safety check
-    #     vec_norms = torch.norm(vecs, dim=1, keepdim=True)
-    #     if (vec_norms < eps).any():
-    #         # Overlapping atoms - return 0
-    #         return torch.tensor(0.0, device=device, dtype=pos.dtype, requires_grad=True)
-    #
-    #     vecs_norm = vecs / vec_norms
-    #
-    #     # Convert parameters
-    #     delta_theta_rad = delta_theta * torch.pi / 180.0
-    #     theta0_rad = 109.47 * torch.pi / 180.0
-    #     two_delta_theta_sq = 2 * delta_theta_rad ** 2
-    #
-    #     total_sum = 0.0
-    #
-    #     for j_idx in range(n_ngh):
-    #         v_j = vecs_norm[j_idx]
-    #
-    #         for k_idx in range(n_ngh):
-    #             if k_idx == j_idx:
-    #                 continue
-    #
-    #             v_k = vecs_norm[k_idx]
-    #
-    #             # Compute polar angle with safety
-    #             cos_theta_k = torch.dot(v_j, v_k).clamp(-1.0 + eps, 1.0 - eps)
-    #             theta_k = torch.acos(cos_theta_k)
-    #
-    #             # Check for NaN
-    #             if torch.isnan(theta_k):
-    #                 continue
-    #
-    #             weight_k = torch.exp(-((theta_k - theta0_rad) ** 2) / two_delta_theta_sq)
-    #
-    #             inner_sum = 0.0
-    #
-    #             for m_idx in range(n_ngh):
-    #                 if m_idx == j_idx or m_idx == k_idx:
-    #                     continue
-    #
-    #                 v_m = vecs_norm[m_idx]
-    #
-    #                 # Compute polar angle
-    #                 cos_theta_m = torch.dot(v_j, v_m).clamp(-1.0 + eps, 1.0 - eps)
-    #                 theta_m = torch.acos(cos_theta_m)
-    #
-    #                 if torch.isnan(theta_m):
-    #                     continue
-    #
-    #                 # Create orthonormal basis with stability checks
-    #                 v_k_component = torch.dot(v_k, v_j) * v_j
-    #                 v_k_perp = v_k - v_k_component
-    #                 v_k_perp_norm = torch.norm(v_k_perp)
-    #
-    #                 # Skip if vectors are too parallel
-    #                 if v_k_perp_norm < eps:
-    #                     continue
-    #
-    #                 v_k_perp = v_k_perp / v_k_perp_norm
-    #
-    #                 # Project v_m
-    #                 v_m_component = torch.dot(v_m, v_j) * v_j
-    #                 v_m_perp = v_m - v_m_component
-    #                 v_m_perp_norm = torch.norm(v_m_perp)
-    #
-    #                 if v_m_perp_norm < eps:
-    #                     continue
-    #
-    #                 v_m_perp = v_m_perp / v_m_perp_norm
-    #
-    #                 # Azimuth angle with safety
-    #                 cos_phi = torch.dot(v_m_perp, v_k_perp).clamp(-1.0 + eps, 1.0 - eps)
-    #
-    #                 # Cross product with check
-    #                 cross_prod = torch.cross(v_k_perp, v_m_perp)
-    #                 cross_norm = torch.norm(cross_prod)
-    #
-    #                 if cross_norm < eps:
-    #                     # Vectors parallel - azimuth undefined, use 0
-    #                     phi = torch.tensor(0.0, device=device)
-    #                 else:
-    #                     sin_phi = torch.dot(cross_prod, v_j).clamp(-1.0, 1.0)
-    #                     phi = torch.atan2(sin_phi, cos_phi)
-    #
-    #                 if torch.isnan(phi):
-    #                     continue
-    #
-    #                 weight_m = torch.exp(-((theta_m - theta0_rad) ** 2) / two_delta_theta_sq)
-    #                 azimuth_term = torch.cos(1.5 * phi) ** 2
-    #
-    #                 inner_sum += azimuth_term * weight_m
-    #
-    #             total_sum += weight_k * inner_sum
-    #
-    #     norm = 1.0 / (n_ngh * (n_ngh - 1) * (n_ngh - 2))
-    #     q = norm * total_sum
-    #
-    #     # Final NaN check
-    #     if torch.isnan(q):
-    #         return torch.tensor(0.0, device=device, dtype=pos.dtype, requires_grad=True)
-    #
-    #     return q
 
-    # def sequential_tetrahedral_optimization(
-    #         self, pos: torch.Tensor, cell: torch.Tensor, symbols: list[str],
-    #         max_steps_per_atom: int = 100,
-    #         q_threshold: float = 0.90,
-    #         lr: float = 0.01,
-    #         start_idx: int = 0,
-    #         freeze_strategy: str = "none",  # "none", "central", or "soft"
-    #         verbose: bool = True
-    # ) -> torch.Tensor:
-    #     """
-    #     Sequentially optimize each central atom's tetrahedral order.
-    #
-    #     Args:
-    #         pos: atomic positions tensor [n_atoms, 3]
-    #         cell: unit cell tensor [3, 3]
-    #         symbols: list of chemical symbols
-    #         max_steps_per_atom: max optimization steps per central atom
-    #         q_threshold: target q value (1.0 = perfect tetrahedral)
-    #         lr: learning rate for Adam optimizer
-    #         start_idx: starting atom index (will find nearest central atom)
-    #         freeze_strategy:
-    #             - "none": allow all atoms to move
-    #             - "central": freeze the central atom itself
-    #             - "soft": apply exponential decay to gradients of optimized atoms
-    #         verbose: print progress
-    #
-    #     Returns:
-    #         Updated positions tensor with improved tetrahedral order
-    #     """
-    #     device = pos.device
-    #
-    #     # Get all central atom indices
-    #     cent_idx = [i for i, s in enumerate(symbols) if s == self.central]
-    #
-    #     if not cent_idx:
-    #         if verbose:
-    #             print("No central atoms found!")
-    #         return pos
-    #
-    #     # Find starting central atom (closest to start_idx)
-    #     if start_idx not in cent_idx:
-    #         distances_to_start = torch.norm(
-    #             pos[cent_idx] - pos[start_idx], dim=1
-    #         )
-    #         start_idx = cent_idx[distances_to_start.argmin().item()]
-    #
-    #     # Order central atoms by distance from start_idx
-    #     distances = torch.norm(pos[cent_idx] - pos[start_idx], dim=1)
-    #     sorted_indices = torch.argsort(distances).cpu().tolist()
-    #     ordered_cent_idx = [cent_idx[i] for i in sorted_indices]
-    #
-    #     if verbose:
-    #         print(f"\n=== Sequential Tetrahedral Optimization ===")
-    #         print(f"Optimizing {len(ordered_cent_idx)} {self.central} atoms")
-    #         print(f"Target q >= {q_threshold:.2f}, max {max_steps_per_atom} steps per atom")
-    #         print(f"Freeze strategy: {freeze_strategy}\n")
-    #
-    #     # Track which atoms have been optimized (for soft freezing)
-    #     optimized_atoms = set()
-    #
-    #     # Work with detached copy of positions
-    #     pos_opt = pos.detach().clone()
-    #
-    #     q_initial_list = []
-    #     q_final_list = []
-    #
-    #     for atom_num, ic in enumerate(ordered_cent_idx):
-    #         # Compute initial q for this atom
-    #         with torch.no_grad():
-    #             q_initial = self.single_atom_tetrahedral_q(
-    #                 pos_opt, cell, symbols, ic
-    #             ).item()
-    #         q_initial_list.append(q_initial)
-    #
-    #         # Create optimizer for this optimization round
-    #         pos_local = pos_opt.clone().requires_grad_(True)
-    #         optimizer = torch.optim.Adam([pos_local], lr=lr)
-    #
-    #         best_q = -float('inf')
-    #         best_pos = pos_local.detach().clone()
-    #         no_improvement = 0
-    #
-    #         for step in range(max_steps_per_atom):
-    #             optimizer.zero_grad()
-    #
-    #             # Compute q for this specific atom
-    #             q = self.single_atom_tetrahedral_q(pos_local, cell, symbols, ic)
-    #
-    #             # Loss: maximize q (minimize -q)
-    #             loss = -q
-    #             loss.backward()
-    #
-    #             # Apply freeze strategy
-    #             if freeze_strategy == "central":
-    #                 # Freeze the central atom itself
-    #                 if pos_local.grad is not None:
-    #                     pos_local.grad[ic] = 0.0
-    #
-    #             elif freeze_strategy == "soft" and optimized_atoms:
-    #                 # Apply exponential decay to previously optimized atoms
-    #                 with torch.no_grad():
-    #                     for opt_idx in optimized_atoms:
-    #                         decay_factor = 0.1  # Reduce gradient by 90%
-    #                         if pos_local.grad is not None:
-    #                             pos_local.grad[opt_idx] *= decay_factor
-    #
-    #             # Update positions
-    #             optimizer.step()
-    #
-    #             # Track best configuration
-    #             current_q = q.item()
-    #             if current_q > best_q:
-    #                 best_q = current_q
-    #                 best_pos = pos_local.detach().clone()
-    #                 no_improvement = 0
-    #             else:
-    #                 no_improvement += 1
-    #
-    #             # Early stopping if converged or no improvement
-    #             if current_q >= q_threshold:
-    #                 if verbose and atom_num % 10 == 0:
-    #                     print(f"  Atom {atom_num + 1}: converged at step {step}, q={current_q:.4f}")
-    #                 break
-    #
-    #             if no_improvement >= 20:
-    #                 break
-    #
-    #         # Update positions with best found
-    #         pos_opt = best_pos.detach().clone()
-    #         optimized_atoms.add(ic)
-    #         q_final_list.append(best_q)
-    #
-    #         # Print progress every 10 atoms
-    #         if verbose and (atom_num + 1) % 10 == 0:
-    #             avg_q_initial = sum(q_initial_list[-10:]) / 10
-    #             avg_q_final = sum(q_final_list[-10:]) / 10
-    #             print(f"  Processed {atom_num + 1}/{len(ordered_cent_idx)}: "
-    #                   f"avg q {avg_q_initial:.3f} → {avg_q_final:.3f}")
-    #
-    #     if verbose:
-    #         avg_q_initial_all = sum(q_initial_list) / len(q_initial_list)
-    #         avg_q_final_all = sum(q_final_list) / len(q_final_list)
-    #         print(f"\n=== Optimization Complete ===")
-    #         print(f"Overall: q {avg_q_initial_all:.4f} → {avg_q_final_all:.4f}")
-    #         print(f"Min q: {min(q_final_list):.4f}, Max q: {max(q_final_list):.4f}\n")
-    #
-    #     return pos_opt
-
-    # #my version of the q_tet with the weighted average
-    # def mean_tetrahedral_q(
-    #         self, pos: torch.Tensor, cell: torch.Tensor, symbols: list[str],
-    #         delta_theta=10.0, theta0=109.47
-    # ) -> torch.Tensor:
-    #     device = pos.device
-    #     cent_idx = torch.tensor(
-    #         [i for i, s in enumerate(symbols) if s == self.central],
-    #         device=device,
-    #         dtype=torch.long,
-    #     )
-    #     neigh_mask = torch.tensor(
-    #         [s == self.neighbour for s in symbols],
-    #         device=device,
-    #         dtype=torch.bool,
-    #     )
-    #
-    #     cutoff_tensor = torch.tensor(self.cutoff, device=device, dtype=pos.dtype)
-    #     edge_idx, shifts_idx = self.neighbor_list_fn(
-    #         positions=pos,
-    #         cell=cell,
-    #         pbc=True,
-    #         cutoff=cutoff_tensor,
-    #     )
-    #
-    #     shifts = torch.mm(shifts_idx.to(dtype=pos.dtype), cell)
-    #     i, j = edge_idx
-    #     rij = pos[j] + shifts - pos[i]
-    #
-    #     theta0_rad = theta0 * torch.pi / 180.0
-    #     delta_theta_rad = delta_theta * torch.pi / 180.0
-    #
-    #     q_vals = []
-    #
-    #     for ic in cent_idx:
-    #         mask = (i == ic) & neigh_mask[j]
-    #         vecs = rij[mask]
-    #         n = vecs.size(0)
-    #         if n < 3:
-    #             continue
-    #
-    #         acc = 0.0
-    #         for idx1 in range(n):
-    #             for idx2 in range(idx1 + 1, n):
-    #                 v1 = vecs[idx1]
-    #                 v2 = vecs[idx2]
-    #                 cos_theta = torch.nn.functional.cosine_similarity(v1.view(1, -1), v2.view(1, -1))
-    #                 cos_theta = torch.clamp(cos_theta, -1.0, 1.0)
-    #                 theta = torch.acos(cos_theta)
-    #                 weight = torch.exp(-((theta - theta0_rad) ** 2) / (2 * delta_theta_rad ** 2))
-    #                 acc += weight
-    #
-    #         norm = 2.0 / (n * (n - 1))
-    #         q_val = acc * norm
-    #         q_vals.append(q_val)
-    #
-    #     if not q_vals:
-    #         return torch.zeros((), device=device, dtype=pos.dtype, requires_grad=True)
-    #
-    #     return torch.stack(q_vals).mean()
 
     #Zimmerman paper implementation of the mean tetrahdral constraint (with torch no grad)
     # def tetrahedral_q(
     #         self, pos: torch.Tensor, cell: torch.Tensor, symbols: list[str],
-    #         delta_theta: float = 12.0  # Parameter from paper (in degrees)
+    #         delta_theta: float = 12.0
     # ) -> torch.Tensor:
     #     """
-    #     Compute mean tetrahedral order parameter using Zimmermann et al. (2015) formula:
+    #     Vectorized tetrahedral order parameter using Zimmermann et al. (2015) formula:
     #
+    #     q_tet = 1 / [N_ngh(N_ngh-1)(N_ngh-2)] * sum_{j≠k} {
+    #         exp[-(θ_k - 109.47°)² / (2Δθ²)] *
+    #         sum_{m≠j,k} cos²(1.5φ) * exp[-(θ_m - 109.47°)² / (2Δθ²)]
+    #     }
     #
-    #     q_tet = (1 / [N_ngh * (N_ngh-1) * (N_ngh-2)]) *
-    #             sum_{j≠k} { exp[-(θ_k - 109.47)² / (2Δθ²)] *
-    #                         sum_{m≠j,k} cos²(1.5φ) * exp[-(θ_m - 109.47)² / (2Δθ²)] }
-    #
-    #
-    #     Where:
-    #     - θ_k is the polar angle between bonds to neighbors j and k
-    #     - φ is the azimuth angle between bond i-m and the plane spanned by i,j,k
-    #     - Δθ = 12° controls the Gaussian width for rewarding ideal angles
-    #
-    #
-    #     Returns q≈1 for perfect tetrahedral, q≈0 for non-tetrahedral.
+    #     GRADIENT-SAFE: No in-place operations.
     #     """
     #     device = pos.device
+    #     dtype = pos.dtype
     #
-    #     # Find all central atoms (Si)
-    #     cent_idx = torch.tensor(
-    #         [i for i, s in enumerate(symbols) if s == self.central],
-    #         device=device,
-    #         dtype=torch.long,
+    #     cent_mask = torch.tensor(
+    #         [s == self.central for s in symbols],
+    #         device=device, dtype=torch.bool
     #     )
-    #     print("cent_idx", cent_idx.shape)
-    #     print(cent_idx)
-    #
-    #     # Get the mask of all atoms
     #     neigh_mask = torch.tensor(
-    #         [s == self.neighbour for s in symbols],  # Returns [True, True, False, False, True, ...]
-    #         device=device,
-    #         dtype=torch.bool,
+    #         [s == self.neighbour for s in symbols],
+    #         device=device, dtype=torch.bool
     #     )
-    #     print("neigh_mask", neigh_mask.shape)
-    #     print(neigh_mask)
     #
-    #     # Get neighbor list
-    #     cutoff_tensor = torch.tensor(self.cutoff, device=device, dtype=pos.dtype)
+    #     cutoff_tensor = torch.tensor(self.cutoff, device=device, dtype=dtype)
     #     edge_idx, shifts_idx = self.neighbor_list_fn(
-    #         positions=pos,
-    #         cell=cell,
-    #         pbc=True,
-    #         cutoff=cutoff_tensor,
+    #         positions=pos, cell=cell, pbc=True, cutoff=cutoff_tensor
     #     )
     #
-    #     shifts = torch.mm(shifts_idx.to(dtype=pos.dtype), cell)
+    #     shifts = torch.mm(shifts_idx.to(dtype=dtype), cell)
     #     i, j = edge_idx
     #     rij = pos[j] + shifts - pos[i]
+    #     vecs_norm = torch.nn.functional.normalize(rij, dim=1)
     #
-    #     # Convert delta_theta to radians and precompute constants
-    #     delta_theta_rad = torch.tensor(delta_theta * torch.pi / 180.0, device=device)
-    #     theta0_rad = torch.tensor(109.47 * torch.pi / 180.0, device=device)
-    #     two_delta_theta_sq = 2 * delta_theta_rad ** 2
+    #     # Constants
+    #     delta_theta_rad = torch.tensor(delta_theta * torch.pi / 180.0, device=device, dtype=dtype)
+    #     theta0_rad = torch.tensor(109.47 * torch.pi / 180.0, device=device, dtype=dtype)
+    #     two_delta_theta_sq = 2.0 * delta_theta_rad ** 2
     #
     #     q_vals = []
-    #     atoms_with_few_neighbors = 0
-    #     neighbor_counts = []
-    #     for ic in cent_idx:
-    #         # Get vectors to neighbors
-    #         mask = (i == ic) & neigh_mask[j]
-    #         vecs = rij[mask]
-    #         n_ngh = vecs.size(0)
-    #         neighbor_counts.append(n_ngh)
     #
-    #         # Need at least 3 neighbors
+    #     for ic in torch.where(cent_mask)[0]:
+    #         mask = (i == ic) & neigh_mask[j]
+    #         vecs = vecs_norm[mask]  # [N_ngh, 3]
+    #         n_ngh = vecs.size(0)
+    #
     #         if n_ngh < 4:
-    #             atoms_with_few_neighbors += 1
     #             continue
     #
-    #         # Normalize vectors
-    #         vecs_norm = vecs / torch.norm(vecs, dim=1, keepdim=True)
-    #
-    #         # Normalization factor from paper
+    #         # Normalization factor
     #         norm = 1.0 / (n_ngh * (n_ngh - 1) * (n_ngh - 2))
     #
-    #         total_sum = 0.0
+    #         # === Vectorized (j, k) pair computation ===
+    #         # Create index arrays
+    #         idx_range = torch.arange(n_ngh, device=device, dtype=torch.long)
+    #         idx_j = idx_range.unsqueeze(1).expand(-1, n_ngh)  # [N, N]
+    #         idx_k = idx_range.unsqueeze(0).expand(n_ngh, -1)  # [N, N]
+    #         jk_mask = (idx_j != idx_k).float()  # [N, N]
     #
-    #         # Outer sum over pairs j, k (j ≠ k)
-    #         for j_idx in range(n_ngh):
-    #             v_j = vecs_norm[j_idx]
+    #         # Pairwise vectors
+    #         vecs_j = vecs.unsqueeze(1).expand(-1, n_ngh, -1)  # [N, N, 3]
+    #         vecs_k = vecs.unsqueeze(0).expand(n_ngh, -1, -1)  # [N, N, 3]
     #
-    #             for k_idx in range(n_ngh):
-    #                 if k_idx == j_idx:
-    #                     continue
+    #         # Compute polar angles θ_jk between pairs
+    #         cos_theta_jk = torch.sum(vecs_j * vecs_k, dim=2).clamp(-1.0, 1.0)
+    #         theta_jk = torch.acos(cos_theta_jk)
     #
-    #                 v_k = vecs_norm[k_idx]
+    #         # Gaussian weight for θ_k
+    #         weight_k = torch.exp(-((theta_jk - theta0_rad) ** 2) / two_delta_theta_sq) * jk_mask
     #
-    #                 # Compute polar angle θ_k between v_j and v_k
-    #                 cos_theta_k = torch.dot(v_j, v_k).clamp(-1.0, 1.0)
-    #                 theta_k = torch.acos(cos_theta_k)
+    #         # === Vectorized (j, k, m) triple computation ===
+    #         vecs_j_3d = vecs.unsqueeze(1).unsqueeze(2).expand(-1, n_ngh, n_ngh, -1)
+    #         vecs_k_3d = vecs.unsqueeze(0).unsqueeze(2).expand(n_ngh, -1, n_ngh, -1)
+    #         vecs_m_3d = vecs.unsqueeze(0).unsqueeze(1).expand(n_ngh, n_ngh, -1, -1)
     #
-    #                 # Gaussian weight for polar angle
-    #                 weight_k = torch.exp(-((theta_k - theta0_rad) ** 2) / two_delta_theta_sq)
+    #         # Compute polar angles θ_jm
+    #         cos_theta_jm = torch.sum(vecs_j_3d * vecs_m_3d, dim=3).clamp(-1.0, 1.0)
+    #         theta_jm = torch.acos(cos_theta_jm)
+    #         weight_m = torch.exp(-((theta_jm - theta0_rad) ** 2) / two_delta_theta_sq)
     #
-    #                 # Inner sum over m (m ≠ j, m ≠ k)
-    #                 inner_sum = 0.0
+    #         # === Azimuth angle φ computation ===
+    #         # Plane normal: n = v_j × v_k
+    #         cross_jk = torch.cross(vecs_j_3d, vecs_k_3d, dim=3)
+    #         cross_jk_norm = torch.norm(cross_jk, dim=3, keepdim=True).clamp(min=1e-8)
+    #         plane_normal = cross_jk / cross_jk_norm
     #
-    #                 for m_idx in range(n_ngh):
-    #                     if m_idx == j_idx or m_idx == k_idx:
-    #                         continue
+    #         # Orthonormal basis: v_k_perp = normalize(v_k - (v_k·v_j)v_j)
+    #         dot_kj = torch.sum(vecs_k_3d * vecs_j_3d, dim=3, keepdim=True)
+    #         vecs_k_perp = vecs_k_3d - dot_kj * vecs_j_3d
+    #         vecs_k_perp = vecs_k_perp / torch.norm(vecs_k_perp, dim=3, keepdim=True).clamp(min=1e-8)
     #
-    #                     v_m = vecs_norm[m_idx]
+    #         # Orthonormal basis: v_m_perp = normalize(v_m - (v_m·v_j)v_j)
+    #         dot_mj = torch.sum(vecs_m_3d * vecs_j_3d, dim=3, keepdim=True)
+    #         vecs_m_perp = vecs_m_3d - dot_mj * vecs_j_3d
+    #         vecs_m_perp = vecs_m_perp / torch.norm(vecs_m_perp, dim=3, keepdim=True).clamp(min=1e-8)
     #
-    #                     # Compute polar angle θ_m between v_j and v_m
-    #                     cos_theta_m = torch.dot(v_j, v_m).clamp(-1.0, 1.0)
-    #                     theta_m = torch.acos(cos_theta_m)
+    #         # Azimuth angle φ between v_m and plane defined by v_j, v_k
+    #         cos_phi = torch.sum(vecs_m_perp * vecs_k_perp, dim=3).clamp(-1.0, 1.0)
+    #         cross_km = torch.cross(vecs_k_perp, vecs_m_perp, dim=3)
+    #         sin_phi = torch.sum(cross_km * vecs_j_3d, dim=3).clamp(-1.0, 1.0)
+    #         phi = torch.atan2(sin_phi, cos_phi)
     #
-    #                     # Compute azimuth angle φ
-    #                     # φ is angle between v_m and the plane spanned by v_j and v_k
-    #                     # Plane normal: n = v_j × v_k
-    #                     plane_normal = torch.linalg.cross(v_j, v_k)
-    #                     plane_normal = plane_normal / (torch.norm(plane_normal) + 1e-8)
+    #         # === Apply formula: cos²(1.5φ) ===
+    #         azimuth_term = torch.cos(1.5 * phi) ** 2
     #
-    #                     # Project v_m onto plane defined by v_j and v_k
-    #                     # φ can be computed from the cross product and dot product
-    #                     # For azimuth angle in spherical coords with v_j as north pole:
-    #                     # We need angle of v_m in the plane perpendicular to v_j
+    #         # === m ≠ j AND m ≠ k mask ===
+    #         idx_j_3d = idx_j.unsqueeze(2).expand(-1, -1, n_ngh)
+    #         idx_k_3d = idx_k.unsqueeze(2).expand(-1, -1, n_ngh)
+    #         idx_m_3d = idx_range.view(1, 1, -1).expand(n_ngh, n_ngh, -1)
+    #         m_valid = ((idx_m_3d != idx_j_3d) & (idx_m_3d != idx_k_3d)).float()
     #
-    #                     # Create orthonormal basis: v_j (north), v_k_perp (east)
-    #                     # v_k_perp = normalize(v_k - (v_k·v_j)v_j)
-    #                     v_k_component_along_j = torch.dot(v_k, v_j) * v_j
-    #                     v_k_perp = v_k - v_k_component_along_j
-    #                     v_k_perp = v_k_perp / (torch.norm(v_k_perp) + 1e-8)
+    #         # Inner sum: sum_{m≠j,k} cos²(1.5φ) * exp[-(θ_m - 109.47°)² / (2Δθ²)]
+    #         inner_sum = torch.sum(azimuth_term * weight_m * m_valid, dim=2)
     #
-    #                     # Project v_m onto plane perpendicular to v_j
-    #                     v_m_component_along_j = torch.dot(v_m, v_j) * v_j
-    #                     v_m_perp = v_m - v_m_component_along_j
-    #                     v_m_perp_norm = torch.norm(v_m_perp) + 1e-8
-    #                     v_m_perp = v_m_perp / v_m_perp_norm
+    #         # Outer sum: sum_{j≠k} weight_k * inner_sum
+    #         total_sum = torch.sum(weight_k * inner_sum)
     #
-    #                     # Azimuth angle φ in plane perpendicular to v_j
-    #                     cos_phi = torch.dot(v_m_perp, v_k_perp).clamp(-1.0, 1.0)
-    #                     sin_phi = torch.dot(torch.linalg.cross(v_k_perp, v_m_perp), v_j).clamp(-1.0, 1.0)
-    #                     phi = torch.atan2(sin_phi, cos_phi)
-    #
-    #                     # Gaussian weight for polar angle θ_m
-    #                     weight_m = torch.exp(-((theta_m - theta0_rad) ** 2) / two_delta_theta_sq)
-    #
-    #                     # Azimuth contribution: cos²(1.5φ)
-    #                     azimuth_term = torch.cos(1.5 * phi) ** 2
-    #
-    #                     inner_sum += azimuth_term * weight_m
-    #
-    #                 total_sum += weight_k * inner_sum
-    #
+    #         # Final q_tet value
     #         q_val = norm * total_sum
     #         q_vals.append(q_val)
-    #     print(f"Si atoms skipped due to < 4 neighbors: {atoms_with_few_neighbors}")
-    #     print(
-    #         f"Neighbor count distribution: min={min(neighbor_counts)}, max={max(neighbor_counts)}, mean={sum(neighbor_counts) / len(neighbor_counts):.2f}")
+    #
     #     if not q_vals:
-    #         return torch.zeros((), device=device, dtype=pos.dtype, requires_grad=True)
+    #         return torch.zeros((), device=device, dtype=dtype, requires_grad=True)
     #
     #     return torch.stack(q_vals)
-
-        #return torch.stack(q_vals)
 
     # #Trying the sequential tetrahedral formula for the mean_tetrahedral_q function
     def tetrahedral_q(
@@ -796,8 +363,15 @@ class XRDModel(nn.Module):
             device=device,
             dtype=torch.long,
         )
+        # neigh_mask = torch.tensor(
+        #     [s == self.neighbour for s in symbols],
+        #     device=device,
+        #     dtype=torch.bool,
+        # )
+
+        # NEW (checks BOTH O and N):
         neigh_mask = torch.tensor(
-            [s == self.neighbour for s in symbols],
+            [s in ["O", "N"] for s in symbols],  # ← Accept both O and N
             device=device,
             dtype=torch.bool,
         )
@@ -854,6 +428,135 @@ class XRDModel(nn.Module):
 
         if not q_vals:
             return torch.zeros((), device=device, dtype=pos.dtype, requires_grad=True)
+
+        return torch.stack(q_vals)
+
+
+    def octahedral_q(
+            self, pos: torch.Tensor, cell: torch.Tensor, symbols: list[str]
+    ) -> torch.Tensor:
+        """
+        Compute mean octahedral order parameter based on the provided formula image.
+        q_oct = 1/Norm * {
+            sum_{j!=k} [
+                3 * H(theta_jk - theta_thr) * exp(-(theta_jk - 180)^2 / (2*d_theta1^2))
+            ] +
+            sum_{j!=k} sum_{m!=j,k} [
+                H(theta_thr - theta_jk) * H(theta_thr - theta_jm) *
+                cos^2(2*phi_m) * exp(-(theta_jm - 90)^2 / (2*d_theta2^2))
+            ]
+        }
+        """
+        device = pos.device
+        dtype = pos.dtype
+
+        # Constants from the formula (angles in degrees)
+        theta_thr_deg = 160.0
+        d_theta1_deg = 12.0
+        d_theta2_deg = 10.0
+
+        # Convert degrees to radians for torch functions
+        theta_thr = math.radians(theta_thr_deg)
+
+        cent_idx = torch.tensor(
+            [i for i, s in enumerate(symbols) if s == self.central],
+            device=device,
+            dtype=torch.long,
+        )
+        neigh_mask = torch.tensor(
+            [s == self.neighbour for s in symbols],
+            device=device,
+            dtype=torch.bool,
+        )
+
+        cutoff_tensor = torch.tensor(self.cutoff, device=device, dtype=dtype)
+        edge_idx, shifts_idx = self.neighbor_list_fn(
+            positions=pos,
+            cell=cell,
+            pbc=True,
+            cutoff=cutoff_tensor,
+        )
+
+        shifts = torch.mm(shifts_idx.to(dtype=dtype), cell)
+        i, j = edge_idx
+        rij = pos[j] + shifts - pos[i]
+
+        q_vals = []
+
+        for ic in cent_idx:
+            mask = (i == ic) & neigh_mask[j]
+            vecs = rij[mask]
+            n_ngh = vecs.size(0)
+
+            if n_ngh < 6:  # Need at least 6 neighbors for octahedron
+                continue
+
+            total_sum = 0.0
+
+            # Loop over all ordered pairs of neighbors (j, k)
+            for j_idx in range(n_ngh):
+                r_ij = vecs[j_idx]
+                z_axis = r_ij / torch.norm(r_ij)
+
+                for k_idx in range(n_ngh):
+                    if k_idx == j_idx:
+                        continue
+
+                    r_ik = vecs[k_idx]
+
+                    # --- Calculate theta_jk (polar angle of k in j's frame) ---
+                    cos_theta_jk = torch.dot(r_ij, r_ik) / (torch.norm(r_ij) * torch.norm(r_ik))
+                    cos_theta_jk = torch.clamp(cos_theta_jk, -1.0, 1.0)
+                    theta_jk = torch.acos(cos_theta_jk)
+                    theta_jk_deg = math.degrees(theta_jk.item())
+
+                    # --- Term A ---
+                    if theta_jk_deg > theta_thr_deg:
+                        exponent = -((theta_jk_deg - 180.0) ** 2) / (2 * d_theta1_deg ** 2)
+                        total_sum += 3.0 * torch.exp(torch.tensor(exponent, device=device, dtype=dtype))
+
+                    # --- Term B ---
+                    if theta_jk_deg < theta_thr_deg:
+                        # Define local coordinate system for phi calculation
+                        proj_ik_on_ij = torch.dot(r_ik, z_axis) * z_axis
+                        x_axis = r_ik - proj_ik_on_ij
+                        if torch.norm(x_axis) < 1e-6: continue  # colinear vectors, phi is ill-defined
+                        x_axis = x_axis / torch.norm(x_axis)
+                        y_axis = torch.cross(z_axis, x_axis)
+
+                        # Loop over other neighbors m
+                        for m_idx in range(n_ngh):
+                            if m_idx == j_idx or m_idx == k_idx:
+                                continue
+
+                            r_im = vecs[m_idx]
+
+                            cos_theta_jm = torch.dot(r_ij, r_im) / (torch.norm(r_ij) * torch.norm(r_im))
+                            cos_theta_jm = torch.clamp(cos_theta_jm, -1.0, 1.0)
+                            theta_jm = torch.acos(cos_theta_jm)
+                            theta_jm_deg = math.degrees(theta_jm.item())
+
+                            if theta_jm_deg < theta_thr_deg:
+                                # Calculate phi_m
+                                proj_im_on_z = torch.dot(r_im, z_axis) * z_axis
+                                r_im_proj_xy = r_im - proj_im_on_z
+
+                                phi_m = torch.atan2(torch.dot(r_im_proj_xy, y_axis), torch.dot(r_im_proj_xy, x_axis))
+
+                                cos2_2phi = torch.cos(2 * phi_m) ** 2
+                                exponent = -((theta_jm_deg - 90.0) ** 2) / (2 * d_theta2_deg ** 2)
+
+                                term_B = cos2_2phi * torch.exp(torch.tensor(exponent, device=device, dtype=dtype))
+                                total_sum += term_B
+
+            # Normalization
+            if n_ngh > 3:
+                norm_factor = n_ngh * (3 + (n_ngh - 2) * (n_ngh - 3))
+                q_val = total_sum / norm_factor
+                q_vals.append(q_val)
+
+        if not q_vals:
+            return torch.zeros((), device=device, dtype=dtype, requires_grad=True)
 
         return torch.stack(q_vals)
 

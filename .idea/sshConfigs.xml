@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig authType="PASSWORD" host="nibi.sharcnet.ca" id="189195e4-5c7d-43e8-a3ba-fb4699e77192" port="22" nameFormat="DESCRIPTIVE" username="agore" useOpenSSHConfig="true" />
+    </configs>
+  </component>
+</project>

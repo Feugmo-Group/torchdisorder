@@ -1,0 +1,31 @@
+# Path configuration for experimental Li3PS4 data
+root_dir: ${oc.env:PROJECT_ROOT}/data-release
+
+data:
+  t_of_r_path: ${data.root_dir}/xrd_measurements/Li3PS4_gamma/T_of_r.csv
+  f_of_q_path: ${data.root_dir}/xrd_measurements/Li3PS4_gamma/F_of_Q_actual.csv
+
+kernel_width: 0.035  # Adjust based on experimental resolution
+
+neutron_scattering_lengths:
+  Li: -1.9023
+  P: 5.1374
+  S: 2.8477
+
+xray_form_factor_params:
+  Li:
+    a: [1.1282, 4.7392, 1.8622, 6.291]
+    b: [3.954, 0.712, 42.3975, 0.028]
+    c: [-9.557]
+  P:
+    a: [6.2915, 4.1791, 1.9200, 1.541]
+    b: [1.9067, 27.0059, 0.526, 68.1645]
+    c: [1.1407]
+  S:
+    a: [6.2915, 5.2915, 1.4386, 1.5410]
+    b: [1.4679, 22.2151, 0.2536, 56.1725]
+    c: [1.4730]
+
+central: 'P'          # Consider S or P as central atom for PS4 tetrahedra analysis
+neighbour: 'S'       # Analyze Li coordination around S/P
+cutoff: 5.5           # Typical for first coordination shell in thiophosphates

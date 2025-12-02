@@ -3,8 +3,8 @@ defaults:
   - experiment: basic
   - trainer: cooper
   - trainer/mace
-  - structure: silica
-  - data: SiO2
+  - structure: iron_oxide
+  - data: FeOx
   - wandb: disabled
   - _self_
 
@@ -21,7 +21,7 @@ output:
   save_plots: true
   plots_dir: ${oc.env:OUTPUT_DIR,outputs/${experiment.name}/${now:%Y-%m-%d}/${now:%H-%M-%S}/plots}
 
-max_steps: 10000
+max_steps: 23000
 optimize_cell: false
 lr: 0.05
 tol: 1e-2
