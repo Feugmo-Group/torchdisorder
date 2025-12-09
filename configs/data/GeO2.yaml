@@ -2,7 +2,7 @@
 root_dir: ${oc.env:PROJECT_ROOT}/data-release
 data:
   t_of_r_path: ${data.root_dir}/xrd_measurements/GeO2/T_of_r.csv
-  f_of_q_path: ${data.root_dir}/xrd_measurements/GeO2/F_of_Q_actual.csv
+  f_of_q_path: ${data.root_dir}/xrd_measurements/GeO2/F_of_Q.csv
 
 
 kernel_width: 0.035
