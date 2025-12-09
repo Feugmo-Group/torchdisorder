@@ -1,32 +1,29 @@
+# CORRECTED CONFIGURATION
 # Path configuration for experimental a-FeOx data
 root_dir: ${oc.env:PROJECT_ROOT}/data-release
 data:
-  # Point these to the FeOx files you digitized/calculated
   t_of_r_path: ${data.root_dir}/xrd_measurements/Fe2O3/T_of_r.csv
   f_of_q_path: ${data.root_dir}/xrd_measurements/Fe2O3/F_of_Q.csv
 
 kernel_width: 0.035
 
-# Coherent Neutron Scattering Lengths (in fm)
-# Source: NIST Center for Neutron Research
+# Coherent Neutron Scattering Lengths (fm) - CORRECT
 neutron_scattering_lengths:
   Fe: 9.45
   O: 5.803
 
-# X-ray Atomic Form Factors (Waasikirf-Kirfel parametrization)
-# Coefficients for Iron (Fe) and Oxygen (O)
+# X-ray Atomic Form Factors (Ionic - Fe3+, O2-) - UPDATED
 xray_form_factor_params:
   Fe:
-    a: [11.0002, 7.343, 3.3697, 2.5709]
-    b: [4.9936, 0.3464, 17.4917, 125.439]
-    c: [1.6991]
+    a: [11.087, 5.766, 4.496, 1.632]
+    b: [4.498, 0.237, 13.905, 71.979]
+    c: [0.019]
   O:
-    a: [3.0485, 2.2868, 1.5463, 0.867]
-    b: [13.2771, 5.7011, 0.3239, 32.9089]
-    c: [0.2508]
+    a: [3.816, 2.508, 1.492, 1.096]
+    b: [15.114, 6.758, 0.444, 46.142]
+    c: [1.088]
 
-# Coordination Constraints (Octahedral Fe-O)
-# "Only octahedrally coordinated iron atoms"
+# Coordination Constraints - CORRECT
 central: 'Fe'
 neighbour: 'O'
-cutoff: 2.5  # Fe-O bond is ~1.9-2.0 Å. 2.5 Å safely captures the first shell.
+cutoff: 2.5 

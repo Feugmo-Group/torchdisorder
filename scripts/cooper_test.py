@@ -55,7 +55,7 @@ def main(cfg: DictConfig) -> None:
     run = wandb.init(
         project="torchdisorder-optimization",
         config=wandb_config,
-        name=f"run_{cfg.structure.name}_{int(time.time())}",
+        name=f"run_{int(time.time())}",
         tags=["xrd", "structure_optimization"]
     )
 
@@ -209,9 +209,9 @@ def main(cfg: DictConfig) -> None:
         target_kind="S_Q",
         q_bins=q_bins,
         loss_fn=loss_fn,
-        q_threshold=0.5,  # for octahedra halide
+        q_threshold=0.7,  # SiO2
         device=cfg.accelerator,
-        penalty_rho=10,  # for halide
+        penalty_rho=10,  # SiO2
     )
 
     # Setup parameters
@@ -223,10 +223,10 @@ def main(cfg: DictConfig) -> None:
         primal_params.append(base_sim_state.cell)
 
     # Create optimizers and adjust lr for training here
-    primal_optimizer = torch.optim.Adam(primal_params, lr=1e-2)
+    primal_optimizer = torch.optim.Adam(primal_params, lr=1e-3)
     dual_optimizer = torch.optim.SGD(
         cooper_problem.dual_parameters(),
-        lr=1e-1,
+        lr=1e-2,
         maximize=True
     )
 
@@ -254,19 +254,19 @@ def main(cfg: DictConfig) -> None:
         )
 
     plateau_detector = PlateauDetector(
-        window=200,  # Number of steps to check for plateau
+        window=1000,  # Number of steps to check for plateau
         melt_quench_fn=melt_quench_wrapper,
         max_melt_quench=2  # Change this to toggle melt_quench
     )
 
-    monitor = LivePlotMonitor(
-        q_bins_np=q_bins.cpu().numpy(),
-        target_sq_np=rdf_data.F_q_target.cpu().numpy(),
-        port=8050
-    )
-    monitor.start_server()
-    time.sleep(2)  # Give server time to start
-    PLOT_UPDATE_INTERVAL = 1
+    # monitor = LivePlotMonitor(
+    #     q_bins_np=q_bins.cpu().numpy(),
+    #     target_sq_np=rdf_data.F_q_target.cpu().numpy(),
+    #     port=8050
+    # )
+    # monitor.start_server()
+    # time.sleep(2)  # Give server time to start
+    # PLOT_UPDATE_INTERVAL = 1
 
     # ====== CHECKPOINT CONFIGURATION ======
     CHECKPOINT_INTERVAL = 10000  # Save every 10,000 steps
@@ -391,27 +391,6 @@ def main(cfg: DictConfig) -> None:
             print(f"Results saved to {output_dir}")
             print(f"{'=' * 60}\n")
 
-            # if cfg.output.save_plots and cmp_state is not None:
-            #     pred_S_Q = cmp_state.misc.get("Y")
-            #     if pred_S_Q is not None:
-            #         pred_S_Q = pred_S_Q.detach().cpu().numpy()
-            #         if pred_S_Q.ndim > 1:
-            #             pred_S_Q = pred_S_Q.flatten()
-            #
-            #         fig = go.Figure()
-            #         fig.add_trace(go.Scatter(
-            #             x=rdf_data.q_bins.cpu().numpy(),
-            #             y=rdf_data.F_q_target.cpu().numpy(),
-            #             mode="lines",
-            #             name="Target S(Q)"
-            #         ))
-            #         fig.add_trace(go.Scatter(
-            #             x=rdf_data.q_bins.cpu().numpy(),
-            #             y=pred_S_Q,
-            #             mode="lines+markers",
-            #             name="Predicted S(Q)"
-            #         ))
-            #         fig.write_html(str(output_dir / "S_Q_final.html"))
             if cfg.output.save_plots and cmp_state is not None:
                 pred_S_Q = cmp_state.misc.get("Y")
                 if pred_S_Q is not None:
@@ -424,15 +403,36 @@ def main(cfg: DictConfig) -> None:
                         x=rdf_data.q_bins.cpu().numpy(),
                         y=rdf_data.F_q_target.cpu().numpy(),
                         mode="lines",
-                        name="Target G(r)"
+                        name="Target S(Q)"
                     ))
                     fig.add_trace(go.Scatter(
                         x=rdf_data.q_bins.cpu().numpy(),
                         y=pred_S_Q,
                         mode="lines+markers",
-                        name="Predicted G(r)"
+                        name="Predicted S(Q)"
                     ))
-                    fig.write_html(str(output_dir / "G_r_final.html"))
+                    fig.write_html(str(output_dir / "S_Q_final.html"))
+            # if cfg.output.save_plots and cmp_state is not None:
+            #     pred_S_Q = cmp_state.misc.get("Y")
+            #     if pred_S_Q is not None:
+            #         pred_S_Q = pred_S_Q.detach().cpu().numpy()
+            #         if pred_S_Q.ndim > 1:
+            #             pred_S_Q = pred_S_Q.flatten()
+            #
+            #         fig = go.Figure()
+            #         fig.add_trace(go.Scatter(
+            #             x=rdf_data.q_bins.cpu().numpy(),
+            #             y=rdf_data.F_q_target.cpu().numpy(),
+            #             mode="lines",
+            #             name="Target G(r)"
+            #         ))
+            #         fig.add_trace(go.Scatter(
+            #             x=rdf_data.q_bins.cpu().numpy(),
+            #             y=pred_S_Q,
+            #             mode="lines+markers",
+            #             name="Predicted G(r)"
+            #         ))
+            #         fig.write_html(str(output_dir / "G_r_final.html"))
         except Exception as e:
             print(f"Error saving results: {e}")
 
@@ -551,7 +551,7 @@ def main(cfg: DictConfig) -> None:
                     lr_reduced = True
 
                     print(f"\n{'=' * 60}")
-                    print(f"🎯 LEARNING RATE REDUCED at step {step}")
+                    print(f"LEARNING RATE REDUCED at step {step}")
                     print(f"  Initial loss: {initial_loss:.6f}")
                     print(f"  Current loss: {current_loss:.6f}")
                     print(f"  Loss reduction: {loss_reduction_percent:.2f}%")
@@ -596,33 +596,34 @@ def main(cfg: DictConfig) -> None:
                 pred_sq = cmp_state.misc.get("Y")
                 if pred_sq is not None:
                     pred_sq_np = pred_sq.detach().cpu().numpy().flatten()
-                    monitor.update_data(
-                        step=step,
-                        loss=loss.item(),
-                        pred_sq=pred_sq_np,
-                        num_violated=num_violated
-                    )
+                    # monitor.update_data(
+                    #     step=step,
+                    #     loss=loss.item(),
+                    #     pred_sq=pred_sq_np,
+                    #     num_violated=num_violated
+                    # )
 
-                    # # ====== W&B: Log S(Q) plot ======
-                    # wandb.log({
-                    #     "S(Q)_plot": wandb.plot.line_series(
-                    #         xs=rdf_data.q_bins.cpu().numpy(),
-                    #         ys=[rdf_data.F_q_target.cpu().numpy(), pred_sq_np],
-                    #         keys=["Target S(Q)", "Predicted S(Q)"],
-                    #         title="Structure Factor",
-                    #         xname="Q (Å⁻¹)"
-                    #     )
-                    # }, step=step)
-                    # ====== W&B: Log G(r) plot ======
+                    # ====== W&B: Log S(Q) plot ======
                     wandb.log({
-                        "G(r)_plot": wandb.plot.line_series(
+                        "S(Q)_plot": wandb.plot.line_series(
                             xs=rdf_data.q_bins.cpu().numpy(),
                             ys=[rdf_data.F_q_target.cpu().numpy(), pred_sq_np],
-                            keys=["Target G(r)", "Predicted G(r)"],
-                            title="Radial Distribution Function",
-                            xname="r"
+                            keys=["Target S(Q)", "Predicted S(Q)"],
+                            title="Structure Factor",
+                            xname="Q (Å⁻¹)"
+
                         )
                     }, step=step)
+                    # # ====== W&B: Log G(r) plot ======
+                    # wandb.log({
+                    #     "G(r)_plot": wandb.plot.line_series(
+                    #         xs=rdf_data.q_bins.cpu().numpy(),
+                    #         ys=[rdf_data.F_q_target.cpu().numpy(), pred_sq_np],
+                    #         keys=["Target G(r)", "Predicted G(r)"],
+                    #         title="Radial Distribution Function",
+                    #         xname="r"
+                    #     )
+                    # }, step=step)
 
 
             # Trajectory saving
@@ -656,24 +657,24 @@ def main(cfg: DictConfig) -> None:
     final_atoms = state_to_atoms(base_sim_state)
 
     if cfg.output.save_plots:
-        # pred_S_Q = cmp_state.misc.get("Y")
-        # if pred_S_Q is not None:
-        #     pred_S_Q = pred_S_Q.detach().cpu().numpy()
-        #     if pred_S_Q.ndim > 1:
-        #         pred_S_Q = pred_S_Q.flatten()
-        #     fig_S_Q.add_trace(
-        #         go.Scatter(x=rdf_data.q_bins.cpu().numpy(), y=pred_S_Q, mode="lines+markers", name="Predicted S(Q)")
-        #     )
-        #     fig_S_Q.write_html(str(Path(cfg.output.plots_dir) / "S_Q_final_plot.html"))
         pred_S_Q = cmp_state.misc.get("Y")
         if pred_S_Q is not None:
             pred_S_Q = pred_S_Q.detach().cpu().numpy()
             if pred_S_Q.ndim > 1:
                 pred_S_Q = pred_S_Q.flatten()
             fig_S_Q.add_trace(
-                go.Scatter(x=rdf_data.q_bins.cpu().numpy(), y=pred_S_Q, mode="lines+markers", name="Predicted G(r)")
+                go.Scatter(x=rdf_data.q_bins.cpu().numpy(), y=pred_S_Q, mode="lines+markers", name="Predicted S(Q)")
             )
-            fig_S_Q.write_html(str(Path(cfg.output.plots_dir) / "G_r_final_plot.html"))
+            fig_S_Q.write_html(str(Path(cfg.output.plots_dir) / "S_Q_final_plot.html"))
+        # pred_S_Q = cmp_state.misc.get("Y")
+        # if pred_S_Q is not None:
+        #     pred_S_Q = pred_S_Q.detach().cpu().numpy()
+        #     if pred_S_Q.ndim > 1:
+        #         pred_S_Q = pred_S_Q.flatten()
+        #     fig_S_Q.add_trace(
+        #         go.Scatter(x=rdf_data.q_bins.cpu().numpy(), y=pred_S_Q, mode="lines+markers", name="Predicted G(r)")
+        #     )
+        #     fig_S_Q.write_html(str(Path(cfg.output.plots_dir) / "G_r_final_plot.html"))
 
     # ====== W&B: Finish run ======
     wandb.finish()

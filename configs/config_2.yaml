@@ -1,0 +1,29 @@
+
+defaults:
+  - experiment: basic
+  - trainer: cooper
+  - trainer/mace
+  - structure: iron_oxide_2
+  - data: FeOx
+  - wandb: disabled
+  - _self_
+
+#minimiser: ${trainer.mace}  # Path to separate AugLag hyperparameter file
+accelerator: 'cuda'  # Use 'gpu' if you have a GPU available
+hydra:
+  run:
+    dir:  ${oc.env:OUTPUT_DIR,outputs/${experiment.name}/${now:%Y-%m-%d}/${now:%H-%M-%S}/${wandb.run_name}}
+ #outputs/${experiment.name}/${now:%Y-%m-%d}/${now:%H-%M-%S}/${wandb.run_name}
+
+output:
+  write_trajectory: true
+  trajectory_path: ${oc.env:OUTPUT_DIR,outputs/${experiment.name}/${now:%Y-%m-%d}/${now:%H-%M-%S}/trajectory}
+  save_plots: true
+  plots_dir: ${oc.env:OUTPUT_DIR,outputs/${experiment.name}/${now:%Y-%m-%d}/${now:%H-%M-%S}/plots}
+
+max_steps: 27000
+optimize_cell: false
+lr: 0.05
+tol: 1e-2
+
+name: "agore"

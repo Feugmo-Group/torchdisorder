@@ -3,7 +3,7 @@ defaults:
   - experiment: basic
   - trainer: cooper
   - trainer/mace
-  - structure: iron_oxide
+  - structure: iron_oxide_1
   - data: FeOx
   - wandb: disabled
   - _self_
@@ -21,7 +21,9 @@ output:
   save_plots: true
   plots_dir: ${oc.env:OUTPUT_DIR,outputs/${experiment.name}/${now:%Y-%m-%d}/${now:%H-%M-%S}/plots}
 
-max_steps: 23000
+max_steps: 27000
 optimize_cell: false
 lr: 0.05
 tol: 1e-2
+
+name: "agore"

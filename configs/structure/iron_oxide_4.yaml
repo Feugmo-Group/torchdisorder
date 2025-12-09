@@ -1,0 +1,9 @@
+root_dir: ${oc.env:PROJECT_ROOT}/data-release
+
+structure:
+  init: "from_cif"
+  species: [Fe, O]          # Elements present
+  stoichiometry: [432, 1080]     # Fe2O3 ratio
+  cif_path: ${data.root_dir}/crystal-structures/epsilon_Fe2O3_iso_4.cif
+
+  target_density: 4.73
