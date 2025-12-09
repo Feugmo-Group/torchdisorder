@@ -26,6 +26,7 @@ from torchdisorder.common.target_rdf import TargetRDFData
 from typing import Callable, Optional, Dict, Tuple
 
 import math
+from torch.nn.utils.rnn import pad_sequence
 #
 @dataclass
 class CooperState(SimState):
@@ -435,169 +436,129 @@ class XRDModel(nn.Module):
             self, pos: torch.Tensor, cell: torch.Tensor, symbols: list[str]
     ) -> torch.Tensor:
         """
-        Compute mean octahedral order parameter.
-        Efficient vectorized implementation of Zimmermann et al. formula.
+        Compute mean octahedral order parameter based on the provided formula image.
+        q_oct = 1/Norm * {
+            sum_{j!=k} [
+                3 * H(theta_jk - theta_thr) * exp(-(theta_jk - 180)^2 / (2*d_theta1^2))
+            ] +
+            sum_{j!=k} sum_{m!=j,k} [
+                H(theta_thr - theta_jk) * H(theta_thr - theta_jm) *
+                cos^2(2*phi_m) * exp(-(theta_jm - 90)^2 / (2*d_theta2^2))
+            ]
+        }
         """
         device = pos.device
         dtype = pos.dtype
 
         # Constants from the formula (angles in degrees)
-        THETA_THR_DEG = 160.0
-        D_THETA1_DEG = 12.0
-        D_THETA2_DEG = 10.0
+        theta_thr_deg = 160.0
+        d_theta1_deg = 12.0
+        d_theta2_deg = 10.0
 
-        # Pre-compute variances and radians
-        sigma1_sq = 2 * (D_THETA1_DEG ** 2)
-        sigma2_sq = 2 * (D_THETA2_DEG ** 2)
+        # Convert degrees to radians for torch functions
+        theta_thr = math.radians(theta_thr_deg)
 
-        # --- 1. Identify Centers and Neighbors ---
-        cent_idx_list = [i for i, s in enumerate(symbols) if s == self.central]
+        cent_idx = torch.tensor(
+            [i for i, s in enumerate(symbols) if s == self.central],
+            device=device,
+            dtype=torch.long,
+        )
+        neigh_mask = torch.tensor(
+            [s == self.neighbour for s in symbols],
+            device=device,
+            dtype=torch.bool,
+        )
 
-        # Early exit if no central atoms
-        if not cent_idx_list:
-            q_vals = []  # Empty list for the final check
-        else:
-            cent_mask = torch.zeros(len(symbols), device=device, dtype=torch.bool)
-            cent_mask[cent_idx_list] = True
+        cutoff_tensor = torch.tensor(self.cutoff, device=device, dtype=dtype)
+        edge_idx, shifts_idx = self.neighbor_list_fn(
+            positions=pos,
+            cell=cell,
+            pbc=True,
+            cutoff=cutoff_tensor,
+        )
 
-            neigh_mask = torch.tensor(
-                [s == self.neighbour for s in symbols],
-                device=device,
-                dtype=torch.bool,
-            )
+        shifts = torch.mm(shifts_idx.to(dtype=dtype), cell)
+        i, j = edge_idx
+        rij = pos[j] + shifts - pos[i]
 
-            cutoff_tensor = torch.tensor(self.cutoff, device=device, dtype=dtype)
-            edge_idx, shifts_idx = self.neighbor_list_fn(
-                positions=pos,
-                cell=cell,
-                pbc=True,
-                cutoff=cutoff_tensor,
-            )
+        q_vals = []
 
-            shifts = torch.mm(shifts_idx.to(dtype=dtype), cell)
-            i_idx, j_idx = edge_idx
-            rij_all = pos[j_idx] + shifts - pos[i_idx]
+        for ic in cent_idx:
+            mask = (i == ic) & neigh_mask[j]
+            vecs = rij[mask]
+            n_ngh = vecs.size(0)
 
-            # --- 2. Filter Edges ---
-            mask_edges = cent_mask[i_idx] & neigh_mask[j_idx]
+            if n_ngh < 6:  # Need at least 6 neighbors for octahedron
+                continue
 
-            valid_i = i_idx[mask_edges]
-            valid_vecs = rij_all[mask_edges]
+            total_sum = 0.0
 
-            if valid_i.numel() == 0:
-                q_vals = []
-            else:
-                # --- 3. Group Neighbors by Center ---
-                sort_indices = torch.argsort(valid_i)
-                valid_i_sorted = valid_i[sort_indices]
-                valid_vecs_sorted = valid_vecs[sort_indices]
+            # Loop over all ordered pairs of neighbors (j, k)
+            for j_idx in range(n_ngh):
+                r_ij = vecs[j_idx]
+                z_axis = r_ij / torch.norm(r_ij)
 
-                unique_centers, counts = torch.unique_consecutive(valid_i_sorted, return_counts=True)
+                for k_idx in range(n_ngh):
+                    if k_idx == j_idx:
+                        continue
 
-                # Filter: Need at least 6 neighbors
-                mask_valid_counts = counts >= 6
+                    r_ik = vecs[k_idx]
 
-                if not mask_valid_counts.any():
-                    q_vals = []
-                else:
-                    final_counts = counts[mask_valid_counts]
-
-                    # Split and Pad
-                    vecs_split = torch.split(valid_vecs_sorted, counts.tolist())
-                    vecs_filtered_list = [v for v, m in zip(vecs_split, mask_valid_counts.tolist()) if m]
-                    vecs_padded = pad_sequence(vecs_filtered_list, batch_first=True, padding_value=0.0)
-
-                    B, N_max, _ = vecs_padded.shape
-                    range_tensor = torch.arange(N_max, device=device).unsqueeze(0)
-                    mask_neighbors = range_tensor < final_counts.unsqueeze(1)
-
-                    # --- 4. Vectorized Computation ---
-
-                    # Normalize r_ij -> u_ij
-                    norms = torch.norm(vecs_padded, dim=2, keepdim=True)
-                    norms = torch.where(norms == 0, torch.tensor(1.0, device=device, dtype=dtype), norms)
-                    u_vecs = vecs_padded / norms
-
-                    # Cosines and Angles
-                    cos_theta = torch.bmm(u_vecs, u_vecs.transpose(1, 2))
-                    cos_theta = torch.clamp(cos_theta, -1.0, 1.0)
-                    theta = torch.acos(cos_theta)
-                    theta_deg = torch.rad2deg(theta)
-
-                    # Valid Pair Masks
-                    eye_mask = torch.eye(N_max, device=device, dtype=torch.bool).unsqueeze(0)
-                    mask_valid_pairs = mask_neighbors.unsqueeze(2) & mask_neighbors.unsqueeze(1) & (~eye_mask)
+                    # --- Calculate theta_jk (polar angle of k in j's frame) ---
+                    cos_theta_jk = torch.dot(r_ij, r_ik) / (torch.norm(r_ij) * torch.norm(r_ik))
+                    cos_theta_jk = torch.clamp(cos_theta_jk, -1.0, 1.0)
+                    theta_jk = torch.acos(cos_theta_jk)
+                    theta_jk_deg = math.degrees(theta_jk.item())
 
                     # --- Term A ---
-                    mask_A = (theta_deg > THETA_THR_DEG) & mask_valid_pairs
-                    exp_A = torch.exp(-((theta_deg - 180.0) ** 2) / sigma1_sq)
-                    term_A_sum = torch.sum(3.0 * exp_A * mask_A.float(), dim=(1, 2))
+                    if theta_jk_deg > theta_thr_deg:
+                        exponent = -((theta_jk_deg - 180.0) ** 2) / (2 * d_theta1_deg ** 2)
+                        total_sum += 3.0 * torch.exp(torch.tensor(exponent, device=device, dtype=dtype))
 
                     # --- Term B ---
-                    mask_jk_frame = (theta_deg < THETA_THR_DEG) & mask_valid_pairs
+                    if theta_jk_deg < theta_thr_deg:
+                        # Define local coordinate system for phi calculation
+                        proj_ik_on_ij = torch.dot(r_ik, z_axis) * z_axis
+                        x_axis = r_ik - proj_ik_on_ij
+                        if torch.norm(x_axis) < 1e-6: continue  # colinear vectors, phi is ill-defined
+                        x_axis = x_axis / torch.norm(x_axis)
+                        y_axis = torch.cross(z_axis, x_axis)
 
-                    # Local Frames
-                    z_axis = u_vecs.unsqueeze(2)
-                    u_k = u_vecs.unsqueeze(1)
+                        # Loop over other neighbors m
+                        for m_idx in range(n_ngh):
+                            if m_idx == j_idx or m_idx == k_idx:
+                                continue
 
-                    dot_kz = torch.sum(u_k * z_axis, dim=3, keepdim=True)
-                    proj_k_on_z = dot_kz * z_axis
-                    x_raw = u_k - proj_k_on_z
+                            r_im = vecs[m_idx]
 
-                    x_norm = torch.norm(x_raw, dim=3, keepdim=True)
-                    x_norm = torch.where(x_norm < 1e-6, torch.tensor(1.0, device=device, dtype=dtype), x_norm)
-                    x_axis = x_raw / x_norm
+                            cos_theta_jm = torch.dot(r_ij, r_im) / (torch.norm(r_ij) * torch.norm(r_im))
+                            cos_theta_jm = torch.clamp(cos_theta_jm, -1.0, 1.0)
+                            theta_jm = torch.acos(cos_theta_jm)
+                            theta_jm_deg = math.degrees(theta_jm.item())
 
-                    z_axis_expanded = z_axis.expand(-1, -1, N_max, -1)
-                    y_axis = torch.cross(z_axis_expanded, x_axis, dim=3)
+                            if theta_jm_deg < theta_thr_deg:
+                                # Calculate phi_m
+                                proj_im_on_z = torch.dot(r_im, z_axis) * z_axis
+                                r_im_proj_xy = r_im - proj_im_on_z
 
-                    # Broadcast m
-                    x_axis_5d = x_axis.unsqueeze(3)
-                    y_axis_5d = y_axis.unsqueeze(3)
-                    u_m = u_vecs.unsqueeze(1).unsqueeze(1)
+                                phi_m = torch.atan2(torch.dot(r_im_proj_xy, y_axis), torch.dot(r_im_proj_xy, x_axis))
 
-                    phi_x = torch.sum(u_m * x_axis_5d, dim=4)
-                    phi_y = torch.sum(u_m * y_axis_5d, dim=4)
+                                cos2_2phi = torch.cos(2 * phi_m) ** 2
+                                exponent = -((theta_jm_deg - 90.0) ** 2) / (2 * d_theta2_deg ** 2)
 
-                    denom = phi_x ** 2 + phi_y ** 2
-                    denom = torch.where(denom < 1e-6, torch.tensor(1.0, device=device, dtype=dtype), denom)
-                    cos_2phi = (phi_x ** 2 - phi_y ** 2) / denom
-                    cos2_2phi = cos_2phi ** 2
+                                term_B = cos2_2phi * torch.exp(torch.tensor(exponent, device=device, dtype=dtype))
+                                total_sum += term_B
 
-                    theta_jm_deg = theta_deg.unsqueeze(2)
-                    exp_B = torch.exp(-((theta_jm_deg - 90.0) ** 2) / sigma2_sq)
-
-                    mask_m_valid = mask_neighbors.view(B, 1, 1, N_max)
-                    idx = torch.arange(N_max, device=device)
-                    mask_indices_B = (idx.view(1, 1, 1, N_max) != idx.view(1, N_max, 1, 1)) & \
-                                     (idx.view(1, 1, 1, N_max) != idx.view(1, 1, N_max, 1))
-                    mask_theta_m = theta_jm_deg < THETA_THR_DEG
-
-                    full_mask_B = (
-                            mask_jk_frame.unsqueeze(3) &
-                            mask_m_valid &
-                            mask_indices_B &
-                            mask_theta_m
-                    )
-
-                    term_B_elements = cos2_2phi * exp_B * full_mask_B.float()
-                    term_B_sum = torch.sum(term_B_elements, dim=(1, 2, 3))
-
-                    # --- Normalization ---
-                    n_ngh_f = final_counts.float()
-                    norm_factor = n_ngh_f * (3.0 + (n_ngh_f - 2.0) * (n_ngh_f - 3.0))
-
-                    # Result is a 1D Tensor of size (Batch,)
-                    final_q_tensor = (term_A_sum + term_B_sum) / norm_factor
-
-                    # Convert the efficient tensor to a list of scalars to satisfy the strict return requirement
-                    q_vals = list(torch.unbind(final_q_tensor))
+            # Normalization
+            if n_ngh > 3:
+                norm_factor = n_ngh * (3 + (n_ngh - 2) * (n_ngh - 3))
+                q_val = total_sum / norm_factor
+                q_vals.append(q_val)
 
         if not q_vals:
             return torch.zeros((), device=device, dtype=dtype, requires_grad=True)
 
         return torch.stack(q_vals)
-    
     # #Original version
     # def mean_tetrahedral_q(
     #         self, pos: torch.Tensor, cell: torch.Tensor, symbols: list[str]

@@ -266,7 +266,7 @@ def main(cfg: DictConfig) -> None:
     # )
     # monitor.start_server()
     # time.sleep(2)  # Give server time to start
-    # PLOT_UPDATE_INTERVAL = 1
+    PLOT_UPDATE_INTERVAL = 1
 
     # ====== CHECKPOINT CONFIGURATION ======
     CHECKPOINT_INTERVAL = 10000  # Save every 10,000 steps
