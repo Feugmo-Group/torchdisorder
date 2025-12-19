@@ -1,10 +1,9 @@
-
 defaults:
   - experiment: basic
   - trainer: cooper
   - trainer/mace
-  - structure: iron_oxide_1
-  - data: FeOx
+  - structure: silica
+  - data: SiO2
   - wandb: disabled
   - _self_
 

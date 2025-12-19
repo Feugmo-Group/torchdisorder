@@ -5,6 +5,6 @@ structure:
   n_atoms: 256
   box_length: 39.6
   species: [Na, Ta, Cl]
-  stoichiometry: [32, 32, 192]
+  stoichiometry: [0, 288, 1728]
   cif_path: ${data.root_dir}/crystal-structures/NaTaCl6.cif
   target_density: 2.94

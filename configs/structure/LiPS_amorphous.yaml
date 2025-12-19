@@ -2,9 +2,9 @@ root_dir: ${oc.env:PROJECT_ROOT}/data-release
 
 structure:
   init: "from_cif"
-  n_atoms: 500
+  n_atoms: 2268
   box_length: 25.0
   species: [Li, P, S]
-  stoichiometry: [300, 100, 100]  # 3:1:1 ratio for Li3PS4
-  cif_path: ${data.root_dir}/crystal-structures/Li3PS4_gamma.cif
+  stoichiometry: [756, 324, 1051]  # 3:1:1 ratio for Li3PS4
+  cif_path: ${data.root_dir}/crystal-structures/glass_67Li2S.cif
   target_density: 2.37  # Approximate density for Li3PS4
