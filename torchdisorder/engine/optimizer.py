@@ -193,81 +193,48 @@ class StructureFactorCMPWithConstraints(cooper.ConstrainedMinimizationProblem):
 
            print(f"  Created constraint for {op_name}: {n_atoms} atoms")
 
-
-   def _compute_violations(
-           self,
-           op_results: Dict[str, torch.Tensor],
-           constrained_atom_indices: torch.Tensor
-   ) -> Dict[str, torch.Tensor]:
-       """
-       Compute constraint violations for all atoms.
-
-
-       Returns:
-           violations: {op_name: tensor of violations per atom}
-       """
+   def _compute_violations(self, op_results: Dict[str, torch.Tensor], constrained_atom_indices: torch.Tensor):
        violations = {}
-
 
        for op_name, constraint_info in self.constraint_dict.items():
            atom_list = constraint_info['atom_indices']
-           op_violations = []
-
+           op_v = []
 
            for atom_idx in atom_list:
-               atom_idx_str = str(atom_idx)
-               atom_constraint = self.constraints_data['atom_constraints'][atom_idx_str]
+               atom_constraint = self.constraints_data['atom_constraints'][str(atom_idx)]
                op_params = atom_constraint['order_parameters'][op_name]
 
-
-               # Find position in constrained_atom_indices tensor
                pos = (constrained_atom_indices == atom_idx).nonzero(as_tuple=True)[0]
-               if len(pos) == 0:
-                   # Atom not in computed results (shouldn't happen)
-                   op_violations.append(0.0)
+               if pos.numel() == 0:
+                   # keep this as a tensor on device (still no grad, but rare)
+                   op_v.append(torch.zeros((), device=self.device))
                    continue
 
+               pos = pos[0]  # tensor index (no .item())
+               value = op_results[op_name][pos]  # tensor value (no .item())
 
-               pos = pos[0].item()
-               value = op_results[op_name][pos].item()
+               weight = torch.tensor(op_params.get('weight', 1.0), device=self.device, dtype=value.dtype)
 
-
-               # Compute violation based on constraint type
                if 'min' in op_params and 'max' in op_params:
-                   # Box constraint: violation if outside [min, max]
-                   if self.violation_type == 'soft':
-                       # Soft constraint: smooth penalty outside bounds
-                       if value < op_params['min']:
-                           violation = op_params['min'] - value
-                       elif value > op_params['max']:
-                           violation = value - op_params['max']
-                       else:
-                           violation = 0.0
-                   else:
-                       # Hard constraint: violation = distance to nearest bound
-                       mid = (op_params['min'] + op_params['max']) / 2
-                       if value < mid:
-                           violation = max(0, op_params['min'] - value)
-                       else:
-                           violation = max(0, value - op_params['max'])
+                   minv = torch.tensor(op_params['min'], device=self.device, dtype=value.dtype)
+                   maxv = torch.tensor(op_params['max'], device=self.device, dtype=value.dtype)
+
+                   # "soft" box violation: relu(min - x) + relu(x - max)
+                   v = torch.relu(minv - value) + torch.relu(value - maxv)
+
+                   if self.violation_type == 'hard':
+                       v = torch.relu(minv - value) + torch.relu(value - maxv)
+
                else:
-                   # Equality constraint with tolerance
-                   target = op_params['target']
-                   tolerance = op_params.get('tolerance', 0.1)
-                   violation = max(0.0, abs(value - target) - tolerance)
+                   target = torch.tensor(op_params['target'], device=self.device, dtype=value.dtype)
+                   tol = torch.tensor(op_params.get('tolerance', 0.1), device=self.device, dtype=value.dtype)
+                   v = torch.relu(torch.abs(value - target) - tol)
 
+               op_v.append(weight * v)
 
-               # Apply weight
-               weight = op_params.get('weight', 1.0)
-               op_violations.append(weight * violation)
-
-
-           # Convert to tensor
-           violations[op_name] = torch.tensor(op_violations, device=self.device, dtype=torch.float32)
-
+           violations[op_name] = torch.stack(op_v).to(dtype=torch.float32)
 
        return violations
-
 
    def compute_cmp_state(
            self,
@@ -334,7 +301,6 @@ class StructureFactorCMPWithConstraints(cooper.ConstrainedMinimizationProblem):
        all_op_types = set()
        for atom_constraint in self.constraints_data['atom_constraints'].values():
            all_op_types.update(atom_constraint['order_parameters'].keys())
-
 
        # Compute all needed order parameters at once
        op_results = self.op_calc(
@@ -478,329 +444,6 @@ class StructureFactorCMPWithConstraints(cooper.ConstrainedMinimizationProblem):
 
 
        return results
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# class ConstantPenalty(PenaltyCoefficient):
-#     """Constant penalty coefficient for AugmentedLagrangian."""
-#
-#     def __init__(self, value: float, device='cuda'):
-#         super().__init__(init=torch.tensor(value, device=device))
-#         self.expects_constraint_features = False
-#
-#     def __call__(self, constraint_features=None):
-#         """Return the constant penalty value."""
-#         return self.init
-#
-#
-# class StructureFactorCMP(cooper.ConstrainedMinimizationProblem):
-#     def __init__(self, model, base_state, target_vec, target_kind, q_bins, loss_fn,
-#                  q_threshold=0.7, device='cuda', penalty_rho=40.0):
-#         super().__init__()
-#         self.model = model
-#         self.base_state = base_state
-#
-#         # Store both target values and uncertainty from rdf_data object
-#         self.target = target_vec.F_q_target
-#         self.target_uncert = target_vec.F_q_uncert
-#
-#         self.kind = target_kind
-#         self.q_bins = q_bins
-#         self.loss_fn = loss_fn
-#         self.q_threshold = q_threshold
-#         self.device = device
-#
-#         # Detect placeholder region (where dF was originally zero)
-#         self.placeholder_mask = (self.target_uncert < 1e-6).to(device)
-#         n_placeholder = self.placeholder_mask.sum().item()
-#         print(f"Found {n_placeholder} placeholder points where dF = 1e-7")
-#
-#         # Count Centrak atoms for per-atom constraints
-#         symbols = [chemical_symbols[int(z)] for z in base_state.atomic_numbers.cpu()]
-#         num_central = sum(1 for s in symbols if s == 'Fe') #Change depending on whatever the central atom is
-#         print(f"Number of central atoms: {num_central}")
-#
-#         # CREATE MULTIPLIER (λ tensor)
-#         multiplier = cooper.multipliers.DenseMultiplier(
-#             num_constraints=num_central,
-#             device=device
-#         )
-#
-#         # CREATE CONSTRAINT
-#         self.q_tet_constraint = cooper.Constraint(
-#             multiplier=multiplier,
-#             constraint_type=cooper.ConstraintType.INEQUALITY,
-#             formulation_type=cooper.formulations.AugmentedLagrangian,
-#             penalty_coefficient=penalty_coeff,
-#         )
-#
-#     def compute_cmp_state(self, positions, cell, step=None):
-#         self.base_state.positions = positions
-#         self.base_state.cell = cell
-#         out = self.model(self.base_state)
-#
-#         # Get predicted S(Q)
-#         pred_sq = out[self.kind].squeeze()
-#
-#         # Clamp prediction to experimental value in placeholder region
-#         pred_sq_clamped = pred_sq.clone()
-#         pred_sq_clamped[self.placeholder_mask] = self.target[self.placeholder_mask]
-#
-#         # Replace in output dict for loss computation
-#         out[self.kind] = pred_sq_clamped.unsqueeze(0) if pred_sq_clamped.dim() == 1 else pred_sq_clamped
-#
-#         # Call loss_fn with clamped output (placeholder region contributes 0 to chi²)
-#         loss_dict = self.loss_fn(out)
-#         chi2_loss = loss_dict["chi2_scatt"]
-#         # chi2_loss = loss_dict["chi2_corr"]  # Uncomment for T(r) optimization
-#
-#         # Total loss is just chi²
-#         total_loss = chi2_loss
-#
-#         # COMPUTE CONSTRAINT VIOLATION
-#         q_per_atom = out['q_tet']
-#         q_per_atom = out['q_oct']
-#         print(f"DEBUG: q_tet_per_atom shape: {q_per_atom.shape}")
-#         violation = self.q_threshold - q_per_atom
-#
-#         q_state = cooper.ConstraintState(violation=violation)
-#         observed_constraints = {self.q_tet_constraint: q_state}
-#
-#         misc = dict(
-#             Q=self.q_bins,
-#             Y=pred_sq_clamped,
-#             loss=total_loss,
-#             chi2_loss=chi2_loss,
-#             kind=self.kind,
-#             q=q_per_atom
-#         )
-#
-#         return cooper.CMPState(loss=total_loss, observed_constraints=observed_constraints, misc=misc)
-
-
-
-
-
-
 
 
 #Defining the FIRE MACE relaxation every few steps

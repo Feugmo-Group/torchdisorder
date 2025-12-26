@@ -68,8 +68,8 @@ class XRDModel(nn.Module):
             central: str = "Si",  # NEED TO CHANGE THESE
             neighbour: str = "O",  # Need to change
             # cutoff: float = 5.7, #FOR GeO2
-            cutoff: float = 2.7,  # For FeO3
-            # cutoff: float = 4.0, #for SiO2
+            # cutoff: float = 2.7,  # For FeO3
+            cutoff: float = 4.0, #for SiO2
     ) -> None:
         super().__init__()
         self._device = device or torch.device(

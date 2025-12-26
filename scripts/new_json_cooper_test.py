@@ -52,13 +52,13 @@ from collections import defaultdict
 @hydra.main(config_path=str(MODELS_PROJECT_ROOT / "configs"), config_name="config", version_base="1.3")
 def main(cfg: DictConfig) -> None:
     # ====== W&B INITIALIZATION ======
-    # wandb_config = OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True)
-    # run = wandb.init(
-    #     project="torchdisorder-optimization",
-    #     config=wandb_config,
-    #     name=f"run_{int(time.time())}",
-    #     tags=["xrd", "structure_optimization"]
-    # )
+    wandb_config = OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True)
+    run = wandb.init(
+        project="torchdisorder-optimization",
+        config=wandb_config,
+        name=f"run_{int(time.time())}",
+        tags=["xrd", "structure_optimization"]
+    )
 
     print("data.root_dir:", cfg.data.root_dir)
     # logger.info("Loaded Hydra Configuration:\n" + OmegaConf.to_yaml(cfg))
@@ -94,6 +94,13 @@ def main(cfg: DictConfig) -> None:
     state = atoms_to_state(atoms_list, device=cfg.accelerator, dtype=dtype)
     state.positions.requires_grad_(True)
     state.cell.requires_grad_(True)
+
+    # print("base_state.cell tensor:", state.cell)
+    # try:
+    #     det = torch.linalg.det(state.cell)
+    #     print("det(base_state.cell):", det)
+    # except Exception as e:
+    #     print("det computation failed:", e)
 
     class StateWrapper:
         def __init__(self, original_state):
@@ -161,7 +168,7 @@ def main(cfg: DictConfig) -> None:
     # ============================
     base_sim_state.positions.requires_grad_(True)
     primal_params = [base_sim_state.positions]
- 
+
     if getattr(cfg, "optimize_cell", False):
         base_sim_state.cell.requires_grad_(True)
         primal_params.append(base_sim_state.cell)
@@ -193,9 +200,7 @@ def main(cfg: DictConfig) -> None:
         dual_optimizers=dual_optimizer
     )
 
-    # ============================
-    # PLATEAU DETECTION + MELT-QUENCH
-    # ============================
+    #melt quench if needed
     def melt_quench_wrapper(current_state, mq_index):
         return perform_melt_quench(
             sim_state=current_state,
@@ -356,9 +361,7 @@ def main(cfg: DictConfig) -> None:
 
     signal.signal(signal.SIGINT, signal_handler)
 
-    # ============================
-    # MAIN TRAINING LOOP
-    # ============================
+    #Main training loop
     prev_loss = None
 
     try:
@@ -393,7 +396,7 @@ def main(cfg: DictConfig) -> None:
             else:
                 current_reduction = 0.0
 
-            # ====== PLATEAU DETECTION & MELT-QUENCH ======
+            # plateau detection & melt quench (if needed)
             print(f"DEBUG: State size BEFORE plateau check: {base_sim_state.positions.shape}")
             base_sim_state, mq_triggered = plateau_detector.check_and_trigger(
                 step=step,
@@ -428,7 +431,7 @@ def main(cfg: DictConfig) -> None:
 
                 primal_optimizer = torch.optim.Adam(primal_params, lr=1e-3)
 
-                # ===== FIX: materialize dual params and fall back to constraint_dict multipliers if needed =====
+                # materialize dual params and fall back to constraint_dict multipliers if needed
                 dual_params = list(cooper_problem.dual_parameters())
                 if len(dual_params) == 0 and hasattr(cooper_problem, "constraint_dict"):
                     dual_params = []
@@ -502,19 +505,19 @@ def main(cfg: DictConfig) -> None:
             )
 
             # If W&B enabled:
-            # wandb.log(
-            #     {
-            #         "loss": loss.item(),
-            #         "loss_reduction_percent": current_reduction,
-            #         "chi2_loss": chi2_loss.item(),
-            #         "avg_violation": avg_violation,
-            #         "max_violation": max_violation,
-            #         "num_violated_atoms": num_violated,
-            #         "primal_lr": primal_lr,
-            #         "dual_lr": dual_lr,
-            #     },
-            #     step=step
-            # )
+            wandb.log(
+                {
+                    "loss": loss.item(),
+                    "loss_reduction_percent": current_reduction,
+                    "chi2_loss": chi2_loss.item(),
+                    "avg_violation": avg_violation,
+                    "max_violation": max_violation,
+                    "num_violated_atoms": num_violated,
+                    "primal_lr": primal_lr,
+                    "dual_lr": dual_lr,
+                },
+                step=step
+            )
 
             if (step > 0) and (step % CHECKPOINT_INTERVAL == 0):
                 save_checkpoint(step, loss.item(), cmp_state)
@@ -524,15 +527,15 @@ def main(cfg: DictConfig) -> None:
                 if pred_sq is not None:
                     pred_sq_np = pred_sq.detach().cpu().numpy().flatten()
                     # If W&B enabled:
-                    # wandb.log({
-                    #     "S(Q)_plot": wandb.plot.line_series(
-                    #         xs=rdf_data.q_bins.cpu().numpy(),
-                    #         ys=[rdf_data.F_q_target.cpu().numpy(), pred_sq_np],
-                    #         keys=["Target S(Q)", "Predicted S(Q)"],
-                    #         title="Structure Factor",
-                    #         xname="Q (Å⁻¹)"
-                    #     )
-                    # }, step=step)
+                    wandb.log({
+                        "S(Q)_plot": wandb.plot.line_series(
+                            xs=rdf_data.q_bins.cpu().numpy(),
+                            ys=[rdf_data.F_q_target.cpu().numpy(), pred_sq_np],
+                            keys=["Target S(Q)", "Predicted S(Q)"],
+                            title="Structure Factor",
+                            xname="Q (Å⁻¹)"
+                        )
+                    }, step=step)
 
             if cfg.output.write_trajectory:
                 traj_path = Path(cfg.output.trajectory_path)
@@ -573,7 +576,7 @@ def main(cfg: DictConfig) -> None:
             fig_S_Q.write_html(str(Path(cfg.output.plots_dir) / "S_Q_final_plot.html"))
 
     # if W&B enabled:
-    # wandb.finish()
+    wandb.finish()
 
 
 if __name__ == "__main__":
