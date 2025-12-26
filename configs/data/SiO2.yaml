@@ -24,3 +24,4 @@ central : 'Si'
 neighbour : 'O'  # Define the central atom as 'Si' and the neighbour atom as 'O'
 cutoff : 2.0  # Define the cutoff distance for the neighbour atoms
 
+json_path: ${data.root_dir}/json/sio2_glass_constraints.json
