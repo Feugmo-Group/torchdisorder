@@ -22,4 +22,6 @@ xray_form_factor_params:
 
 central : 'Ge'  # Define the central atom as 'Ge' and the neighbour atom as 'O'
 neighbour : 'O'
-cutoff : 2.0  # Define the cutoff distance for the neighbour atoms
+cutoff : 2.1  # Define the cutoff distance for the neighbour atoms
+
+json_path: ${data.root_dir}/json/geo2_constraints.json
