@@ -29,3 +29,6 @@ xray_form_factor_params:
 central: 'P'          # Consider S or P as central atom for PS4 tetrahedra analysis
 neighbour: 'S'       # Analyze Li coordination around S/P
 cutoff: 5.5           # Typical for first coordination shell in thiophosphates
+
+json_path: ${data.root_dir}/json/sio2_glass_constraints.json  #change this to when you generate the LiPS
+
