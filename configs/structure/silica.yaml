@@ -1,9 +1,23 @@
-root_dir: ${oc.env:PROJECT_ROOT}/data-release
-structure:
-  init: "random_icp"          # or "from_cif" or pymatgen
-  n_atoms: 500
-  box_length: 25.0
-  species: [Si, O]
-  stoichiometry: [167, 333]
-  cif_path: ${data.root_dir}/crystal-structures/c-SiO2.cif"
-  target_density: 2.20        # used only in `from_cif` mode
+# Silica (SiO2) Structure Configuration
+# ======================================
+#
+# Specifies how to generate the initial atomic structure.
+
+# Base directory for structure files
+root_dir: ${oc.env:PROJECT_ROOT}/data
+
+# Structure initialization method
+# Options: from_cif, random, pymatgen
+init: "from_cif"
+
+# Structure parameters
+n_atoms: 1125           # Total number of atoms in supercell
+box_length: 25.0        # Box size in Angstroms (used for random init)
+species: [Si, O]        # Atomic species
+stoichiometry: [375, 750]  # Number of each species (Si:O = 1:2)
+
+# CIF file path (for from_cif mode)
+cif_path: ${structure.root_dir}/crystal-structures/c-SiO2.cif
+
+# Target density for supercell scaling (g/cm³)
+target_density: 2.20

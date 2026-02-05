@@ -1,4 +1,0 @@
-[2025-07-19 11:52:00,466][__main__][INFO] - — Optimising with AugLagLoss + FIRE —
-[2025-07-19 11:52:00,582][__main__][INFO] - step    0 | loss = 980639104.000000 | χ²_corr=2.414e+02 | χ²_scatt=4.902e+10 | q_loss=2.254e+05 | scale_q=1.000e+00 | scale_scatt=2.000e-02 | rho=1.000e-03 | lambda_corr=2.414e-01 | 
-[2025-07-19 11:52:00,582][__main__][INFO] - [MACE] Relax block at outer step 0
-[2025-07-19 11:52:04,124][__main__][INFO] -     MACE sub‑step 00 | E = -233.905365 eV

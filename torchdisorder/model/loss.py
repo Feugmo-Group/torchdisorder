@@ -52,9 +52,54 @@ from torchdisorder.model.rdf import (
 # -----------------------------------------------------------------------------
 
 def chi_squared(estimate: torch.Tensor, target: torch.Tensor, uncertainty: torch.Tensor | float) -> torch.Tensor:
+    """
+    Compute the normalized (reduced) chi-squared statistic.
+    χ²_norm = χ² / N
+    
+    Handles size mismatches by truncating to minimum length.
+    """
+    # Handle empty tensors
+    if estimate.numel() == 0 or target.numel() == 0:
+        print(f"WARNING: chi_squared received empty tensor. estimate: {estimate.shape}, target: {target.shape}")
+        return torch.tensor(float('inf'), device=estimate.device, dtype=estimate.dtype)
+    
+    # Flatten tensors
+    estimate = estimate.reshape(-1)
+    target = target.reshape(-1)
+    
+    # Handle size mismatch by truncating to minimum length
+    if estimate.shape[0] != target.shape[0]:
+        min_len = min(estimate.shape[0], target.shape[0])
+        print(f"WARNING: chi_squared size mismatch. estimate: {estimate.shape[0]}, target: {target.shape[0]}. Truncating to {min_len}")
+        estimate = estimate[:min_len]
+        target = target[:min_len]
+    
     if isinstance(uncertainty, (float, int)):
-        uncertainty = torch.tensor(uncertainty, device=estimate.device, dtype=estimate.dtype)
-    return torch.sum((estimate - target) ** 2 / (uncertainty ** 2))
+        uncertainty = torch.full_like(estimate, uncertainty)
+    else:
+        uncertainty = uncertainty.reshape(-1)
+        if uncertainty.shape[0] != estimate.shape[0]:
+            if uncertainty.numel() == 1:
+                uncertainty = uncertainty.expand_as(estimate)
+            else:
+                uncertainty = uncertainty[:estimate.shape[0]]
+    
+    # Avoid division by zero
+    uncertainty = torch.clamp(uncertainty, min=1e-6)
+    
+    chi2 = torch.sum((estimate - target) ** 2 / (uncertainty ** 2))
+    
+    # Check for NaN
+    if torch.isnan(chi2):
+        print(f"WARNING: chi_squared returned NaN!")
+        print(f"  estimate range: [{estimate.min():.4f}, {estimate.max():.4f}]")
+        print(f"  target range: [{target.min():.4f}, {target.max():.4f}]")
+        print(f"  uncertainty range: [{uncertainty.min():.4f}, {uncertainty.max():.4f}]")
+        return torch.tensor(float('inf'), device=estimate.device, dtype=estimate.dtype)
+    
+    return chi2
+
+#normalize
 
 # -----------------------------------------------------------------------------
 # Hyper‑parameter dataclass
@@ -371,37 +416,48 @@ def q_octahedral(
 
 
 
+# def chi_squared(estimate: torch.Tensor, target: torch.Tensor, uncertainty: torch.Tensor | float) -> torch.Tensor:
+#     """
+#         Compute the unnormalized chi-squared statistic between estimated and target values.
+#
+#         The chi-squared value is calculated as:
+#
+#             χ² = Σ [(estimate - target)² / uncertainty²]
+#
+#         where each squared deviation is normalized by the square of the uncertainty.
+#         This metric is commonly used to evaluate the goodness-of-fit of a model to experimental data,
+#         accounting for the variance in measurements.
+#
+#         Parameters
+#         ----------
+#         estimate : torch.Tensor
+#             Predicted values (e.g., from a model), shape (...,).
+#         target : torch.Tensor
+#             Ground truth or observed values to compare against, same shape as `estimate`.
+#         uncertainty : torch.Tensor or float
+#             Measurement uncertainty. Can be:
+#             - A scalar, applied uniformly
+#             - A tensor of the same shape as `estimate`, for pointwise uncertainty
+#
+#         Returns
+#         -------
+#         torch.Tensor
+#             A scalar tensor containing the total chi-squared loss.
+#         """
+#     if isinstance(uncertainty, (float, int)):
+#         uncertainty = torch.tensor(uncertainty, device=estimate.device, dtype=estimate.dtype)
+#     return torch.sum((estimate - target) ** 2 / (uncertainty ** 2))
+
 def chi_squared(estimate: torch.Tensor, target: torch.Tensor, uncertainty: torch.Tensor | float) -> torch.Tensor:
     """
-        Compute the unnormalized chi-squared statistic between estimated and target values.
-
-        The chi-squared value is calculated as:
-
-            χ² = Σ [(estimate - target)² / uncertainty²]
-
-        where each squared deviation is normalized by the square of the uncertainty.
-        This metric is commonly used to evaluate the goodness-of-fit of a model to experimental data,
-        accounting for the variance in measurements.
-
-        Parameters
-        ----------
-        estimate : torch.Tensor
-            Predicted values (e.g., from a model), shape (...,).
-        target : torch.Tensor
-            Ground truth or observed values to compare against, same shape as `estimate`.
-        uncertainty : torch.Tensor or float
-            Measurement uncertainty. Can be:
-            - A scalar, applied uniformly
-            - A tensor of the same shape as `estimate`, for pointwise uncertainty
-
-        Returns
-        -------
-        torch.Tensor
-            A scalar tensor containing the total chi-squared loss.
-        """
+    Compute the normalized (reduced) chi-squared statistic.
+    χ²_norm = χ² / N
+    """
     if isinstance(uncertainty, (float, int)):
         uncertainty = torch.tensor(uncertainty, device=estimate.device, dtype=estimate.dtype)
-    return torch.sum((estimate - target) ** 2 / (uncertainty ** 2))
+    chi2 = torch.sum((estimate - target) ** 2 / (uncertainty ** 2))
+    N = estimate.numel()  # Number of data points
+    return chi2 / N
 
 
 @dataclass
@@ -556,3 +612,137 @@ def make_objective_and_constraints(rdf_data,desc):
         return chi_squared(desc["S_Q"], rdf_data.rdf.F_q_target, rdf_data.F_q_uncert) / desc["S_Q"].numel() - 0.1
 
     return objective, [constraint_corr, constraint_scatt]
+
+#Loss function for the cooper constraint
+#returns the chi^2 loss
+#modeled off the AugLagLoss
+class CooperLoss(nn.Module):
+    """
+    Loss function for constrained optimization.
+    
+    Computes chi-squared loss between predicted and target spectra.
+    
+    Supported target types:
+        - S_Q: Structure factor S(Q) in Q-space
+        - T_r: Total correlation function T(r) in r-space  
+        - g_r: Pair distribution function g(r) in r-space
+    
+    Args:
+        target_data: TargetRDFData object with target spectra
+        target_type: Which spectrum to fit ('S_Q', 'T_r', 'g_r')
+        device: Device to use
+    """
+    
+    VALID_TARGETS = ['S_Q', 'T_r', 'g_r']
+    
+    def __init__(self, target_data, target_type: str = 'S_Q', device="cuda"):
+        super().__init__()
+        self.target = target_data
+        self.target_type = target_type if target_type else 'S_Q'
+        
+        if self.target_type not in self.VALID_TARGETS:
+            raise ValueError(f"Invalid target_type '{target_type}'. Must be one of {self.VALID_TARGETS}")
+        
+        self.device = torch.device(device)
+
+    def forward(self, desc: dict) -> dict:
+        """
+        Compute chi-squared loss based on selected target type.
+        
+        Args:
+            desc: Dictionary with predicted spectra from XRD model
+                  Expected keys: 'S_Q', 'T_r', 'g_r' (or 'G_r')
+        
+        Returns:
+            dict with:
+                - total_loss: Main loss for optimization (based on target_type)
+                - chi2_loss: Alias for total_loss
+                - S_Q_loss, T_r_loss, g_r_loss: Individual losses if data available
+        """
+        losses = {}
+        
+        # Debug logging (only once)
+        if not hasattr(self, '_logged_keys'):
+            print(f"\n  CooperLoss forward:")
+            print(f"    Input keys: {list(desc.keys())}")
+            print(f"    Target type: {self.target_type}")
+            print(f"    Available targets: S_Q={self.target.has_S_Q()}, T_r={self.target.has_T_r()}, g_r={self.target.has_g_r()}")
+            self._logged_keys = True
+        
+        # -----------------------------------------------------------------
+        # S(Q) loss - Structure Factor
+        # -----------------------------------------------------------------
+        if 'S_Q' in desc and self.target.has_S_Q():
+            pred = desc['S_Q']
+            target = self.target.S_Q_target
+            uncert = self.target.S_Q_uncert
+            
+            if not hasattr(self, '_logged_S_Q'):
+                print(f"    S(Q): pred={pred.shape}, target={target.shape}")
+                self._logged_S_Q = True
+            
+            if uncert is None or uncert.numel() == 0:
+                uncert = 0.05
+            losses['S_Q_loss'] = chi_squared(pred, target, uncert)
+        
+        # -----------------------------------------------------------------
+        # T(r) loss - Total Correlation Function
+        # -----------------------------------------------------------------
+        if 'T_r' in desc and self.target.has_T_r():
+            pred = desc['T_r']
+            target = self.target.T_r_target
+            uncert = self.target.T_r_uncert
+            
+            if not hasattr(self, '_logged_T_r'):
+                print(f"    T(r): pred={pred.shape}, target={target.shape}")
+                self._logged_T_r = True
+            
+            if uncert is None or uncert.numel() == 0:
+                uncert = 0.05
+            losses['T_r_loss'] = chi_squared(pred, target, uncert)
+        
+        # -----------------------------------------------------------------
+        # g(r) loss - Pair Distribution Function
+        # -----------------------------------------------------------------
+        # Check for both 'g_r' and 'G_r' keys (G_r is computed, g_r is alias)
+        g_r_key = 'g_r' if 'g_r' in desc else ('G_r' if 'G_r' in desc else None)
+        if g_r_key and self.target.has_g_r():
+            pred = desc[g_r_key]
+            target = self.target.g_r_target
+            uncert = self.target.g_r_uncert
+            
+            if not hasattr(self, '_logged_g_r'):
+                print(f"    g(r): pred={pred.shape}, target={target.shape}")
+                self._logged_g_r = True
+            
+            if uncert is None or uncert.numel() == 0:
+                uncert = 0.05
+            losses['g_r_loss'] = chi_squared(pred, target, uncert)
+        
+        # -----------------------------------------------------------------
+        # Select main loss based on target_type
+        # -----------------------------------------------------------------
+        loss_key = f'{self.target_type}_loss'
+        if loss_key in losses:
+            total_loss = losses[loss_key]
+        else:
+            # Fallback: use first available loss
+            available = [k for k in losses.keys() if k.endswith('_loss')]
+            if available:
+                total_loss = losses[available[0]]
+                if not hasattr(self, '_warned_fallback'):
+                    print(f"  WARNING: Target {self.target_type} not available, using {available[0]}")
+                    self._warned_fallback = True
+            else:
+                print(f"  ERROR: No valid loss available!")
+                print(f"    desc keys: {list(desc.keys())}")
+                print(f"    losses computed: {list(losses.keys())}")
+                total_loss = torch.tensor(1e6, device=self.device, requires_grad=True)
+        
+        return {
+            'total_loss': total_loss,
+            'chi2_loss': total_loss,
+            **losses
+        }
+
+

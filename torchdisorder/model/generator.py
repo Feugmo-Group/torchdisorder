@@ -25,22 +25,22 @@ def generate_atoms_from_config(
     -------
     ASE Atoms or pymatgen Structure depending on return_type
     """
-    init_type: Literal["random_icp", "from_cif", "pymatgen"] = cfg.structure.init
+    init_type: Literal["random_icp", "from_cif", "pymatgen"] = cfg.init
 
     if init_type == "random_icp":
         atoms = generate_random_atoms(
-            species=cfg.structure.species,
-            stoichiometry=cfg.structure.stoichiometry,
-            box_length=cfg.structure.box_length,
+            species=cfg.species,
+            stoichiometry=cfg.stoichiometry,
+            box_length=cfg.box_length,
         )
         return atoms if return_type == "ase" else AseAtomsAdaptor.get_structure(atoms)
 
     elif init_type == "from_cif":
-        atoms = generate_crystal_atoms(cfg.structure.cif_path, target_density=cfg.structure.target_density)
+        atoms = generate_crystal_atoms(cfg.cif_path, target_density=cfg.target_density)
         return atoms if return_type == "ase" else AseAtomsAdaptor.get_structure(atoms)
 
     elif init_type == "pymatgen":
-        struct, ase_atoms = generate_from_pymatgen(cfg.structure.cif_path, cfg.structure.target_density)
+        struct, ase_atoms = generate_from_pymatgen(cfg.cif_path, cfg.target_density)
         return ase_atoms if return_type == "ase" else struct
 
     else:

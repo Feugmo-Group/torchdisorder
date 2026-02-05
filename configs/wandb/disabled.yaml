@@ -1,8 +1,8 @@
-# Disable wandb entirely
+# Weights & Biases Configuration - Disabled
+# ==========================================
+
+enabled: false
 project: null
 entity: null
-#run_name: ${experiment.name}_${now:%H-%M-%S}
-#run_name: wandb_run_${now:%Y-%m-%d}_${now:%H-%M-%S}
-run_name: wandb_run
-mode: disabled
-log_every: 0
+tags: []
+notes: ""

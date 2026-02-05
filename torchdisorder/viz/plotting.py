@@ -19,6 +19,8 @@ from typing import Union, Optional
 from pathlib import Path
 import matplotlib.pyplot as plt
 import wandb
+
+import time
 def plot_partial_rdfs(r_bins,
                       rdf_dict,
                       out_path: Union[str, Path] = None,
@@ -356,3 +358,175 @@ def plot_contour(func, sequence, info=None):
 #
 # fig2 = plot_contour(func, sequence, info)
 # fig2.write_html("contour.html")  # Save as HTML
+
+"""
+Live monitoring dashboard for Cooper optimization using Dash.
+"""
+
+from dash import Dash, dcc, html
+from dash.dependencies import Output, Input
+import plotly.graph_objects as go
+import threading
+import numpy as np
+
+
+class LivePlotMonitor:
+    """Thread-safe live plotting monitor using Dash."""
+
+    def __init__(self, q_bins_np, target_sq_np, port=8050):
+        """
+        Initialize live plot monitor.
+
+        Args:
+            q_bins_np: Q-space bins (numpy array)
+            target_sq_np: Target S(Q) values (numpy array)
+            port: Port for Dash server (default: 8050)
+        """
+        self.q_bins = q_bins_np
+        self.target_sq = target_sq_np
+        self.port = port
+
+        # Thread-safe data storage
+        self.latest_sq = None
+        self.loss_history = []
+        self.step_history = []
+        self.violation_history = []
+        self.data_lock = threading.Lock()
+
+        # Create Dash app
+        self.app = Dash(__name__)
+        self._setup_layout()
+        self._setup_callbacks()
+
+    def _setup_layout(self):
+        """Setup Dash app layout."""
+        self.app.layout = html.Div([
+            html.H1("🔬 Cooper Optimization - Live Training Monitor",
+                    style={'textAlign': 'center', 'color': '#2c3e50'}),
+
+            html.Div([
+                html.Div([
+                    html.H3("Current Step: ", style={'display': 'inline'}),
+                    html.Span(id='current-step', style={'color': '#e74c3c', 'fontSize': '24px'})
+                ], style={'textAlign': 'center', 'margin': '20px'}),
+            ]),
+
+            # Main plots
+            dcc.Graph(id='sq-plot', style={'height': '500px'}),
+
+            html.Div([
+                dcc.Graph(id='loss-plot', style={'width': '48%', 'display': 'inline-block'}),
+                dcc.Graph(id='violation-plot', style={'width': '48%', 'display': 'inline-block', 'marginLeft': '4%'}),
+            ]),
+
+            # Auto-refresh interval
+            dcc.Interval(
+                id='interval-component',
+                interval=2000,  # Update every 2 seconds
+                n_intervals=0
+            )
+        ], style={'fontFamily': 'Arial, sans-serif', 'padding': '20px'})
+
+    def _setup_callbacks(self):
+        """Setup Dash callbacks for live updates."""
+
+        @self.app.callback(
+            [Output('current-step', 'children'),
+             Output('sq-plot', 'figure'),
+             Output('loss-plot', 'figure'),
+             Output('violation-plot', 'figure')],
+            Input('interval-component', 'n_intervals')
+        )
+        def update_all_plots(n):
+            with self.data_lock:
+                latest_sq = self.latest_sq
+                loss_hist = self.loss_history.copy()
+                step_hist = self.step_history.copy()
+                viol_hist = self.violation_history.copy()
+
+            # Current step
+            current_step = step_hist[-1] if step_hist else 0
+
+            # S(Q) plot
+            fig_sq = go.Figure()
+            fig_sq.add_trace(go.Scatter(
+                x=self.q_bins, y=self.target_sq,
+                mode='lines', name='Target S(Q)',
+                line=dict(color='blue', width=2, dash='dash')
+            ))
+            if latest_sq is not None:
+                fig_sq.add_trace(go.Scatter(
+                    x=self.q_bins, y=latest_sq,
+                    mode='lines', name='Predicted S(Q)',
+                    line=dict(color='red', width=2)
+                ))
+            fig_sq.update_layout(
+                title='Structure Factor S(Q)',
+                xaxis_title='Q (Å⁻¹)',
+                yaxis_title='S(Q)',
+                template='plotly_white',
+                height=500
+            )
+
+            # Loss plot
+            fig_loss = go.Figure()
+            if loss_hist:
+                fig_loss.add_trace(go.Scatter(
+                    x=step_hist, y=loss_hist,
+                    mode='lines+markers', name='Training Loss',
+                    line=dict(color='green', width=2)
+                ))
+            fig_loss.update_layout(
+                title='Training Loss',
+                xaxis_title='Step',
+                yaxis_title='Loss',
+                yaxis_type='log',
+                template='plotly_white'
+            )
+
+            # Violation plot
+            fig_viol = go.Figure()
+            if viol_hist:
+                fig_viol.add_trace(go.Scatter(
+                    x=step_hist, y=viol_hist,
+                    mode='lines+markers', name='Constraint Violations',
+                    line=dict(color='orange', width=2)
+                ))
+            fig_viol.update_layout(
+                title='Constraint Violations',
+                xaxis_title='Step',
+                yaxis_title='# Atoms Violated',
+                template='plotly_white'
+            )
+
+            return f"{current_step}", fig_sq, fig_loss, fig_viol
+
+    def update_data(self, step, loss, pred_sq, num_violated):
+        """
+        Thread-safe data update.
+
+        Args:
+            step: Current optimization step
+            loss: Current loss value
+            pred_sq: Predicted S(Q) array (numpy)
+            num_violated: Number of atoms violating constraints
+        """
+        with self.data_lock:
+            self.latest_sq = pred_sq
+            self.step_history.append(step)
+            self.loss_history.append(loss)
+            self.violation_history.append(num_violated)
+
+    def start_server(self):
+        """Start Dash server in background thread."""
+
+        def run():
+            # Changed from run_server to run (new Dash API)
+            self.app.run(debug=False, port=self.port, use_reloader=False)
+
+        thread = threading.Thread(target=run, daemon=True)
+        thread.start()
+        print(f"\n{'=' * 70}")
+        print(f"🌐 Live monitoring dashboard started!")
+        print(f"📊 Open in browser: http://localhost:{self.port}")
+        print(f"{'=' * 70}\n")

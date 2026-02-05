@@ -57,7 +57,11 @@ def get_distance_matrix(points_1: torch.Tensor, points_2: torch.Tensor, cell: to
     diff = points_2[None, :, :] - points_1[:, None, :]
     shifts = torch.round(diff @ cell.inverse()) @ cell
     mip = diff - shifts
-    return torch.linalg.norm(mip, dim=-1)
+    # Use sqrt(sum_sq + eps) instead of linalg.norm to avoid NaN gradients
+    # at zero distance (self-pairs in same-element distance matrices).
+    # The gradient of sqrt(x+eps) is finite: 1/(2*sqrt(x+eps)), whereas
+    # the gradient of norm(x) at x=0 is 0/0 = NaN.
+    return torch.sqrt((mip * mip).sum(dim=-1) + 1e-10)
 
 
 def get_observed_distances(points_1: torch.Tensor, points_2: torch.Tensor, cell: torch.Tensor) -> torch.Tensor:
@@ -460,6 +464,94 @@ class SpectrumCalculator:
     def from_config_dict(cls, cfg: Dict[str, Any]) -> "SpectrumCalculator":
         return cls(ScatteringConfig.from_dict(cfg))
 
+    def compute_structure_factor_direct(
+        self, 
+        symbols: List[str], 
+        positions: torch.Tensor, 
+        cell: torch.Tensor, 
+        q_bins: torch.Tensor
+    ) -> torch.Tensor:
+        """
+        Compute the neutron structure factor S(Q) directly using the Debye formula.
+        
+        This is more efficient when only S(Q) is needed (no r-space data).
+        
+        S(Q) = 1/N * |Σ_j b_j * exp(i Q·r_j)|² averaged over Q directions
+        
+        For powder diffraction (isotropic average):
+        S(Q) = 1 + (1/N) * Σ_{i≠j} b_i*b_j * sin(Q*r_ij)/(Q*r_ij) / <b>²
+        
+        Parameters
+        ----------
+        symbols : List[str]
+            Chemical symbols for each atom
+        positions : torch.Tensor
+            Atomic positions (N, 3)
+        cell : torch.Tensor
+            Unit cell (3, 3)
+        q_bins : torch.Tensor
+            Q values to evaluate S(Q) at
+            
+        Returns
+        -------
+        torch.Tensor
+            S(Q) values
+        """
+        device = positions.device
+        dtype = positions.dtype
+        n_atoms = len(symbols)
+        n_q = len(q_bins)
+        
+        # Get scattering lengths
+        b = torch.tensor(
+            [self.neutron_scattering_lengths.get(s, 0.0) for s in symbols],
+            device=device, dtype=dtype
+        )
+        b_mean = b.mean()
+        b_sq_mean = (b ** 2).mean()
+        
+        if b_mean.abs() < 1e-10:
+            return torch.ones(n_q, device=device, dtype=dtype)
+        
+        # Compute all pairwise distances
+        # Use efficient vectorized computation
+        diff = positions.unsqueeze(0) - positions.unsqueeze(1)  # (N, N, 3)
+        
+        # Apply minimum image convention for periodic boundaries
+        # Convert to fractional coordinates
+        cell_inv = torch.linalg.inv(cell)
+        diff_frac = torch.einsum('ijk,kl->ijl', diff, cell_inv)
+        diff_frac = diff_frac - torch.round(diff_frac)
+        diff = torch.einsum('ijk,kl->ijl', diff_frac, cell)
+        
+        # Compute distances
+        r_ij = torch.sqrt((diff ** 2).sum(dim=-1) + 1e-10)  # (N, N)
+        
+        # Get weight matrix b_i * b_j / <b>²
+        weights = torch.outer(b, b) / (b_mean ** 2)  # (N, N)
+        
+        # Compute S(Q) using Debye formula
+        # S(Q) = (1/N) * Σ_{i,j} w_ij * sin(Q*r_ij)/(Q*r_ij)
+        S_Q = torch.zeros(n_q, device=device, dtype=dtype)
+        
+        # Vectorized computation over Q
+        Q = q_bins.unsqueeze(-1).unsqueeze(-1)  # (n_q, 1, 1)
+        r = r_ij.unsqueeze(0)  # (1, N, N)
+        Qr = Q * r  # (n_q, N, N)
+        
+        # sin(Qr)/(Qr) with limit handling for Qr->0
+        sinc_Qr = torch.where(
+            Qr.abs() < 1e-8,
+            torch.ones_like(Qr),
+            torch.sin(Qr) / (Qr + 1e-10)
+        )
+        
+        # Weight and sum
+        w = weights.unsqueeze(0)  # (1, N, N)
+        S_Q = (w * sinc_Qr).sum(dim=(-2, -1)) / n_atoms
+        
+        return S_Q
+
     def compute_neutron_rdf(self, symbols, positions, cell, r_bins):
         return get_neutron_total_rdf(
             symbols,
@@ -469,6 +561,9 @@ class SpectrumCalculator:
             kernel_width=self.kernel_width,
             scattering_lengths=self.neutron_scattering_lengths,
         )
+    
+    # Simpler alias
+    compute_rdf = compute_neutron_rdf
 
     def compute_neutron_sf(self, total_rdf: torch.Tensor, r_bins: torch.Tensor, q_bins: torch.Tensor, symbols: List[str], cell: torch.Tensor) -> torch.Tensor:
         return get_neutron_total_scattering_sf(
@@ -478,6 +573,9 @@ class SpectrumCalculator:
             symbols,
             cell,
         )
+    
+    # Simpler alias
+    compute_sf = compute_neutron_sf
 
     def compute_xray_sf(self, symbols: List[str], positions: torch.Tensor, cell: torch.Tensor, q_bins: torch.Tensor, r_bins: torch.Tensor, kernel_width: float ) -> torch.Tensor:
 
@@ -536,8 +634,11 @@ class SpectrumCalculator:
             r_bins,
             chemical_symbols,
             cell,
-            scattering_lengths=self.neutron_scattering_lengths,  # keep user‑supplied values
+            scattering_lengths=self.neutron_scattering_lengths,
         )
+    
+    # Simpler alias
+    compute_correlation = compute_neutron_correlation
 
 
 

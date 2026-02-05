@@ -1,7 +1,10 @@
-project: torchdisorder
-entity: giresse
-#run_name: ${experiment.name}_${now:%H-%M-%S}
-#run_name: wandb_run_${now:%Y-%m-%d}_${now:%H-%M-%S}
-run_name: wandb_run
-mode: online
-log_every: 100
+# Weights & Biases Configuration - Enabled
+# ==========================================
+
+enabled: true
+project: "torchdisorder-optimization"
+entity: null  # Set to your W&B team name, or null for personal account
+tags:
+  - structure_optimization
+  - constrained
+notes: ""
