@@ -1,0 +1,118 @@
+
+======================================================================
+  TARGET DATA CONFIGURATION
+======================================================================
+  ⚙ Auto-generated r_bins: 1000 bins, r_max=20.0 Å
+  ✓ Loaded S(Q): 7725 bins from F_of_Q.csv
+
+  Data Files:
+    F(Q)/S(Q) path: /Users/conrard/Downloads/torchdisorder_v5/data/xrd_measurements/Li3PS4/F_of_Q.csv
+    T(r) path: None
+
+  Loaded Data:
+    ✓ F(Q)/S(Q) data:
+        Bins: 7725
+        Q range: [0.46, 17.34] Å⁻¹
+        F range: [-0.211, 1.931]
+    ✗ T(r) data: Not loaded
+======================================================================
+
+Plotting experimental spectrum...
+
+======================================================================
+  STRUCTURE GENERATION
+======================================================================
+  Initialization type: from_cif
+
+  Generated Structure:
+    Total atoms: 283
+    Composition: {'P': 72, 'S': 211}
+    Cell vectors:
+      a = 11.3321 Å, b = 34.6834 Å, c = 23.2052 Å
+      α = 107.48°, β = 103.55°, γ = 101.86°
+    Volume: 8073.79 Å³
+    Density: 1.8500 g/cm³
+
+  ⚠ WARNING: NON-CUBIC cell detected
+    The cell is NOT cubic. Ensure your model handles this correctly.
+======================================================================
+
+
+======================================================================
+  MODEL CONFIGURATION
+======================================================================
+  Model forward pass: OK
+  Available outputs: ['G_r', 'T_r', 'S_Q']
+    G_r: shape=torch.Size([1, 1000]), range=[-0.1175, 0.2944]
+    T_r: shape=torch.Size([1, 1000]), range=[0.0000, 0.3404]
+    S_Q: shape=torch.Size([1, 7725]), range=[-4.3442, 2.6550]
+======================================================================
+
+CooperLoss initialized with target: S_Q
+
+======================================================================
+  CONSTRAINT CONFIGURATION
+======================================================================
+  Constraints enabled: True
+  Use types: all
+  Constraints file: /Users/conrard/Downloads/torchdisorder_v5/data/json/glass_67Li2S_small_constraints.json
+  Original constraints: 30 atoms, types: ['q4', 'cn', 'tet', 'q2']
+  Cutoff: 3.5 Å
+  After filtering: 30 atoms, types: ['tet', 'q4', 'cn', 'q2']
+  Filtered constraints saved: outputs/2026-02-02/20-00-01/plots/filtered_constraints.json
+  Penalty rho: 10.0
+  ✓ Order parameters: PyTorch backend
+Found 7725 placeholder points where dF = 1e-7
+  Created constraint for cn: 30 atoms
+  Created constraint for tet: 17 atoms
+  Created constraint for q4: 7 atoms
+  Created constraint for q2: 13 atoms
+
+Initialized StructureFactorCMPWithConstraints:
+  Constrained atoms: 30
+  Order parameters: tet, q4, cn, q2
+  Total Cooper constraints: 4
+  Constraint warmup: 500 steps
+======================================================================
+
+
+======================================================================
+  STARTING OPTIMIZATION
+======================================================================
+  Max steps: 10000
+  Target: S(Q)
+  Constraints: ON
+  Plot interval: 100
+  Checkpoint interval: 200
+  Gradient clipping: norm ≤ 1.0
+  Position clamping: max 0.1 Å/step
+  Constraint warmup: 500 steps
+======================================================================
+
+  ✓ Gradient safety hook registered on positions
+
+  CooperLoss forward:
+    Input keys: ['G_r', 'T_r', 'S_Q']
+    Target type: S_Q
+    Available targets: S_Q=True, T_r=False, g_r=False
+    S(Q): pred=torch.Size([1, 7725]), target=torch.Size([7725])
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Initial loss: nan
+Step 0: Loss=nan (nan%), Viol: 0.0000/0.0000 (0)
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 1: Loss=nan (nan%), Viol: 0.0061/0.0375 (56)
+Step 2: Loss=nan (nan%), Viol: 0.0122/0.0750 (56)
+Step 3: Loss=nan (nan%), Viol: 0.0184/0.1125 (56)
+Step 4: Loss=nan (nan%), Viol: 0.0245/0.1500 (56)
+Step 5: Loss=nan (nan%), Viol: 0.0306/0.1875 (56)
+Step 6: Loss=nan (nan%), Viol: 0.0367/0.2250 (56)
+Step 7: Loss=nan (nan%), Viol: 0.0429/0.2625 (56)
+Step 8: Loss=nan (nan%), Viol: 0.0486/0.3000 (56)
+Step 9: Loss=nan (nan%), Viol: 0.0547/0.3375 (56)
+
+wandb: WARNING Tried to log to step 0 that is less than the current step 1. Steps must be monotonically increasing, so this data will be ignored. See https://wandb.me/define-metric to log data out of order.

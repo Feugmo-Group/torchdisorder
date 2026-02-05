@@ -1,0 +1,79 @@
+# ==============================================================================
+# Li-P-S Glass Structure Configuration
+# ==============================================================================
+#
+# Configuration for lithium thiophosphate glass (67Li2S-33P2S5)
+# Structure has Li removed for RMC optimization
+#
+# P environment types in this glass:
+#   - PS4^3-: Isolated tetrahedra (7.3%)
+#   - P2S7^4-: Edge-sharing dimers (78.5%)
+#   - P2S6^4-: Face-sharing dumbbells (14.2%)
+
+# Base directory for structure files
+root_dir: ${oc.env:PROJECT_ROOT,./}/data
+
+# ==============================================================================
+# STRUCTURE INITIALIZATION
+# ==============================================================================
+
+# Initialization method: from_cif, random, or pymatgen
+init: "from_cif"
+
+# CIF file path (Li-free structure)
+cif_path: ${structure.root_dir}/crystal-structures/glass_67Li2S_small.cif
+
+# ==============================================================================
+# STRUCTURE PROPERTIES
+# ==============================================================================
+
+# Expected atom counts
+n_atoms: 5054
+species: [P, S]
+stoichiometry: [1200, 3854]
+
+# Box dimensions (Å)
+box_length: 47.5  # Approximate for this system
+
+# Target density (g/cm³)
+# Note: This is for the Li-free structure
+target_density: 1.85
+
+# ==============================================================================
+# CONSTRAINT FILE
+# ==============================================================================
+
+# Path to order parameter constraints JSON
+constraints_path: ${structure.root_dir}/json/glass_67Li2S_small_constraints.json
+
+# ==============================================================================
+# ORDER PARAMETER SETTINGS
+# ==============================================================================
+
+# Central atom for order parameter calculation
+central_element: P
+central_atomic_number: 15
+
+# Neighbor elements for order parameters
+neighbor_elements: [P, S]
+neighbor_atomic_numbers: [15, 16]
+
+# Cutoff for neighbor finding (Å)
+# P-S bonds are ~2.0 Å, use 3.5 Å to capture first coordination shell
+order_param_cutoff: 3.5
+
+# Order parameters to compute
+order_params:
+  - tet   # Tetrahedral (for PS4 units)
+  - cn    # Coordination number
+  - q4    # Bond orientational
+
+# Target order parameter values (from literature)
+targets:
+  tet:
+    PS4: 0.85     # Ideal tetrahedral
+    P2S7: 0.60    # Distorted (bridging S)
+    P2S6: 0.65    # Distorted (P-P bond)
+  cn:
+    target: 4.0   # P should have 4 neighbors (3S + 1P or 4S)
+    tolerance: 0.5

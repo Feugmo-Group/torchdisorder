@@ -1,0 +1,43 @@
+# Cooper Constrained Optimization Trainer Configuration
+# ======================================================
+#
+# Settings for the augmented Lagrangian optimization using Cooper library.
+
+# Optimizer selection
+name: cooper
+
+# Primal optimizer (for atomic positions)
+primal:
+  type: Adam
+  lr: 1e-3
+  betas: [0.9, 0.999]
+
+# Dual optimizer (for Lagrange multipliers)
+dual:
+  type: SGD
+  lr: 1e-2
+  maximize: true
+
+# Learning rate reduction settings
+lr_reduction:
+  enabled: true
+  threshold: 97.5    # Reduce LR after this % loss reduction
+  primal_factor: 0.1  # Multiply primal LR by this
+  dual_factor: 0.1    # Multiply dual LR by this
+
+# Augmented Lagrangian settings
+penalty_coefficient: 10.0   # Initial penalty rho
+penalty_schedule: constant  # Options: constant, increasing
+
+# Constraint violation handling
+violation_type: soft  # Options: soft (smooth), hard (strict)
+
+# Melt-quench restart settings (optional)
+melt_quench:
+  enabled: false
+  trigger_plateau: true
+  plateau_window: 3000
+  melt_temp: 1200      # Kelvin
+  quench_temp: 300     # Kelvin
+  melt_steps: 2000
+  quench_steps: 5000

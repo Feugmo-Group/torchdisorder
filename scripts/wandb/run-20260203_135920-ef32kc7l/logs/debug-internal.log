@@ -1,0 +1,7 @@
+{"time":"2026-02-03T13:59:20.365311-05:00","level":"INFO","msg":"stream: starting","core version":"0.21.0"}
+{"time":"2026-02-03T13:59:20.582351-05:00","level":"INFO","msg":"stream: created new stream","id":"ef32kc7l"}
+{"time":"2026-02-03T13:59:20.582377-05:00","level":"INFO","msg":"stream: started","id":"ef32kc7l"}
+{"time":"2026-02-03T13:59:20.582382-05:00","level":"INFO","msg":"handler: started","stream_id":"ef32kc7l"}
+{"time":"2026-02-03T13:59:20.582411-05:00","level":"INFO","msg":"writer: Do: started","stream_id":"ef32kc7l"}
+{"time":"2026-02-03T13:59:20.582418-05:00","level":"INFO","msg":"sender: started","stream_id":"ef32kc7l"}
+{"time":"2026-02-03T13:59:23.200432-05:00","level":"WARN","msg":"handler: ignoring partial history record","step":0,"current":1}

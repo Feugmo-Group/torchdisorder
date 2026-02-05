@@ -1,0 +1,263 @@
+
+======================================================================
+  TARGET DATA CONFIGURATION
+======================================================================
+  ✓ Loaded T(r): 1001 bins from T_of_r.csv
+  ✓ Loaded S(Q): 999 bins from F_of_Q.csv
+
+  Data Files:
+    F(Q)/S(Q) path: /Users/conrard/Downloads/torchdisorder_v5/data/xrd_measurements/SiO2/F_of_Q.csv
+    T(r) path: /Users/conrard/Downloads/torchdisorder_v5/data/xrd_measurements/SiO2/T_of_r.csv
+
+  Loaded Data:
+    ✓ F(Q)/S(Q) data:
+        Bins: 999
+        Q range: [0.02, 19.98] Å⁻¹
+        F range: [-0.231, 0.212]
+    ✓ T(r) data:
+        Bins: 1001
+        r range: [0.00, 10.00] Å
+        T range: [0.000, 2.643]
+======================================================================
+
+Plotting experimental spectrum...
+
+======================================================================
+  STRUCTURE GENERATION
+======================================================================
+  Initialization type: from_cif
+
+  Generated Structure:
+    Total atoms: 1125
+    Composition: {'O': 750, 'Si': 375}
+    Cell vectors:
+      a = 26.0957 Å, b = 26.0957 Å, c = 28.8371 Å
+      α = 90.00°, β = 90.00°, γ = 120.00°
+    Volume: 17006.68 Å³
+    Density: 2.1999 g/cm³
+
+  ⚠ WARNING: NON-CUBIC cell detected
+    The cell is NOT cubic. Ensure your model handles this correctly.
+======================================================================
+
+
+======================================================================
+  MODEL CONFIGURATION
+======================================================================
+  Model forward pass: OK
+  Available outputs: ['G_r', 'T_r', 'S_Q']
+    G_r: shape=torch.Size([1, 1001]), range=[-0.2758, 0.9866]
+    T_r: shape=torch.Size([1, 1001]), range=[0.0000, 3.3181]
+    S_Q: shape=torch.Size([1, 999]), range=[-0.3327, 1.6025]
+======================================================================
+
+CooperLoss initialized with target: S_Q
+
+======================================================================
+  CONSTRAINT CONFIGURATION
+======================================================================
+  Constraints enabled: True
+  Use types: all
+  Constraints file: /Users/conrard/Downloads/torchdisorder_v5/data/json/sio2_glass_constraints.json
+  Original constraints: 375 atoms, types: ['tet']
+  Cutoff: 2.3 Å
+  After filtering: 375 atoms, types: ['tet']
+  Filtered constraints saved: outputs/2026-02-03/12-19-47/plots/filtered_constraints.json
+  Penalty rho: 10.0
+  ✓ Order parameters: PyTorch backend
+Found 26 placeholder points where dF = 1e-7
+  Created constraint for tet: 375 atoms
+
+Initialized StructureFactorCMPWithConstraints:
+  Constrained atoms: 375
+  Order parameters: tet
+  Total Cooper constraints: 1
+  Constraint warmup: 500 steps
+======================================================================
+
+
+======================================================================
+  STARTING OPTIMIZATION
+======================================================================
+  Max steps: 5000
+  Target: S(Q)
+  Constraints: ON
+  Plot interval: 100
+  Checkpoint interval: 200
+  Gradient clipping: norm ≤ 1.0
+  Position clamping: max 0.1 Å/step
+  Constraint warmup: 500 steps
+======================================================================
+
+  ✓ Gradient safety hook registered on positions
+
+  CooperLoss forward:
+    Input keys: ['G_r', 'T_r', 'S_Q']
+    Target type: S_Q
+    Available targets: S_Q=True, T_r=True, g_r=False
+    S(Q): pred=torch.Size([1, 999]), target=torch.Size([999])
+    T(r): pred=torch.Size([1, 1001]), target=torch.Size([1001])
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Initial loss: 28602.316406
+Step 0: Loss=28602.316406 (0.0%), Viol: 0.0000/0.0000 (0)
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 1: Loss=28404.431641 (0.7%), Viol: 0.0014/0.0024 (299)
+Step 2: Loss=28205.457031 (1.4%), Viol: 0.0028/0.0048 (299)
+Step 3: Loss=28005.449219 (2.1%), Viol: 0.0042/0.0072 (299)
+Step 4: Loss=27804.505859 (2.8%), Viol: 0.0056/0.0096 (299)
+
+wandb: WARNING Tried to log to step 0 that is less than the current step 1. Steps must be monotonically increasing, so this data will be ignored. See https://wandb.me/define-metric to log data out of order.
+Step 5: Loss=27602.734375 (3.5%), Viol: 0.0070/0.0120 (299)
+Step 6: Loss=27400.191406 (4.2%), Viol: 0.0084/0.0144 (299)
+Step 7: Loss=27196.945312 (4.9%), Viol: 0.0098/0.0168 (299)
+Step 8: Loss=26993.113281 (5.6%), Viol: 0.0113/0.0192 (299)
+Step 9: Loss=26788.748047 (6.3%), Viol: 0.0127/0.0216 (299)
+Step 100: Loss=11718.061523 (59.0%), Viol: 0.1386/0.2400 (297)
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 200: Loss=5487.899902 (80.8%), Viol: 0.2643/0.4800 (304)
+Checkpoint saved: outputs/2026-02-03/12-19-47/checkpoints/step_200
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 300: Loss=3083.637451 (89.2%), Viol: 0.3718/0.7200 (299)
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 400: Loss=1735.886597 (93.9%), Viol: 0.4348/0.9600 (283)
+Checkpoint saved: outputs/2026-02-03/12-19-47/checkpoints/step_400
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 500: Loss=974.909424 (96.6%), Viol: 0.4940/1.2000 (276)
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+
+LR reduced at step 587 (97.5% reduction)
+Step 600: Loss=708.523560 (97.5%), Viol: 0.4785/1.2000 (260)
+Checkpoint saved: outputs/2026-02-03/12-19-47/checkpoints/step_600
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 700: Loss=687.063049 (97.6%), Viol: 0.4813/1.2000 (267)
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 800: Loss=679.457092 (97.6%), Viol: 0.4807/1.2000 (261)
+Checkpoint saved: outputs/2026-02-03/12-19-47/checkpoints/step_800
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 900: Loss=671.533386 (97.7%), Viol: 0.4802/1.2000 (266)
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 1000: Loss=663.738098 (97.7%), Viol: 0.4786/1.2000 (257)
+Checkpoint saved: outputs/2026-02-03/12-19-47/checkpoints/step_1000
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 1100: Loss=655.885742 (97.7%), Viol: 0.4798/1.2000 (262)
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 1200: Loss=647.785217 (97.7%), Viol: 0.4777/1.2000 (259)
+Checkpoint saved: outputs/2026-02-03/12-19-47/checkpoints/step_1200
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 1300: Loss=636.758972 (97.8%), Viol: 0.4740/1.2000 (261)
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 1400: Loss=624.652283 (97.8%), Viol: 0.4752/1.2000 (263)
+Checkpoint saved: outputs/2026-02-03/12-19-47/checkpoints/step_1400
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 1500: Loss=610.242615 (97.9%), Viol: 0.4736/1.2000 (259)
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 1600: Loss=594.418152 (97.9%), Viol: 0.4717/1.2000 (261)
+Checkpoint saved: outputs/2026-02-03/12-19-47/checkpoints/step_1600
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 1700: Loss=580.318298 (98.0%), Viol: 0.4694/1.2000 (256)
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 1800: Loss=567.262878 (98.0%), Viol: 0.4697/1.2000 (259)
+Checkpoint saved: outputs/2026-02-03/12-19-47/checkpoints/step_1800
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 1900: Loss=557.470825 (98.1%), Viol: 0.4690/1.2000 (257)
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 2000: Loss=547.251709 (98.1%), Viol: 0.4715/1.2000 (259)
+Checkpoint saved: outputs/2026-02-03/12-19-47/checkpoints/step_2000
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 2100: Loss=536.903137 (98.1%), Viol: 0.4695/1.2000 (259)
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 2200: Loss=526.083069 (98.2%), Viol: 0.4687/1.2000 (255)
+Checkpoint saved: outputs/2026-02-03/12-19-47/checkpoints/step_2200
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 2300: Loss=515.044922 (98.2%), Viol: 0.4718/1.2000 (258)
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 2400: Loss=503.708893 (98.2%), Viol: 0.4678/1.2000 (253)
+Checkpoint saved: outputs/2026-02-03/12-19-47/checkpoints/step_2400
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 2500: Loss=492.091156 (98.3%), Viol: 0.4677/1.2000 (257)
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)
+Step 2600: Loss=480.621796 (98.3%), Viol: 0.4665/1.2000 (254)
+Checkpoint saved: outputs/2026-02-03/12-19-47/checkpoints/step_2600
+
+/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/lib/python3.12/site-packages/warp/_src/torch.py:280: UserWarning:
+
+The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more information. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/build/aten/src/ATen/core/TensorBody.h:494.)

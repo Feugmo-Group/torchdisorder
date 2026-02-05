@@ -1,0 +1,33 @@
+{
+  "os":  "macOS-26.2-arm64-arm-64bit",
+  "python":  "CPython 3.12.8",
+  "startedAt":  "2026-02-03T17:19:47.602228Z",
+  "program":  "/Users/conrard/Downloads/torchdisorder_v5/scripts/train.py",
+  "codePath":  "train.py",
+  "codePathLocal":  "train.py",
+  "email":  "cgtetsas@uwaterloo.ca",
+  "root":  "/Users/conrard/Downloads/torchdisorder_v5/scripts",
+  "host":  "eduroam-campus-10-36-222-41.campus-dynamic.uwaterloo.ca",
+  "executable":  "/Users/conrard/.venv/torchdisorder-x1pC2K7f-py3.12/bin/python3.12",
+  "cpu_count":  8,
+  "cpu_count_logical":  8,
+  "disk":  {
+    "/":  {
+      "total":  "994662584320",
+      "used":  "881464590336"
+    }
+  },
+  "memory":  {
+    "total":  "25769803776"
+  },
+  "apple":  {
+    "name":  "Apple M2",
+    "ecpuCores":  4,
+    "pcpuCores":  4,
+    "gpuCores":  10,
+    "memoryGb":  24,
+    "swapTotalBytes":  "11811160064",
+    "ramTotalBytes":  "25769803776"
+  },
+  "writerId":  "8wfpzc8l8ap605yyshyyhrakzb821w5j"
+}

@@ -1,0 +1,188 @@
+======================================================================
+P ENVIRONMENT SUMMARY FOR  
+======================================================================
+
+Total atoms: 499
+Total P atoms: 108
+Total anionic units: 56
+
+Environment Distribution:
+----------------------------------------------------------------------
+  PS4^3-                             :  71.43% (0 P atoms)
+  PS3^-                              :  19.64% (0 P atoms)
+  P2S7^4- (dimer)                    :   8.93% (0 P atoms)
+  P2S6^4- (dumbbell)                 :   0.00% (0 P atoms)
+
+======================================================================
+ORDER PARAMETER CONSTRAINTS BY ENVIRONMENT
+======================================================================
+
+
+P4 environments (40 atoms):
+----------------------------------------------------------------------
+  cn: target=4.00, weight=1.5
+      (P-S coordination number)
+  tet: target=0.85, range=[0.70, 1.00], weight=2.0
+      (Tetrahedral PS4^3-)
+  q4: target=0.60, range=[0.40, 0.80], weight=0.5
+      (Tetrahedral bond order)
+
+Pa environments (10 atoms):
+----------------------------------------------------------------------
+  cn: target=4.00, weight=1.0
+      (P coordination (3S + 1P))
+  tet: target=0.60, range=[0.40, 0.80], weight=1.5
+      (Distorted tetrahedral (bridging S))
+
+P3 environments (11 atoms):
+----------------------------------------------------------------------
+  cn: target=3.00, weight=1.5
+      (P-S coordination)
+  q2: target=0.50, range=[0.30, 0.70], weight=1.0
+      (Pyramidal symmetry)
+
+======================================================================
+DETAILED P SITE INFORMATION
+======================================================================
+
+
+P4 sites (40 atoms):
+----------------------------------------------------------------------
+  Index    3: PS4^3-                    CN=4 (0P + 4S) xyz=(11.104, 14.206, 3.562)
+      S neighbors: [np.int64(322), np.int64(111), np.int64(345), np.int64(227)]
+  Index    7: PS4^3-                    CN=4 (0P + 4S) xyz=(11.163, 22.684, 9.483)
+      S neighbors: [np.int64(325), np.int64(115), np.int64(348), np.int64(231)]
+  Index   10: PS4^3-                    CN=4 (0P + 4S) xyz=(23.277, 6.256, 9.544)
+      S neighbors: [np.int64(328), np.int64(350), np.int64(118), np.int64(234)]
+  Index   11: PS4^3-                    CN=4 (0P + 4S) xyz=(23.008, 6.223, 15.933)
+      S neighbors: [np.int64(329), np.int64(351), np.int64(119), np.int64(235)]
+  Index   12: PS4^3-                    CN=4 (0P + 4S) xyz=(22.665, 14.583, 3.232)
+      S neighbors: [np.int64(330), np.int64(120), np.int64(352), np.int64(236)]
+  Index   17: PS4^3-                    CN=4 (0P + 4S) xyz=(23.159, 22.817, 15.989)
+      S neighbors: [np.int64(332), np.int64(125), np.int64(357), np.int64(241)]
+  Index   18: PS4^3-                    CN=4 (0P + 4S) xyz=(35.394, 6.085, 3.595)
+      S neighbors: [np.int64(333), np.int64(358), np.int64(126), np.int64(215)]
+  Index   19: PS4^3-                    CN=4 (0P + 4S) xyz=(34.698, 5.780, 9.185)
+      S neighbors: [np.int64(334), np.int64(127), np.int64(359), np.int64(216)]
+  Index   22: PS4^3-                    CN=4 (0P + 4S) xyz=(35.058, 14.172, 10.006)
+      S neighbors: [np.int64(337), np.int64(130), np.int64(361), np.int64(219)]
+  Index   23: PS4^3-                    CN=4 (0P + 4S) xyz=(2.893, 9.491, 14.842)
+      S neighbors: [np.int64(418), np.int64(194), np.int64(368), np.int64(338)]
+  Index   25: PS4^3-                    CN=4 (0P + 4S) xyz=(35.001, 22.254, 9.219)
+      S neighbors: [np.int64(340), np.int64(364), np.int64(133), np.int64(222)]
+  Index   29: PS4^3-                    CN=4 (0P + 4S) xyz=(7.997, 6.154, 16.368)
+      S neighbors: [np.int64(392), np.int64(244), np.int64(456), np.int64(110)]
+  Index   31: PS4^3-                    CN=4 (0P + 4S) xyz=(4.775, 13.809, 11.860)
+      S neighbors: [np.int64(139), np.int64(459), np.int64(371), np.int64(246)]
+  Index   33: PS4^3-                    CN=4 (0P + 4S) xyz=(4.484, 22.561, 5.573)
+      S neighbors: [np.int64(460), np.int64(141), np.int64(373), np.int64(248)]
+  Index   36: PS4^3-                    CN=4 (0P + 4S) xyz=(17.398, 6.141, 5.447)
+      S neighbors: [np.int64(144), np.int64(462), np.int64(376), np.int64(251)]
+  Index   39: PS4^3-                    CN=4 (0P + 4S) xyz=(17.099, 14.532, 5.232)
+      S neighbors: [np.int64(147), np.int64(465), np.int64(378), np.int64(254)]
+  Index   40: PS4^3-                    CN=4 (0P + 4S) xyz=(17.324, 14.292, 11.658)
+      S neighbors: [np.int64(148), np.int64(466), np.int64(379), np.int64(255)]
+  Index   41: PS4^3-                    CN=4 (0P + 4S) xyz=(17.114, 14.607, 17.704)
+      S neighbors: [np.int64(256), np.int64(149), np.int64(464), np.int64(377)]
+  Index   49: PS4^3-                    CN=4 (0P + 4S) xyz=(28.766, 13.952, 11.167)
+      S neighbors: [np.int64(157), np.int64(471), np.int64(387), np.int64(264)]
+  Index   57: PS4^3-                    CN=4 (0P + 4S) xyz=(7.643, 10.195, 1.017)
+      S neighbors: [np.int64(272), np.int64(438), np.int64(395), np.int64(165)]
+  Index   58: PS4^3-                    CN=4 (0P + 4S) xyz=(7.088, 10.069, 6.321)
+      S neighbors: [np.int64(273), np.int64(436), np.int64(393), np.int64(166)]
+  Index   62: PS4^3-                    CN=4 (0P + 4S) xyz=(7.080, 18.726, 12.761)
+      S neighbors: [np.int64(277), np.int64(439), np.int64(397), np.int64(170)]
+  Index   64: PS4^3-                    CN=4 (0P + 4S) xyz=(18.919, 2.163, 6.770)
+      S neighbors: [np.int64(279), np.int64(440), np.int64(172), np.int64(399)]
+  Index   66: PS4^3-                    CN=4 (0P + 4S) xyz=(18.866, 10.201, 0.525)
+      S neighbors: [np.int64(281), np.int64(444), np.int64(174), np.int64(404)]
+  Index   67: PS4^3-                    CN=4 (0P + 4S) xyz=(19.290, 10.019, 6.138)
+      S neighbors: [np.int64(282), np.int64(442), np.int64(402), np.int64(175)]
+  Index   68: PS4^3-                    CN=4 (0P + 4S) xyz=(19.724, 9.934, 12.989)
+      S neighbors: [np.int64(283), np.int64(443), np.int64(403), np.int64(176)]
+  Index   69: PS4^3-                    CN=4 (0P + 4S) xyz=(19.087, 18.567, 0.498)
+      S neighbors: [np.int64(284), np.int64(447), np.int64(407), np.int64(177)]
+  Index   70: PS4^3-                    CN=4 (0P + 4S) xyz=(18.962, 18.631, 6.487)
+      S neighbors: [np.int64(285), np.int64(445), np.int64(405), np.int64(178)]
+  Index   72: PS4^3-                    CN=4 (0P + 4S) xyz=(30.944, 1.984, 0.142)
+      S neighbors: [np.int64(287), np.int64(449), np.int64(180), np.int64(410)]
+  Index   79: PS4^3-                    CN=4 (0P + 4S) xyz=(30.902, 17.625, 6.707)
+      S neighbors: [np.int64(453), np.int64(411), np.int64(294), np.int64(187)]
+  Index   81: PS4^3-                    CN=4 (0P + 4S) xyz=(0.664, 1.765, 2.686)
+      S neighbors: [np.int64(313), np.int64(189), np.int64(414), np.int64(473)]
+  Index   87: PS4^3-                    CN=4 (0P + 4S) xyz=(6.177, 18.453, 1.403)
+      S neighbors: [np.int64(275), np.int64(398), np.int64(489), np.int64(168)]
+  Index   89: PS4^3-                    CN=4 (0P + 4S) xyz=(0.954, 18.755, 15.030)
+      S neighbors: [np.int64(320), np.int64(420), np.int64(197), np.int64(480)]
+  Index   90: PS4^3-                    CN=4 (0P + 4S) xyz=(13.059, 2.002, 2.444)
+      S neighbors: [np.int64(296), np.int64(198), np.int64(421), np.int64(481)]
+  Index   93: PS4^3-                    CN=4 (0P + 4S) xyz=(13.059, 9.685, 3.179)
+      S neighbors: [np.int64(299), np.int64(424), np.int64(484), np.int64(321)]
+  Index   95: PS4^3-                    CN=4 (0P + 4S) xyz=(12.809, 9.582, 14.667)
+      S neighbors: [np.int64(301), np.int64(426), np.int64(203), np.int64(486)]
+  Index   96: PS4^3-                    CN=4 (0P + 4S) xyz=(12.009, 11.833, 5.347)
+      S neighbors: [np.int64(300), np.int64(321), np.int64(202), np.int64(227)]
+  Index   97: PS4^3-                    CN=4 (0P + 4S) xyz=(13.130, 18.834, 8.345)
+      S neighbors: [np.int64(303), np.int64(488), np.int64(205), np.int64(467)]
+  Index  104: PS4^3-                    CN=4 (0P + 4S) xyz=(24.846, 10.663, 14.507)
+      S neighbors: [np.int64(309), np.int64(432), np.int64(211), np.int64(495)]
+  Index  105: PS4^3-                    CN=4 (0P + 4S) xyz=(24.688, 18.696, 2.909)
+      S neighbors: [np.int64(310), np.int64(433), np.int64(212), np.int64(496)]
+
+Pa sites (10 atoms):
+----------------------------------------------------------------------
+  Index    0: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(3.863, 8.116, 7.610)
+      P neighbors: [np.int64(77)]
+      S neighbors: [np.int64(417), np.int64(367), np.int64(273)]
+  Index    4: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(16.113, 18.006, 9.639)
+      P neighbors: [np.int64(16)]
+      S neighbors: [np.int64(427), np.int64(488), np.int64(285)]
+  Index   21: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(31.790, 15.642, 17.787)
+      P neighbors: [np.int64(78)]
+      S neighbors: [np.int64(265), np.int64(455), np.int64(336)]
+  Index   52: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(29.992, 18.107, 15.308)
+      P neighbors: [np.int64(80)]
+      S neighbors: [np.int64(295), np.int64(336), np.int64(188)]
+  Index   60: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(7.632, 13.180, 15.512)
+      P neighbors: [np.int64(86)]
+      S neighbors: [np.int64(395), np.int64(247), np.int64(324)]
+  Index   75: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(34.184, 12.267, 0.104)
+      P neighbors: [np.int64(50)]
+      S neighbors: [np.int64(315), np.int64(131), np.int64(457)]
+  Index   77: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(2.094, 8.347, 8.387)
+      P neighbors: [np.int64(0)]
+      S neighbors: [np.int64(417), np.int64(193), np.int64(367)]
+  Index   85: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(2.462, 14.956, 10.232)
+      P neighbors: [np.int64(34)]
+      S neighbors: [np.int64(219), np.int64(419), np.int64(139)]
+  Index   86: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(5.545, 12.658, 14.586)
+      P neighbors: [np.int64(60)]
+      S neighbors: [np.int64(459), np.int64(140), np.int64(247)]
+  Index   88: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(0.897, 18.140, 9.043)
+      P neighbors: [np.int64(34)]
+      S neighbors: [np.int64(319), np.int64(419), np.int64(479)]
+
+P3 sites (11 atoms):
+----------------------------------------------------------------------
+  Index    5: PS3^-                     CN=3 (0P + 3S) xyz=(11.295, 13.752, 16.680)
+      S neighbors: [np.int64(324), np.int64(113), np.int64(229)]
+  Index    6: PS3^-                     CN=3 (0P + 3S) xyz=(12.672, 22.722, 3.951)
+      S neighbors: [np.int64(114), np.int64(230), np.int64(421)]
+  Index   15: PS3^-                     CN=3 (0P + 3S) xyz=(23.419, 22.770, 3.665)
+      S neighbors: [np.int64(123), np.int64(355), np.int64(239)]
+  Index   24: PS3^-                     CN=3 (0P + 3S) xyz=(35.025, 22.939, 3.422)
+      S neighbors: [np.int64(132), np.int64(363), np.int64(221)]
+  Index   37: PS3^-                     CN=3 (0P + 3S) xyz=(11.611, 6.305, 14.843)
+      S neighbors: [np.int64(344), np.int64(456), np.int64(226)]
+  Index   42: PS3^-                     CN=3 (0P + 3S) xyz=(15.255, 22.433, 5.493)
+      S neighbors: [np.int64(230), np.int64(467), np.int64(150)]
+  Index   51: PS3^-                     CN=3 (0P + 3S) xyz=(27.515, 1.626, 5.457)
+      S neighbors: [np.int64(207), np.int64(430), np.int64(288)]
+  Index   54: PS3^-                     CN=3 (0P + 3S) xyz=(6.872, 2.265, 0.808)
+      S neighbors: [np.int64(269), np.int64(435), np.int64(162)]
+  Index   55: PS3^-                     CN=3 (0P + 3S) xyz=(7.091, 2.193, 7.254)
+      S neighbors: [np.int64(270), np.int64(163), np.int64(390)]
+  Index   63: PS3^-                     CN=3 (0P + 3S) xyz=(18.345, 1.830, 15.817)
+      S neighbors: [np.int64(482), np.int64(280), np.int64(173)]
+  Index   73: PS3^-                     CN=3 (0P + 3S) xyz=(30.990, 1.744, 7.013)
+      S neighbors: [np.int64(288), np.int64(448), np.int64(181)]

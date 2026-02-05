@@ -1,0 +1,16 @@
+{"time":"2026-02-03T10:19:05.214215-05:00","level":"INFO","msg":"stream: starting","core version":"0.21.0"}
+{"time":"2026-02-03T10:19:05.396779-05:00","level":"INFO","msg":"stream: created new stream","id":"0b8ih3q4"}
+{"time":"2026-02-03T10:19:05.396813-05:00","level":"INFO","msg":"stream: started","id":"0b8ih3q4"}
+{"time":"2026-02-03T10:19:05.396858-05:00","level":"INFO","msg":"writer: Do: started","stream_id":"0b8ih3q4"}
+{"time":"2026-02-03T10:19:05.397084-05:00","level":"INFO","msg":"handler: started","stream_id":"0b8ih3q4"}
+{"time":"2026-02-03T10:19:05.397185-05:00","level":"INFO","msg":"sender: started","stream_id":"0b8ih3q4"}
+{"time":"2026-02-03T10:19:08.390005-05:00","level":"WARN","msg":"handler: ignoring partial history record","step":0,"current":1}
+{"time":"2026-02-03T10:44:59.637009-05:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/graphql\": read tcp 10.36.222.41:59587->35.186.228.49:443: read: connection reset by peer"}
+{"time":"2026-02-03T11:07:33.747488-05:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/feugmo-group/torchdisorder-optimization/0b8ih3q4/file_stream\": read tcp 10.36.222.41:65031->35.186.228.49:443: read: connection reset by peer"}
+{"time":"2026-02-03T11:13:11.454743-05:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-02-03T11:13:11.607831-05:00","level":"INFO","msg":"handler: operation stats","stats":{"operations":[{"desc":"uploading history steps 10001-10001, summary, console lines 674-675","runtime_seconds":0.152629875}],"total_operations":1}}
+{"time":"2026-02-03T11:13:11.668183-05:00","level":"INFO","msg":"stream: closing","id":"0b8ih3q4"}
+{"time":"2026-02-03T11:13:11.668266-05:00","level":"INFO","msg":"sender: closed","stream_id":"0b8ih3q4"}
+{"time":"2026-02-03T11:13:11.668421-05:00","level":"INFO","msg":"handler: closed","stream_id":"0b8ih3q4"}
+{"time":"2026-02-03T11:13:11.668451-05:00","level":"INFO","msg":"writer: Close: closed","stream_id":"0b8ih3q4"}
+{"time":"2026-02-03T11:13:11.668488-05:00","level":"INFO","msg":"stream: closed","id":"0b8ih3q4"}

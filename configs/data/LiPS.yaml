@@ -1,0 +1,106 @@
+# ==============================================================================
+# Li-P-S Glass Data Configuration
+# ==============================================================================
+#
+# Experimental diffraction data for 67Li2S-33P2S5 glass
+# Data from neutron total scattering measurements
+
+  # Root directory for data files
+root_dir: ${oc.env:PROJECT_ROOT,./}/data
+data:
+
+  # ---------------------------------------------------------------------------
+  # Q-space data - Structure Factor S(Q)
+  # ---------------------------------------------------------------------------
+  s_of_q_path: ${data.root_dir}/xrd_measurements/Li3PS4/S_of_Q.csv
+  
+  # Alternative: Use F(Q) file
+  # s_of_q_path: ${data.root_dir}/xrd_measurements/LiPS_F_of_Q.csv
+  
+  # ---------------------------------------------------------------------------
+  # r-space data (optional)
+  # ---------------------------------------------------------------------------
+  # Total correlation function T(r)
+  t_of_r_path: null
+  
+  # Pair distribution function g(r)
+  g_of_r_path: null
+  
+  # ---------------------------------------------------------------------------
+  # Auto-generation of r_bins (when no r-space data)
+  # ---------------------------------------------------------------------------
+  # For large structures, use larger r_max
+  r_max: 20.0        # Maximum r value (Å)
+  n_r_bins: 1000     # Number of bins
+  
+  # ---------------------------------------------------------------------------
+  # Data subsampling
+  # ---------------------------------------------------------------------------
+  # Skip every N points to reduce memory for very dense Q grids
+  stride_q: 1        # Q-space stride
+  stride_r: 1        # r-space stride
+
+# ==============================================================================
+# SPECTRUM CALCULATION PARAMETERS
+# ==============================================================================
+
+# Gaussian broadening width for RDF calculation (Å)
+kernel_width: 0.03
+
+# Q range for calculations
+q_min: 0.5
+q_max: 40.0
+
+# ==============================================================================
+# SCATTERING PARAMETERS
+# ==============================================================================
+
+# Neutron scattering lengths (fm)
+# Values for natural isotope mixtures
+neutron_scattering_lengths:
+  P: 5.13
+  S: 2.847
+  # Li: -1.90  # Not needed, Li removed from structure
+
+# Number density (atoms/Å³)
+# For 67Li2S-33P2S5 Li-free structure
+number_density: 0.045
+
+xray_form_factor_params:
+  Li:
+    a: [1.1282, 4.7392, 1.8622, 6.291]
+    b: [3.954, 0.712, 42.3975, 0.028]
+    c: [-9.557]
+  P:
+    a: [6.2915, 4.1791, 1.9200, 1.541]
+    b: [1.9067, 27.0059, 0.526, 68.1645]
+    c: [1.1407]
+  S:
+    a: [6.2915, 5.2915, 1.4386, 1.5410]
+    b: [1.4679, 22.2151, 0.2536, 56.1725]
+    c: [1.4730]
+
+central: 'P'          # Consider S or P as central atom for PS4 tetrahedra analysis
+neighbour: 'S'       # Analyze Li coordination around S/P
+cutoff: 5.5           # Typical for first coordination shell in thiophosphates
+
+json_path: ${data.root_dir}/json/glass_67Li2S_small_constraints.json  #change this to when you generate the LiPS
+# ==============================================================================
+# SUPPORTED CSV COLUMN NAMES
+# ==============================================================================
+# The loader auto-detects columns. Supported names:
+#
+# S(Q) file:
+#   Q column: Q, q
+#   S column: SQ, S, S(Q), F, F(Q)
+#   Error:    dSQ, dS, dF, uncertainty, error
+#
+# T(r) file:
+#   r column: r, R
+#   T column: T, Tr, T(r)
+#   Error:    dT, uncertainty, error
+#
+# g(r) file:
+#   r column: r, R
+#   g column: g, gr, g(r), G, G(r), rdf, RDF
+#   Error:    dg, dgr, uncertainty, error

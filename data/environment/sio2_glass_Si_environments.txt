@@ -1,0 +1,766 @@
+======================================================================
+Si ENVIRONMENT SUMMARY FOR SiO2
+======================================================================
+
+Total atoms: 1125
+Total Si atoms: 375
+Cutoff (Si-O): 2.300 Å
+
+Environment distribution (by Si CN):
+----------------------------------------------------------------------
+  Si4         : 100.00%  (count=375)
+
+======================================================================
+DETAILED Si SITE INFORMATION
+======================================================================
+
+Index      0: SiO4 (tetrahedral)       CN=4 xyz=(2.305, 0.000, 0.000)
+    O neighbors: [379, 410, 510, 548]
+Index      1: SiO4 (tetrahedral)       CN=4 xyz=(2.305, 0.000, 5.431)
+    O neighbors: [378, 387, 516, 518]
+Index      2: SiO4 (tetrahedral)       CN=4 xyz=(-0.153, 4.256, 0.000)
+    O neighbors: [375, 380, 413, 455]
+Index      3: SiO4 (tetrahedral)       CN=4 xyz=(-0.153, 4.256, 5.431)
+    O neighbors: [381, 383, 388, 419]
+Index      4: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 2.261, 3.621)
+    O neighbors: [377, 378, 381, 382]
+Index      5: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 1.996, 1.810)
+    O neighbors: [376, 379, 382, 551]
+Index      6: SiO4 (tetrahedral)       CN=4 xyz=(2.305, 0.000, 10.863)
+    O neighbors: [386, 395, 524, 526]
+Index      7: SiO4 (tetrahedral)       CN=4 xyz=(-0.153, 4.256, 10.863)
+    O neighbors: [389, 391, 396, 428]
+Index      8: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 2.261, 9.052)
+    O neighbors: [385, 386, 389, 390]
+Index      9: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 1.996, 7.242)
+    O neighbors: [384, 387, 390, 560]
+Index     10: SiO4 (tetrahedral)       CN=4 xyz=(2.305, 0.000, 16.294)
+    O neighbors: [394, 403, 532, 534]
+Index     11: SiO4 (tetrahedral)       CN=4 xyz=(-0.153, 4.256, 16.294)
+    O neighbors: [397, 399, 404, 437]
+Index     12: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 2.261, 14.483)
+    O neighbors: [393, 394, 397, 398]
+Index     13: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 1.996, 12.673)
+    O neighbors: [392, 395, 398, 569]
+Index     14: SiO4 (tetrahedral)       CN=4 xyz=(2.305, 0.000, 21.725)
+    O neighbors: [402, 411, 540, 542]
+Index     15: SiO4 (tetrahedral)       CN=4 xyz=(-0.153, 4.256, 21.725)
+    O neighbors: [405, 407, 412, 446]
+Index     16: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 2.261, 19.915)
+    O neighbors: [401, 402, 405, 406]
+Index     17: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 1.996, 18.104)
+    O neighbors: [400, 403, 406, 578]
+Index     18: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 2.261, 25.346)
+    O neighbors: [409, 410, 413, 414]
+Index     19: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 1.996, 23.536)
+    O neighbors: [408, 411, 414, 587]
+Index     20: SiO4 (tetrahedral)       CN=4 xyz=(-2.610, 8.513, 0.000)
+    O neighbors: [415, 421, 456, 458]
+Index     21: SiO4 (tetrahedral)       CN=4 xyz=(-2.610, 8.513, 5.431)
+    O neighbors: [420, 422, 424, 430]
+Index     22: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 6.517, 3.621)
+    O neighbors: [417, 419, 422, 423]
+Index     23: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 6.252, 1.810)
+    O neighbors: [380, 416, 423, 596]
+Index     24: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 10.509, 1.810)
+    O neighbors: [421, 462, 468, 597]
+Index     25: SiO4 (tetrahedral)       CN=4 xyz=(-2.610, 8.513, 10.863)
+    O neighbors: [429, 431, 433, 439]
+Index     26: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 6.517, 9.052)
+    O neighbors: [426, 428, 431, 432]
+Index     27: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 6.252, 7.242)
+    O neighbors: [388, 425, 432, 608]
+Index     28: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 10.509, 7.242)
+    O neighbors: [430, 472, 478, 609]
+Index     29: SiO4 (tetrahedral)       CN=4 xyz=(-2.610, 8.513, 16.294)
+    O neighbors: [438, 440, 442, 448]
+Index     30: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 6.517, 14.483)
+    O neighbors: [435, 437, 440, 441]
+Index     31: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 6.252, 12.673)
+    O neighbors: [396, 434, 441, 620]
+Index     32: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 10.509, 12.673)
+    O neighbors: [439, 482, 488, 621]
+Index     33: SiO4 (tetrahedral)       CN=4 xyz=(-2.610, 8.513, 21.725)
+    O neighbors: [447, 449, 451, 457]
+Index     34: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 6.517, 19.915)
+    O neighbors: [444, 446, 449, 450]
+Index     35: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 6.252, 18.104)
+    O neighbors: [404, 443, 450, 632]
+Index     36: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 10.509, 18.104)
+    O neighbors: [448, 492, 498, 633]
+Index     37: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 6.517, 25.346)
+    O neighbors: [453, 455, 458, 459]
+Index     38: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 6.252, 23.536)
+    O neighbors: [412, 452, 459, 644]
+Index     39: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 10.509, 23.536)
+    O neighbors: [457, 502, 508, 645]
+Index     40: SiO4 (tetrahedral)       CN=4 xyz=(-5.068, 12.769, 0.000)
+    O neighbors: [460, 466, 505, 507]
+Index     41: SiO4 (tetrahedral)       CN=4 xyz=(-5.068, 12.769, 5.431)
+    O neighbors: [465, 467, 470, 476]
+Index     42: SiO4 (tetrahedral)       CN=4 xyz=(-3.610, 10.773, 3.621)
+    O neighbors: [418, 420, 467, 468]
+Index     43: SiO4 (tetrahedral)       CN=4 xyz=(-6.067, 15.030, 3.621)
+    O neighbors: [464, 465, 469, 515]
+Index     44: SiO4 (tetrahedral)       CN=4 xyz=(-3.610, 14.765, 1.810)
+    O neighbors: [463, 466, 469, 657]
+Index     45: SiO4 (tetrahedral)       CN=4 xyz=(-5.068, 12.769, 10.863)
+    O neighbors: [475, 477, 480, 486]
+Index     46: SiO4 (tetrahedral)       CN=4 xyz=(-3.610, 10.773, 9.052)
+    O neighbors: [427, 429, 477, 478]
+Index     47: SiO4 (tetrahedral)       CN=4 xyz=(-6.067, 15.030, 9.052)
+    O neighbors: [474, 475, 479, 523]
+Index     48: SiO4 (tetrahedral)       CN=4 xyz=(-3.610, 14.765, 7.242)
+    O neighbors: [473, 476, 479, 667]
+Index     49: SiO4 (tetrahedral)       CN=4 xyz=(-5.068, 12.769, 16.294)
+    O neighbors: [485, 487, 490, 496]
+Index     50: SiO4 (tetrahedral)       CN=4 xyz=(-3.610, 10.773, 14.483)
+    O neighbors: [436, 438, 487, 488]
+Index     51: SiO4 (tetrahedral)       CN=4 xyz=(-6.067, 15.030, 14.483)
+    O neighbors: [484, 485, 489, 531]
+Index     52: SiO4 (tetrahedral)       CN=4 xyz=(-3.610, 14.765, 12.673)
+    O neighbors: [483, 486, 489, 677]
+Index     53: SiO4 (tetrahedral)       CN=4 xyz=(-5.068, 12.769, 21.725)
+    O neighbors: [495, 497, 500, 506]
+Index     54: SiO4 (tetrahedral)       CN=4 xyz=(-3.610, 10.773, 19.915)
+    O neighbors: [445, 447, 497, 498]
+Index     55: SiO4 (tetrahedral)       CN=4 xyz=(-6.067, 15.030, 19.915)
+    O neighbors: [494, 495, 499, 539]
+Index     56: SiO4 (tetrahedral)       CN=4 xyz=(-3.610, 14.765, 18.104)
+    O neighbors: [493, 496, 499, 687]
+Index     57: SiO4 (tetrahedral)       CN=4 xyz=(-3.610, 10.773, 25.346)
+    O neighbors: [454, 456, 507, 508]
+Index     58: SiO4 (tetrahedral)       CN=4 xyz=(-6.067, 15.030, 25.346)
+    O neighbors: [504, 505, 509, 547]
+Index     59: SiO4 (tetrahedral)       CN=4 xyz=(-3.610, 14.765, 23.536)
+    O neighbors: [503, 506, 509, 697]
+Index     60: SiO4 (tetrahedral)       CN=4 xyz=(-7.525, 17.026, 0.000)
+    O neighbors: [461, 514, 545, 547]
+Index     61: SiO4 (tetrahedral)       CN=4 xyz=(-7.525, 17.026, 5.431)
+    O neighbors: [471, 513, 515, 522]
+Index     62: SiO4 (tetrahedral)       CN=4 xyz=(-8.525, 19.287, 3.621)
+    O neighbors: [512, 513, 516, 517]
+Index     63: SiO4 (tetrahedral)       CN=4 xyz=(-6.067, 19.022, 1.810)
+    O neighbors: [511, 514, 517, 706]
+Index     64: SiO4 (tetrahedral)       CN=4 xyz=(-7.525, 17.026, 10.863)
+    O neighbors: [481, 521, 523, 530]
+Index     65: SiO4 (tetrahedral)       CN=4 xyz=(-8.525, 19.287, 9.052)
+    O neighbors: [520, 521, 524, 525]
+Index     66: SiO4 (tetrahedral)       CN=4 xyz=(-6.067, 19.022, 7.242)
+    O neighbors: [519, 522, 525, 715]
+Index     67: SiO4 (tetrahedral)       CN=4 xyz=(-7.525, 17.026, 16.294)
+    O neighbors: [491, 529, 531, 538]
+Index     68: SiO4 (tetrahedral)       CN=4 xyz=(-8.525, 19.287, 14.483)
+    O neighbors: [528, 529, 532, 533]
+Index     69: SiO4 (tetrahedral)       CN=4 xyz=(-6.067, 19.022, 12.673)
+    O neighbors: [527, 530, 533, 724]
+Index     70: SiO4 (tetrahedral)       CN=4 xyz=(-7.525, 17.026, 21.725)
+    O neighbors: [501, 537, 539, 546]
+Index     71: SiO4 (tetrahedral)       CN=4 xyz=(-8.525, 19.287, 19.915)
+    O neighbors: [536, 537, 540, 541]
+Index     72: SiO4 (tetrahedral)       CN=4 xyz=(-6.067, 19.022, 18.104)
+    O neighbors: [535, 538, 541, 733]
+Index     73: SiO4 (tetrahedral)       CN=4 xyz=(-8.525, 19.287, 25.346)
+    O neighbors: [544, 545, 548, 549]
+Index     74: SiO4 (tetrahedral)       CN=4 xyz=(-6.067, 19.022, 23.536)
+    O neighbors: [543, 546, 549, 742]
+Index     75: SiO4 (tetrahedral)       CN=4 xyz=(7.220, 0.000, 0.000)
+    O neighbors: [511, 555, 589, 748]
+Index     76: SiO4 (tetrahedral)       CN=4 xyz=(7.220, 0.000, 5.431)
+    O neighbors: [519, 553, 564, 712]
+Index     77: SiO4 (tetrahedral)       CN=4 xyz=(4.762, 4.256, 0.000)
+    O neighbors: [376, 556, 593, 648]
+Index     78: SiO4 (tetrahedral)       CN=4 xyz=(4.762, 4.256, 5.431)
+    O neighbors: [384, 557, 565, 600]
+Index     79: SiO4 (tetrahedral)       CN=4 xyz=(12.135, 0.000, 0.000)
+    O neighbors: [590, 705, 753, 946]
+Index     80: SiO4 (tetrahedral)       CN=4 xyz=(12.135, 0.000, 5.431)
+    O neighbors: [554, 714, 763, 906]
+Index     81: SiO4 (tetrahedral)       CN=4 xyz=(9.677, 4.256, 0.000)
+    O neighbors: [550, 650, 754, 797]
+Index     82: SiO4 (tetrahedral)       CN=4 xyz=(9.677, 4.256, 5.431)
+    O neighbors: [559, 602, 757, 764]
+Index     83: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 2.261, 3.621)
+    O neighbors: [551, 553, 557, 558]
+Index     84: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 1.996, 1.810)
+    O neighbors: [550, 552, 555, 558]
+Index     85: SiO4 (tetrahedral)       CN=4 xyz=(7.220, 0.000, 10.863)
+    O neighbors: [527, 562, 573, 721]
+Index     86: SiO4 (tetrahedral)       CN=4 xyz=(4.762, 4.256, 10.863)
+    O neighbors: [392, 566, 574, 612]
+Index     87: SiO4 (tetrahedral)       CN=4 xyz=(12.135, 0.000, 10.863)
+    O neighbors: [563, 723, 773, 916]
+Index     88: SiO4 (tetrahedral)       CN=4 xyz=(9.677, 4.256, 10.863)
+    O neighbors: [568, 614, 767, 774]
+Index     89: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 2.261, 9.052)
+    O neighbors: [560, 562, 566, 567]
+Index     90: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 1.996, 7.242)
+    O neighbors: [559, 561, 564, 567]
+Index     91: SiO4 (tetrahedral)       CN=4 xyz=(7.220, 0.000, 16.294)
+    O neighbors: [535, 571, 582, 730]
+Index     92: SiO4 (tetrahedral)       CN=4 xyz=(4.762, 4.256, 16.294)
+    O neighbors: [400, 575, 583, 624]
+Index     93: SiO4 (tetrahedral)       CN=4 xyz=(12.135, 0.000, 16.294)
+    O neighbors: [572, 732, 783, 926]
+Index     94: SiO4 (tetrahedral)       CN=4 xyz=(9.677, 4.256, 16.294)
+    O neighbors: [577, 626, 777, 784]
+Index     95: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 2.261, 14.483)
+    O neighbors: [569, 571, 575, 576]
+Index     96: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 1.996, 12.673)
+    O neighbors: [568, 570, 573, 576]
+Index     97: SiO4 (tetrahedral)       CN=4 xyz=(7.220, 0.000, 21.725)
+    O neighbors: [543, 580, 591, 739]
+Index     98: SiO4 (tetrahedral)       CN=4 xyz=(4.762, 4.256, 21.725)
+    O neighbors: [408, 584, 592, 636]
+Index     99: SiO4 (tetrahedral)       CN=4 xyz=(12.135, 0.000, 21.725)
+    O neighbors: [581, 741, 793, 936]
+Index    100: SiO4 (tetrahedral)       CN=4 xyz=(9.677, 4.256, 21.725)
+    O neighbors: [586, 638, 787, 794]
+Index    101: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 2.261, 19.915)
+    O neighbors: [578, 580, 584, 585]
+Index    102: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 1.996, 18.104)
+    O neighbors: [577, 579, 582, 585]
+Index    103: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 2.261, 25.346)
+    O neighbors: [587, 589, 593, 594]
+Index    104: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 1.996, 23.536)
+    O neighbors: [586, 588, 591, 594]
+Index    105: SiO4 (tetrahedral)       CN=4 xyz=(2.305, 8.513, 0.000)
+    O neighbors: [416, 604, 649, 653]
+Index    106: SiO4 (tetrahedral)       CN=4 xyz=(2.305, 8.513, 5.431)
+    O neighbors: [425, 601, 605, 616]
+Index    107: SiO4 (tetrahedral)       CN=4 xyz=(7.220, 8.513, 0.000)
+    O neighbors: [595, 651, 805, 847]
+Index    108: SiO4 (tetrahedral)       CN=4 xyz=(7.220, 8.513, 5.431)
+    O neighbors: [603, 607, 807, 815]
+Index    109: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 6.517, 3.621)
+    O neighbors: [596, 600, 605, 606]
+Index    110: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 6.252, 1.810)
+    O neighbors: [556, 595, 598, 606]
+Index    111: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 10.509, 1.810)
+    O neighbors: [599, 604, 655, 663]
+Index    112: SiO4 (tetrahedral)       CN=4 xyz=(2.305, 8.513, 10.863)
+    O neighbors: [434, 613, 617, 628]
+Index    113: SiO4 (tetrahedral)       CN=4 xyz=(7.220, 8.513, 10.863)
+    O neighbors: [615, 619, 817, 825]
+Index    114: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 6.517, 9.052)
+    O neighbors: [608, 612, 617, 618]
+Index    115: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 6.252, 7.242)
+    O neighbors: [565, 607, 610, 618]
+Index    116: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 10.509, 7.242)
+    O neighbors: [611, 616, 665, 673]
+Index    117: SiO4 (tetrahedral)       CN=4 xyz=(2.305, 8.513, 16.294)
+    O neighbors: [443, 625, 629, 640]
+Index    118: SiO4 (tetrahedral)       CN=4 xyz=(7.220, 8.513, 16.294)
+    O neighbors: [627, 631, 827, 835]
+Index    119: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 6.517, 14.483)
+    O neighbors: [620, 624, 629, 630]
+Index    120: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 6.252, 12.673)
+    O neighbors: [574, 619, 622, 630]
+Index    121: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 10.509, 12.673)
+    O neighbors: [623, 628, 675, 683]
+Index    122: SiO4 (tetrahedral)       CN=4 xyz=(2.305, 8.513, 21.725)
+    O neighbors: [452, 637, 641, 652]
+Index    123: SiO4 (tetrahedral)       CN=4 xyz=(7.220, 8.513, 21.725)
+    O neighbors: [639, 643, 837, 845]
+Index    124: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 6.517, 19.915)
+    O neighbors: [632, 636, 641, 642]
+Index    125: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 6.252, 18.104)
+    O neighbors: [583, 631, 634, 642]
+Index    126: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 10.509, 18.104)
+    O neighbors: [635, 640, 685, 693]
+Index    127: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 6.517, 25.346)
+    O neighbors: [644, 648, 653, 654]
+Index    128: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 6.252, 23.536)
+    O neighbors: [592, 643, 646, 654]
+Index    129: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 10.509, 23.536)
+    O neighbors: [647, 652, 695, 703]
+Index    130: SiO4 (tetrahedral)       CN=4 xyz=(-0.153, 12.769, 0.000)
+    O neighbors: [462, 661, 699, 702]
+Index    131: SiO4 (tetrahedral)       CN=4 xyz=(-0.153, 12.769, 5.431)
+    O neighbors: [472, 659, 662, 671]
+Index    132: SiO4 (tetrahedral)       CN=4 xyz=(4.762, 12.769, 0.000)
+    O neighbors: [655, 700, 854, 896]
+Index    133: SiO4 (tetrahedral)       CN=4 xyz=(4.762, 12.769, 5.431)
+    O neighbors: [660, 665, 856, 864]
+Index    134: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 10.773, 3.621)
+    O neighbors: [597, 601, 662, 663]
+Index    135: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 15.030, 3.621)
+    O neighbors: [657, 659, 664, 711]
+Index    136: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 14.765, 1.810)
+    O neighbors: [656, 658, 661, 664]
+Index    137: SiO4 (tetrahedral)       CN=4 xyz=(-0.153, 12.769, 10.863)
+    O neighbors: [482, 669, 672, 681]
+Index    138: SiO4 (tetrahedral)       CN=4 xyz=(4.762, 12.769, 10.863)
+    O neighbors: [670, 675, 866, 874]
+Index    139: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 10.773, 9.052)
+    O neighbors: [609, 613, 672, 673]
+Index    140: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 15.030, 9.052)
+    O neighbors: [667, 669, 674, 720]
+Index    141: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 14.765, 7.242)
+    O neighbors: [666, 668, 671, 674]
+Index    142: SiO4 (tetrahedral)       CN=4 xyz=(-0.153, 12.769, 16.294)
+    O neighbors: [492, 679, 682, 691]
+Index    143: SiO4 (tetrahedral)       CN=4 xyz=(4.762, 12.769, 16.294)
+    O neighbors: [680, 685, 876, 884]
+Index    144: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 10.773, 14.483)
+    O neighbors: [621, 625, 682, 683]
+Index    145: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 15.030, 14.483)
+    O neighbors: [677, 679, 684, 729]
+Index    146: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 14.765, 12.673)
+    O neighbors: [676, 678, 681, 684]
+Index    147: SiO4 (tetrahedral)       CN=4 xyz=(-0.153, 12.769, 21.725)
+    O neighbors: [502, 689, 692, 701]
+Index    148: SiO4 (tetrahedral)       CN=4 xyz=(4.762, 12.769, 21.725)
+    O neighbors: [690, 695, 886, 894]
+Index    149: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 10.773, 19.915)
+    O neighbors: [633, 637, 692, 693]
+Index    150: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 15.030, 19.915)
+    O neighbors: [687, 689, 694, 738]
+Index    151: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 14.765, 18.104)
+    O neighbors: [686, 688, 691, 694]
+Index    152: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 10.773, 25.346)
+    O neighbors: [645, 649, 702, 703]
+Index    153: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 15.030, 25.346)
+    O neighbors: [697, 699, 704, 747]
+Index    154: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 14.765, 23.536)
+    O neighbors: [696, 698, 701, 704]
+Index    155: SiO4 (tetrahedral)       CN=4 xyz=(-2.610, 17.026, 0.000)
+    O neighbors: [463, 710, 744, 747]
+Index    156: SiO4 (tetrahedral)       CN=4 xyz=(-2.610, 17.026, 5.431)
+    O neighbors: [473, 708, 711, 719]
+Index    157: SiO4 (tetrahedral)       CN=4 xyz=(2.305, 17.026, 0.000)
+    O neighbors: [656, 745, 903, 945]
+Index    158: SiO4 (tetrahedral)       CN=4 xyz=(2.305, 17.026, 5.431)
+    O neighbors: [666, 709, 905, 913]
+Index    159: SiO4 (tetrahedral)       CN=4 xyz=(-3.610, 19.287, 3.621)
+    O neighbors: [706, 708, 712, 713]
+Index    160: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 19.022, 1.810)
+    O neighbors: [705, 707, 710, 713]
+Index    161: SiO4 (tetrahedral)       CN=4 xyz=(-2.610, 17.026, 10.863)
+    O neighbors: [483, 717, 720, 728]
+Index    162: SiO4 (tetrahedral)       CN=4 xyz=(2.305, 17.026, 10.863)
+    O neighbors: [676, 718, 915, 923]
+Index    163: SiO4 (tetrahedral)       CN=4 xyz=(-3.610, 19.287, 9.052)
+    O neighbors: [715, 717, 721, 722]
+Index    164: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 19.022, 7.242)
+    O neighbors: [714, 716, 719, 722]
+Index    165: SiO4 (tetrahedral)       CN=4 xyz=(-2.610, 17.026, 16.294)
+    O neighbors: [493, 726, 729, 737]
+Index    166: SiO4 (tetrahedral)       CN=4 xyz=(2.305, 17.026, 16.294)
+    O neighbors: [686, 727, 925, 933]
+Index    167: SiO4 (tetrahedral)       CN=4 xyz=(-3.610, 19.287, 14.483)
+    O neighbors: [724, 726, 730, 731]
+Index    168: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 19.022, 12.673)
+    O neighbors: [723, 725, 728, 731]
+Index    169: SiO4 (tetrahedral)       CN=4 xyz=(-2.610, 17.026, 21.725)
+    O neighbors: [503, 735, 738, 746]
+Index    170: SiO4 (tetrahedral)       CN=4 xyz=(2.305, 17.026, 21.725)
+    O neighbors: [696, 736, 935, 943]
+Index    171: SiO4 (tetrahedral)       CN=4 xyz=(-3.610, 19.287, 19.915)
+    O neighbors: [733, 735, 739, 740]
+Index    172: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 19.022, 18.104)
+    O neighbors: [732, 734, 737, 740]
+Index    173: SiO4 (tetrahedral)       CN=4 xyz=(-3.610, 19.287, 25.346)
+    O neighbors: [742, 744, 748, 749]
+Index    174: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 19.022, 23.536)
+    O neighbors: [741, 743, 746, 749]
+Index    175: SiO4 (tetrahedral)       CN=4 xyz=(17.050, 0.000, 0.000)
+    O neighbors: [755, 792, 900, 948]
+Index    176: SiO4 (tetrahedral)       CN=4 xyz=(17.050, 0.000, 5.431)
+    O neighbors: [752, 765, 908, 910]
+Index    177: SiO4 (tetrahedral)       CN=4 xyz=(14.592, 4.256, 0.000)
+    O neighbors: [750, 756, 798, 843]
+Index    178: SiO4 (tetrahedral)       CN=4 xyz=(14.592, 4.256, 5.431)
+    O neighbors: [758, 760, 766, 803]
+Index    179: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 2.261, 3.621)
+    O neighbors: [552, 554, 757, 759]
+Index    180: SiO4 (tetrahedral)       CN=4 xyz=(16.050, 2.261, 3.621)
+    O neighbors: [751, 752, 758, 956]
+Index    181: SiO4 (tetrahedral)       CN=4 xyz=(13.593, 1.996, 1.810)
+    O neighbors: [750, 751, 753, 759]
+Index    182: SiO4 (tetrahedral)       CN=4 xyz=(17.050, 0.000, 10.863)
+    O neighbors: [762, 775, 918, 920]
+Index    183: SiO4 (tetrahedral)       CN=4 xyz=(14.592, 4.256, 10.863)
+    O neighbors: [768, 770, 776, 813]
+Index    184: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 2.261, 9.052)
+    O neighbors: [561, 563, 767, 769]
+Index    185: SiO4 (tetrahedral)       CN=4 xyz=(16.050, 2.261, 9.052)
+    O neighbors: [761, 762, 768, 964]
+Index    186: SiO4 (tetrahedral)       CN=4 xyz=(13.593, 1.996, 7.242)
+    O neighbors: [760, 761, 763, 769]
+Index    187: SiO4 (tetrahedral)       CN=4 xyz=(17.050, 0.000, 16.294)
+    O neighbors: [772, 785, 928, 930]
+Index    188: SiO4 (tetrahedral)       CN=4 xyz=(14.592, 4.256, 16.294)
+    O neighbors: [778, 780, 786, 823]
+Index    189: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 2.261, 14.483)
+    O neighbors: [570, 572, 777, 779]
+Index    190: SiO4 (tetrahedral)       CN=4 xyz=(16.050, 2.261, 14.483)
+    O neighbors: [771, 772, 778, 972]
+Index    191: SiO4 (tetrahedral)       CN=4 xyz=(13.593, 1.996, 12.673)
+    O neighbors: [770, 771, 773, 779]
+Index    192: SiO4 (tetrahedral)       CN=4 xyz=(17.050, 0.000, 21.725)
+    O neighbors: [782, 795, 938, 940]
+Index    193: SiO4 (tetrahedral)       CN=4 xyz=(14.592, 4.256, 21.725)
+    O neighbors: [788, 790, 796, 833]
+Index    194: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 2.261, 19.915)
+    O neighbors: [579, 581, 787, 789]
+Index    195: SiO4 (tetrahedral)       CN=4 xyz=(16.050, 2.261, 19.915)
+    O neighbors: [781, 782, 788, 980]
+Index    196: SiO4 (tetrahedral)       CN=4 xyz=(13.593, 1.996, 18.104)
+    O neighbors: [780, 781, 783, 789]
+Index    197: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 2.261, 25.346)
+    O neighbors: [588, 590, 797, 799]
+Index    198: SiO4 (tetrahedral)       CN=4 xyz=(16.050, 2.261, 25.346)
+    O neighbors: [791, 792, 798, 988]
+Index    199: SiO4 (tetrahedral)       CN=4 xyz=(13.593, 1.996, 23.536)
+    O neighbors: [790, 791, 793, 799]
+Index    200: SiO4 (tetrahedral)       CN=4 xyz=(12.135, 8.513, 0.000)
+    O neighbors: [800, 806, 844, 848]
+Index    201: SiO4 (tetrahedral)       CN=4 xyz=(12.135, 8.513, 5.431)
+    O neighbors: [804, 808, 810, 816]
+Index    202: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 6.517, 3.621)
+    O neighbors: [598, 602, 807, 809]
+Index    203: SiO4 (tetrahedral)       CN=4 xyz=(13.593, 6.517, 3.621)
+    O neighbors: [801, 803, 808, 997]
+Index    204: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 6.252, 1.810)
+    O neighbors: [754, 800, 801, 809]
+Index    205: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 10.509, 1.810)
+    O neighbors: [802, 805, 850, 858]
+Index    206: SiO4 (tetrahedral)       CN=4 xyz=(12.135, 8.513, 10.863)
+    O neighbors: [814, 818, 820, 826]
+Index    207: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 6.517, 9.052)
+    O neighbors: [610, 614, 817, 819]
+Index    208: SiO4 (tetrahedral)       CN=4 xyz=(13.593, 6.517, 9.052)
+    O neighbors: [811, 813, 818, 1006]
+Index    209: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 6.252, 7.242)
+    O neighbors: [764, 810, 811, 819]
+Index    210: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 10.509, 7.242)
+    O neighbors: [812, 815, 860, 868]
+Index    211: SiO4 (tetrahedral)       CN=4 xyz=(12.135, 8.513, 16.294)
+    O neighbors: [824, 828, 830, 836]
+Index    212: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 6.517, 14.483)
+    O neighbors: [622, 626, 827, 829]
+Index    213: SiO4 (tetrahedral)       CN=4 xyz=(13.593, 6.517, 14.483)
+    O neighbors: [821, 823, 828, 1015]
+Index    214: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 6.252, 12.673)
+    O neighbors: [774, 820, 821, 829]
+Index    215: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 10.509, 12.673)
+    O neighbors: [822, 825, 870, 878]
+Index    216: SiO4 (tetrahedral)       CN=4 xyz=(12.135, 8.513, 21.725)
+    O neighbors: [834, 838, 840, 846]
+Index    217: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 6.517, 19.915)
+    O neighbors: [634, 638, 837, 839]
+Index    218: SiO4 (tetrahedral)       CN=4 xyz=(13.593, 6.517, 19.915)
+    O neighbors: [831, 833, 838, 1024]
+Index    219: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 6.252, 18.104)
+    O neighbors: [784, 830, 831, 839]
+Index    220: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 10.509, 18.104)
+    O neighbors: [832, 835, 880, 888]
+Index    221: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 6.517, 25.346)
+    O neighbors: [646, 650, 847, 849]
+Index    222: SiO4 (tetrahedral)       CN=4 xyz=(13.593, 6.517, 25.346)
+    O neighbors: [841, 843, 848, 1033]
+Index    223: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 6.252, 23.536)
+    O neighbors: [794, 840, 841, 849]
+Index    224: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 10.509, 23.536)
+    O neighbors: [842, 845, 890, 898]
+Index    225: SiO4 (tetrahedral)       CN=4 xyz=(9.677, 12.769, 0.000)
+    O neighbors: [850, 855, 893, 897]
+Index    226: SiO4 (tetrahedral)       CN=4 xyz=(9.677, 12.769, 5.431)
+    O neighbors: [853, 857, 860, 865]
+Index    227: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 10.773, 3.621)
+    O neighbors: [599, 603, 856, 858]
+Index    228: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 15.030, 3.621)
+    O neighbors: [658, 660, 859, 905]
+Index    229: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 10.773, 3.621)
+    O neighbors: [802, 804, 857, 1041]
+Index    230: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 15.030, 3.621)
+    O neighbors: [852, 853, 907, 1042]
+Index    231: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 14.765, 1.810)
+    O neighbors: [851, 852, 854, 859]
+Index    232: SiO4 (tetrahedral)       CN=4 xyz=(9.677, 12.769, 10.863)
+    O neighbors: [863, 867, 870, 875]
+Index    233: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 10.773, 9.052)
+    O neighbors: [611, 615, 866, 868]
+Index    234: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 15.030, 9.052)
+    O neighbors: [668, 670, 869, 915]
+Index    235: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 10.773, 9.052)
+    O neighbors: [812, 814, 867, 1051]
+Index    236: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 15.030, 9.052)
+    O neighbors: [862, 863, 917, 1052]
+Index    237: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 14.765, 7.242)
+    O neighbors: [861, 862, 864, 869]
+Index    238: SiO4 (tetrahedral)       CN=4 xyz=(9.677, 12.769, 16.294)
+    O neighbors: [873, 877, 880, 885]
+Index    239: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 10.773, 14.483)
+    O neighbors: [623, 627, 876, 878]
+Index    240: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 15.030, 14.483)
+    O neighbors: [678, 680, 879, 925]
+Index    241: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 10.773, 14.483)
+    O neighbors: [822, 824, 877, 1061]
+Index    242: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 15.030, 14.483)
+    O neighbors: [872, 873, 927, 1062]
+Index    243: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 14.765, 12.673)
+    O neighbors: [871, 872, 874, 879]
+Index    244: SiO4 (tetrahedral)       CN=4 xyz=(9.677, 12.769, 21.725)
+    O neighbors: [883, 887, 890, 895]
+Index    245: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 10.773, 19.915)
+    O neighbors: [635, 639, 886, 888]
+Index    246: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 15.030, 19.915)
+    O neighbors: [688, 690, 889, 935]
+Index    247: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 10.773, 19.915)
+    O neighbors: [832, 834, 887, 1071]
+Index    248: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 15.030, 19.915)
+    O neighbors: [882, 883, 937, 1072]
+Index    249: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 14.765, 18.104)
+    O neighbors: [881, 882, 884, 889]
+Index    250: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 10.773, 25.346)
+    O neighbors: [647, 651, 896, 898]
+Index    251: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 15.030, 25.346)
+    O neighbors: [698, 700, 899, 945]
+Index    252: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 10.773, 25.346)
+    O neighbors: [842, 844, 897, 1081]
+Index    253: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 15.030, 25.346)
+    O neighbors: [892, 893, 947, 1082]
+Index    254: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 14.765, 23.536)
+    O neighbors: [891, 892, 894, 899]
+Index    255: SiO4 (tetrahedral)       CN=4 xyz=(7.220, 17.026, 0.000)
+    O neighbors: [851, 904, 942, 947]
+Index    256: SiO4 (tetrahedral)       CN=4 xyz=(7.220, 17.026, 5.431)
+    O neighbors: [861, 902, 907, 914]
+Index    257: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 19.287, 3.621)
+    O neighbors: [707, 709, 906, 909]
+Index    258: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 19.287, 3.621)
+    O neighbors: [901, 902, 908, 1091]
+Index    259: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 19.022, 1.810)
+    O neighbors: [900, 901, 903, 909]
+Index    260: SiO4 (tetrahedral)       CN=4 xyz=(7.220, 17.026, 10.863)
+    O neighbors: [871, 912, 917, 924]
+Index    261: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 19.287, 9.052)
+    O neighbors: [716, 718, 916, 919]
+Index    262: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 19.287, 9.052)
+    O neighbors: [911, 912, 918, 1099]
+Index    263: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 19.022, 7.242)
+    O neighbors: [910, 911, 913, 919]
+Index    264: SiO4 (tetrahedral)       CN=4 xyz=(7.220, 17.026, 16.294)
+    O neighbors: [881, 922, 927, 934]
+Index    265: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 19.287, 14.483)
+    O neighbors: [725, 727, 926, 929]
+Index    266: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 19.287, 14.483)
+    O neighbors: [921, 922, 928, 1107]
+Index    267: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 19.022, 12.673)
+    O neighbors: [920, 921, 923, 929]
+Index    268: SiO4 (tetrahedral)       CN=4 xyz=(7.220, 17.026, 21.725)
+    O neighbors: [891, 932, 937, 944]
+Index    269: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 19.287, 19.915)
+    O neighbors: [734, 736, 936, 939]
+Index    270: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 19.287, 19.915)
+    O neighbors: [931, 932, 938, 1115]
+Index    271: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 19.022, 18.104)
+    O neighbors: [930, 931, 933, 939]
+Index    272: SiO4 (tetrahedral)       CN=4 xyz=(1.305, 19.287, 25.346)
+    O neighbors: [743, 745, 946, 949]
+Index    273: SiO4 (tetrahedral)       CN=4 xyz=(6.220, 19.287, 25.346)
+    O neighbors: [941, 942, 948, 1123]
+Index    274: SiO4 (tetrahedral)       CN=4 xyz=(3.763, 19.022, 23.536)
+    O neighbors: [940, 941, 943, 949]
+Index    275: SiO4 (tetrahedral)       CN=4 xyz=(21.964, 0.000, 0.000)
+    O neighbors: [953, 984, 1085, 1122]
+Index    276: SiO4 (tetrahedral)       CN=4 xyz=(21.964, 0.000, 5.431)
+    O neighbors: [952, 961, 1090, 1093]
+Index    277: SiO4 (tetrahedral)       CN=4 xyz=(19.507, 4.256, 0.000)
+    O neighbors: [950, 954, 987, 1029]
+Index    278: SiO4 (tetrahedral)       CN=4 xyz=(19.507, 4.256, 5.431)
+    O neighbors: [955, 958, 962, 993]
+Index    279: SiO4 (tetrahedral)       CN=4 xyz=(20.965, 2.261, 3.621)
+    O neighbors: [951, 952, 955, 957]
+Index    280: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 1.996, 1.810)
+    O neighbors: [375, 377, 953, 957]
+Index    281: SiO4 (tetrahedral)       CN=4 xyz=(18.507, 1.996, 1.810)
+    O neighbors: [755, 950, 951, 956]
+Index    282: SiO4 (tetrahedral)       CN=4 xyz=(21.964, 0.000, 10.863)
+    O neighbors: [960, 969, 1098, 1101]
+Index    283: SiO4 (tetrahedral)       CN=4 xyz=(19.507, 4.256, 10.863)
+    O neighbors: [963, 966, 970, 1002]
+Index    284: SiO4 (tetrahedral)       CN=4 xyz=(20.965, 2.261, 9.052)
+    O neighbors: [959, 960, 963, 965]
+Index    285: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 1.996, 7.242)
+    O neighbors: [383, 385, 961, 965]
+Index    286: SiO4 (tetrahedral)       CN=4 xyz=(18.507, 1.996, 7.242)
+    O neighbors: [765, 958, 959, 964]
+Index    287: SiO4 (tetrahedral)       CN=4 xyz=(21.964, 0.000, 16.294)
+    O neighbors: [968, 977, 1106, 1109]
+Index    288: SiO4 (tetrahedral)       CN=4 xyz=(19.507, 4.256, 16.294)
+    O neighbors: [971, 974, 978, 1011]
+Index    289: SiO4 (tetrahedral)       CN=4 xyz=(20.965, 2.261, 14.483)
+    O neighbors: [967, 968, 971, 973]
+Index    290: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 1.996, 12.673)
+    O neighbors: [391, 393, 969, 973]
+Index    291: SiO4 (tetrahedral)       CN=4 xyz=(18.507, 1.996, 12.673)
+    O neighbors: [775, 966, 967, 972]
+Index    292: SiO4 (tetrahedral)       CN=4 xyz=(21.964, 0.000, 21.725)
+    O neighbors: [976, 985, 1114, 1117]
+Index    293: SiO4 (tetrahedral)       CN=4 xyz=(19.507, 4.256, 21.725)
+    O neighbors: [979, 982, 986, 1020]
+Index    294: SiO4 (tetrahedral)       CN=4 xyz=(20.965, 2.261, 19.915)
+    O neighbors: [975, 976, 979, 981]
+Index    295: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 1.996, 18.104)
+    O neighbors: [399, 401, 977, 981]
+Index    296: SiO4 (tetrahedral)       CN=4 xyz=(18.507, 1.996, 18.104)
+    O neighbors: [785, 974, 975, 980]
+Index    297: SiO4 (tetrahedral)       CN=4 xyz=(20.965, 2.261, 25.346)
+    O neighbors: [983, 984, 987, 989]
+Index    298: SiO4 (tetrahedral)       CN=4 xyz=(-1.152, 1.996, 23.536)
+    O neighbors: [407, 409, 985, 989]
+Index    299: SiO4 (tetrahedral)       CN=4 xyz=(18.507, 1.996, 23.536)
+    O neighbors: [795, 982, 983, 988]
+Index    300: SiO4 (tetrahedral)       CN=4 xyz=(17.050, 8.513, 0.000)
+    O neighbors: [990, 995, 1030, 1032]
+Index    301: SiO4 (tetrahedral)       CN=4 xyz=(17.050, 8.513, 5.431)
+    O neighbors: [994, 996, 999, 1004]
+Index    302: SiO4 (tetrahedral)       CN=4 xyz=(18.507, 6.517, 3.621)
+    O neighbors: [991, 993, 996, 998]
+Index    303: SiO4 (tetrahedral)       CN=4 xyz=(20.965, 6.252, 1.810)
+    O neighbors: [415, 417, 954, 998]
+Index    304: SiO4 (tetrahedral)       CN=4 xyz=(18.508, 10.509, 1.810)
+    O neighbors: [418, 460, 995, 1043]
+Index    305: SiO4 (tetrahedral)       CN=4 xyz=(16.050, 6.252, 1.810)
+    O neighbors: [756, 990, 991, 997]
+Index    306: SiO4 (tetrahedral)       CN=4 xyz=(13.593, 10.509, 1.810)
+    O neighbors: [806, 992, 1035, 1041]
+Index    307: SiO4 (tetrahedral)       CN=4 xyz=(17.050, 8.513, 10.863)
+    O neighbors: [1003, 1005, 1008, 1013]
+Index    308: SiO4 (tetrahedral)       CN=4 xyz=(18.507, 6.517, 9.052)
+    O neighbors: [1000, 1002, 1005, 1007]
+Index    309: SiO4 (tetrahedral)       CN=4 xyz=(20.965, 6.252, 7.242)
+    O neighbors: [424, 426, 962, 1007]
+Index    310: SiO4 (tetrahedral)       CN=4 xyz=(18.508, 10.509, 7.242)
+    O neighbors: [427, 470, 1004, 1053]
+Index    311: SiO4 (tetrahedral)       CN=4 xyz=(16.050, 6.252, 7.242)
+    O neighbors: [766, 999, 1000, 1006]
+Index    312: SiO4 (tetrahedral)       CN=4 xyz=(13.593, 10.509, 7.242)
+    O neighbors: [816, 1001, 1045, 1051]
+Index    313: SiO4 (tetrahedral)       CN=4 xyz=(17.050, 8.513, 16.294)
+    O neighbors: [1012, 1014, 1017, 1022]
+Index    314: SiO4 (tetrahedral)       CN=4 xyz=(18.507, 6.517, 14.483)
+    O neighbors: [1009, 1011, 1014, 1016]
+Index    315: SiO4 (tetrahedral)       CN=4 xyz=(20.965, 6.252, 12.673)
+    O neighbors: [433, 435, 970, 1016]
+Index    316: SiO4 (tetrahedral)       CN=4 xyz=(18.508, 10.509, 12.673)
+    O neighbors: [436, 480, 1013, 1063]
+Index    317: SiO4 (tetrahedral)       CN=4 xyz=(16.050, 6.252, 12.673)
+    O neighbors: [776, 1008, 1009, 1015]
+Index    318: SiO4 (tetrahedral)       CN=4 xyz=(13.593, 10.509, 12.673)
+    O neighbors: [826, 1010, 1055, 1061]
+Index    319: SiO4 (tetrahedral)       CN=4 xyz=(17.050, 8.513, 21.725)
+    O neighbors: [1021, 1023, 1026, 1031]
+Index    320: SiO4 (tetrahedral)       CN=4 xyz=(18.507, 6.517, 19.915)
+    O neighbors: [1018, 1020, 1023, 1025]
+Index    321: SiO4 (tetrahedral)       CN=4 xyz=(20.965, 6.252, 18.104)
+    O neighbors: [442, 444, 978, 1025]
+Index    322: SiO4 (tetrahedral)       CN=4 xyz=(18.508, 10.509, 18.104)
+    O neighbors: [445, 490, 1022, 1073]
+Index    323: SiO4 (tetrahedral)       CN=4 xyz=(16.050, 6.252, 18.104)
+    O neighbors: [786, 1017, 1018, 1024]
+Index    324: SiO4 (tetrahedral)       CN=4 xyz=(13.593, 10.509, 18.104)
+    O neighbors: [836, 1019, 1065, 1071]
+Index    325: SiO4 (tetrahedral)       CN=4 xyz=(18.507, 6.517, 25.346)
+    O neighbors: [1027, 1029, 1032, 1034]
+Index    326: SiO4 (tetrahedral)       CN=4 xyz=(20.965, 6.252, 23.536)
+    O neighbors: [451, 453, 986, 1034]
+Index    327: SiO4 (tetrahedral)       CN=4 xyz=(18.508, 10.509, 23.536)
+    O neighbors: [454, 500, 1031, 1083]
+Index    328: SiO4 (tetrahedral)       CN=4 xyz=(16.050, 6.252, 23.536)
+    O neighbors: [796, 1026, 1027, 1033]
+Index    329: SiO4 (tetrahedral)       CN=4 xyz=(13.593, 10.509, 23.536)
+    O neighbors: [846, 1028, 1075, 1081]
+Index    330: SiO4 (tetrahedral)       CN=4 xyz=(14.592, 12.769, 0.000)
+    O neighbors: [1035, 1039, 1078, 1080]
+Index    331: SiO4 (tetrahedral)       CN=4 xyz=(14.592, 12.769, 5.431)
+    O neighbors: [1038, 1040, 1045, 1049]
+Index    332: SiO4 (tetrahedral)       CN=4 xyz=(16.050, 10.773, 3.621)
+    O neighbors: [992, 994, 1040, 1043]
+Index    333: SiO4 (tetrahedral)       CN=4 xyz=(13.593, 15.030, 3.621)
+    O neighbors: [1037, 1038, 1044, 1089]
+Index    334: SiO4 (tetrahedral)       CN=4 xyz=(16.050, 14.765, 1.810)
+    O neighbors: [461, 464, 1039, 1044]
+Index    335: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 14.765, 1.810)
+    O neighbors: [855, 1036, 1037, 1042]
+Index    336: SiO4 (tetrahedral)       CN=4 xyz=(14.592, 12.769, 10.863)
+    O neighbors: [1048, 1050, 1055, 1059]
+Index    337: SiO4 (tetrahedral)       CN=4 xyz=(16.050, 10.773, 9.052)
+    O neighbors: [1001, 1003, 1050, 1053]
+Index    338: SiO4 (tetrahedral)       CN=4 xyz=(13.593, 15.030, 9.052)
+    O neighbors: [1047, 1048, 1054, 1097]
+Index    339: SiO4 (tetrahedral)       CN=4 xyz=(16.050, 14.765, 7.242)
+    O neighbors: [471, 474, 1049, 1054]
+Index    340: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 14.765, 7.242)
+    O neighbors: [865, 1046, 1047, 1052]
+Index    341: SiO4 (tetrahedral)       CN=4 xyz=(14.592, 12.769, 16.294)
+    O neighbors: [1058, 1060, 1065, 1069]
+Index    342: SiO4 (tetrahedral)       CN=4 xyz=(16.050, 10.773, 14.483)
+    O neighbors: [1010, 1012, 1060, 1063]
+Index    343: SiO4 (tetrahedral)       CN=4 xyz=(13.593, 15.030, 14.483)
+    O neighbors: [1057, 1058, 1064, 1105]
+Index    344: SiO4 (tetrahedral)       CN=4 xyz=(16.050, 14.765, 12.673)
+    O neighbors: [481, 484, 1059, 1064]
+Index    345: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 14.765, 12.673)
+    O neighbors: [875, 1056, 1057, 1062]
+Index    346: SiO4 (tetrahedral)       CN=4 xyz=(14.592, 12.769, 21.725)
+    O neighbors: [1068, 1070, 1075, 1079]
+Index    347: SiO4 (tetrahedral)       CN=4 xyz=(16.050, 10.773, 19.915)
+    O neighbors: [1019, 1021, 1070, 1073]
+Index    348: SiO4 (tetrahedral)       CN=4 xyz=(13.593, 15.030, 19.915)
+    O neighbors: [1067, 1068, 1074, 1113]
+Index    349: SiO4 (tetrahedral)       CN=4 xyz=(16.050, 14.765, 18.104)
+    O neighbors: [491, 494, 1069, 1074]
+Index    350: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 14.765, 18.104)
+    O neighbors: [885, 1066, 1067, 1072]
+Index    351: SiO4 (tetrahedral)       CN=4 xyz=(16.050, 10.773, 25.346)
+    O neighbors: [1028, 1030, 1080, 1083]
+Index    352: SiO4 (tetrahedral)       CN=4 xyz=(13.593, 15.030, 25.346)
+    O neighbors: [1077, 1078, 1084, 1121]
+Index    353: SiO4 (tetrahedral)       CN=4 xyz=(16.050, 14.765, 23.536)
+    O neighbors: [501, 504, 1079, 1084]
+Index    354: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 14.765, 23.536)
+    O neighbors: [895, 1076, 1077, 1082]
+Index    355: SiO4 (tetrahedral)       CN=4 xyz=(12.135, 17.026, 0.000)
+    O neighbors: [1036, 1088, 1119, 1121]
+Index    356: SiO4 (tetrahedral)       CN=4 xyz=(12.135, 17.026, 5.431)
+    O neighbors: [1046, 1087, 1089, 1096]
+Index    357: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 19.287, 3.621)
+    O neighbors: [1086, 1087, 1090, 1092]
+Index    358: SiO4 (tetrahedral)       CN=4 xyz=(-10.982, 19.022, 1.810)
+    O neighbors: [510, 512, 1088, 1092]
+Index    359: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 19.022, 1.810)
+    O neighbors: [904, 1085, 1086, 1091]
+Index    360: SiO4 (tetrahedral)       CN=4 xyz=(12.135, 17.026, 10.863)
+    O neighbors: [1056, 1095, 1097, 1104]
+Index    361: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 19.287, 9.052)
+    O neighbors: [1094, 1095, 1098, 1100]
+Index    362: SiO4 (tetrahedral)       CN=4 xyz=(-10.982, 19.022, 7.242)
+    O neighbors: [518, 520, 1096, 1100]
+Index    363: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 19.022, 7.242)
+    O neighbors: [914, 1093, 1094, 1099]
+Index    364: SiO4 (tetrahedral)       CN=4 xyz=(12.135, 17.026, 16.294)
+    O neighbors: [1066, 1103, 1105, 1112]
+Index    365: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 19.287, 14.483)
+    O neighbors: [1102, 1103, 1106, 1108]
+Index    366: SiO4 (tetrahedral)       CN=4 xyz=(-10.982, 19.022, 12.673)
+    O neighbors: [526, 528, 1104, 1108]
+Index    367: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 19.022, 12.673)
+    O neighbors: [924, 1101, 1102, 1107]
+Index    368: SiO4 (tetrahedral)       CN=4 xyz=(12.135, 17.026, 21.725)
+    O neighbors: [1076, 1111, 1113, 1120]
+Index    369: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 19.287, 19.915)
+    O neighbors: [1110, 1111, 1114, 1116]
+Index    370: SiO4 (tetrahedral)       CN=4 xyz=(-10.982, 19.022, 18.104)
+    O neighbors: [534, 536, 1112, 1116]
+Index    371: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 19.022, 18.104)
+    O neighbors: [934, 1109, 1110, 1115]
+Index    372: SiO4 (tetrahedral)       CN=4 xyz=(11.135, 19.287, 25.346)
+    O neighbors: [1118, 1119, 1122, 1124]
+Index    373: SiO4 (tetrahedral)       CN=4 xyz=(-10.982, 19.022, 23.536)
+    O neighbors: [542, 544, 1120, 1124]
+Index    374: SiO4 (tetrahedral)       CN=4 xyz=(8.678, 19.022, 23.536)
+    O neighbors: [944, 1117, 1118, 1123]
