@@ -1,1 +1,16 @@
-/Users/conrard/Library/Caches/wandb/logs/core-debug-20260202_192124.log
+{"time":"2026-02-02T19:21:24.05498-05:00","level":"INFO","msg":"main: starting server","port-filename":"/var/folders/mx/890d30k11gb84hjc0xjcghxm0000gn/T/tmptx1sjus1/port-61957.txt","pid":61957,"log-level":0,"disable-analytics":false,"shutdown-on-parent-exit":false,"enable-dcgm-profiling":false}
+{"time":"2026-02-02T19:21:24.056732-05:00","level":"INFO","msg":"server: will exit if parent process dies","ppid":61957}
+{"time":"2026-02-02T19:21:24.056805-05:00","level":"INFO","msg":"server: accepting connections","addr":{"Name":"/var/folders/mx/890d30k11gb84hjc0xjcghxm0000gn/T/wandb-61957-62001-563000451/socket","Net":"unix"}}
+{"time":"2026-02-02T19:21:24.107182-05:00","level":"INFO","msg":"connection: ManageConnectionData: new connection created","id":"1"}
+{"time":"2026-02-02T19:21:24.133263-05:00","level":"INFO","msg":"handleInformInit: received","streamId":"z2kfb349","id":"1"}
+{"time":"2026-02-02T19:21:24.329052-05:00","level":"INFO","msg":"handleInformInit: stream started","streamId":"z2kfb349","id":"1"}
+{"time":"2026-02-02T19:36:25.635469-05:00","level":"INFO","msg":"handleInformFinish: finish message received","streamId":"z2kfb349","id":"1"}
+{"time":"2026-02-02T19:36:25.641304-05:00","level":"INFO","msg":"handleInformFinish: stream closed","streamId":"z2kfb349","id":"1"}
+{"time":"2026-02-02T19:36:26.634247-05:00","level":"INFO","msg":"handleInformTeardown: server teardown initiated","id":"1"}
+{"time":"2026-02-02T19:36:26.634382-05:00","level":"INFO","msg":"handleInformTeardown: server shutdown complete","id":"1"}
+{"time":"2026-02-02T19:36:26.634407-05:00","level":"INFO","msg":"connection: closing","id":"1"}
+{"time":"2026-02-02T19:36:26.634434-05:00","level":"INFO","msg":"server is shutting down"}
+{"time":"2026-02-02T19:36:26.635125-05:00","level":"INFO","msg":"server: listener closed","addr":{"Name":"/var/folders/mx/890d30k11gb84hjc0xjcghxm0000gn/T/wandb-61957-62001-563000451/socket","Net":"unix"}}
+{"time":"2026-02-02T19:36:26.634545-05:00","level":"INFO","msg":"connection: closed successfully","id":"1"}
+{"time":"2026-02-02T19:36:26.63555-05:00","level":"INFO","msg":"connection: ManageConnectionData: connection closed","id":"1"}
+{"time":"2026-02-02T19:36:26.636058-05:00","level":"INFO","msg":"server is closed"}

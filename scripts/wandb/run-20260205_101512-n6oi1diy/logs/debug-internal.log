@@ -5,3 +5,10 @@
 {"time":"2026-02-05T10:15:12.569521-05:00","level":"INFO","msg":"handler: started","stream_id":"n6oi1diy"}
 {"time":"2026-02-05T10:15:12.569635-05:00","level":"INFO","msg":"sender: started","stream_id":"n6oi1diy"}
 {"time":"2026-02-05T10:15:15.375544-05:00","level":"WARN","msg":"handler: ignoring partial history record","step":0,"current":1}
+{"time":"2026-02-05T10:29:46.9911-05:00","level":"INFO","msg":"handler: operation stats","stats":{"operations":[{"desc":"uploading media/html/spectrum_animation_4999_d4a30d27880a8d306d68.html","runtime_seconds":1.838723625,"progress":"9.5MB/9.9MB"}],"total_operations":1}}
+{"time":"2026-02-05T10:29:47.36204-05:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-02-05T10:29:47.719251-05:00","level":"INFO","msg":"stream: closing","id":"n6oi1diy"}
+{"time":"2026-02-05T10:29:47.719453-05:00","level":"INFO","msg":"sender: closed","stream_id":"n6oi1diy"}
+{"time":"2026-02-05T10:29:47.719589-05:00","level":"INFO","msg":"handler: closed","stream_id":"n6oi1diy"}
+{"time":"2026-02-05T10:29:47.719722-05:00","level":"INFO","msg":"writer: Close: closed","stream_id":"n6oi1diy"}
+{"time":"2026-02-05T10:29:47.719816-05:00","level":"INFO","msg":"stream: closed","id":"n6oi1diy"}

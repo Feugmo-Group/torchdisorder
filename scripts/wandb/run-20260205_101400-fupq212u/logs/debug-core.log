@@ -1,1 +1,7 @@
-/Users/conrard/Library/Caches/wandb/logs/core-debug-20260205_101400.log
+{"time":"2026-02-05T10:14:00.274931-05:00","level":"INFO","msg":"main: starting server","port-filename":"/var/folders/mx/890d30k11gb84hjc0xjcghxm0000gn/T/tmp17921ti2/port-31127.txt","pid":31127,"log-level":0,"disable-analytics":false,"shutdown-on-parent-exit":false,"enable-dcgm-profiling":false}
+{"time":"2026-02-05T10:14:00.282673-05:00","level":"INFO","msg":"server: will exit if parent process dies","ppid":31127}
+{"time":"2026-02-05T10:14:00.282631-05:00","level":"INFO","msg":"server: accepting connections","addr":{"Name":"/var/folders/mx/890d30k11gb84hjc0xjcghxm0000gn/T/wandb-31127-31132-3184959737/socket","Net":"unix"}}
+{"time":"2026-02-05T10:14:00.299993-05:00","level":"INFO","msg":"connection: ManageConnectionData: new connection created","id":"1"}
+{"time":"2026-02-05T10:14:00.328647-05:00","level":"INFO","msg":"handleInformInit: received","streamId":"fupq212u","id":"1"}
+{"time":"2026-02-05T10:14:00.578953-05:00","level":"INFO","msg":"handleInformInit: stream started","streamId":"fupq212u","id":"1"}
+{"time":"2026-02-05T10:14:32.430248-05:00","level":"INFO","msg":"main: received shutdown signal","signal":2}

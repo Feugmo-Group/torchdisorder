@@ -1,1 +1,7 @@
-/Users/conrard/Library/Caches/wandb/logs/core-debug-20260203_135758.log
+{"time":"2026-02-03T13:57:58.060372-05:00","level":"INFO","msg":"main: starting server","port-filename":"/var/folders/mx/890d30k11gb84hjc0xjcghxm0000gn/T/tmp6fkz4vpi/port-17246.txt","pid":17246,"log-level":0,"disable-analytics":false,"shutdown-on-parent-exit":false,"enable-dcgm-profiling":false}
+{"time":"2026-02-03T13:57:58.062196-05:00","level":"INFO","msg":"server: will exit if parent process dies","ppid":17246}
+{"time":"2026-02-03T13:57:58.062253-05:00","level":"INFO","msg":"server: accepting connections","addr":{"Name":"/var/folders/mx/890d30k11gb84hjc0xjcghxm0000gn/T/wandb-17246-17292-4090696343/socket","Net":"unix"}}
+{"time":"2026-02-03T13:57:58.110581-05:00","level":"INFO","msg":"connection: ManageConnectionData: new connection created","id":"1"}
+{"time":"2026-02-03T13:57:58.133753-05:00","level":"INFO","msg":"handleInformInit: received","streamId":"rwys3rd0","id":"1"}
+{"time":"2026-02-03T13:57:58.326376-05:00","level":"INFO","msg":"handleInformInit: stream started","streamId":"rwys3rd0","id":"1"}
+{"time":"2026-02-03T13:58:25.698687-05:00","level":"INFO","msg":"main: received shutdown signal","signal":2}

@@ -1,1 +1,16 @@
-/Users/conrard/Library/Caches/wandb/logs/core-debug-20260203_140255.log
+{"time":"2026-02-03T14:02:55.830076-05:00","level":"INFO","msg":"main: starting server","port-filename":"/var/folders/mx/890d30k11gb84hjc0xjcghxm0000gn/T/tmpmte_20x4/port-19259.txt","pid":19259,"log-level":0,"disable-analytics":false,"shutdown-on-parent-exit":false,"enable-dcgm-profiling":false}
+{"time":"2026-02-03T14:02:55.832163-05:00","level":"INFO","msg":"server: will exit if parent process dies","ppid":19259}
+{"time":"2026-02-03T14:02:55.832386-05:00","level":"INFO","msg":"server: accepting connections","addr":{"Name":"/var/folders/mx/890d30k11gb84hjc0xjcghxm0000gn/T/wandb-19259-19301-2076193016/socket","Net":"unix"}}
+{"time":"2026-02-03T14:02:55.887322-05:00","level":"INFO","msg":"connection: ManageConnectionData: new connection created","id":"1"}
+{"time":"2026-02-03T14:02:55.91028-05:00","level":"INFO","msg":"handleInformInit: received","streamId":"tmnch8sb","id":"1"}
+{"time":"2026-02-03T14:02:56.098971-05:00","level":"INFO","msg":"handleInformInit: stream started","streamId":"tmnch8sb","id":"1"}
+{"time":"2026-02-03T14:18:00.950662-05:00","level":"INFO","msg":"handleInformFinish: finish message received","streamId":"tmnch8sb","id":"1"}
+{"time":"2026-02-03T14:18:00.955912-05:00","level":"INFO","msg":"handleInformFinish: stream closed","streamId":"tmnch8sb","id":"1"}
+{"time":"2026-02-03T14:18:01.949774-05:00","level":"INFO","msg":"handleInformTeardown: server teardown initiated","id":"1"}
+{"time":"2026-02-03T14:18:01.949835-05:00","level":"INFO","msg":"handleInformTeardown: server shutdown complete","id":"1"}
+{"time":"2026-02-03T14:18:01.949852-05:00","level":"INFO","msg":"server is shutting down"}
+{"time":"2026-02-03T14:18:01.949845-05:00","level":"INFO","msg":"connection: closing","id":"1"}
+{"time":"2026-02-03T14:18:01.949926-05:00","level":"INFO","msg":"connection: closed successfully","id":"1"}
+{"time":"2026-02-03T14:18:01.949943-05:00","level":"INFO","msg":"connection: ManageConnectionData: connection closed","id":"1"}
+{"time":"2026-02-03T14:18:01.950068-05:00","level":"INFO","msg":"server: listener closed","addr":{"Name":"/var/folders/mx/890d30k11gb84hjc0xjcghxm0000gn/T/wandb-19259-19301-2076193016/socket","Net":"unix"}}
+{"time":"2026-02-03T14:18:01.950108-05:00","level":"INFO","msg":"server is closed"}

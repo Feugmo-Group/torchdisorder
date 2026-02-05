@@ -1,1 +1,6 @@
-/Users/conrard/Library/Caches/wandb/logs/core-debug-20260201_184052.log
+{"time":"2026-02-01T18:40:52.664275-05:00","level":"INFO","msg":"main: starting server","port-filename":"/var/folders/mx/890d30k11gb84hjc0xjcghxm0000gn/T/tmpi09laiz3/port-54047.txt","pid":54047,"log-level":0,"disable-analytics":false,"shutdown-on-parent-exit":false,"enable-dcgm-profiling":false}
+{"time":"2026-02-01T18:40:52.666156-05:00","level":"INFO","msg":"server: will exit if parent process dies","ppid":54047}
+{"time":"2026-02-01T18:40:52.666183-05:00","level":"INFO","msg":"server: accepting connections","addr":{"Name":"/var/folders/mx/890d30k11gb84hjc0xjcghxm0000gn/T/wandb-54047-54055-2496317981/socket","Net":"unix"}}
+{"time":"2026-02-01T18:40:52.713645-05:00","level":"INFO","msg":"connection: ManageConnectionData: new connection created","id":"1"}
+{"time":"2026-02-01T18:40:52.740757-05:00","level":"INFO","msg":"handleInformInit: received","streamId":"48hhmwni","id":"1"}
+{"time":"2026-02-01T18:40:53.02765-05:00","level":"INFO","msg":"handleInformInit: stream started","streamId":"48hhmwni","id":"1"}
