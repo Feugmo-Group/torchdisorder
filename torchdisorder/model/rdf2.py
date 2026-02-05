@@ -265,28 +265,20 @@ def get_neutron_total_scattering_sf(
 ) -> torch.Tensor:
     """
     Compute neutron total scattering structure factor S(Q) from total RDF.
-    
-    Uses the Faber-Ziman convention where S(Q) → 1 as Q → ∞.
-    
-    The relationship is:
-        S(Q) = 1 + 4πρ ∫ r·G(r)·sin(Qr)/Q dr
-    
-    where G(r) is the distinct part of the correlation function (G(r) → 0 as r → ∞).
 
     Args:
-        total_rdf: 1D tensor G(r) - the distinct correlation function
-        r_bins: 1D tensor r values (Å)
-        q_bins: 1D tensor Q values (Å⁻¹)
+        total_rdf: 1D tensor G(r)
+        r_bins: 1D tensor r values
+        q_bins: 1D tensor Q values
         chemical_symbols: List of atomic symbols
-        cell: Tensor (D, D) - unit cell vectors
+        cell: Tensor (D, D)
 
     Returns:
-        1D tensor S(Q) in Faber-Ziman convention (→ 1 at high Q)
+        1D tensor S(Q)
     """
     rho = len(chemical_symbols) / get_cell_volume(cell)
     integrand = r_bins[None, :] * total_rdf[None, :] * torch.sin(q_bins[:, None] * r_bins[None, :]) / q_bins[:, None]
-    # Faber-Ziman S(Q) = 1 + Fourier transform of G(r)
-    return 1.0 + 4 * torch.pi * rho * torch.trapz(integrand, r_bins)
+    return 4 * torch.pi * rho * torch.trapz(integrand, r_bins)
 
 
 # -----------------------------------------------------------------------------
