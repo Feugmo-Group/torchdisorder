@@ -944,7 +944,7 @@ If you use TorchDisorder in your research, please cite:
 ```bibtex
 @software{torchdisorder2024,
   title={TorchDisorder: Differentiable Amorphous Structure Generation from Scattering Data},
-  author={Advait Gore, Xander Gouws, Tetsassi Feugmoand  Conrard Giresse},
+  author={Advait Gore, Xander Gouws, Tetsassi Feugmo   Conrard Giresse},
   year={2024},
   institution={University of Waterloo},
   url={https://github.com/feugmo-group/torchdisorder}
