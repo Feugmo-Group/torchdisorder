@@ -944,20 +944,14 @@ If you use TorchDisorder in your research, please cite:
 ```bibtex
 @software{torchdisorder2024,
   title={TorchDisorder: Differentiable Amorphous Structure Generation from Scattering Data},
-  author={Tetsassi Feugmo, Conrard Giresse},
+  author={Advait Gore, Xander Gouws, Tetsassi Feugmoand  Conrard Giresse},
   year={2024},
   institution={University of Waterloo},
   url={https://github.com/feugmo-group/torchdisorder}
 }
 ```
 
-### Related Publications
 
-1. Cooper, M. J. (1979). "The analysis of powder diffraction data." *Acta Crystallographica* A35, 569-573.
-2. Keen, D. A. (2001). "A comparison of various commonly used correlation functions for describing total scattering." *Journal of Applied Crystallography* 34, 172-177.
-3. McGreevy, R. L. & Pusztai, L. (1988). "Reverse Monte Carlo simulation: A new technique for the determination of disordered structures." *Molecular Simulation* 1, 359-367.
-
----
 
 ## License
 
