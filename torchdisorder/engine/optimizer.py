@@ -43,6 +43,111 @@ class ConstantPenalty(PenaltyCoefficient):
        return self.init
 
 
+class ScalarAdaptivePenalty(PenaltyCoefficient):
+    """
+    Scalar adaptive penalty coefficient for Augmented Lagrangian.
+    
+    A single penalty value applied to all constraints that adapts based
+    on overall constraint satisfaction progress.
+    
+    For per-constraint adaptive penalties, use AdaptivePenalty from
+    constrained_optimizer module.
+    
+    Parameters
+    ----------
+    init : float
+        Initial penalty value
+    growth_rate : float
+        Multiply penalty by this when constraints not improving
+    decay_rate : float
+        Multiply penalty by this when constraints improving
+    max_penalty : float
+        Upper bound on penalty
+    min_penalty : float
+        Lower bound on penalty
+    patience : int
+        Steps without improvement before increasing penalty
+    device : str
+        Device for tensors
+    """
+    
+    def __init__(
+        self,
+        init: float = 10.0,
+        growth_rate: float = 1.5,
+        decay_rate: float = 0.95,
+        max_penalty: float = 1000.0,
+        min_penalty: float = 1.0,
+        patience: int = 10,
+        device: str = 'cuda'
+    ):
+        # Don't call super().__init__ to avoid the value setter issue
+        # Just set the attributes we need
+        self.expects_constraint_features = False
+        
+        self.growth_rate = growth_rate
+        self.decay_rate = decay_rate
+        self.max_penalty = max_penalty
+        self.min_penalty = min_penalty
+        self.patience = patience
+        self.device = device
+        self._init_value = init
+        
+        # Tracking state
+        self._current_value = init
+        self._best_violation = float('inf')
+        self._steps_without_improvement = 0
+    
+    def __call__(self, constraint_features=None):
+        """Return the current penalty value."""
+        return torch.tensor(self._current_value, device=self.device)
+    
+    def update(self, total_violation: float):
+        """
+        Update penalty based on constraint violation.
+        
+        Call this after each optimization step with the sum of
+        squared constraint violations.
+        
+        Parameters
+        ----------
+        total_violation : float
+            Sum of squared constraint violations
+        """
+        if total_violation < self._best_violation * 0.99:  # 1% improvement threshold
+            # Constraints improving - decrease penalty
+            self._best_violation = total_violation
+            self._steps_without_improvement = 0
+            self._current_value = max(
+                self.min_penalty,
+                self._current_value * self.decay_rate
+            )
+        else:
+            # Not improving
+            self._steps_without_improvement += 1
+            if self._steps_without_improvement >= self.patience:
+                # Increase penalty
+                self._current_value = min(
+                    self.max_penalty,
+                    self._current_value * self.growth_rate
+                )
+                self._steps_without_improvement = 0
+    
+    def reset(self, init: float = None):
+        """Reset penalty to initial value."""
+        if init is not None:
+            self._current_value = init
+        else:
+            self._current_value = self._init_value
+        self._best_violation = float('inf')
+        self._steps_without_improvement = 0
+    
+    @property
+    def current_penalty(self) -> float:
+        """Current penalty value."""
+        return self._current_value
+
+
 
 
 class StructureFactorCMPWithConstraints(cooper.ConstrainedMinimizationProblem):
@@ -91,23 +196,57 @@ class StructureFactorCMPWithConstraints(cooper.ConstrainedMinimizationProblem):
            target_kind: str = 'S_Q',
            q_bins: Optional[torch.Tensor] = None,
            device: str = 'cuda',
-           penalty_rho: float = 40.0,
+           penalty_config: Union[float, Dict] = 10.0,
            violation_type: str = 'soft',  # 'soft' or 'hard'
            constraint_warmup_steps: int = 0,  # Ramp constraints over N steps
    ):
+       """
+       Initialize constrained minimization problem.
+       
+       Parameters
+       ----------
+       penalty_config : float or dict
+           If float: constant penalty value
+           If dict: adaptive penalty with keys:
+               - init: Initial penalty value
+               - growth_rate: Multiply when constraints not improving
+               - decay_rate: Multiply when constraints improving
+               - max_penalty: Upper bound
+               - min_penalty: Lower bound
+               - patience: Steps before increasing penalty
+       """
        super().__init__()
 
 
        self.model = model
        self.base_state = base_state
-       self.target = target_vec.F_q_target
-       self.target_uncert = target_vec.F_q_uncert
        self.kind = target_kind
        self.q_bins = q_bins
        self.loss_fn = loss_fn
        self.device = device
        self.violation_type = violation_type
        self.constraint_warmup_steps = constraint_warmup_steps
+       
+       # Select correct target based on target_kind
+       # Map target_kind to the corresponding attribute in TargetRDFData
+       target_map = {
+           'S_Q': ('S_Q_target', 'S_Q_uncert'),
+           'F_Q': ('F_q_target', 'F_q_uncert'),
+           'T_r': ('T_r_target', 'T_r_uncert'),
+           'g_r': ('g_r_target', 'g_r_uncert'),
+           'G_r': ('G_r_target', 'G_r_uncert'),  # G(r) = 4πρr[g(r) - 1]
+       }
+       
+       if target_kind in target_map:
+           target_attr, uncert_attr = target_map[target_kind]
+           self.target = getattr(target_vec, target_attr)
+           self.target_uncert = getattr(target_vec, uncert_attr)
+           print(f"  Using target: {target_attr} with shape {self.target.shape}")
+       else:
+           # Fallback to F_q for backward compatibility
+           print(f"  Warning: Unknown target_kind '{target_kind}', defaulting to F_q")
+           self.target = target_vec.F_q_target
+           self.target_uncert = target_vec.F_q_uncert
 
 
        # Load constraints from JSON
@@ -119,14 +258,14 @@ class StructureFactorCMPWithConstraints(cooper.ConstrainedMinimizationProblem):
        self.op_calc = TorchSimOrderParameters(cutoff=cutoff, device=str(device))
 
 
-       # Detect placeholder region (where dF was originally zero)
+       # Detect placeholder region (where uncertainty is negligible)
        self.placeholder_mask = (self.target_uncert < 1e-6).to(device)
        n_placeholder = self.placeholder_mask.sum().item()
-       print(f"Found {n_placeholder} placeholder points where dF = 1e-7")
+       print(f"  Found {n_placeholder} placeholder points (uncertainty < 1e-6)")
 
 
        # Set up constraints based on JSON file
-       self._setup_constraints(penalty_rho)
+       self._setup_constraints(penalty_config)
 
 
        print(f"\nInitialized StructureFactorCMPWithConstraints:")
@@ -144,14 +283,37 @@ class StructureFactorCMPWithConstraints(cooper.ConstrainedMinimizationProblem):
        return constraints
 
 
-   def _setup_constraints(self, penalty_rho: float):
+   def _setup_constraints(self, penalty_config: Union[float, Dict]):
        """
        Set up Cooper constraint objects for all atom-constraint pairs.
 
+       Parameters
+       ----------
+       penalty_config : float or dict
+           If float: constant penalty value
+           If dict: adaptive penalty configuration
 
        Strategy: Group constraints by order parameter type to reduce
        the number of Cooper constraint objects.
        """
+       # Create penalty coefficient based on config type
+       if isinstance(penalty_config, dict):
+           self.penalty_coeff = ScalarAdaptivePenalty(
+               init=penalty_config.get('init', 10.0),
+               growth_rate=penalty_config.get('growth_rate', 1.5),
+               decay_rate=penalty_config.get('decay_rate', 0.95),
+               max_penalty=penalty_config.get('max_penalty', 1000.0),
+               min_penalty=penalty_config.get('min_penalty', 1.0),
+               patience=penalty_config.get('patience', 10),
+               device=self.device
+           )
+           print(f"  Using ScalarAdaptivePenalty: init={penalty_config.get('init', 10.0)}, "
+                 f"growth={penalty_config.get('growth_rate', 1.5)}, "
+                 f"decay={penalty_config.get('decay_rate', 0.95)}")
+       else:
+           self.penalty_coeff = ConstantPenalty(float(penalty_config), device=self.device)
+           print(f"  Using ConstantPenalty: {penalty_config}")
+       
        # Group atoms by order parameter type
        op_to_atoms = defaultdict(list)
 
@@ -177,16 +339,12 @@ class StructureFactorCMPWithConstraints(cooper.ConstrainedMinimizationProblem):
            )
 
 
-           # Create penalty coefficient
-           penalty_coeff = ConstantPenalty(penalty_rho, device=self.device)
-
-
-           # Create constraint
+           # Create constraint using shared penalty coefficient
            constraint = cooper.Constraint(
                multiplier=multiplier,
                constraint_type=cooper.ConstraintType.INEQUALITY,
                formulation_type=cooper.formulations.AugmentedLagrangian,
-               penalty_coefficient=penalty_coeff,
+               penalty_coefficient=self.penalty_coeff,
            )
 
 

@@ -1,157 +1,102 @@
-# ==============================================================================
-# TorchDisorder Configuration v2
-# ==============================================================================
+# TorchDisorder Configuration
+# ===========================
 #
-# Structure optimization via diffraction pattern matching using constrained
-# optimization (Augmented Lagrangian).
-#
-# Usage examples:
-#   python scripts/train.py                              # Use defaults
-#   python scripts/train.py data=SiO2                    # Override data config
-#   python scripts/train.py max_steps=100000             # Override max steps
-#   python scripts/train.py accelerator=cpu              # Run on CPU
-#   python scripts/train.py target=T_r                   # Train on T(r)
-#   python scripts/train.py target=g_r                   # Train on g(r)
-#   python scripts/train.py constraints.enabled=false    # Disable constraints
-#   python scripts/train.py constraints.use_types=[tet]  # Only tetrahedral
-#
-# ==============================================================================
+# Usage:
+#   python scripts/train.py                              # Use defaults (SiO2, neutron)
+#   python scripts/train.py data=SiO2 structure=silica   # SiO2 glass (neutron)
+#   python scripts/train.py data=GeO2 structure=GeO2     # GeO2 glass (neutron)
+#   python scripts/train.py data=LiPS structure=LiPS     # Li-P-S glass (X-ray)
+#   python scripts/train.py target=F_Q                   # F(Q) target
+#   python scripts/train.py target=G_r                   # G(r) target (for X-ray PDF)
+#   python scripts/train.py structure.supercell.target_atoms=2000  # Larger cell
 
+experiment_name: SiO2
 defaults:
-  - data:  LiPS #SiO2 #LiPS #SiO2
-  - structure: LiPS #silica # LiPS #silica
+  - data: SiO2  #  SiO2 GeO2, LiPS
+  - structure: silica # silica,  GeO2, LiPS
   - trainer: cooper
   - wandb: enabled
   - _self_
 
-# ==============================================================================
-# DEVICE CONFIGURATION
-# ==============================================================================
-# accelerator: cuda  - NVIDIA GPU (recommended)
-# accelerator: mps   - Apple Silicon GPU
-# accelerator: cpu   - CPU only (slow)
+# =============================================================================
+# Device
+# =============================================================================
+accelerator: 'cpu'  # cuda, mps, cpu
 
-accelerator: 'cpu'
+# =============================================================================
+# Target Selection
+# =============================================================================
+# Options: S_Q, F_Q, T_r, g_r, G_r
+#   - S_Q: Structure factor S(Q) → 1 as Q → ∞
+#   - F_Q: Reduced structure factor F(Q) = Q[S(Q)-1] → 0 as Q → ∞
+#   - g_r: Pair distribution function g(r) → 1 as r → ∞
+#   - G_r: Reduced PDF G(r) = 4πρr[g(r)-1] → 0 as r → ∞ (PDFgetX3 output)
+#   - T_r: Total correlation function T(r) = 4πρr·g(r)
+target: F_Q
 
-# ==============================================================================
-# TARGET SPECTRUM SELECTION
-# ==============================================================================
-# Which diffraction spectrum to fit during optimization.
-# The chi-squared loss will be calculated ONLY for this target.
-#
-# Options:
-#   S_Q  - Structure factor S(Q)              [Q-space, reciprocal]
-#   T_r  - Total correlation function T(r)    [r-space, real]
-#   g_r  - Pair distribution function g(r)    [r-space, real]
-#
-# Relationships:
-#   S(Q) ←→ Fourier transform ←→ g(r)
-#   T(r) = 4πρr[g(r) - 1]
-#
-# Notes:
-#   - S(Q) is most commonly used for neutron/X-ray diffraction
-#   - g(r) is useful when pair distances are primary interest
-#   - T(r) is common in neutron PDF analysis
-#
-target: S_Q
+# =============================================================================
+# Optimization
+# =============================================================================
+max_steps: 5000
+optimize_cell: false
 
-# ==============================================================================
-# OPTIMIZATION SETTINGS
-# ==============================================================================
-
-max_steps: 5000       # Maximum optimization steps
-optimize_cell: false     # Optimize cell parameters (not just positions)
-penalty_rho: 10.0        # Initial penalty parameter for constraints
-
-# Learning rates
 lr:
-  primal: 1e-3           # Adam optimizer for atomic positions
-  dual: 1e-2             # SGD optimizer for Lagrange multipliers
-  primal_reduced: 1e-4   # After 97.5% loss reduction
-  dual_reduced: 1e-3     # After 97.5% loss reduction
+  primal: 1e-3
+  dual: 1e-2
+  primal_reduced: 1e-4
+  dual_reduced: 1e-3
 
-# ==============================================================================
-# STABILITY SETTINGS
-# ==============================================================================
-# These prevent NaN/explosion in large systems with many constraints.
-#
-# Gradient clipping: caps gradient norm to prevent overshooting
-# Position clamping: limits max displacement per atom per step (Å)
-# Constraint warmup: gradually introduces constraints over N steps
-#
-# Recommended for large systems (>2000 atoms):
-#   grad_clip_norm: 1.0
-#   max_displacement: 0.1
-#   constraint_warmup_steps: 500
+# =============================================================================
+# Adaptive Penalty
+# =============================================================================
+penalty:
+  init: 10.0
+  growth_rate: 1.5
+  decay_rate: 0.95
+  max_penalty: 1000.0
+  min_penalty: 1.0
+  patience: 10
 
+# =============================================================================
+# Stability
+# =============================================================================
 stability:
-  grad_clip_norm: 1.0          # Max gradient norm (null to disable)
-  max_displacement: 0.1        # Max Å displacement per atom per step (null to disable)
-  constraint_warmup_steps: 500 # Ramp constraints over N steps (0 to disable)
+  grad_clip_norm: 1.0
+  max_displacement: 0.1
+  constraint_warmup_steps: 500
 
-# ==============================================================================
-# CONSTRAINT CONFIGURATION
-# ==============================================================================
-# Control which structural constraints from JSON file to apply.
-# Constraints enforce local chemical order during optimization.
-#
-# Examples:
-#   constraints.enabled: false        - Run unconstrained optimization
-#   constraints.use_types: all        - Use all constraints from JSON
-#   constraints.use_types: [tet]      - Only tetrahedral (q_tet)
-#   constraints.use_types: [tet,cn]   - Tetrahedral + coordination number
-#
-# Available constraint types (depends on JSON file):
-#   tet : Tetrahedral order parameter q_tet (for SiO4, PO4, PS4, etc.)
-#   oct : Octahedral order parameter (for FeO6, TiO6, etc.)
-#   cn  : Coordination number constraint
-#   q2, q4, q6 : Steinhardt bond order parameters
-#
+# =============================================================================
+# Constraints
+# =============================================================================
 constraints:
-  enabled: true          # Set to false to disable all constraints
-  use_types: [tet] #all         # 'all' or list like [tet, cn]
+  enabled: true
+  use_types: all  # 'all' or [tet, cn, q4, ...]
 
-# ==============================================================================
-# ORDER PARAMETER CALCULATOR SETTINGS
-# ==============================================================================
-# Backend for computing order parameters during constraint evaluation.
-#
-# Options:
-#   auto    - Use WARP if available on CUDA, else PyTorch (recommended)
-#   pytorch - Always use PyTorch (compatible everywhere)
-#   warp    - Always use WARP (requires NVIDIA GPU + warp-lang package)
-#
-# Performance:
-#   - PyTorch: Works everywhere, ~1-10ms for small systems
-#   - WARP: 10-100x faster for large systems (>1000 atoms)
-#
-# To install WARP: pip install warp-lang
-#
+# =============================================================================
+# Order Parameters
+# =============================================================================
 order_params:
-  backend: auto          # 'auto', 'pytorch', or 'warp'
-  cutoff: 3.5            # Neighbor cutoff (Å)
-  max_neighbors: 64      # Max neighbors per atom (increase for dense systems)
+  backend: auto  # auto, pytorch, warp
+  cutoff: 5.5
+  max_neighbors: 4
 
-# ==============================================================================
-# OUTPUT CONFIGURATION
-# ==============================================================================
-
-checkpoint_interval: 200  # Save checkpoint every N steps
+# =============================================================================
+# Output
+# =============================================================================
+checkpoint_interval: 200
 
 output:
-  write_trajectory: true           # Write trajectory XYZ file
+  write_trajectory: true
   trajectory_path: ${hydra:run.dir}/trajectory
-  save_plots: true                 # Save spectrum plots
+  save_plots: true
   plots_dir: ${hydra:run.dir}/plots
-  plot_interval: 100              # Update plots every N steps
+  plot_interval: 100
 
-# ==============================================================================
-# HYDRA OUTPUT DIRECTORY
-# ==============================================================================
-# Results are saved in timestamped directories under outputs/
-
+# =============================================================================
+# Hydra
+# =============================================================================
 hydra:
   run:
-    dir: outputs/${now:%Y-%m-%d}/${now:%H-%M-%S}
+    dir: outputs/${experiment_name}_${now:%Y-%m-%d}/${now:%H-%M-%S}
   sweep:
-    dir: outputs/multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}
+    dir: outputs/multirun/{experiment_name}_${now:%Y-%m-%d}/${now:%H-%M-%S}

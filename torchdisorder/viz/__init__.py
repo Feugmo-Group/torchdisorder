@@ -1,23 +1,13 @@
 """
-TorchDisorder Visualization Module
-
-Live plotting and structure visualization utilities.
+Viz subpackage – Plotting and visualization utilities.
 """
 
 from torchdisorder.viz.plotting import (
-    init_live_total_correlation,
-    init_live_total_scattering,
-    update_live_plot,
-    plot_total_correlation,
-    plot_total_scattering,
-    LivePlotMonitor,
+    plot_spectrum,
+    plot_structure,
 )
 
 __all__ = [
-    "init_live_total_correlation",
-    "init_live_total_scattering",
-    "update_live_plot",
-    "plot_total_correlation",
-    "plot_total_scattering",
-    "LivePlotMonitor",
+    'plot_spectrum',
+    'plot_structure',
 ]

@@ -5,8 +5,8 @@
     16
   ],
   "atom_constraints": {
-    "1": {
-      "atom_index": 1,
+    "2": {
+      "atom_index": 2,
       "element": "P",
       "environment_type": "P4",
       "environment_label": "PS4^3-",
@@ -34,50 +34,13 @@
         }
       },
       "s_neighbor_indices": [
-        114,
-        84,
-        175,
-        93
+        246,
+        425,
+        643,
+        809
       ],
       "n_p": 0,
       "n_s": 4
-    },
-    "2": {
-      "atom_index": 2,
-      "element": "P",
-      "environment_type": "Pa",
-      "environment_label": "P2S7^4- (dimer)",
-      "target_coordination": 4,
-      "order_parameters": {
-        "cn": {
-          "target": 4.0,
-          "tolerance": 0.5,
-          "weight": 1.0,
-          "description": "P coordination (3S + 1P)"
-        },
-        "tet": {
-          "target": 0.6,
-          "min": 0.4,
-          "max": 0.8,
-          "weight": 1.5,
-          "description": "Distorted tetrahedral (bridging S)"
-        }
-      },
-      "has_p_neighbor": true,
-      "expected_p_p_distance": {
-        "min": 2.8,
-        "max": 3.5
-      },
-      "p_neighbor_indices": [
-        38
-      ],
-      "s_neighbor_indices": [
-        147,
-        263,
-        168
-      ],
-      "n_p": 1,
-      "n_s": 3
     },
     "4": {
       "atom_index": 4,
@@ -101,9 +64,9 @@
         }
       },
       "s_neighbor_indices": [
-        154,
-        194,
-        105
+        248,
+        327,
+        520
       ],
       "n_p": 0,
       "n_s": 3
@@ -135,113 +98,47 @@
         "max": 3.5
       },
       "p_neighbor_indices": [
-        18
+        148
       ],
       "s_neighbor_indices": [
-        119,
-        272,
-        96
+        491,
+        580,
+        591
       ],
       "n_p": 1,
-      "n_s": 3
-    },
-    "7": {
-      "atom_index": 7,
-      "element": "P",
-      "environment_type": "P3",
-      "environment_label": "PS3^-",
-      "target_coordination": 3,
-      "order_parameters": {
-        "cn": {
-          "target": 3.0,
-          "tolerance": 0.5,
-          "weight": 1.5,
-          "description": "P-S coordination"
-        },
-        "q2": {
-          "target": 0.5,
-          "min": 0.3,
-          "max": 0.7,
-          "weight": 1.0,
-          "description": "Pyramidal symmetry"
-        }
-      },
-      "s_neighbor_indices": [
-        97,
-        140,
-        79
-      ],
-      "n_p": 0,
-      "n_s": 3
-    },
-    "8": {
-      "atom_index": 8,
-      "element": "P",
-      "environment_type": "P3",
-      "environment_label": "PS3^-",
-      "target_coordination": 3,
-      "order_parameters": {
-        "cn": {
-          "target": 3.0,
-          "tolerance": 0.5,
-          "weight": 1.5,
-          "description": "P-S coordination"
-        },
-        "q2": {
-          "target": 0.5,
-          "min": 0.3,
-          "max": 0.7,
-          "weight": 1.0,
-          "description": "Pyramidal symmetry"
-        }
-      },
-      "s_neighbor_indices": [
-        247,
-        121,
-        181
-      ],
-      "n_p": 0,
       "n_s": 3
     },
     "9": {
       "atom_index": 9,
       "element": "P",
-      "environment_type": "P4",
-      "environment_label": "PS4^3-",
-      "target_coordination": 4,
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
       "order_parameters": {
         "cn": {
-          "target": 4.0,
+          "target": 3.0,
           "tolerance": 0.5,
           "weight": 1.5,
-          "description": "P-S coordination number"
+          "description": "P-S coordination"
         },
-        "tet": {
-          "target": 0.85,
-          "min": 0.7,
-          "max": 1.0,
-          "weight": 2.0,
-          "description": "Tetrahedral PS4^3-"
-        },
-        "q4": {
-          "target": 0.6,
-          "min": 0.4,
-          "max": 0.8,
-          "weight": 0.5,
-          "description": "Tetrahedral bond order"
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
         }
       },
       "s_neighbor_indices": [
-        182,
-        122,
-        226,
-        98
+        251,
+        332,
+        525
       ],
       "n_p": 0,
-      "n_s": 4
+      "n_s": 3
     },
-    "12": {
-      "atom_index": 12,
+    "10": {
+      "atom_index": 10,
       "element": "P",
       "environment_type": "Pa",
       "environment_label": "P2S7^4- (dimer)",
@@ -267,14 +164,72 @@
         "max": 3.5
       },
       "p_neighbor_indices": [
-        54
+        5
       ],
       "s_neighbor_indices": [
-        92,
-        197,
-        72
+        221,
+        249,
+        523
       ],
       "n_p": 1,
+      "n_s": 3
+    },
+    "11": {
+      "atom_index": 11,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        252,
+        334,
+        527
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "12": {
+      "atom_index": 12,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        253,
+        335,
+        528
+      ],
+      "n_p": 0,
       "n_s": 3
     },
     "16": {
@@ -299,9 +254,9 @@
         }
       },
       "s_neighbor_indices": [
-        270,
-        282,
-        150
+        256,
+        339,
+        532
       ],
       "n_p": 0,
       "n_s": 3
@@ -309,6 +264,43 @@
     "17": {
       "atom_index": 17,
       "element": "P",
+      "environment_type": "Pa",
+      "environment_label": "P2S7^4- (dimer)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P coordination (3S + 1P)"
+        },
+        "tet": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 1.5,
+          "description": "Distorted tetrahedral (bridging S)"
+        }
+      },
+      "has_p_neighbor": true,
+      "expected_p_p_distance": {
+        "min": 2.8,
+        "max": 3.5
+      },
+      "p_neighbor_indices": [
+        131
+      ],
+      "s_neighbor_indices": [
+        260,
+        343,
+        896
+      ],
+      "n_p": 1,
+      "n_s": 3
+    },
+    "18": {
+      "atom_index": 18,
+      "element": "P",
       "environment_type": "P3",
       "environment_label": "PS3^-",
       "target_coordination": 3,
@@ -328,15 +320,15 @@
         }
       },
       "s_neighbor_indices": [
-        106,
-        274,
-        213
+        258,
+        341,
+        534
       ],
       "n_p": 0,
       "n_s": 3
     },
-    "19": {
-      "atom_index": 19,
+    "20": {
+      "atom_index": 20,
       "element": "P",
       "environment_type": "Pa",
       "environment_label": "P2S7^4- (dimer)",
@@ -362,18 +354,18 @@
         "max": 3.5
       },
       "p_neighbor_indices": [
-        63
+        188
       ],
       "s_neighbor_indices": [
-        232,
-        104,
-        144
+        260,
+        524,
+        560
       ],
       "n_p": 1,
       "n_s": 3
     },
-    "21": {
-      "atom_index": 21,
+    "22": {
+      "atom_index": 22,
       "element": "P",
       "environment_type": "Pa",
       "environment_label": "P2S7^4- (dimer)",
@@ -399,12 +391,12 @@
         "max": 3.5
       },
       "p_neighbor_indices": [
-        41
+        165
       ],
       "s_neighbor_indices": [
-        155,
-        95,
-        145
+        262,
+        345,
+        538
       ],
       "n_p": 1,
       "n_s": 3
@@ -412,31 +404,76 @@
     "24": {
       "atom_index": 24,
       "element": "P",
-      "environment_type": "P3",
-      "environment_label": "PS3^-",
-      "target_coordination": 3,
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
       "order_parameters": {
         "cn": {
-          "target": 3.0,
+          "target": 4.0,
           "tolerance": 0.5,
           "weight": 1.5,
-          "description": "P-S coordination"
+          "description": "P-S coordination number"
         },
-        "q2": {
-          "target": 0.5,
-          "min": 0.3,
-          "max": 0.7,
-          "weight": 1.0,
-          "description": "Pyramidal symmetry"
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
         }
       },
       "s_neighbor_indices": [
-        188,
-        164,
-        200
+        264,
+        281,
+        347,
+        540
       ],
       "n_p": 0,
-      "n_s": 3
+      "n_s": 4
+    },
+    "26": {
+      "atom_index": 26,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        266,
+        283,
+        349,
+        542
+      ],
+      "n_p": 0,
+      "n_s": 4
     },
     "27": {
       "atom_index": 27,
@@ -460,156 +497,16 @@
         }
       },
       "s_neighbor_indices": [
-        276,
-        136,
-        213
+        267,
+        350,
+        543
       ],
       "n_p": 0,
       "n_s": 3
-    },
-    "28": {
-      "atom_index": 28,
-      "element": "P",
-      "environment_type": "P3",
-      "environment_label": "PS3^-",
-      "target_coordination": 3,
-      "order_parameters": {
-        "cn": {
-          "target": 3.0,
-          "tolerance": 0.5,
-          "weight": 1.5,
-          "description": "P-S coordination"
-        },
-        "q2": {
-          "target": 0.5,
-          "min": 0.3,
-          "max": 0.7,
-          "weight": 1.0,
-          "description": "Pyramidal symmetry"
-        }
-      },
-      "s_neighbor_indices": [
-        212,
-        244,
-        173
-      ],
-      "n_p": 0,
-      "n_s": 3
-    },
-    "29": {
-      "atom_index": 29,
-      "element": "P",
-      "environment_type": "P4",
-      "environment_label": "PS4^3-",
-      "target_coordination": 4,
-      "order_parameters": {
-        "cn": {
-          "target": 4.0,
-          "tolerance": 0.5,
-          "weight": 1.5,
-          "description": "P-S coordination number"
-        },
-        "tet": {
-          "target": 0.85,
-          "min": 0.7,
-          "max": 1.0,
-          "weight": 2.0,
-          "description": "Tetrahedral PS4^3-"
-        },
-        "q4": {
-          "target": 0.6,
-          "min": 0.4,
-          "max": 0.8,
-          "weight": 0.5,
-          "description": "Tetrahedral bond order"
-        }
-      },
-      "s_neighbor_indices": [
-        138,
-        77,
-        278,
-        151
-      ],
-      "n_p": 0,
-      "n_s": 4
-    },
-    "30": {
-      "atom_index": 30,
-      "element": "P",
-      "environment_type": "P4",
-      "environment_label": "PS4^3-",
-      "target_coordination": 4,
-      "order_parameters": {
-        "cn": {
-          "target": 4.0,
-          "tolerance": 0.5,
-          "weight": 1.5,
-          "description": "P-S coordination number"
-        },
-        "tet": {
-          "target": 0.85,
-          "min": 0.7,
-          "max": 1.0,
-          "weight": 2.0,
-          "description": "Tetrahedral PS4^3-"
-        },
-        "q4": {
-          "target": 0.6,
-          "min": 0.4,
-          "max": 0.8,
-          "weight": 0.5,
-          "description": "Tetrahedral bond order"
-        }
-      },
-      "s_neighbor_indices": [
-        163,
-        180,
-        203,
-        271
-      ],
-      "n_p": 0,
-      "n_s": 4
     },
     "31": {
       "atom_index": 31,
       "element": "P",
-      "environment_type": "Pa",
-      "environment_label": "P2S7^4- (dimer)",
-      "target_coordination": 4,
-      "order_parameters": {
-        "cn": {
-          "target": 4.0,
-          "tolerance": 0.5,
-          "weight": 1.0,
-          "description": "P coordination (3S + 1P)"
-        },
-        "tet": {
-          "target": 0.6,
-          "min": 0.4,
-          "max": 0.8,
-          "weight": 1.5,
-          "description": "Distorted tetrahedral (bridging S)"
-        }
-      },
-      "has_p_neighbor": true,
-      "expected_p_p_distance": {
-        "min": 2.8,
-        "max": 3.5
-      },
-      "p_neighbor_indices": [
-        55
-      ],
-      "s_neighbor_indices": [
-        240,
-        102,
-        230
-      ],
-      "n_p": 1,
-      "n_s": 3
-    },
-    "32": {
-      "atom_index": 32,
-      "element": "P",
       "environment_type": "P3",
       "environment_label": "PS3^-",
       "target_coordination": 3,
@@ -629,9 +526,9 @@
         }
       },
       "s_neighbor_indices": [
-        185,
-        109,
-        216
+        269,
+        352,
+        382
       ],
       "n_p": 0,
       "n_s": 3
@@ -663,18 +560,92 @@
         "max": 3.5
       },
       "p_neighbor_indices": [
-        20
+        7
       ],
       "s_neighbor_indices": [
-        111,
-        241,
-        248
+        476,
+        574,
+        694
       ],
       "n_p": 1,
       "n_s": 3
     },
     "35": {
       "atom_index": 35,
+      "element": "P",
+      "environment_type": "Pa",
+      "environment_label": "P2S7^4- (dimer)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P coordination (3S + 1P)"
+        },
+        "tet": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 1.5,
+          "description": "Distorted tetrahedral (bridging S)"
+        }
+      },
+      "has_p_neighbor": true,
+      "expected_p_p_distance": {
+        "min": 2.8,
+        "max": 3.5
+      },
+      "p_neighbor_indices": [
+        71
+      ],
+      "s_neighbor_indices": [
+        272,
+        358,
+        551
+      ],
+      "n_p": 1,
+      "n_s": 3
+    },
+    "37": {
+      "atom_index": 37,
+      "element": "P",
+      "environment_type": "Pa",
+      "environment_label": "P2S7^4- (dimer)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P coordination (3S + 1P)"
+        },
+        "tet": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 1.5,
+          "description": "Distorted tetrahedral (bridging S)"
+        }
+      },
+      "has_p_neighbor": true,
+      "expected_p_p_distance": {
+        "min": 2.8,
+        "max": 3.5
+      },
+      "p_neighbor_indices": [
+        100
+      ],
+      "s_neighbor_indices": [
+        216,
+        389,
+        437
+      ],
+      "n_p": 1,
+      "n_s": 3
+    },
+    "39": {
+      "atom_index": 39,
       "element": "P",
       "environment_type": "P3",
       "environment_label": "PS3^-",
@@ -695,15 +666,44 @@
         }
       },
       "s_neighbor_indices": [
-        279,
-        269,
-        206
+        217,
+        391,
+        439
       ],
       "n_p": 0,
       "n_s": 3
     },
-    "40": {
-      "atom_index": 40,
+    "41": {
+      "atom_index": 41,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        305,
+        370,
+        557
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "42": {
+      "atom_index": 42,
       "element": "P",
       "environment_type": "P4",
       "environment_label": "PS4^3-",
@@ -731,53 +731,16 @@
         }
       },
       "s_neighbor_indices": [
-        165,
-        209,
-        148,
-        199
+        218,
+        374,
+        752,
+        778
       ],
       "n_p": 0,
       "n_s": 4
     },
-    "46": {
-      "atom_index": 46,
-      "element": "P",
-      "environment_type": "P2",
-      "environment_label": "P2S6^4- (dumbbell)",
-      "target_coordination": 4,
-      "order_parameters": {
-        "cn": {
-          "target": 4.0,
-          "tolerance": 0.5,
-          "weight": 1.0,
-          "description": "P coordination (3S + 1P)"
-        },
-        "tet": {
-          "target": 0.65,
-          "min": 0.4,
-          "max": 0.85,
-          "weight": 1.5,
-          "description": "Tetrahedral with P-P bond"
-        }
-      },
-      "has_p_neighbor": true,
-      "expected_p_p_distance": {
-        "min": 2.0,
-        "max": 2.4
-      },
-      "p_neighbor_indices": [
-        69
-      ],
-      "s_neighbor_indices": [
-        180,
-        88,
-        198
-      ],
-      "n_p": 1,
-      "n_s": 3
-    },
-    "48": {
-      "atom_index": 48,
+    "44": {
+      "atom_index": 44,
       "element": "P",
       "environment_type": "P3",
       "environment_label": "PS3^-",
@@ -798,9 +761,252 @@
         }
       },
       "s_neighbor_indices": [
-        250,
-        192,
-        242
+        220,
+        396,
+        444
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "45": {
+      "atom_index": 45,
+      "element": "P",
+      "environment_type": "Pa",
+      "environment_label": "P2S7^4- (dimer)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P coordination (3S + 1P)"
+        },
+        "tet": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 1.5,
+          "description": "Distorted tetrahedral (bridging S)"
+        }
+      },
+      "has_p_neighbor": true,
+      "expected_p_p_distance": {
+        "min": 2.8,
+        "max": 3.5
+      },
+      "p_neighbor_indices": [
+        43
+      ],
+      "s_neighbor_indices": [
+        219,
+        221,
+        886
+      ],
+      "n_p": 1,
+      "n_s": 3
+    },
+    "46": {
+      "atom_index": 46,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        222,
+        278,
+        398,
+        446
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "49": {
+      "atom_index": 49,
+      "element": "P",
+      "environment_type": "Pa",
+      "environment_label": "P2S7^4- (dimer)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P coordination (3S + 1P)"
+        },
+        "tet": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 1.5,
+          "description": "Distorted tetrahedral (bridging S)"
+        }
+      },
+      "has_p_neighbor": true,
+      "expected_p_p_distance": {
+        "min": 2.8,
+        "max": 3.5
+      },
+      "p_neighbor_indices": [
+        28
+      ],
+      "s_neighbor_indices": [
+        268,
+        401,
+        449
+      ],
+      "n_p": 1,
+      "n_s": 3
+    },
+    "50": {
+      "atom_index": 50,
+      "element": "P",
+      "environment_type": "Pa",
+      "environment_label": "P2S7^4- (dimer)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P coordination (3S + 1P)"
+        },
+        "tet": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 1.5,
+          "description": "Distorted tetrahedral (bridging S)"
+        }
+      },
+      "has_p_neighbor": true,
+      "expected_p_p_distance": {
+        "min": 2.8,
+        "max": 3.5
+      },
+      "p_neighbor_indices": [
+        97
+      ],
+      "s_neighbor_indices": [
+        226,
+        402,
+        450
+      ],
+      "n_p": 1,
+      "n_s": 3
+    },
+    "53": {
+      "atom_index": 53,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        229,
+        405,
+        453
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "55": {
+      "atom_index": 55,
+      "element": "P",
+      "environment_type": "Pa",
+      "environment_label": "P2S7^4- (dimer)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P coordination (3S + 1P)"
+        },
+        "tet": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 1.5,
+          "description": "Distorted tetrahedral (bridging S)"
+        }
+      },
+      "has_p_neighbor": true,
+      "expected_p_p_distance": {
+        "min": 2.8,
+        "max": 3.5
+      },
+      "p_neighbor_indices": [
+        142
+      ],
+      "s_neighbor_indices": [
+        280,
+        407,
+        455
+      ],
+      "n_p": 1,
+      "n_s": 3
+    },
+    "56": {
+      "atom_index": 56,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        232,
+        408,
+        456
       ],
       "n_p": 0,
       "n_s": 3
@@ -827,9 +1033,9 @@
         }
       },
       "s_neighbor_indices": [
-        91,
-        282,
-        150
+        235,
+        411,
+        459
       ],
       "n_p": 0,
       "n_s": 3
@@ -861,55 +1067,18 @@
         "max": 3.5
       },
       "p_neighbor_indices": [
-        22
+        171
       ],
       "s_neighbor_indices": [
-        99,
-        187,
-        146
+        236,
+        381,
+        883
       ],
       "n_p": 1,
       "n_s": 3
     },
     "62": {
       "atom_index": 62,
-      "element": "P",
-      "environment_type": "P4",
-      "environment_label": "PS4^3-",
-      "target_coordination": 4,
-      "order_parameters": {
-        "cn": {
-          "target": 4.0,
-          "tolerance": 0.5,
-          "weight": 1.5,
-          "description": "P-S coordination number"
-        },
-        "tet": {
-          "target": 0.85,
-          "min": 0.7,
-          "max": 1.0,
-          "weight": 2.0,
-          "description": "Tetrahedral PS4^3-"
-        },
-        "q4": {
-          "target": 0.6,
-          "min": 0.4,
-          "max": 0.8,
-          "weight": 0.5,
-          "description": "Tetrahedral bond order"
-        }
-      },
-      "s_neighbor_indices": [
-        194,
-        212,
-        135,
-        244
-      ],
-      "n_p": 0,
-      "n_s": 4
-    },
-    "64": {
-      "atom_index": 64,
       "element": "P",
       "environment_type": "P3",
       "environment_label": "PS3^-",
@@ -930,15 +1099,15 @@
         }
       },
       "s_neighbor_indices": [
-        262,
-        212,
-        95
+        238,
+        797,
+        833
       ],
       "n_p": 0,
       "n_s": 3
     },
-    "65": {
-      "atom_index": 65,
+    "64": {
+      "atom_index": 64,
       "element": "P",
       "environment_type": "P4",
       "environment_label": "PS4^3-",
@@ -966,16 +1135,206 @@
         }
       },
       "s_neighbor_indices": [
-        184,
-        233,
-        196,
-        100
+        313,
+        316,
+        481,
+        580
       ],
       "n_p": 0,
       "n_s": 4
     },
+    "65": {
+      "atom_index": 65,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        285,
+        417,
+        429
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
     "68": {
       "atom_index": 68,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        241,
+        288,
+        420,
+        432
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "70": {
+      "atom_index": 70,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        242,
+        422,
+        434
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "72": {
+      "atom_index": 72,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        254,
+        304,
+        336
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "80": {
+      "atom_index": 80,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        505,
+        609,
+        647,
+        754
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "82": {
+      "atom_index": 82,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        506,
+        649,
+        756
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "84": {
+      "atom_index": 84,
       "element": "P",
       "environment_type": "Pa",
       "environment_label": "P2S7^4- (dimer)",
@@ -1001,14 +1360,1992 @@
         "max": 3.5
       },
       "p_neighbor_indices": [
-        54
+        25
       ],
       "s_neighbor_indices": [
-        109,
-        139,
-        216
+        238,
+        541,
+        597
       ],
       "n_p": 1,
+      "n_s": 3
+    },
+    "86": {
+      "atom_index": 86,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        269,
+        569,
+        620
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "89": {
+      "atom_index": 89,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        361,
+        656,
+        687,
+        858
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "94": {
+      "atom_index": 94,
+      "element": "P",
+      "environment_type": "Pa",
+      "environment_label": "P2S7^4- (dimer)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P coordination (3S + 1P)"
+        },
+        "tet": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 1.5,
+          "description": "Distorted tetrahedral (bridging S)"
+        }
+      },
+      "has_p_neighbor": true,
+      "expected_p_p_distance": {
+        "min": 2.8,
+        "max": 3.5
+      },
+      "p_neighbor_indices": [
+        165
+      ],
+      "s_neighbor_indices": [
+        310,
+        538,
+        574
+      ],
+      "n_p": 1,
+      "n_s": 3
+    },
+    "95": {
+      "atom_index": 95,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        515,
+        624,
+        662,
+        763
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "98": {
+      "atom_index": 98,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        491,
+        591,
+        715,
+        750
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "103": {
+      "atom_index": 103,
+      "element": "P",
+      "environment_type": "Pa",
+      "environment_label": "P2S7^4- (dimer)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P coordination (3S + 1P)"
+        },
+        "tet": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 1.5,
+          "description": "Distorted tetrahedral (bridging S)"
+        }
+      },
+      "has_p_neighbor": true,
+      "expected_p_p_distance": {
+        "min": 2.8,
+        "max": 3.5
+      },
+      "p_neighbor_indices": [
+        99
+      ],
+      "s_neighbor_indices": [
+        284,
+        416,
+        428
+      ],
+      "n_p": 1,
+      "n_s": 3
+    },
+    "104": {
+      "atom_index": 104,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        497,
+        633,
+        671,
+        769
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "105": {
+      "atom_index": 105,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        498,
+        637,
+        672,
+        770
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "106": {
+      "atom_index": 106,
+      "element": "P",
+      "environment_type": "Pa",
+      "environment_label": "P2S7^4- (dimer)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P coordination (3S + 1P)"
+        },
+        "tet": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 1.5,
+          "description": "Distorted tetrahedral (bridging S)"
+        }
+      },
+      "has_p_neighbor": true,
+      "expected_p_p_distance": {
+        "min": 2.8,
+        "max": 3.5
+      },
+      "p_neighbor_indices": [
+        71
+      ],
+      "s_neighbor_indices": [
+        252,
+        358,
+        638
+      ],
+      "n_p": 1,
+      "n_s": 3
+    },
+    "107": {
+      "atom_index": 107,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        500,
+        636,
+        674,
+        771
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "108": {
+      "atom_index": 108,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        460,
+        699,
+        846,
+        880
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "111": {
+      "atom_index": 111,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        462,
+        702,
+        849,
+        882
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "113": {
+      "atom_index": 113,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        464,
+        704,
+        848,
+        884
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "114": {
+      "atom_index": 114,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        297,
+        465,
+        585,
+        720
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "115": {
+      "atom_index": 115,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        466,
+        706,
+        850,
+        886
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "119": {
+      "atom_index": 119,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        469,
+        710,
+        854,
+        889
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "122": {
+      "atom_index": 122,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        472,
+        677,
+        857,
+        892
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "130": {
+      "atom_index": 130,
+      "element": "P",
+      "environment_type": "Pa",
+      "environment_label": "P2S7^4- (dimer)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P coordination (3S + 1P)"
+        },
+        "tet": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 1.5,
+          "description": "Distorted tetrahedral (bridging S)"
+        }
+      },
+      "has_p_neighbor": true,
+      "expected_p_p_distance": {
+        "min": 2.8,
+        "max": 3.5
+      },
+      "p_neighbor_indices": [
+        151
+      ],
+      "s_neighbor_indices": [
+        526,
+        562,
+        613
+      ],
+      "n_p": 1,
+      "n_s": 3
+    },
+    "132": {
+      "atom_index": 132,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        480,
+        687,
+        870,
+        898
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "138": {
+      "atom_index": 138,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        320,
+        693,
+        876,
+        902
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "141": {
+      "atom_index": 141,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        488,
+        696,
+        879,
+        904
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "145": {
+      "atom_index": 145,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        360,
+        773,
+        809
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "146": {
+      "atom_index": 146,
+      "element": "P",
+      "environment_type": "Pa",
+      "environment_label": "P2S7^4- (dimer)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P coordination (3S + 1P)"
+        },
+        "tet": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 1.5,
+          "description": "Distorted tetrahedral (bridging S)"
+        }
+      },
+      "has_p_neighbor": true,
+      "expected_p_p_distance": {
+        "min": 2.8,
+        "max": 3.5
+      },
+      "p_neighbor_indices": [
+        120
+      ],
+      "s_neighbor_indices": [
+        361,
+        774,
+        858
+      ],
+      "n_p": 1,
+      "n_s": 3
+    },
+    "147": {
+      "atom_index": 147,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        237,
+        246,
+        580
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "150": {
+      "atom_index": 150,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        442,
+        660,
+        862
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "152": {
+      "atom_index": 152,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        365,
+        780,
+        816
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "155": {
+      "atom_index": 155,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        367,
+        783,
+        819
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "157": {
+      "atom_index": 157,
+      "element": "P",
+      "environment_type": "Pa",
+      "environment_label": "P2S7^4- (dimer)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P coordination (3S + 1P)"
+        },
+        "tet": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 1.5,
+          "description": "Distorted tetrahedral (bridging S)"
+        }
+      },
+      "has_p_neighbor": true,
+      "expected_p_p_distance": {
+        "min": 2.8,
+        "max": 3.5
+      },
+      "p_neighbor_indices": [
+        73
+      ],
+      "s_neighbor_indices": [
+        369,
+        785,
+        821
+      ],
+      "n_p": 1,
+      "n_s": 3
+    },
+    "161": {
+      "atom_index": 161,
+      "element": "P",
+      "environment_type": "Pa",
+      "environment_label": "P2S7^4- (dimer)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P coordination (3S + 1P)"
+        },
+        "tet": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 1.5,
+          "description": "Distorted tetrahedral (bridging S)"
+        }
+      },
+      "has_p_neighbor": true,
+      "expected_p_p_distance": {
+        "min": 2.8,
+        "max": 3.5
+      },
+      "p_neighbor_indices": [
+        92
+      ],
+      "s_neighbor_indices": [
+        373,
+        789,
+        825
+      ],
+      "n_p": 1,
+      "n_s": 3
+    },
+    "162": {
+      "atom_index": 162,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        374,
+        790,
+        826
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "163": {
+      "atom_index": 163,
+      "element": "P",
+      "environment_type": "Pa",
+      "environment_label": "P2S7^4- (dimer)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P coordination (3S + 1P)"
+        },
+        "tet": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 1.5,
+          "description": "Distorted tetrahedral (bridging S)"
+        }
+      },
+      "has_p_neighbor": true,
+      "expected_p_p_distance": {
+        "min": 2.8,
+        "max": 3.5
+      },
+      "p_neighbor_indices": [
+        74
+      ],
+      "s_neighbor_indices": [
+        257,
+        623,
+        692
+      ],
+      "n_p": 1,
+      "n_s": 3
+    },
+    "164": {
+      "atom_index": 164,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        375,
+        792,
+        828
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "166": {
+      "atom_index": 166,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        377,
+        794,
+        830
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "167": {
+      "atom_index": 167,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        378,
+        795,
+        831
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "170": {
+      "atom_index": 170,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        380,
+        598,
+        798,
+        834
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "172": {
+      "atom_index": 172,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        382,
+        800,
+        836
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "175": {
+      "atom_index": 175,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        511,
+        623,
+        658
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "176": {
+      "atom_index": 176,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        385,
+        804,
+        840
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "178": {
+      "atom_index": 178,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        386,
+        806,
+        842
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "180": {
+      "atom_index": 180,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        324,
+        359,
+        493,
+        881
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "182": {
+      "atom_index": 182,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        291,
+        578,
+        589,
+        713
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "183": {
+      "atom_index": 183,
+      "element": "P",
+      "environment_type": "Pa",
+      "environment_label": "P2S7^4- (dimer)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P coordination (3S + 1P)"
+        },
+        "tet": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 1.5,
+          "description": "Distorted tetrahedral (bridging S)"
+        }
+      },
+      "has_p_neighbor": true,
+      "expected_p_p_distance": {
+        "min": 2.8,
+        "max": 3.5
+      },
+      "p_neighbor_indices": [
+        75
+      ],
+      "s_neighbor_indices": [
+        492,
+        607,
+        749
+      ],
+      "n_p": 1,
+      "n_s": 3
+    },
+    "185": {
+      "atom_index": 185,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        293,
+        581,
+        716
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "186": {
+      "atom_index": 186,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        294,
+        309,
+        406
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "188": {
+      "atom_index": 188,
+      "element": "P",
+      "environment_type": "Pa",
+      "environment_label": "P2S7^4- (dimer)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P coordination (3S + 1P)"
+        },
+        "tet": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 1.5,
+          "description": "Distorted tetrahedral (bridging S)"
+        }
+      },
+      "has_p_neighbor": true,
+      "expected_p_p_distance": {
+        "min": 2.8,
+        "max": 3.5
+      },
+      "p_neighbor_indices": [
+        20
+      ],
+      "s_neighbor_indices": [
+        296,
+        524,
+        560
+      ],
+      "n_p": 1,
+      "n_s": 3
+    },
+    "190": {
+      "atom_index": 190,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        298,
+        586,
+        593
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "192": {
+      "atom_index": 192,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        300,
+        723,
+        772
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "193": {
+      "atom_index": 193,
+      "element": "P",
+      "environment_type": "Pa",
+      "environment_label": "P2S7^4- (dimer)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P coordination (3S + 1P)"
+        },
+        "tet": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 1.5,
+          "description": "Distorted tetrahedral (bridging S)"
+        }
+      },
+      "has_p_neighbor": true,
+      "expected_p_p_distance": {
+        "min": 2.8,
+        "max": 3.5
+      },
+      "p_neighbor_indices": [
+        126
+      ],
+      "s_neighbor_indices": [
+        726,
+        749,
+        775
+      ],
+      "n_p": 1,
+      "n_s": 3
+    },
+    "194": {
+      "atom_index": 194,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        302,
+        554,
+        595,
+        725
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "196": {
+      "atom_index": 196,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        216,
+        304,
+        401,
+        891
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "198": {
+      "atom_index": 198,
+      "element": "P",
+      "environment_type": "Pa",
+      "environment_label": "P2S7^4- (dimer)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P coordination (3S + 1P)"
+        },
+        "tet": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 1.5,
+          "description": "Distorted tetrahedral (bridging S)"
+        }
+      },
+      "has_p_neighbor": true,
+      "expected_p_p_distance": {
+        "min": 2.8,
+        "max": 3.5
+      },
+      "p_neighbor_indices": [
+        214
+      ],
+      "s_neighbor_indices": [
+        374,
+        694,
+        903
+      ],
+      "n_p": 1,
+      "n_s": 3
+    },
+    "201": {
+      "atom_index": 201,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        309,
+        561,
+        732
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "204": {
+      "atom_index": 204,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        312,
+        564,
+        735
+      ],
+      "n_p": 0,
+      "n_s": 3
+    },
+    "205": {
+      "atom_index": 205,
+      "element": "P",
+      "environment_type": "Pa",
+      "environment_label": "P2S7^4- (dimer)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P coordination (3S + 1P)"
+        },
+        "tet": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 1.5,
+          "description": "Distorted tetrahedral (bridging S)"
+        }
+      },
+      "has_p_neighbor": true,
+      "expected_p_p_distance": {
+        "min": 2.8,
+        "max": 3.5
+      },
+      "p_neighbor_indices": [
+        61
+      ],
+      "s_neighbor_indices": [
+        237,
+        313,
+        413
+      ],
+      "n_p": 1,
+      "n_s": 3
+    },
+    "206": {
+      "atom_index": 206,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        314,
+        566,
+        598,
+        737
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "207": {
+      "atom_index": 207,
+      "element": "P",
+      "environment_type": "P4",
+      "environment_label": "PS4^3-",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination number"
+        },
+        "tet": {
+          "target": 0.85,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedral PS4^3-"
+        },
+        "q4": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 0.5,
+          "description": "Tetrahedral bond order"
+        }
+      },
+      "s_neighbor_indices": [
+        315,
+        567,
+        599,
+        738
+      ],
+      "n_p": 0,
+      "n_s": 4
+    },
+    "209": {
+      "atom_index": 209,
+      "element": "P",
+      "environment_type": "Pa",
+      "environment_label": "P2S7^4- (dimer)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P coordination (3S + 1P)"
+        },
+        "tet": {
+          "target": 0.6,
+          "min": 0.4,
+          "max": 0.8,
+          "weight": 1.5,
+          "description": "Distorted tetrahedral (bridging S)"
+        }
+      },
+      "has_p_neighbor": true,
+      "expected_p_p_distance": {
+        "min": 2.8,
+        "max": 3.5
+      },
+      "p_neighbor_indices": [
+        137
+      ],
+      "s_neighbor_indices": [
+        229,
+        240,
+        901
+      ],
+      "n_p": 1,
+      "n_s": 3
+    },
+    "215": {
+      "atom_index": 215,
+      "element": "P",
+      "environment_type": "P3",
+      "environment_label": "PS3^-",
+      "target_coordination": 3,
+      "order_parameters": {
+        "cn": {
+          "target": 3.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-S coordination"
+        },
+        "q2": {
+          "target": 0.5,
+          "min": 0.3,
+          "max": 0.7,
+          "weight": 1.0,
+          "description": "Pyramidal symmetry"
+        }
+      },
+      "s_neighbor_indices": [
+        322,
+        575,
+        746
+      ],
+      "n_p": 0,
       "n_s": 3
     }
   },
@@ -1021,28 +3358,28 @@
         "S2-": 0.0
       },
       "current_fractions": {
-        "PS4^3-": 29.166666666666668,
-        "PS3^-": 54.166666666666664,
-        "P2S7^4- (dimer)": 16.666666666666668,
+        "PS4^3-": 36.470588235294116,
+        "PS3^-": 47.05882352941177,
+        "P2S7^4- (dimer)": 16.470588235294116,
         "P2S6^4- (dumbbell)": 0.0
       },
       "description": "Maintain P environment distribution"
     },
-    "total_p_atoms": 72,
-    "total_anionic_units": 24,
+    "total_p_atoms": 216,
+    "total_anionic_units": 85,
     "target_composition": "67Li2S-33P2S5"
   },
   "metadata": {
     "structure_type": "li_p_s_glass",
     "target_composition": "67Li2S-33P2S5",
-    "total_atoms": 283,
-    "composition": "P5+72 S2-211",
+    "total_atoms": 907,
+    "composition": "P5+216 S2-691",
     "cutoff_description": "Distance cutoff for P-S neighbor finding",
     "order_parameter_types": [
-      "q4",
-      "cn",
       "tet",
-      "q2"
+      "q2",
+      "q4",
+      "cn"
     ],
     "notes": "Constraints for augmented Lagrangian   with TorchSimOrderParameters",
     "environment_types": {

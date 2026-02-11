@@ -1,19 +1,19 @@
-# Silica (SiO2) Structure Configuration
-# =====================================
+# GeO2 (Germanium Dioxide) Structure Configuration
+# =================================================
 
 root_dir: ${oc.env:PROJECT_ROOT,./}/data
 
 # Initialization method: from_cif, random_icp, pymatgen
 init: from_cif
 
-# CIF file path
-cif_path: ${structure.root_dir}/crystal-structures/sio2_glass.cif
+# CIF file path (corrected: c-GeO2.cif, not GeO2.cif)
+cif_path: ${structure.root_dir}/crystal-structures/geo2_glass.cif
 
 # Target density for scaling (g/cm³)
-target_density: 2.20
+target_density: 3.65
 
 # Structure properties
-species: [Si, O]
+species: [Ge, O]
 stoichiometry: [1, 2]
 
 # Random initialization settings (if init=random_icp)

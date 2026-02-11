@@ -1,61 +1,95 @@
 """
-TorchDisorder: Differentiable Generation of Amorphous Atomic Structures
+TorchDisorder v6 – Differentiable Structure Optimization from Scattering Data
+==============================================================================
 
-A PyTorch-based framework for generating physically realistic amorphous structures
-by fitting experimental diffraction data while enforcing local coordination constraints.
+This package provides tools for optimizing atomic structures to match
+experimental scattering data (neutron or X-ray) while satisfying
+structural constraints.
 
-Key Features:
-- Gradient-based optimization using automatic differentiation
-- Constrained optimization via Cooper library (augmented Lagrangian)
-- Order parameter constraints (tetrahedral, octahedral, bond-orientational)
-- Support for multiple target types: S(Q), F(Q), T(r), G(r), g(r)
-- Integration with torch-sim, MACE, and Pymatgen
+Key Improvements in v6:
+    1. Unified Scattering Module: Single interface for S(Q), F(Q), g(r), T(r)
+    2. Environment-Based Constraints: Group by local environment, not OP type
+    3. Adaptive Penalties: Penalties grow for persistent violations
 
-Example:
+Main Components:
+    - model.scattering: Unified differentiable scattering calculations
+    - model.xrd: XRD/neutron diffraction model
+    - model.loss: Loss functions for optimization
+    - engine.constrained_optimizer: Environment-based constrained optimization (v6)
+    - engine.optimizer: Legacy optimizer (v5 compatibility)
+    - engine.order_params: Order parameter calculations
+
+Usage (v6 style):
+    >>> from torchdisorder.model import XRDModel, CooperLoss
+    >>> from torchdisorder.engine import EnvironmentConstrainedOptimizer
+    >>> 
+    >>> model = XRDModel(symbols, config, r_bins, q_bins)
+    >>> loss_fn = CooperLoss(target_data, target_type='S_Q')
+    >>> cmp = EnvironmentConstrainedOptimizer(...)
+
+Usage (v5 style - backward compatible):
     >>> from torchdisorder import StructureFactorCMPWithConstraints
-    >>> from torchdisorder.model import XRDModel, SpectrumCalculator
-    >>> from torchdisorder.common import TargetRDFData
-    >>> 
-    >>> # Load target data and create model
-    >>> rdf_data = TargetRDFData.from_dict(config, device='cuda')
-    >>> xrd_model = XRDModel(spec_calc, rdf_data, dtype=torch.float32, device='cuda')
-    >>> 
-    >>> # Create constrained optimization problem
-    >>> cmp = StructureFactorCMPWithConstraints(
-    ...     model=xrd_model,
-    ...     base_state=state,
-    ...     target_vec=rdf_data,
-    ...     constraints_file='constraints.json'
-    ... )
+    >>> from torchdisorder.model.xrd import XRDModel
 """
 
-__version__ = "0.2.0"
-__author__ = "Feugmo Group, University of Waterloo"
+__version__ = '0.6.0'
+__author__ = 'Tetsassi Feugmo Research Group'
 
-# Core exports
+# =====================================================================
+# v6 Core Imports
+# =====================================================================
+from torchdisorder.model.xrd import XRDModel
+from torchdisorder.model.loss import CooperLoss, chi_squared, ChiSquaredObjective
+from torchdisorder.model.scattering import (
+    UnifiedSpectrumCalculator,
+    SpectrumCalculator,
+    ScatteringConfig,
+)
+from torchdisorder.engine.constrained_optimizer import (
+    EnvironmentConstrainedOptimizer,
+    AdaptivePenalty,
+)
+from torchdisorder.engine.order_params import TorchSimOrderParameters
+
+# =====================================================================
+# v5 Backward Compatibility Imports
+# =====================================================================
 from torchdisorder.engine.optimizer import (
     StructureFactorCMPWithConstraints,
     perform_melt_quench,
     perform_fire_relaxation,
+    ConstantPenalty,
 )
-from torchdisorder.engine.order_params import TorchSimOrderParameters
 from torchdisorder.common.target_rdf import TargetRDFData
-from torchdisorder.model.xrd import XRDModel
-from torchdisorder.model.rdf import SpectrumCalculator
-from torchdisorder.model.loss import CooperLoss, ChiSquaredObjective
 from torchdisorder.model.generator import generate_atoms_from_config
 
 __all__ = [
-    # Core classes
-    "StructureFactorCMPWithConstraints",
-    "TorchSimOrderParameters",
-    "TargetRDFData",
-    "XRDModel",
-    "SpectrumCalculator",
-    "CooperLoss",
-    "ChiSquaredObjective",
-    # Functions
-    "generate_atoms_from_config",
-    "perform_melt_quench",
-    "perform_fire_relaxation",
+    # Version
+    '__version__',
+    
+    # v6 Models
+    'XRDModel',
+    'UnifiedSpectrumCalculator',
+    'SpectrumCalculator',
+    'ScatteringConfig',
+    
+    # Loss
+    'CooperLoss',
+    'chi_squared',
+    'ChiSquaredObjective',
+    
+    # v6 Optimization
+    'EnvironmentConstrainedOptimizer',
+    'AdaptivePenalty',
+    
+    # v5 Backward Compatibility
+    'StructureFactorCMPWithConstraints',
+    'perform_melt_quench',
+    'perform_fire_relaxation',
+    'ConstantPenalty',
+    'TargetRDFData',
+    'generate_atoms_from_config',
+    
+    # Order Parameters
+    'TorchSimOrderParameters',
 ]

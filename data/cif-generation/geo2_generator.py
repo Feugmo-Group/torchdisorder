@@ -1,161 +1,99 @@
 """
-SiO2 Glass Structure Constraint Generator
+GeO2 Glass Structure Constraint Generator
 ==========================================
 
-Generates v6-compatible constraint files for SiO2 glass structures.
-Classifies Si environments by coordination number and outputs
+Generates v6-compatible constraint files for GeO2 glass structures.
+Classifies Ge environments by coordination number and outputs
 constraints for environment-based optimization.
 
-Features:
-    - Supercell generation from CIF files
-    - Environment classification (Si4, Si3, Si5, Si6)
-    - v6-format constraint JSON output
+GeO2 glass is structurally similar to SiO2 glass but with:
+    - Longer Ge-O bonds (~1.73-1.88 Å vs ~1.60-1.62 Å for Si-O)
+    - Similar tetrahedral network structure
+    - Higher tendency for Ge to adopt higher coordination (5, 6) under pressure
 
 Usage:
-    # Generate constraints from CIF (no supercell)
-    python -m torchdisorder.constraints.sio2_generator --input c-SiO2.cif --output sio2_glass
-
-    # Generate supercell with ~1000 atoms
-    python -m torchdisorder.constraints.sio2_generator --input c-SiO2.cif --output sio2_glass --supercell 1000
-
-    # Manual replication
-    python -m torchdisorder.constraints.sio2_generator --input c-SiO2.cif --output sio2_glass --replicate 3 3 3
+    python -m torchdisorder.constraints.geo2_generator --input c-GeO2.cif --output geo2_glass
 
 Output files:
-    - {output}.cif                   : Structure file (supercell if requested)
-    - {output}_constraints.json      : v6-format constraints
-    - {output}_Si_environments.json  : Machine-readable environment data
-    - {output}_Si_environments.txt   : Human-readable summary
+    - {output}.cif                   : Structure file (copy of input)
+    - {output}_constraints.json      : v6-format constraints for EnvironmentConstrainedOptimizer
+    - {output}_Ge_environments.json  : Machine-readable environment data
+    - {output}_Ge_environments.txt   : Human-readable summary
 """
 
 import json
 import numpy as np
 from collections import defaultdict
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List
 import argparse
 
 from pymatgen.core import Structure
 from pymatgen.io.cif import CifWriter
 
 
-def create_supercell(
-    structure: Structure,
-    target_atoms: Optional[int] = None,
-    replicate: Optional[List[int]] = None,
-) -> Tuple[Structure, List[int]]:
+class GeEnvironmentClassifier:
     """
-    Create a supercell from a pymatgen Structure.
-    
-    Parameters
-    ----------
-    structure : Structure
-        Unit cell to replicate
-    target_atoms : int, optional
-        Target number of atoms. Will find closest supercell.
-    replicate : list of int, optional
-        Manual [na, nb, nc] replication factors.
-        
-    Returns
-    -------
-    Structure
-        Supercell structure
-    list
-        Replication factors used [na, nb, nc]
-    """
-    n_unit = len(structure)
-    
-    if target_atoms is not None:
-        # Find best replication to get close to target_atoms
-        ratio = target_atoms / n_unit
-        n_rep = max(1, round(ratio ** (1/3)))
-        
-        # Try to find optimal [na, nb, nc]
-        best_rep = [n_rep, n_rep, n_rep]
-        best_diff = abs(n_unit * n_rep**3 - target_atoms)
-        
-        # Search nearby combinations
-        for na in range(max(1, n_rep-2), n_rep+4):
-            for nb in range(max(1, n_rep-2), n_rep+4):
-                for nc in range(max(1, n_rep-2), n_rep+4):
-                    n_total = n_unit * na * nb * nc
-                    diff = abs(n_total - target_atoms)
-                    if diff < best_diff:
-                        best_diff = diff
-                        best_rep = [na, nb, nc]
-        
-        replicate = best_rep
-        print(f"  Auto-computed replication: {replicate} → {n_unit * np.prod(replicate)} atoms (target: {target_atoms})")
-    
-    elif replicate is None:
-        replicate = [1, 1, 1]
-    
-    # Create supercell using pymatgen
-    if replicate != [1, 1, 1]:
-        structure = structure.copy()
-        structure.make_supercell(replicate)
-    
-    return structure, replicate
-
-
-class SiEnvironmentClassifier:
-    """
-    Classify Si environments in SiO2 by Si-O coordination number (CN).
+    Classify Ge environments in GeO2 by Ge-O coordination number (CN).
     
     Environment types:
-        - Si4: SiO4 tetrahedral (CN=4) - ideal glass former
-        - Si3: SiO3 undercoordinated (CN=3) - defect
-        - Si5: SiO5 overcoordinated (CN=5) - defect
-        - Si6: SiO6 octahedral (CN=6) - high pressure phase
+        - Ge4: GeO4 tetrahedral (CN=4) - ideal glass former
+        - Ge3: GeO3 undercoordinated (CN=3) - defect
+        - Ge5: GeO5 overcoordinated (CN=5) - intermediate
+        - Ge6: GeO6 octahedral (CN=6) - high pressure phase (rutile-type)
+    
+    Note: Ge has a larger ionic radius than Si, so Ge-O bonds are longer
+    (typically 1.73-1.88 Å) and the default cutoff is set accordingly.
     """
 
-    def __init__(self, structure: Structure, si_o_cutoff: float = 2.2):
+    def __init__(self, structure: Structure, ge_o_cutoff: float = 2.4):
         """
         Args:
             structure: Pymatgen Structure object
-            si_o_cutoff: Si-O bond cutoff distance in Å (default 2.2 Å)
+            ge_o_cutoff: Ge-O bond cutoff distance in Å (default 2.4 Å)
+                        Ge-O bonds are typically 1.73-1.88 Å
         """
         self.structure = structure
-        self.si_o_cutoff = si_o_cutoff
+        self.ge_o_cutoff = ge_o_cutoff
 
-    def get_o_neighbors_of_si(self, si_index: int) -> List[int]:
-        """Get indices of O atoms within cutoff of Si atom."""
-        si_site = self.structure[si_index]
+    def get_o_neighbors_of_ge(self, ge_index: int) -> List[int]:
+        """Get indices of O atoms within cutoff of Ge atom."""
+        ge_site = self.structure[ge_index]
         o_neighbors = []
         for j, other in enumerate(self.structure):
-            if j == si_index:
+            if j == ge_index:
                 continue
             if other.specie.symbol != "O":
                 continue
-            if si_site.distance(other) <= self.si_o_cutoff:
+            if ge_site.distance(other) <= self.ge_o_cutoff:
                 o_neighbors.append(j)
         return o_neighbors
 
-    def classify_si_site(self, si_index: int) -> Dict:
+    def classify_ge_site(self, ge_index: int) -> Dict:
         """
-        Classify a single Si site by its coordination environment.
+        Classify a single Ge site by its coordination environment.
         
         Returns:
             dict with keys: 'type', 'label', 'cn', 'neighbors'
         """
-        o_neigh = self.get_o_neighbors_of_si(si_index)
+        o_neigh = self.get_o_neighbors_of_ge(ge_index)
         cn = len(o_neigh)
 
         # Environment label by CN
         if cn == 4:
-            env_type = "Si4"
-            label = "SiO4 (tetrahedral)"
+            env_type = "Ge4"
+            label = "GeO4 (tetrahedral)"
         elif cn == 3:
-            env_type = "Si3"
-            label = "SiO3 (undercoordinated)"
+            env_type = "Ge3"
+            label = "GeO3 (undercoordinated)"
         elif cn == 5:
-            env_type = "Si5"
-            label = "SiO5 (overcoordinated)"
+            env_type = "Ge5"
+            label = "GeO5 (five-coordinate)"
         elif cn == 6:
-            env_type = "Si6"
-            label = "SiO6 (octahedral)"
+            env_type = "Ge6"
+            label = "GeO6 (octahedral)"
         else:
-            env_type = "Si_unknown"
-            label = f"Unknown (SiO{cn})"
+            env_type = "Ge_unknown"
+            label = f"Unknown (GeO{cn})"
 
         return {
             "type": env_type,
@@ -164,123 +102,126 @@ class SiEnvironmentClassifier:
             "neighbors": {"O": o_neigh},
         }
 
-    def classify_all_si(self) -> Dict[int, Dict]:
-        """Classify all Si sites in the structure."""
+    def classify_all_ge(self) -> Dict[int, Dict]:
+        """Classify all Ge sites in the structure."""
         out = {}
         for i, site in enumerate(self.structure):
-            if site.specie.symbol == "Si":
-                out[i] = self.classify_si_site(i)
+            if site.specie.symbol == "Ge":
+                out[i] = self.classify_ge_site(i)
         return out
 
     def get_statistics(self, classifications: Dict[int, Dict]) -> Dict:
-        """Calculate statistics of Si environments."""
+        """Calculate statistics of Ge environments."""
         counts = defaultdict(int)
         for d in classifications.values():
             counts[d["type"]] += 1
 
-        total_si = len(classifications)
+        total_ge = len(classifications)
         fractions = {}
-        if total_si > 0:
+        if total_ge > 0:
             for k, v in counts.items():
-                fractions[k] = 100.0 * v / total_si
+                fractions[k] = 100.0 * v / total_ge
 
         return {
             "counts": dict(counts),
             "fractions": fractions,
-            "total_si": total_si,
+            "total_ge": total_ge,
         }
 
 
-class SiO2ConstraintWriter:
+class GeO2ConstraintWriter:
     """
-    Writes v6-format constraints and environment summaries for Si sites.
+    Writes v6-format constraints and environment summaries for Ge sites.
     
     v6 Format Features:
         - Uses "environment" key (not "environment_type")
         - Includes "environment_priorities" section
         - Compatible with EnvironmentConstrainedOptimizer
+    
+    Note: Tetrahedral order parameter targets are slightly lower for GeO2
+    than SiO2 due to the larger Ge-O bond length allowing more flexibility.
     """
 
-    # Order parameters for each Si environment
+    # Order parameters for each Ge environment
     ENVIRONMENT_ORDER_PARAMETERS = {
-        "Si4": {  # Tetrahedral - ideal glass structure
+        "Ge4": {  # Tetrahedral - ideal glass structure
             "order_parameters": {
                 "tet": {
-                    "target": 0.85,
-                    "min": 0.7,
+                    "target": 0.80,  # Slightly lower than Si due to larger radius
+                    "min": 0.65,
                     "max": 1.0,
                     "weight": 2.0,
-                    "description": "Tetrahedrality around Si (SiO4)",
+                    "description": "Tetrahedrality around Ge (GeO4)",
                 },
                 "cn": {
                     "target": 4.0,
                     "tolerance": 0.5,
                     "weight": 1.5,
-                    "description": "Si-O coordination number",
+                    "description": "Ge-O coordination number",
                 },
             },
-            "element_filter": [8, 14],  # O=8, Si=14
-            "cutoff": 2.2,
+            "element_filter": [8, 32],  # O=8, Ge=32
+            "cutoff": 2.4,
         },
-        "Si3": {  # Undercoordinated - defect
+        "Ge3": {  # Undercoordinated - defect
             "order_parameters": {
                 "cn": {
                     "target": 3.0,
                     "tolerance": 0.5,
                     "weight": 1.0,
-                    "description": "Si-O coordination (undercoordinated)",
+                    "description": "Ge-O coordination (undercoordinated)",
                 },
             },
-            "element_filter": [8, 14],
-            "cutoff": 2.2,
+            "element_filter": [8, 32],
+            "cutoff": 2.4,
         },
-        "Si5": {  # Overcoordinated - defect
+        "Ge5": {  # Five-coordinate - intermediate
             "order_parameters": {
                 "cn": {
                     "target": 5.0,
                     "tolerance": 0.5,
                     "weight": 1.0,
-                    "description": "Si-O coordination (overcoordinated)",
+                    "description": "Ge-O coordination (five-coordinate)",
                 },
             },
-            "element_filter": [8, 14],
-            "cutoff": 2.2,
+            "element_filter": [8, 32],
+            "cutoff": 2.4,
         },
-        "Si6": {  # Octahedral - high pressure
+        "Ge6": {  # Octahedral - high pressure (rutile-type GeO2)
             "order_parameters": {
                 "cn": {
                     "target": 6.0,
                     "tolerance": 0.5,
-                    "weight": 1.0,
-                    "description": "Si-O coordination (octahedral)",
+                    "weight": 1.5,
+                    "description": "Ge-O coordination (octahedral)",
                 },
             },
-            "element_filter": [8, 14],
-            "cutoff": 2.2,
+            "element_filter": [8, 32],
+            "cutoff": 2.4,
         },
     }
 
     # v6: Environment priorities for adaptive penalty weighting
     ENVIRONMENT_PRIORITIES = {
-        "Si4": 2.0,   # Tetrahedral - most important, strict geometry
-        "Si3": 1.0,   # Undercoordinated - defect, less strict
-        "Si5": 1.0,   # Overcoordinated - defect, less strict
-        "Si6": 1.5,   # Octahedral - if present, maintain
+        "Ge4": 2.0,   # Tetrahedral - most important for glass, strict geometry
+        "Ge3": 1.0,   # Undercoordinated - defect, less strict
+        "Ge5": 1.2,   # Five-coordinate - sometimes found in glasses
+        "Ge6": 1.5,   # Octahedral - if present, maintain (densified glass)
     }
 
     def __init__(
         self, 
         structure: Structure, 
-        classifier: SiEnvironmentClassifier,
+        classifier: GeEnvironmentClassifier,
         include_environments: List[str] = None,
     ):
         """
         Args:
             structure: Pymatgen Structure object
-            classifier: SiEnvironmentClassifier instance
-            include_environments: List of environments to include (e.g., ['Si4']).
+            classifier: GeEnvironmentClassifier instance
+            include_environments: List of environments to include (e.g., ['Ge4']).
                                   If None, includes all known environments.
-                                  Options: 'Si4', 'Si3', 'Si5', 'Si6'
+                                  Options: 'Ge4', 'Ge3', 'Ge5', 'Ge6'
         """
         self.structure = structure
         self.classifier = classifier
@@ -322,8 +263,8 @@ class SiO2ConstraintWriter:
         Only environments in self.include_environments are included.
         """
         constraints = {
-            "cutoff": self.classifier.si_o_cutoff,
-            "element_filter": [8, 14],  # O=8, Si=14
+            "cutoff": self.classifier.ge_o_cutoff,
+            "element_filter": [8, 32],  # O=8, Ge=32
             "atom_constraints": {},
             "environment_priorities": {},  # v6: for adaptive penalties
         }
@@ -331,7 +272,7 @@ class SiO2ConstraintWriter:
         # Track which environments are present
         present_envs = set()
 
-        for si_idx, data in classifications.items():
+        for ge_idx, data in classifications.items():
             env_type = data["type"]
             
             # Skip environments not in include list
@@ -347,8 +288,8 @@ class SiO2ConstraintWriter:
 
             # v6 FORMAT: Use "environment" key (not "environment_type")
             atom_constraint = {
-                "atom_index": si_idx,
-                "element": "Si",
+                "atom_index": ge_idx,
+                "element": "Ge",
                 "environment": env_type,  # v6 key name
                 "environment_label": data["label"],
                 "target_coordination": data["cn"],
@@ -356,7 +297,7 @@ class SiO2ConstraintWriter:
                 "o_neighbor_indices": data["neighbors"]["O"],
                 "cn": data["cn"],
             }
-            constraints["atom_constraints"][str(si_idx)] = atom_constraint
+            constraints["atom_constraints"][str(ge_idx)] = atom_constraint
 
         # v6: Add environment priorities for present environments only
         for env_type in present_envs:
@@ -364,8 +305,8 @@ class SiO2ConstraintWriter:
 
         # Global constraints
         constraints["global_constraints"] = {
-            "description": "Per-Si order parameter constraints for SiO2 glass",
-            "total_si_atoms": stats["total_si"],
+            "description": "Per-Ge order parameter constraints for GeO2 glass",
+            "total_ge_atoms": stats["total_ge"],
             "environment_fractions": stats["fractions"],
             "included_environments": list(self.include_environments),
         }
@@ -373,7 +314,7 @@ class SiO2ConstraintWriter:
         # Metadata
         constraints["metadata"] = {
             "version": "v6",  # Mark as v6 format
-            "structure_type": "sio2",
+            "structure_type": "geo2",
             "total_atoms": self.structure.num_sites,
             "composition": str(self.structure.composition),
             "included_environments": list(self.include_environments),
@@ -384,10 +325,10 @@ class SiO2ConstraintWriter:
             )),
             "notes": "v6 constraints for EnvironmentConstrainedOptimizer with adaptive penalties",
             "environment_types": {
-                "Si4": "Tetrahedral SiO4",
-                "Si3": "Undercoordinated SiO3 (defect)",
-                "Si5": "Overcoordinated SiO5 (defect)",
-                "Si6": "Octahedral SiO6 (high pressure)",
+                "Ge4": "Tetrahedral GeO4 (quartz-like)",
+                "Ge3": "Undercoordinated GeO3 (defect)",
+                "Ge5": "Five-coordinate GeO5 (intermediate)",
+                "Ge6": "Octahedral GeO6 (rutile-like, high pressure)",
             },
         }
 
@@ -407,7 +348,7 @@ class SiO2ConstraintWriter:
         with open(constraints_file, "w") as f:
             json.dump(constraints, f, indent=2)
         print(f"Wrote v6 constraints to: {constraints_file}")
-        print(f"  - {len(constraints['atom_constraints'])} Si atoms with constraints")
+        print(f"  - {len(constraints['atom_constraints'])} Ge atoms with constraints")
         print(f"  - Environments: {list(constraints['environment_priorities'].keys())}")
 
         # 2) Machine-readable environments JSON
@@ -424,22 +365,22 @@ class SiO2ConstraintWriter:
                 for k, v in classifications.items()
             },
         }
-        env_file = f"{output_prefix}_Si_environments.json"
+        env_file = f"{output_prefix}_Ge_environments.json"
         with open(env_file, "w") as f:
             json.dump(env_json, f, indent=2)
         print(f"Wrote environment data to: {env_file}")
 
         # 3) Human-readable text summary
-        summary_file = f"{output_prefix}_Si_environments.txt"
+        summary_file = f"{output_prefix}_Ge_environments.txt"
         with open(summary_file, "w") as f:
             f.write("=" * 70 + "\n")
-            f.write("Si ENVIRONMENT SUMMARY FOR SiO2\n")
+            f.write("Ge ENVIRONMENT SUMMARY FOR GeO2\n")
             f.write("=" * 70 + "\n\n")
             f.write(f"Total atoms: {self.structure.num_sites}\n")
-            f.write(f"Total Si atoms: {stats['total_si']}\n")
-            f.write(f"Cutoff (Si-O): {self.classifier.si_o_cutoff:.3f} Å\n\n")
+            f.write(f"Total Ge atoms: {stats['total_ge']}\n")
+            f.write(f"Cutoff (Ge-O): {self.classifier.ge_o_cutoff:.3f} Å\n\n")
 
-            f.write("Environment distribution (by Si CN):\n")
+            f.write("Environment distribution (by Ge CN):\n")
             f.write("-" * 70 + "\n")
             for env_type, frac in sorted(stats["fractions"].items(), key=lambda x: -x[1]):
                 priority = self.ENVIRONMENT_PRIORITIES.get(env_type, 1.0)
@@ -464,23 +405,23 @@ class SiO2ConstraintWriter:
                         f.write(f"weight={op_params['weight']:.1f}\n")
 
             f.write("\n" + "=" * 70 + "\n")
-            f.write("DETAILED Si SITE INFORMATION\n")
+            f.write("DETAILED Ge SITE INFORMATION\n")
             f.write("=" * 70 + "\n\n")
             
             # Group by type
             by_type = defaultdict(list)
-            for si_idx, data in classifications.items():
-                by_type[data["type"]].append((si_idx, data))
+            for ge_idx, data in classifications.items():
+                by_type[data["type"]].append((ge_idx, data))
             
-            for env_type in ["Si4", "Si3", "Si5", "Si6", "Si_unknown"]:
+            for env_type in ["Ge4", "Ge3", "Ge5", "Ge6", "Ge_unknown"]:
                 if env_type in by_type:
                     sites = by_type[env_type]
                     f.write(f"\n{env_type} sites ({len(sites)} atoms):\n")
                     f.write("-" * 70 + "\n")
-                    for si_idx, data in sites:
-                        c = self.structure[si_idx].coords
+                    for ge_idx, data in sites:
+                        c = self.structure[ge_idx].coords
                         f.write(
-                            f"  Index {si_idx:6d}: {data['label']:24s} "
+                            f"  Index {ge_idx:6d}: {data['label']:24s} "
                             f"CN={data['cn']} "
                             f"xyz=({c[0]:.3f}, {c[1]:.3f}, {c[2]:.3f})\n"
                         )
@@ -491,70 +432,53 @@ class SiO2ConstraintWriter:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="SiO2 environment + v6 constraint generator with supercell support",
+        description="GeO2 environment + v6 constraint generator",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-    # Generate constraints from crystalline SiO2 (no supercell)
-    python -m torchdisorder.constraints.sio2_generator --input c-SiO2.cif --output sio2_glass
+    # Generate constraints from crystalline GeO2 (all environments)
+    python -m torchdisorder.constraints.geo2_generator --input c-GeO2.cif --output geo2_glass
 
-    # Generate supercell with ~1000 atoms
-    python -m torchdisorder.constraints.sio2_generator --input c-SiO2.cif --output sio2_glass --supercell 1000
-
-    # Generate supercell with ~2000 atoms
-    python -m torchdisorder.constraints.sio2_generator --input c-SiO2.cif --output sio2_large --supercell 2000
-
-    # Manual replication (3x3x3)
-    python -m torchdisorder.constraints.sio2_generator --input c-SiO2.cif --output sio2_3x3x3 --replicate 3 3 3
-
-    # Only tetrahedral Si4 (normal glass) - RECOMMENDED
-    python -m torchdisorder.constraints.sio2_generator --input c-SiO2.cif --environments Si4 --output sio2_glass
+    # Only tetrahedral Ge4 (normal glass) - RECOMMENDED for most cases
+    python -m torchdisorder.constraints.geo2_generator --input c-GeO2.cif --environments Ge4 --output geo2_glass
 
     # Tetrahedral + octahedral (for densified/high-pressure glass)
-    python -m torchdisorder.constraints.sio2_generator --input c-SiO2.cif --environments Si4 Si6 --output sio2_densified
+    python -m torchdisorder.constraints.geo2_generator --input c-GeO2.cif --environments Ge4 Ge6 --output geo2_densified
+
+    # Use custom cutoff
+    python -m torchdisorder.constraints.geo2_generator --input structure.cif --cutoff 2.5 --output geo2
 
 Environment types:
-    Si4  - Tetrahedral SiO4 (CN=4) - Normal glass structure [DEFAULT]
-    Si3  - Undercoordinated SiO3 (CN=3) - Defect/surface site
-    Si5  - Overcoordinated SiO5 (CN=5) - Transient/high-pressure
-    Si6  - Octahedral SiO6 (CN=6) - High-pressure phase (stishovite-like)
+    Ge4 - Tetrahedral GeO4 (CN=4) - Normal glass structure [DEFAULT]
+    Ge3 - Undercoordinated GeO3 (CN=3) - Defect/surface site
+    Ge5 - Five-coordinate GeO5 (CN=5) - Intermediate (more common than Si5)
+    Ge6 - Octahedral GeO6 (CN=6) - High-pressure phase (rutile-like)
 
 Output files:
-    {output}.cif                    - Structure file (supercell if requested)
-    {output}_constraints.json       - v6-format constraints
-    {output}_Si_environments.json   - Machine-readable data
-    {output}_Si_environments.txt    - Human-readable summary
+    {output}_constraints.json      - v6-format constraints
+    {output}_Ge_environments.json  - Machine-readable data
+    {output}_Ge_environments.txt   - Human-readable summary
+
+Notes:
+    - GeO2 has longer Ge-O bonds (~1.73-1.88 Å) than Si-O (~1.60-1.62 Å)
+    - Default cutoff is 2.4 Å (vs 2.2 Å for SiO2)
+    - Ge shows higher tendency for 5/6-fold coordination under pressure
         """
     )
     parser.add_argument("--input", required=True, help="Input structure file (CIF/POSCAR/etc.)")
-    parser.add_argument("--output", default="sio2", help="Output file prefix")
-    parser.add_argument("--cutoff", type=float, default=2.2, help="Si-O cutoff distance in Å (default: 2.2)")
-    parser.add_argument(
-        "--supercell", 
-        type=int, 
-        default=None,
-        metavar="N",
-        help="Target number of atoms for supercell (auto-compute replication)"
-    )
-    parser.add_argument(
-        "--replicate",
-        type=int,
-        nargs=3,
-        default=None,
-        metavar=("NA", "NB", "NC"),
-        help="Manual replication factors [na nb nc]"
-    )
+    parser.add_argument("--output", default="geo2", help="Output file prefix")
+    parser.add_argument("--cutoff", type=float, default=2.4, help="Ge-O cutoff distance in Å (default: 2.4)")
     parser.add_argument(
         "--environments", 
         nargs="+", 
         default=None,
-        choices=["Si4", "Si3", "Si5", "Si6"],
-        help="Environment types to include (default: all). Use 'Si4' for normal glass."
+        choices=["Ge4", "Ge3", "Ge5", "Ge6"],
+        help="Environment types to include (default: all). Use 'Ge4' for normal glass."
     )
     args = parser.parse_args()
 
     print(f"\n{'=' * 70}")
-    print("SiO2 Constraint Generator (v6 format)")
+    print("GeO2 Constraint Generator (v6 format)")
     print(f"{'=' * 70}")
 
     # Load structure
@@ -563,25 +487,13 @@ Output files:
     print(f"  Formula: {structure.composition.reduced_formula}")
     print(f"  Number of sites: {structure.num_sites}")
 
-    # Create supercell if requested
-    if args.supercell is not None or args.replicate is not None:
-        print(f"\nCreating supercell...")
-        structure, rep = create_supercell(
-            structure, 
-            target_atoms=args.supercell,
-            replicate=args.replicate
-        )
-        print(f"  Replication: {rep}")
-        print(f"  New structure: {structure.num_sites} atoms")
-        print(f"  Formula: {structure.composition.reduced_formula}")
-
-    # Classify Si environments
-    print(f"\nClassifying Si environments (cutoff={args.cutoff} Å)...")
-    classifier = SiEnvironmentClassifier(structure, si_o_cutoff=args.cutoff)
-    classifications = classifier.classify_all_si()
+    # Classify Ge environments
+    print(f"\nClassifying Ge environments (cutoff={args.cutoff} Å)...")
+    classifier = GeEnvironmentClassifier(structure, ge_o_cutoff=args.cutoff)
+    classifications = classifier.classify_all_ge()
     stats = classifier.get_statistics(classifications)
 
-    print(f"  Total Si atoms: {stats['total_si']}")
+    print(f"  Total Ge atoms: {stats['total_ge']}")
     for env_type, frac in stats["fractions"].items():
         print(f"    {env_type}: {frac:.1f}% ({stats['counts'][env_type]} atoms)")
 
@@ -597,7 +509,7 @@ Output files:
 
     # Write outputs
     print(f"\nWriting output files...")
-    writer = SiO2ConstraintWriter(structure, classifier, include_environments=include_envs)
+    writer = GeO2ConstraintWriter(structure, classifier, include_environments=include_envs)
     writer.write_outputs(args.output, classifications, stats)
 
     print(f"\n{'=' * 70}")

@@ -1,65 +1,60 @@
-# ==============================================================================
 # SiO2 (Silica Glass) Data Configuration
-# ==============================================================================
-#
-# Experimental data and constraint specification for amorphous SiO2 refinement.
-#
-# Data files should be CSV format with header row containing column names.
-# Supported column names are automatically detected (case-insensitive):
-#
-#   S(Q) file: Q, SQ/S/F/F(Q)/S(Q), dSQ/dS/dF/uncertainty/error (optional)
-#   T(r) file: r, T/Tr/T(r), dT/uncertainty/error (optional)
-#   g(r) file: r, g/gr/g(r)/G/G(r)/rdf, dg/uncertainty/error (optional)
-#
-# ==============================================================================
+# ========================================
+# Neutron diffraction data for amorphous silica
 
-# Base directory for data files (can use environment variable)
 root_dir: ${oc.env:PROJECT_ROOT,./}/data
 
-# ==============================================================================
-# EXPERIMENTAL DIFFRACTION DATA
-# ==============================================================================
+# =============================================================================
+# Scattering Type: 'neutron' or 'xray'
+# =============================================================================
+scattering_type: neutron
 
+# =============================================================================
+# Data Paths
+# =============================================================================
 data:
-  # ---------------------------------------------------------------------------
-  # Q-space (reciprocal space) data - Structure Factor S(Q)
-  # ---------------------------------------------------------------------------
-  # Path to S(Q) or F(Q) data file
-  # Supported keys: s_of_q_path (preferred) or f_of_q_path (legacy)
   s_of_q_path: ${data.root_dir}/xrd_measurements/SiO2/F_of_Q.csv
-  # f_of_q_path: null  # Alternative legacy key
-  
-  # ---------------------------------------------------------------------------
-  # r-space (real space) data - T(r) and g(r)
-  # ---------------------------------------------------------------------------
-  # Path to T(r) total correlation function
   t_of_r_path: ${data.root_dir}/xrd_measurements/SiO2/T_of_r.csv
-  
-  # Path to g(r) pair distribution function (optional)
-  # Set to null if not available
   g_of_r_path: null
   
-  # ---------------------------------------------------------------------------
-  # Auto-generation of r_bins (used if t_of_r_path and g_of_r_path are null)
-  # ---------------------------------------------------------------------------
-  # The model needs r_bins to compute G(r) → S(Q) via Fourier transform.
-  # If no r-space data is provided, r_bins will be auto-generated.
-  r_max: 10.0      # Maximum r value (Å)
-  n_r_bins: 500    # Number of bins
+  # Input format: null=auto-detect, true=F(Q), false=S(Q)
+  input_is_F_Q: null
+  
+  # Data subsampling (1 = no subsampling)
+  stride_q: 1
+  stride_r: 1
 
-# ==============================================================================
-# SPECTRUM CALCULATION PARAMETERS
-# ==============================================================================
+# =============================================================================
+# Q-space Range (Å⁻¹)
+# =============================================================================
+# Filter experimental S(Q)/F(Q) data to this range
+# Set to null to use full data range
+q_min: 0.5
+q_max: 25.0
 
-# Gaussian broadening width for RDF calculation
+# =============================================================================
+# R-space Range (Å)
+# =============================================================================
+# Used for auto-generating r_bins or filtering loaded data
+r_min: 0.01
+r_max: 10.0
+n_r_bins: 500
+
+# =============================================================================
+# Spectrum Calculation
+# =============================================================================
 kernel_width: 0.035
 
-# Neutron scattering lengths (fm) - from NIST database
+# =============================================================================
+# Neutron Scattering Lengths (fm)
+# =============================================================================
 neutron_scattering_lengths:
   Si: 4.1491
   O: 5.803
 
-# X-ray form factor parameters (Cromer-Mann coefficients)
+# =============================================================================
+# X-ray Form Factor Parameters (Cromer-Mann)
+# =============================================================================
 xray_form_factor_params:
   Si:
     a: [6.2915, 3.0353, 1.9891, 1.541]
@@ -70,19 +65,14 @@ xray_form_factor_params:
     b: [13.2771, 5.7011, 0.3239, 32.9089]
     c: [0.2508]
 
-# ==============================================================================
-# ORDER PARAMETER SETTINGS
-# ==============================================================================
-# For computing tetrahedral order parameter q_tet
+# =============================================================================
+# Order Parameters
+# =============================================================================
+central: 'Si'
+neighbour: 'O'
+cutoff: 2.0
 
-central: 'Si'      # Central atom species (for order parameter)
-neighbour: 'O'     # Neighbor atom species
-cutoff: 2.0        # Neighbor cutoff distance (Å)
-
-# ==============================================================================
-# CONSTRAINT SPECIFICATION
-# ==============================================================================
-# JSON file containing per-atom order parameter constraints.
-# Generated by constraint generator scripts.
-
+# =============================================================================
+# Constraints
+# =============================================================================
 json_path: ${data.root_dir}/json/sio2_glass_constraints.json

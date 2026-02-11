@@ -1,85 +1,78 @@
-# Li-P-S Glass Data Configuration
-# ================================
-# X-ray PDF data for 67Li2S-33P2S5 glass
+# GeO2 (Germanium Dioxide Glass) Data Configuration
+# ==================================================
+# Neutron diffraction data for amorphous germania
 
 root_dir: ${oc.env:PROJECT_ROOT,./}/data
 
 # =============================================================================
 # Scattering Type: 'neutron' or 'xray'
 # =============================================================================
-# IMPORTANT: This is X-ray data from PDF analysis!
-scattering_type: xray
+scattering_type: neutron
 
 # =============================================================================
 # Data Paths
 # =============================================================================
 data:
-  s_of_q_path: ${data.root_dir}/xrd_measurements/Li3PS4/S_of_Q.csv
-  g_of_r_path: ${data.root_dir}/xrd_measurements/Li3PS4/g_of_r.csv
-  t_of_r_path: null
+  s_of_q_path: ${data.root_dir}/xrd_measurements/GeO2/F_of_Q.csv
+  t_of_r_path: ${data.root_dir}/xrd_measurements/GeO2/T_of_r.csv
+  g_of_r_path: null
   
-  # Input format: false=S(Q), true=F(Q), null=auto-detect
-  input_is_F_Q: false
+  # Input format: null=auto-detect, true=F(Q), false=S(Q)
+  input_is_F_Q: null
   
-  # Data subsampling - IMPORTANT for large datasets
-  # S_of_Q.csv has 7725 bins - stride_q=4 gives ~1931 bins (much faster!)
-  stride_q: 4
+  # Data subsampling (1 = no subsampling)
+  stride_q: 1
   stride_r: 1
 
 # =============================================================================
 # Q-space Range (Å⁻¹)
 # =============================================================================
 # Filter experimental S(Q)/F(Q) data to this range
+# Set to null to use full data range
 q_min: 0.5
-q_max: 17.5
+q_max: 25.0
 
 # =============================================================================
 # R-space Range (Å)
 # =============================================================================
 # Used for auto-generating r_bins or filtering loaded data
 r_min: 0.01
-r_max: 50.0
+r_max: 10.0
 n_r_bins: 500
 
 # =============================================================================
 # Spectrum Calculation
 # =============================================================================
-kernel_width: 0.03
-number_density: 0.0352  # atoms/Å³
+kernel_width: 0.035
 
 # =============================================================================
 # Neutron Scattering Lengths (fm)
 # =============================================================================
 neutron_scattering_lengths:
-  Li: -1.90
-  P: 5.13
-  S: 2.847
+  Ge: 8.185
+  O: 5.803
 
 # =============================================================================
 # X-ray Form Factor Parameters (Cromer-Mann)
 # =============================================================================
 xray_form_factor_params:
-  Li:
-    a: [1.1282, 0.7508, 0.6175, 0.4653]
-    b: [3.9546, 1.0524, 85.3905, 168.261]
-    c: [0.0377]
-  P:
-    a: [6.4345, 4.1791, 1.78, 1.4908]
-    b: [1.9067, 27.157, 0.526, 68.1645]
-    c: [1.1149]
-  S:
-    a: [6.9053, 5.2034, 1.4379, 1.5863]
-    b: [1.4679, 22.2151, 0.2536, 56.172]
-    c: [0.8669]
+  Ge:
+    a: [16.0816, 6.3747, 3.7068, 3.683]
+    b: [2.8509, 0.2516, 11.4468, 54.7625]
+    c: [2.1313]
+  O:
+    a: [3.0485, 2.2868, 1.5463, 0.867]
+    b: [13.2771, 5.7011, 0.3239, 32.9089]
+    c: [0.2508]
 
 # =============================================================================
 # Order Parameters
 # =============================================================================
-central: 'P'
-neighbour: 'S'
-cutoff: 5.5
+central: 'Ge'
+neighbour: 'O'
+cutoff: 2.4
 
 # =============================================================================
 # Constraints
 # =============================================================================
-json_path: ${data.root_dir}/json/glass_67Li2S_small_constraints.json
+json_path: ${data.root_dir}/json/geo2_glass_constraints.json

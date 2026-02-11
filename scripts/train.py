@@ -73,11 +73,29 @@ import cooper
 
 from torchdisorder.common.utils import MODELS_PROJECT_ROOT
 from torchdisorder.common.target_rdf import TargetRDFData
-from torchdisorder.model.rdf import SpectrumCalculator
 from torchdisorder.model.generator import generate_atoms_from_config
 from torchdisorder.model.xrd import XRDModel
 from torchdisorder.model.loss import CooperLoss
 from torchdisorder.engine.optimizer import StructureFactorCMPWithConstraints
+
+
+def to_dict(obj):
+    """Safely convert OmegaConf or dict to plain dict."""
+    if obj is None:
+        return {}
+    # Check if it's an OmegaConf object
+    if hasattr(OmegaConf, 'is_config') and OmegaConf.is_config(obj):
+        return OmegaConf.to_container(obj, resolve=True)
+    # Legacy check for older OmegaConf versions
+    if hasattr(obj, '_iter_ex'):
+        return OmegaConf.to_container(obj, resolve=True)
+    if isinstance(obj, dict):
+        return dict(obj)  # Make a copy
+    # Try to convert to dict if possible
+    try:
+        return dict(obj)
+    except (TypeError, ValueError):
+        return {}
 
 
 # =============================================================================
@@ -99,6 +117,17 @@ TARGET_CONFIG = {
         'bins_attr': 'q_bins',
         'output_key': 'S_Q',  # Key in model output dict
     },
+    'F_Q': {
+        'name': 'Reduced Structure Factor',
+        'symbol': 'F(Q)',
+        'xlabel': 'Q (Å⁻¹)',
+        'ylabel': 'F(Q) = Q[S(Q)-1]',
+        'space': 'Q',
+        'target_attr': 'F_q_target',  # Use F(Q) target directly
+        'uncert_attr': 'F_q_uncert',  # Use F(Q) uncertainty directly
+        'bins_attr': 'q_bins',
+        'output_key': 'F_Q',  # Model computes F(Q) = Q[S(Q)-1]
+    },
     'T_r': {
         'name': 'Total Correlation Function',
         'symbol': 'T(r)',
@@ -119,7 +148,18 @@ TARGET_CONFIG = {
         'target_attr': 'g_r_target',
         'uncert_attr': 'g_r_uncert',
         'bins_attr': 'r_bins',
-        'output_key': 'G_r',  # Model outputs G_r which is same as g(r)
+        'output_key': 'g_r',  # Model outputs g_r
+    },
+    'G_r': {
+        'name': 'Reduced Pair Distribution Function',
+        'symbol': 'G(r)',
+        'xlabel': 'r (Å)',
+        'ylabel': 'G(r) = 4πρr[g(r)-1]',
+        'space': 'r',
+        'target_attr': 'G_r_target',
+        'uncert_attr': 'G_r_uncert',
+        'bins_attr': 'r_bins',
+        'output_key': 'G_r',  # Model outputs G_r
     },
 }
 
@@ -245,14 +285,21 @@ class SpectraPlotter:
         # Get bins
         bins_attr = cfg['bins_attr']
         if hasattr(rdf_data, bins_attr) and getattr(rdf_data, bins_attr) is not None:
-            x = getattr(rdf_data, bins_attr).cpu().numpy()
+            bins_data = getattr(rdf_data, bins_attr)
+            if bins_data.numel() == 0:
+                return {}
+            x = bins_data.cpu().numpy()
         else:
             return {}
         
         # Get target
         target_attr = cfg['target_attr']
         if hasattr(rdf_data, target_attr) and getattr(rdf_data, target_attr) is not None:
-            y_target = getattr(rdf_data, target_attr).cpu().numpy()
+            target_data = getattr(rdf_data, target_attr)
+            if target_data.numel() == 0:
+                print(f"  Warning: {target_attr} is empty, skipping experimental plot")
+                return {}
+            y_target = target_data.cpu().numpy()
         else:
             return {}
         
@@ -260,7 +307,9 @@ class SpectraPlotter:
         uncert_attr = cfg['uncert_attr']
         y_uncert = None
         if hasattr(rdf_data, uncert_attr) and getattr(rdf_data, uncert_attr) is not None:
-            y_uncert = getattr(rdf_data, uncert_attr).cpu().numpy()
+            uncert_data = getattr(rdf_data, uncert_attr)
+            if uncert_data.numel() > 0 and len(uncert_data) == len(y_target):
+                y_uncert = uncert_data.cpu().numpy()
         
         # Create figure
         fig, ax = plt.subplots(figsize=(12, 6))
@@ -831,24 +880,53 @@ def main(cfg: DictConfig) -> None:
     print("  TARGET DATA CONFIGURATION")
     print(f"{'=' * 70}")
     
-    rdf_data = TargetRDFData.from_dict(cfg.data.data, device=accelerator)
+    # Extract stride parameters from config
+    data_cfg = cfg.data.data if hasattr(cfg.data, 'data') else cfg.data
+    stride_q = OmegaConf.select(data_cfg, 'stride_q', default=1)
+    stride_r = OmegaConf.select(data_cfg, 'stride_r', default=1)
+    
+    if stride_q > 1:
+        print(f"  Using stride_q={stride_q} for Q-space subsampling")
+    if stride_r > 1:
+        print(f"  Using stride_r={stride_r} for r-space subsampling")
+    
+    # Build complete config dict, merging nested data section with top-level parameters
+    rdf_config = to_dict(data_cfg)
+    
+    # Add top-level parameters that might not be in nested section
+    top_level_params = ['r_min', 'r_max', 'q_min', 'q_max', 'n_r_bins', 'kernel_width']
+    for param in top_level_params:
+        if param not in rdf_config:
+            value = OmegaConf.select(cfg.data, param, default=None)
+            if value is not None:
+                rdf_config[param] = value
+    
+    rdf_data = TargetRDFData.from_dict(
+        rdf_config, 
+        device=accelerator,
+        stride_q=stride_q,
+        stride_r=stride_r
+    )
     
     # Print configuration paths
     data_cfg = cfg.data.data
     print("\n  Data Files:")
-    print(f"    F(Q)/S(Q) path: {data_cfg.get('s_of_q_path', 'null')}")
-    print(f"    T(r) path: {data_cfg.get('t_of_r_path', 'null')}")
+    print(f"    F(Q)/S(Q) path: {OmegaConf.select(data_cfg, 's_of_q_path', default='null')}")
+    print(f"    T(r) path: {OmegaConf.select(data_cfg, 't_of_r_path', default='null')}")
     
     print("\n  Loaded Data:")
     
     # Check Q-space data F(Q)/S(Q)
     if rdf_data.has_q_data():
         q = rdf_data.q_bins.cpu().numpy()
-        F_q = rdf_data.F_q_target.cpu().numpy()
-        print(f"    ✓ F(Q)/S(Q) data:")
+        S_Q = rdf_data.S_Q_target.cpu().numpy()
+        F_Q = rdf_data.F_q_target.cpu().numpy()
+        original_fmt = "F(Q)" if rdf_data.input_was_F_Q() else "S(Q)"
+        print(f"    ✓ Q-space data (original format: {original_fmt}):")
         print(f"        Bins: {len(q)}")
         print(f"        Q range: [{q.min():.2f}, {q.max():.2f}] Å⁻¹")
-        print(f"        F range: [{F_q.min():.3f}, {F_q.max():.3f}]")
+        print(f"        S(Q) range: [{S_Q.min():.3f}, {S_Q.max():.3f}]")
+        print(f"        F(Q) range: [{F_Q.min():.3f}, {F_Q.max():.3f}]")
     else:
         print(f"    ✗ F(Q)/S(Q) data: Not loaded")
     
@@ -919,7 +997,6 @@ def main(cfg: DictConfig) -> None:
         print(f"  Box length: {struct_cfg.get('box_length', 'N/A')} Å")
         print(f"  Target density: {struct_cfg.get('target_density', 'N/A')} g/cm³")
     
-    spec_calc = SpectrumCalculator.from_config_dict(cfg.data)
     atoms = generate_atoms_from_config(cfg.structure)
     atoms_list = [atoms]
     
@@ -958,17 +1035,95 @@ def main(cfg: DictConfig) -> None:
     state.cell.requires_grad_(True)
     base_sim_state = setup_state_wrapper(state, atoms_list, device)
 
-    xrd_model = XRDModel(
-        spectrum_calc=spec_calc,
-        rdf_data=rdf_data,
-        dtype=dtype,
-        device=accelerator,
-    )
-
+    # Prepare model config from data config
+    # Note: Hydra merges data config - try multiple possible locations
+    neutron_lengths = None
+    xray_params = None
+    
+    # Try to find neutron_scattering_lengths in various locations
+    # Hydra loads data config under cfg.data, so check there first
+    search_paths_neutron = [
+        'data.neutron_scattering_lengths',  # In data yaml at top level
+        'neutron_scattering_lengths',       # In main config
+        'data.data.neutron_scattering_lengths',  # If nested under data.data
+    ]
+    for path in search_paths_neutron:
+        val = OmegaConf.select(cfg, path, default=None)
+        if val is not None:
+            converted = to_dict(val)
+            if converted and len(converted) > 0:
+                neutron_lengths = converted
+                print(f"  Found neutron_scattering_lengths at: {path}")
+                break
+    
+    # Try to find xray_form_factor_params
+    search_paths_xray = [
+        'data.xray_form_factor_params',
+        'xray_form_factor_params',
+        'data.data.xray_form_factor_params',
+    ]
+    for path in search_paths_xray:
+        val = OmegaConf.select(cfg, path, default=None)
+        if val is not None:
+            converted = to_dict(val)
+            if converted and len(converted) > 0:
+                xray_params = converted
+                print(f"  Found xray_form_factor_params at: {path}")
+                break
+    
+    # Try to find kernel_width
+    kernel_width = OmegaConf.select(cfg, 'data.kernel_width', default=None)
+    if kernel_width is None:
+        kernel_width = OmegaConf.select(cfg, 'kernel_width', default=None)
+    if kernel_width is None:
+        kernel_width = OmegaConf.select(cfg, 'data.data.kernel_width', default=0.03)
+    
     # Test forward pass
     print(f"\n{'=' * 70}")
     print("  MODEL CONFIGURATION")
     print(f"{'=' * 70}")
+    print(f"  kernel_width: {kernel_width}")
+    print(f"  neutron_scattering_lengths: {neutron_lengths}")
+    print(f"  xray_form_factor_params: {list(xray_params.keys()) if xray_params else 'None'}")
+    print(f"  unique_symbols: {unique_symbols}")
+    
+    # Validate neutron scattering lengths - required for neutron calculations
+    if not neutron_lengths:
+        print(f"\n  WARNING: neutron_scattering_lengths not found in config!")
+        print(f"    Available top-level keys: {list(cfg.keys())}")
+        
+        # Try to build from known values for common elements
+        default_neutron_lengths = {
+            'Si': 4.1491, 'O': 5.803, 'Ge': 8.185,
+            'P': 5.13, 'S': 2.847, 'Li': -1.90,
+            'Na': 3.63, 'Fe': 9.45, 'N': 9.36, 'Cl': 9.577,
+            'Ta': 6.91, 'K': 3.67, 'Ca': 4.70, 'Mg': 5.375,
+        }
+        neutron_lengths = {s: default_neutron_lengths.get(s, 5.0) for s in unique_symbols}
+        print(f"    Using default values: {neutron_lengths}")
+    
+    # Try to find scattering_type (default to neutron for backward compatibility)
+    scattering_type = OmegaConf.select(cfg, 'data.scattering_type', default=None)
+    if scattering_type is None:
+        scattering_type = OmegaConf.select(cfg, 'scattering_type', default='neutron')
+    print(f"  scattering_type: {scattering_type}")
+    
+    model_config = {
+        'kernel_width': kernel_width,
+        'neutron_scattering_lengths': neutron_lengths,
+        'xray_form_factor_params': xray_params if xray_params else {},
+        'scattering_type': scattering_type,
+    }
+    
+    xrd_model = XRDModel(
+        symbols=unique_symbols,
+        config=model_config,
+        r_bins=rdf_data.r_bins,
+        q_bins=rdf_data.q_bins,
+        rdf_data=rdf_data,
+        device=accelerator,
+    )
+
     try:
         results = xrd_model(base_sim_state)
         print(f"  Model forward pass: OK")
@@ -1044,8 +1199,16 @@ def main(cfg: DictConfig) -> None:
                     json.dump(filtered, f, indent=2)
                 print(f"  Filtered constraints saved: {filtered_path}")
                 
-                penalty_rho = OmegaConf.select(cfg, 'penalty_rho', default=10.0)
-                print(f"  Penalty rho: {penalty_rho}")
+                # Get penalty configuration
+                penalty_cfg = OmegaConf.select(cfg, 'penalty', default=None)
+                if penalty_cfg is not None:
+                    penalty_config = OmegaConf.to_container(penalty_cfg)
+                    print(f"  Penalty config: init={penalty_config.get('init', 10.0)}, "
+                          f"growth={penalty_config.get('growth_rate', 1.5)}")
+                else:
+                    # Fallback to legacy penalty_rho
+                    penalty_config = OmegaConf.select(cfg, 'penalty_rho', default=10.0)
+                    print(f"  Penalty rho: {penalty_config}")
                 
                 constraint_warmup_steps = int(OmegaConf.select(cfg, 'stability.constraint_warmup_steps', default=0))
                 
@@ -1057,7 +1220,7 @@ def main(cfg: DictConfig) -> None:
                     loss_fn=loss_fn,
                     target_kind=target_type,
                     device=str(device),
-                    penalty_rho=penalty_rho,
+                    penalty_config=penalty_config,
                     constraint_warmup_steps=constraint_warmup_steps
                 )
                 use_constraints = True

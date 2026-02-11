@@ -1,451 +1,333 @@
 """
-XRD Model for computing structure factors and order parameters.
+model/xrd.py – XRD/Neutron Diffraction Model for Structure Optimization
+=======================================================================
 
-This module provides the XRDModel class for computing G(r), T(r), S(Q)
-from SimState tensors, along with order parameter calculations.
+Differentiable model that computes scattering spectra from atomic structures.
+Supports both neutron and X-ray scattering with proper weighting factors.
+
+Outputs:
+    - G_r: Reduced pair distribution function
+    - T_r: Total correlation function  
+    - S_Q: Structure factor
+    - F_Q: Reduced structure factor
+
+Usage:
+    >>> model = XRDModel(
+    ...     symbols=['Li', 'P', 'S'],
+    ...     config=config_dict,
+    ...     r_bins=r_bins,
+    ...     q_bins=q_bins,
+    ... )
+    >>> results = model(sim_state)
+    >>> S_Q = results['S_Q']
 """
 
-import traceback
-import warnings
-from collections.abc import Callable
-from enum import StrEnum
-from pathlib import Path
-from typing import Any, ClassVar, Callable, Optional, Dict, Tuple, List
-import math
-
+from __future__ import annotations
+from typing import Dict, List, Optional, Any
+from dataclasses import dataclass
 import torch
-from torch import nn
+import torch.nn as nn
+
 import torch_sim as ts
-from torch_sim.models.interface import ModelInterface
-from torch_sim.neighbors import vesin_nl_ts
-from torch_sim.typing import StateDict
-from torch_sim.state import DeformGradMixin, SimState
-from torch.nn.utils.rnn import pad_sequence
-from ase.data import chemical_symbols
-from dataclasses import dataclass, field
-import yaml
+from torch_sim.io import state_to_atoms
 
-from torchdisorder.common.target_rdf import TargetRDFData
-from torchdisorder.model.rdf import SpectrumCalculator
-from torchdisorder.model.loss import AugLagLoss
+from torchdisorder.model.scattering import UnifiedSpectrumCalculator, ScatteringConfig
 
 
-@dataclass(kw_only=True)
-class CooperState(SimState):
-    """Extended SimState with loss and descriptor fields for constrained optimization."""
+# =============================================================================
+# Configuration
+# =============================================================================
+
+@dataclass
+class XRDModelConfig:
+    """Configuration for XRD model."""
     
-    loss: torch.Tensor
-    G_r: torch.Tensor
-    T_r: torch.Tensor
-    S_Q: torch.Tensor
-    q_tet: torch.Tensor
+    # Scattering parameters
+    neutron_scattering_lengths: Dict[str, float]
+    xray_form_factor_params: Dict[str, Dict[str, List[float]]]
+    kernel_width: float = 0.1
+    
+    # Output control
+    compute_neutron: bool = True
+    compute_xray: bool = False
+    
+    # Scattering type for primary output: 'neutron' or 'xray'
+    scattering_type: str = 'neutron'
+    
+    # Species filter for neighbors (e.g., only S for P-S correlations)
+    neighbor_species: Optional[List[str]] = None
+    
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> 'XRDModelConfig':
+        return cls(
+            neutron_scattering_lengths=d.get('neutron_scattering_lengths', {}),
+            xray_form_factor_params=d.get('xray_form_factor_params', {}),
+            kernel_width=d.get('kernel_width', 0.1),
+            compute_neutron=d.get('compute_neutron', True),
+            compute_xray=d.get('compute_xray', False),
+            scattering_type=d.get('scattering_type', 'neutron'),
+            neighbor_species=d.get('neighbor_species', None),
+        )
 
-    has_G_r: bool = False
-    has_T_r: bool = False
-    has_S_Q: bool = False
-    has_q_tet: bool = False
-    diagnostics: dict | None = None
 
-    _global_attributes: ClassVar[set[str]] = SimState._global_attributes | {
-        "loss",
-        "G_r", "T_r", "S_Q", "q_tet",
-        "has_G_r", "has_T_r", "has_S_Q", "has_q_tet",
-        "diagnostics",
-    }
-
+# =============================================================================
+# XRD Model
+# =============================================================================
 
 class XRDModel(nn.Module):
-    """Compute G(r), T(r), S(Q) from SimState tensors.
+    """
+    Differentiable model for computing scattering spectra.
     
-    This model computes neutron/X-ray diffraction patterns and local order
-    parameters for atomic structures. Supports batched processing of multiple
-    systems.
+    Takes atomic structure (positions, cell) and computes:
+    - G_r: Reduced pair distribution function G(r) = 4πρr[g(r) - 1]
+    - T_r: Total correlation function T(r) = 4πρr·g(r)
+    - S_Q: Structure factor S(Q)
+    - F_Q: Reduced structure factor F(Q) = Q[S(Q) - 1]
     
     Args:
-        spectrum_calc: SpectrumCalculator instance for computing spectra
-        rdf_data: TargetRDFData with experimental target data
-        neighbor_list_fn: Neighbor list function (default: vesin_nl_ts)
-        dtype: PyTorch data type
-        device: Device to use for computations
-        system_idx: Optional pre-set system indices
-        atomic_numbers: Optional pre-set atomic numbers
-        compute_q_tet: Whether to compute tetrahedral order parameter
-        central: Central atom type for order parameters (e.g., 'Si', 'Ge')
-        neighbour: Neighbor atom type for order parameters (e.g., 'O', 'S')
-        cutoff: Cutoff distance for neighbor search
+        symbols: List of element symbols in structure
+        config: Configuration dictionary or XRDModelConfig
+        r_bins: Tensor of r values for real-space functions
+        q_bins: Tensor of Q values for reciprocal-space functions
+        rdf_data: Optional target RDF data (for backward compat)
+        device: Computation device
+    
+    Example:
+        >>> model = XRDModel(
+        ...     symbols=['Li', 'P', 'S'],
+        ...     config={'neutron_scattering_lengths': {'Li': -1.90, 'P': 5.13, 'S': 2.847}},
+        ...     r_bins=torch.linspace(0.5, 10.0, 200),
+        ...     q_bins=torch.linspace(0.5, 15.0, 300),
+        ... )
+        >>> results = model(sim_state)
     """
-
+    
     def __init__(
-            self,
-            spectrum_calc: SpectrumCalculator,
-            rdf_data: TargetRDFData,
-            *,
-            neighbor_list_fn: Callable = vesin_nl_ts,
-            dtype: torch.dtype,
-            device: str | torch.device = "cuda",
-            system_idx: torch.Tensor | None = None,
-            atomic_numbers: torch.Tensor | None = None,
-            compute_q_tet: bool = True,
-            central: str = "Si",
-            neighbour: str = "O",
-            cutoff: float = 4.0,
-    ) -> None:
+        self,
+        symbols: List[str],
+        config: Dict[str, Any],
+        r_bins: torch.Tensor,
+        q_bins: torch.Tensor,
+        rdf_data: Optional[Any] = None,  # TargetRDFData for backward compat
+        device: str = 'cuda',
+    ):
         super().__init__()
-        self._device = device or torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu"
+        
+        self.symbols = symbols
+        self.device = torch.device(device)
+        
+        # Parse config
+        if isinstance(config, XRDModelConfig):
+            self.config = config
+        else:
+            self.config = XRDModelConfig.from_dict(config)
+        
+        # Store bins as buffers (not parameters)
+        self.register_buffer('r_bins', r_bins.to(self.device))
+        self.register_buffer('q_bins', q_bins.to(self.device))
+        
+        # Create spectrum calculator
+        scatt_config = ScatteringConfig(
+            neutron_scattering_lengths=self.config.neutron_scattering_lengths,
+            xray_form_factor_params=self.config.xray_form_factor_params,
+            kernel_width=self.config.kernel_width,
         )
-        self.spec = spectrum_calc
+        self.calculator = UnifiedSpectrumCalculator(scatt_config)
+        
+        # Store RDF data for backward compatibility
         self.rdf_data = rdf_data
-
-        self.dtype = dtype
-        self.device = device
-        self._memory_scales_with = "n_atoms"
-        self.neighbor_list_fn = neighbor_list_fn
         
-        # Order parameter settings
-        self._compute_q_tet = compute_q_tet
-        self.central = central
-        self.neighbour = neighbour
-        self.cutoff = cutoff
-
-        # Set up batch information if atomic numbers are provided
-        self.atomic_numbers_in_init = atomic_numbers is not None
-        if atomic_numbers is not None:
-            if system_idx is None:
-                system_idx = torch.zeros(
-                    len(atomic_numbers), dtype=torch.long, device=self.device
-                )
-            self.setup_from_batch(atomic_numbers, system_idx)
-
-    def setup_from_batch(
-            self, atomic_numbers: torch.Tensor, system_idx: torch.Tensor
-    ) -> None:
-        """Set up internal state from atomic numbers and system indices.
-
-        Args:
-            atomic_numbers: Atomic numbers tensor with shape [n_atoms].
-            system_idx: System indices tensor with shape [n_atoms]
-                indicating which system each atom belongs to.
+        # Logging flag
+        self._logged_once = False
+    
+    def forward(
+        self,
+        state: ts.SimState,
+        compute_all: bool = True,
+    ) -> Dict[str, torch.Tensor]:
         """
-        self.atomic_numbers = atomic_numbers
-        self.system_idx = system_idx
-
-        # Determine number of systems and atoms per system
-        self.n_systems = system_idx.max().item() + 1
-
-        # Create ptr tensor for system boundaries
-        self.n_atoms_per_system = []
-        ptr = [0]
-        for i in range(self.n_systems):
-            system_mask = system_idx == i
-            n_atoms = system_mask.sum().item()
-            self.n_atoms_per_system.append(n_atoms)
-            ptr.append(ptr[-1] + n_atoms)
-
-        self.ptr = torch.tensor(ptr, dtype=torch.long, device=self.device)
-        self.total_atoms = atomic_numbers.shape[0]
-
-    def forward(self, state: ts.state.SimState) -> Dict[str, torch.Tensor]:
-        """Forward pass computing all spectra.
+        Compute scattering spectra from atomic structure.
         
         Args:
-            state: SimState with positions, cell, and atomic_numbers
-            
+            state: torch_sim SimState with positions and cell
+            compute_all: If True, compute all spectra. If False, only S_Q.
+        
         Returns:
-            Dictionary with 'G_r', 'T_r', 'S_Q' tensors
+            Dict with keys: 'G_r', 'T_r', 'S_Q', 'F_Q' (depending on config)
         """
-        # Handle dict input
-        if isinstance(state, dict):
-            state = ts.SimState(**state, masses=torch.ones_like(state["positions"]))
-
-        # Validate atomic numbers
-        if state.atomic_numbers is None and not self.atomic_numbers_in_init:
-            raise ValueError(
-                "Atomic numbers must be provided in either the constructor or forward."
-            )
-        if state.atomic_numbers is not None and self.atomic_numbers_in_init:
-            raise ValueError(
-                "Atomic numbers cannot be provided in both the constructor and forward."
-            )
-
-        # Set system_idx if needed
-        if state.system_idx is None:
-            if not hasattr(self, "system_idx"):
-                raise ValueError("System indices must be provided if not set during initialization")
-            state.system_idx = self.system_idx
-
-        # Update batch info if needed
-        if (
-                state.atomic_numbers is not None
-                and not self.atomic_numbers_in_init
-                and not torch.equal(
-            state.atomic_numbers,
-            getattr(self, "atomic_numbers", torch.zeros(0, device=self.device)),
-        )
-        ):
-            self.setup_from_batch(state.atomic_numbers, state.system_idx)
-
-        pos = state.positions
+        # Extract structure info
+        positions = state.positions
         cell = state.cell
-        atomic_numbers = state.atomic_numbers.detach()
-        system_idx = state.system_idx.detach()
-
+        
+        # Handle cell dimensions
+        if cell.ndim == 3:
+            cell = cell[0]
+        
+        # Get symbols (use stored or extract from state)
+        if hasattr(state, 'atomic_numbers') and state.atomic_numbers is not None:
+            symbols = self._atomic_numbers_to_symbols(state.atomic_numbers)
+        else:
+            # Try to get from atoms
+            try:
+                atoms = state_to_atoms(state)[0]
+                symbols = atoms.get_chemical_symbols()
+            except:
+                symbols = self.symbols
+        
+        if not self._logged_once:
+            print(f"\nXRDModel forward pass:")
+            print(f"  Positions: {positions.shape}")
+            print(f"  Cell: {cell.shape}")
+            print(f"  Symbols: {len(symbols)} atoms ({set(symbols)})")
+            print(f"  r_bins: {self.r_bins.shape}")
+            print(f"  q_bins: {self.q_bins.shape}")
+            self._logged_once = True
+        
+        # Compute spectra
         results = {}
-        G_r_list, T_r_list, S_Q_list = [], [], []
-
-        # Batched descriptor computation
-        for b in range(state.n_systems):
-            batch_mask = state.system_idx == b
-            system_numbers = atomic_numbers[batch_mask]
-            pos_b = pos[batch_mask]
-            cell_b = cell[b]
-            
-            # Convert atomic numbers to chemical symbols
-            symbols_b = [chemical_symbols[z] for z in system_numbers]
-
-            # Compute spectra: G(r) → T(r) → S(Q)
-            G_r = self.spec.compute_rdf(
-                symbols_b, pos_b, cell_b, self.rdf_data.r_bins
+        
+        # Use configured scattering type
+        scattering_type = self.config.scattering_type
+        
+        if compute_all:
+            # Compute all spectra efficiently
+            all_spectra = self.calculator.compute_all(
+                symbols=symbols,
+                positions=positions,
+                cell=cell,
+                r_bins=self.r_bins,
+                q_bins=self.q_bins,
+                scattering_type=scattering_type,
             )
-            T_r = self.spec.compute_correlation(
-                G_r, self.rdf_data.r_bins, symbols_b, cell_b
+            results.update(all_spectra)
+        else:
+            # Just compute S(Q)
+            results['S_Q'] = self.calculator.compute(
+                symbols=symbols,
+                positions=positions,
+                cell=cell,
+                r_bins=self.r_bins,
+                q_bins=self.q_bins,
+                output='S_Q',
+                scattering_type=scattering_type,
             )
-            S_Q = self.spec.compute_sf(
-                G_r, self.rdf_data.r_bins, self.rdf_data.q_bins, symbols_b, cell_b
+        
+        # Compute both neutron and X-ray if requested
+        if self.config.compute_xray and scattering_type != 'xray':
+            results['S_Q_xray'] = self.calculator.compute(
+                symbols=symbols,
+                positions=positions,
+                cell=cell,
+                r_bins=self.r_bins,
+                q_bins=self.q_bins,
+                output='S_Q',
+                scattering_type='xray',
             )
-
-            G_r_list.append(G_r)
-            T_r_list.append(T_r)
-            S_Q_list.append(S_Q)
-
-        # Stack results
-        results["G_r"] = torch.stack(G_r_list)
-        results["T_r"] = torch.stack(T_r_list)
-        results["S_Q"] = torch.stack(S_Q_list)
+        
+        if self.config.compute_neutron and scattering_type != 'neutron':
+            results['S_Q_neutron'] = self.calculator.compute(
+                symbols=symbols,
+                positions=positions,
+                cell=cell,
+                r_bins=self.r_bins,
+                q_bins=self.q_bins,
+                output='S_Q',
+                scattering_type='neutron',
+            )
         
         return results
-
-    def tetrahedral_q(
-            self, pos: torch.Tensor, cell: torch.Tensor, symbols: list[str]
+    
+    def _atomic_numbers_to_symbols(self, atomic_numbers: torch.Tensor) -> List[str]:
+        """Convert atomic numbers tensor to symbol list."""
+        from ase.data import chemical_symbols as ase_symbols
+        return [ase_symbols[z] for z in atomic_numbers.cpu().tolist()]
+    
+    def compute_structure_factor(
+        self,
+        state: ts.SimState,
+        method: str = 'via_rdf',
     ) -> torch.Tensor:
-        """Compute tetrahedral order parameter using exact formula.
-        
-        q = 1 - (3/8) * sum_{j<k} (cos(psi_jk) + 1/3)^2
-        
-        For each central atom, considers the 4 nearest neighbors and computes
-        the angle-based order parameter. Perfect tetrahedron gives q=1.
+        """
+        Compute S(Q) with choice of method.
         
         Args:
-            pos: Atomic positions [n_atoms, 3]
-            cell: Unit cell [3, 3]
-            symbols: List of chemical symbols
-            
-        Returns:
-            Tensor of q values for each central atom
+            state: SimState
+            method: 'via_rdf' (default) or 'direct' (Debye formula)
         """
-        device = pos.device
-        cent_idx = torch.tensor(
-            [i for i, s in enumerate(symbols) if s == self.central],
-            device=device,
-            dtype=torch.long,
-        )
-        neigh_mask = torch.tensor(
-            [s == self.neighbour for s in symbols],
-            device=device,
-            dtype=torch.bool,
-        )
-
-        cutoff_tensor = torch.tensor(self.cutoff, device=device, dtype=pos.dtype)
-        edge_idx, shifts_idx = self.neighbor_list_fn(
-            positions=pos,
-            cell=cell,
-            pbc=True,
-            cutoff=cutoff_tensor,
-        )
-
-        shifts = torch.mm(shifts_idx.to(dtype=pos.dtype), cell)
-        i, j = edge_idx
-        rij = pos[j] + shifts - pos[i]
-
-        q_vals = []
-
-        for ic in cent_idx:
-            mask = (i == ic) & neigh_mask[j]
-            vecs = rij[mask]
-            n = vecs.size(0)
-
-            # Return 0 if fewer than 4 neighbors (can't form tetrahedron)
-            if n < 4:
-                continue
-
-            # Select exactly 4 nearest neighbors
-            distances = torch.norm(vecs, dim=1)
-            nearest_4_indices = torch.argsort(distances)[:4]
-            vecs_4 = vecs[nearest_4_indices]
-
-            # Compute q using exact formula from paper
-            # Sum over j=1..3, k=j+1..4 (6 angle pairs total)
-            acc = 0.0
-            for j_idx in range(3):
-                for k_idx in range(j_idx + 1, 4):
-                    v_j = vecs_4[j_idx]
-                    v_k = vecs_4[k_idx]
-
-                    # Compute cosine of angle between vectors
-                    cos_psi = torch.nn.functional.cosine_similarity(
-                        v_j.view(1, -1), v_k.view(1, -1)
-                    )
-                    cos_psi = torch.clamp(cos_psi, -1.0, 1.0)
-
-                    # Formula: (cos(psi_jk) + 1/3)^2
-                    term = (cos_psi + 1.0 / 3.0) ** 2
-                    acc += term
-
-            # q = 1 - (3/8) * sum of 6 terms
-            q_val = 1.0 - (3.0 / 8.0) * acc
-            q_vals.append(q_val)
-
-        if not q_vals:
-            return torch.zeros((), device=device, dtype=pos.dtype, requires_grad=True)
-
-        return torch.stack(q_vals)
-
-    def octahedral_q(
-            self, pos: torch.Tensor, cell: torch.Tensor, symbols: list[str]
-    ) -> torch.Tensor:
-        """Compute octahedral order parameter.
+        positions = state.positions
+        cell = state.cell if state.cell.ndim == 2 else state.cell[0]
         
-        q_oct = 1/Norm * {
-            sum_{j!=k} [
-                3 * H(theta_jk - theta_thr) * exp(-(theta_jk - 180)^2 / (2*d_theta1^2))
-            ] +
-            sum_{j!=k} sum_{m!=j,k} [
-                H(theta_thr - theta_jk) * H(theta_thr - theta_jm) *
-                cos^2(2*phi_m) * exp(-(theta_jm - 90)^2 / (2*d_theta2^2))
-            ]
-        }
+        if hasattr(state, 'atomic_numbers') and state.atomic_numbers is not None:
+            symbols = self._atomic_numbers_to_symbols(state.atomic_numbers)
+        else:
+            symbols = self.symbols
         
-        Args:
-            pos: Atomic positions [n_atoms, 3]
-            cell: Unit cell [3, 3]
-            symbols: List of chemical symbols
-            
-        Returns:
-            Tensor of q values for each central atom
-        """
-        device = pos.device
-        dtype = pos.dtype
+        if method == 'direct':
+            return self.calculator.compute(
+                symbols=symbols,
+                positions=positions,
+                cell=cell,
+                q_bins=self.q_bins,
+                output='S_Q',
+                scattering_type='neutron',
+            )
+        else:
+            return self.calculator.compute(
+                symbols=symbols,
+                positions=positions,
+                cell=cell,
+                r_bins=self.r_bins,
+                q_bins=self.q_bins,
+                output='S_Q',
+                scattering_type='neutron',
+            )
 
-        # Constants (angles in degrees)
-        theta_thr_deg = 160.0
-        d_theta1_deg = 12.0
-        d_theta2_deg = 10.0
 
-        # Convert to radians
-        theta_thr = math.radians(theta_thr_deg)
+# =============================================================================
+# Factory Functions
+# =============================================================================
 
-        cent_idx = torch.tensor(
-            [i for i, s in enumerate(symbols) if s == self.central],
-            device=device,
-            dtype=torch.long,
-        )
-        neigh_mask = torch.tensor(
-            [s == self.neighbour for s in symbols],
-            device=device,
-            dtype=torch.bool,
-        )
+def create_xrd_model(
+    atoms,
+    config: Dict[str, Any],
+    r_range: tuple = (0.5, 10.0),
+    q_range: tuple = (0.5, 15.0),
+    n_r: int = 200,
+    n_q: int = 300,
+    device: str = 'cuda',
+) -> XRDModel:
+    """
+    Factory function to create XRD model from ASE Atoms.
+    
+    Args:
+        atoms: ASE Atoms object
+        config: Configuration dict with scattering parameters
+        r_range: (r_min, r_max) for r-space
+        q_range: (q_min, q_max) for Q-space
+        n_r: Number of r points
+        n_q: Number of Q points
+        device: Computation device
+    """
+    symbols = atoms.get_chemical_symbols()
+    
+    r_bins = torch.linspace(*r_range, n_r, device=device)
+    q_bins = torch.linspace(*q_range, n_q, device=device)
+    
+    return XRDModel(
+        symbols=symbols,
+        config=config,
+        r_bins=r_bins,
+        q_bins=q_bins,
+        device=device,
+    )
 
-        cutoff_tensor = torch.tensor(self.cutoff, device=device, dtype=dtype)
-        edge_idx, shifts_idx = self.neighbor_list_fn(
-            positions=pos,
-            cell=cell,
-            pbc=True,
-            cutoff=cutoff_tensor,
-        )
 
-        shifts = torch.mm(shifts_idx.to(dtype=dtype), cell)
-        i, j = edge_idx
-        rij = pos[j] + shifts - pos[i]
+# =============================================================================
+# Exports
+# =============================================================================
 
-        q_vals = []
-
-        for ic in cent_idx:
-            mask = (i == ic) & neigh_mask[j]
-            vecs = rij[mask]
-            n_ngh = vecs.size(0)
-
-            if n_ngh < 6:  # Need at least 6 neighbors for octahedron
-                continue
-
-            total_sum = 0.0
-
-            # Loop over all ordered pairs of neighbors (j, k)
-            for j_idx in range(n_ngh):
-                r_ij = vecs[j_idx]
-                z_axis = r_ij / torch.norm(r_ij)
-
-                for k_idx in range(n_ngh):
-                    if k_idx == j_idx:
-                        continue
-
-                    r_ik = vecs[k_idx]
-
-                    # Calculate theta_jk (polar angle of k in j's frame)
-                    cos_theta_jk = torch.dot(r_ij, r_ik) / (torch.norm(r_ij) * torch.norm(r_ik))
-                    cos_theta_jk = torch.clamp(cos_theta_jk, -1.0, 1.0)
-                    theta_jk = torch.acos(cos_theta_jk)
-                    theta_jk_deg = math.degrees(theta_jk.item())
-
-                    # Term A
-                    if theta_jk_deg > theta_thr_deg:
-                        exponent = -((theta_jk_deg - 180.0) ** 2) / (2 * d_theta1_deg ** 2)
-                        total_sum += 3.0 * torch.exp(torch.tensor(exponent, device=device, dtype=dtype))
-
-                    # Term B
-                    if theta_jk_deg < theta_thr_deg:
-                        # Define local coordinate system for phi calculation
-                        proj_ik_on_ij = torch.dot(r_ik, z_axis) * z_axis
-                        x_axis = r_ik - proj_ik_on_ij
-                        if torch.norm(x_axis) < 1e-6:
-                            continue  # colinear vectors
-                        x_axis = x_axis / torch.norm(x_axis)
-                        y_axis = torch.cross(z_axis, x_axis)
-
-                        # Loop over other neighbors m
-                        for m_idx in range(n_ngh):
-                            if m_idx == j_idx or m_idx == k_idx:
-                                continue
-
-                            r_im = vecs[m_idx]
-
-                            cos_theta_jm = torch.dot(r_ij, r_im) / (torch.norm(r_ij) * torch.norm(r_im))
-                            cos_theta_jm = torch.clamp(cos_theta_jm, -1.0, 1.0)
-                            theta_jm = torch.acos(cos_theta_jm)
-                            theta_jm_deg = math.degrees(theta_jm.item())
-
-                            if theta_jm_deg < theta_thr_deg:
-                                # Calculate phi_m
-                                proj_im_on_z = torch.dot(r_im, z_axis) * z_axis
-                                r_im_proj_xy = r_im - proj_im_on_z
-
-                                phi_m = torch.atan2(
-                                    torch.dot(r_im_proj_xy, y_axis),
-                                    torch.dot(r_im_proj_xy, x_axis)
-                                )
-
-                                cos2_2phi = torch.cos(2 * phi_m) ** 2
-                                exponent = -((theta_jm_deg - 90.0) ** 2) / (2 * d_theta2_deg ** 2)
-
-                                term_B = cos2_2phi * torch.exp(torch.tensor(exponent, device=device, dtype=dtype))
-                                total_sum += term_B
-
-            # Normalization
-            if n_ngh > 3:
-                norm_factor = n_ngh * (3 + (n_ngh - 2) * (n_ngh - 3))
-                q_val = total_sum / norm_factor
-                q_vals.append(q_val)
-
-        if not q_vals:
-            return torch.zeros((), device=device, dtype=dtype, requires_grad=True)
-
-        return torch.stack(q_vals)
+__all__ = [
+    'XRDModelConfig',
+    'XRDModel',
+    'create_xrd_model',
+]

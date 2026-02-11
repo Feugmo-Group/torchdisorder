@@ -1,7 +1,0 @@
-{"time":"2026-02-05T11:02:20.910147-05:00","level":"INFO","msg":"main: starting server","port-filename":"/var/folders/mx/890d30k11gb84hjc0xjcghxm0000gn/T/tmpz21_k_1c/port-33686.txt","pid":33686,"log-level":0,"disable-analytics":false,"shutdown-on-parent-exit":false,"enable-dcgm-profiling":false}
-{"time":"2026-02-05T11:02:20.91265-05:00","level":"INFO","msg":"server: will exit if parent process dies","ppid":33686}
-{"time":"2026-02-05T11:02:20.912606-05:00","level":"INFO","msg":"server: accepting connections","addr":{"Name":"/var/folders/mx/890d30k11gb84hjc0xjcghxm0000gn/T/wandb-33686-33692-3627765035/socket","Net":"unix"}}
-{"time":"2026-02-05T11:02:20.922687-05:00","level":"INFO","msg":"connection: ManageConnectionData: new connection created","id":"1"}
-{"time":"2026-02-05T11:02:20.960495-05:00","level":"INFO","msg":"handleInformInit: received","streamId":"oa2222wu","id":"1"}
-{"time":"2026-02-05T11:02:21.229217-05:00","level":"INFO","msg":"handleInformInit: stream started","streamId":"oa2222wu","id":"1"}
-{"time":"2026-02-05T11:12:11.293128-05:00","level":"INFO","msg":"main: received shutdown signal","signal":2}

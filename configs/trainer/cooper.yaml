@@ -2,6 +2,7 @@
 # ======================================================
 #
 # Settings for the augmented Lagrangian optimization using Cooper library.
+# Note: Penalty settings are now in main config.yaml under 'penalty:'
 
 # Optimizer selection
 name: cooper
@@ -9,13 +10,13 @@ name: cooper
 # Primal optimizer (for atomic positions)
 primal:
   type: Adam
-  lr: 1e-3
+  lr: ${lr.primal}
   betas: [0.9, 0.999]
 
 # Dual optimizer (for Lagrange multipliers)
 dual:
   type: SGD
-  lr: 1e-2
+  lr: ${lr.dual}
   maximize: true
 
 # Learning rate reduction settings
@@ -24,10 +25,6 @@ lr_reduction:
   threshold: 97.5    # Reduce LR after this % loss reduction
   primal_factor: 0.1  # Multiply primal LR by this
   dual_factor: 0.1    # Multiply dual LR by this
-
-# Augmented Lagrangian settings
-penalty_coefficient: 10.0   # Initial penalty rho
-penalty_schedule: constant  # Options: constant, increasing
 
 # Constraint violation handling
 violation_type: soft  # Options: soft (smooth), hard (strict)

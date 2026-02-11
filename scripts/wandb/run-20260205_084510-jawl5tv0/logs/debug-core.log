@@ -1,7 +1,0 @@
-{"time":"2026-02-05T08:45:10.497537-05:00","level":"INFO","msg":"main: starting server","port-filename":"/var/folders/mx/890d30k11gb84hjc0xjcghxm0000gn/T/tmppwqck1nw/port-27407.txt","pid":27407,"log-level":0,"disable-analytics":false,"shutdown-on-parent-exit":false,"enable-dcgm-profiling":false}
-{"time":"2026-02-05T08:45:10.498036-05:00","level":"INFO","msg":"server: will exit if parent process dies","ppid":27407}
-{"time":"2026-02-05T08:45:10.498036-05:00","level":"INFO","msg":"server: accepting connections","addr":{"Name":"/var/folders/mx/890d30k11gb84hjc0xjcghxm0000gn/T/wandb-27407-27415-2296268866/socket","Net":"unix"}}
-{"time":"2026-02-05T08:45:10.683531-05:00","level":"INFO","msg":"connection: ManageConnectionData: new connection created","id":"1"}
-{"time":"2026-02-05T08:45:10.718085-05:00","level":"INFO","msg":"handleInformInit: received","streamId":"jawl5tv0","id":"1"}
-{"time":"2026-02-05T08:45:10.923557-05:00","level":"INFO","msg":"handleInformInit: stream started","streamId":"jawl5tv0","id":"1"}
-{"time":"2026-02-05T08:45:17.304114-05:00","level":"INFO","msg":"main: received shutdown signal","signal":2}

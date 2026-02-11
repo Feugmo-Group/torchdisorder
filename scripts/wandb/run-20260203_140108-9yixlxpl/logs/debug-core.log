@@ -1,7 +1,0 @@
-{"time":"2026-02-03T14:01:09.068175-05:00","level":"INFO","msg":"main: starting server","port-filename":"/var/folders/mx/890d30k11gb84hjc0xjcghxm0000gn/T/tmp_ywbgvbl/port-18553.txt","pid":18553,"log-level":0,"disable-analytics":false,"shutdown-on-parent-exit":false,"enable-dcgm-profiling":false}
-{"time":"2026-02-03T14:01:09.069956-05:00","level":"INFO","msg":"server: will exit if parent process dies","ppid":18553}
-{"time":"2026-02-03T14:01:09.070153-05:00","level":"INFO","msg":"server: accepting connections","addr":{"Name":"/var/folders/mx/890d30k11gb84hjc0xjcghxm0000gn/T/wandb-18553-18597-636603539/socket","Net":"unix"}}
-{"time":"2026-02-03T14:01:09.12763-05:00","level":"INFO","msg":"connection: ManageConnectionData: new connection created","id":"1"}
-{"time":"2026-02-03T14:01:09.14963-05:00","level":"INFO","msg":"handleInformInit: received","streamId":"9yixlxpl","id":"1"}
-{"time":"2026-02-03T14:01:09.335775-05:00","level":"INFO","msg":"handleInformInit: stream started","streamId":"9yixlxpl","id":"1"}
-{"time":"2026-02-03T14:01:41.820401-05:00","level":"INFO","msg":"main: received shutdown signal","signal":2}
