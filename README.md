@@ -68,21 +68,56 @@ TorchDisorder addresses these by:
 
 ### Install from Source
 
+### Install from Source
 ```bash
 # Clone repository
-git clone https://github.com/your-repo/torchdisorder.git
+git clone https://github.com/feugmo-group/torchdisorder.git
 cd torchdisorder
 
-# Create virtual environment (recommended)
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# or: venv\Scripts\activate  # Windows
+# Install Poetry (if not already installed)
+curl -sSL https://install.python-poetry.org | python3 -
 
-# Install dependencies
-pip install -r requirements.txt
+# Install dependencies and create virtual environment
+poetry install
 
-# Install package in development mode
-pip install -e .
+# Activate the virtual environment
+poetry shell
+
+# Or run commands without activating
+poetry run python your_script.py
+```
+
+**Optional: Configure Poetry to create venv in project directory**
+```bash
+# This creates .venv folder inside your project
+poetry config virtualenvs.in-project true
+
+# Then install
+poetry install
+```
+
+**Install with specific dependency groups**
+```bash
+# Install with development dependencies
+poetry install --with dev
+
+# Install with testing dependencies
+poetry install --with test,lint
+
+# Install only main dependencies (production)
+poetry install --only main
+```
+
+**For contributors:**
+```bash
+# Install pre-commit hooks (if configured)
+poetry run pre-commit install
+
+# Run tests
+poetry run pytest
+
+# Run linting
+poetry run ruff check .
 ```
 
 ### Dependencies

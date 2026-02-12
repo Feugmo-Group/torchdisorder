@@ -1,7 +1,33 @@
 __pycache__/
 *.pyc
-.env
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+.venv/
 venv/
+ENV/
+env/
+.env
 .virtualenvs/
+
+# Poetry - DON'T ignore poetry.lock!
+# poetry.lock  <- Do NOT add this line
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+*.egg-info/
+dist/
+build/
 *.egg-info/
 .DS_Store
