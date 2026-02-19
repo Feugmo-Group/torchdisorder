@@ -10,10 +10,10 @@
 #   python scripts/train.py target=G_r                   # G(r) target (for X-ray PDF)
 #   python scripts/train.py structure.supercell.target_atoms=2000  # Larger cell
 
-experiment_name: SiO2
+experiment_name: glass_75Li2S
 defaults:
-  - data: SiO2  #  SiO2 GeO2, LiPS
-  - structure: silica # silica,  GeO2, LiPS
+  - data: LiPS  #  SiO2 GeO2, LiPS
+  - structure: LiPS # silica,  GeO2, LiPS
   - trainer: cooper
   - wandb: enabled
   - _self_
@@ -32,7 +32,7 @@ accelerator: 'cpu'  # cuda, mps, cpu
 #   - g_r: Pair distribution function g(r) → 1 as r → ∞
 #   - G_r: Reduced PDF G(r) = 4πρr[g(r)-1] → 0 as r → ∞ (PDFgetX3 output)
 #   - T_r: Total correlation function T(r) = 4πρr·g(r)
-target: F_Q
+target: S_Q
 
 # =============================================================================
 # Optimization
@@ -90,7 +90,7 @@ output:
   trajectory_path: ${hydra:run.dir}/trajectory
   save_plots: true
   plots_dir: ${hydra:run.dir}/plots
-  plot_interval: 100
+  plot_interval: 50
 
 # =============================================================================
 # Hydra
@@ -99,4 +99,4 @@ hydra:
   run:
     dir: outputs/${experiment_name}_${now:%Y-%m-%d}/${now:%H-%M-%S}
   sweep:
-    dir: outputs/multirun/{experiment_name}_${now:%Y-%m-%d}/${now:%H-%M-%S}
+    dir: outputs/multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}

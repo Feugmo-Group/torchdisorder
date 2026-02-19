@@ -277,14 +277,7 @@ class TargetRDFData:
                 # Optional uncertainty
                 dG_col = find_column(df, ['dG', 'dGr', 'uncertainty', 'error'], required=False)
                 if dG_col:
-                    loaded_uncert = torch.tensor(df[dG_col].to_numpy(dtype="float32")[::stride_r], device=device)
-                    # Check if loaded uncertainty is valid (not all zeros/negligible)
-                    if loaded_uncert.abs().max() > 1e-6:
-                        G_r_uncert = loaded_uncert
-                        print(f"    G(r) uncertainty: from column '{dG_col}'")
-                    else:
-                        G_r_uncert = torch.full_like(G_r_target, 0.05)
-                        print(f"    Note: '{dG_col}' column has negligible values, using default uncertainty 0.05")
+                    G_r_uncert = torch.tensor(df[dG_col].to_numpy(dtype="float32")[::stride_r], device=device)
                 else:
                     G_r_uncert = torch.full_like(G_r_target, 0.05)
                 
@@ -300,14 +293,7 @@ class TargetRDFData:
                 # Optional uncertainty
                 dg_col = find_column(df, ['dg', 'uncertainty', 'error'], required=False)
                 if dg_col:
-                    loaded_uncert = torch.tensor(df[dg_col].to_numpy(dtype="float32")[::stride_r], device=device)
-                    # Check if loaded uncertainty is valid (not all zeros/negligible)
-                    if loaded_uncert.abs().max() > 1e-6:
-                        g_r_uncert = loaded_uncert
-                        print(f"    g(r) uncertainty: from column '{dg_col}'")
-                    else:
-                        g_r_uncert = torch.full_like(g_r_target, 0.05)
-                        print(f"    Note: '{dg_col}' column has negligible values, using default uncertainty 0.05")
+                    g_r_uncert = torch.tensor(df[dg_col].to_numpy(dtype="float32")[::stride_r], device=device)
                 else:
                     g_r_uncert = torch.full_like(g_r_target, 0.05)
                 
@@ -372,7 +358,7 @@ class TargetRDFData:
                 q_space_uncert = torch.tensor(df[dS_col].to_numpy(dtype="float32")[::stride_q], device=device)
             else:
                 print(f"  Note: {Path(s_path).name} has no uncertainty column. Using default 0.05")
-                q_space_uncert = torch.full_like(q_space_target, 0.05)
+                q_space_uncert = torch.full_like(q_space_target, 0.001)
             
             # Auto-detect F(Q) vs S(Q) if not specified
             # F(Q) oscillates around 0 and → 0 as Q → ∞

@@ -29,15 +29,15 @@ data:
 # =============================================================================
 # Filter experimental S(Q)/F(Q) data to this range
 # Set to null to use full data range
-q_min: 0.5
-q_max: 25.0
+q_min: 0.2
+q_max: 22.0
 
 # =============================================================================
 # R-space Range (Å)
 # =============================================================================
 # Used for auto-generating r_bins or filtering loaded data
-r_min: 0.01
-r_max: 10.0
+r_min: 0.5
+r_max: 25.0
 n_r_bins: 500
 
 # =============================================================================
@@ -75,4 +75,6 @@ cutoff: 2.4
 # =============================================================================
 # Constraints
 # =============================================================================
+# Note: Uses SiO2 constraints as template (same tetrahedral structure)
+# For custom GeO2 constraints, create data/json/geo2_glass_constraints.json
 json_path: ${data.root_dir}/json/geo2_glass_constraints.json

@@ -855,7 +855,7 @@ def main(cfg: DictConfig) -> None:
     target_cfg = TARGET_CONFIG[target_type]
     
     print(f"\n{'=' * 70}")
-    print(f"  TorchDisorder Training v1")
+    print(f"  TorchDisorder Training ")
     print(f"{'=' * 70}")
     print(f"  Target Spectrum: {target_cfg['name']} [{target_cfg['symbol']}]")
     print(f"{'=' * 70}\n")
@@ -890,19 +890,8 @@ def main(cfg: DictConfig) -> None:
     if stride_r > 1:
         print(f"  Using stride_r={stride_r} for r-space subsampling")
     
-    # Build complete config dict, merging nested data section with top-level parameters
-    rdf_config = to_dict(data_cfg)
-    
-    # Add top-level parameters that might not be in nested section
-    top_level_params = ['r_min', 'r_max', 'q_min', 'q_max', 'n_r_bins', 'kernel_width']
-    for param in top_level_params:
-        if param not in rdf_config:
-            value = OmegaConf.select(cfg.data, param, default=None)
-            if value is not None:
-                rdf_config[param] = value
-    
     rdf_data = TargetRDFData.from_dict(
-        rdf_config, 
+        to_dict(data_cfg), 
         device=accelerator,
         stride_q=stride_q,
         stride_r=stride_r
