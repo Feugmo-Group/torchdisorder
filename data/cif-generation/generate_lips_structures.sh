@@ -83,67 +83,71 @@ run_variant() {
 }
 
 # --------------------------------------------------------------------------
-# 67Li2S–33P2S5   (supercell 5×8×5 of Li7P3S11)
+# 67Li2S–33P2S5   (supercell 8×4×4 of Li7P3S11, near-cubic ~50 Å)
+# 8×4×4 → 49.5×50.5×50.7 Å (within 2.4%); MIC cutoff after density
+# scaling ≈ 25.5 Å (vs 5×8×5 which gave 30.9×101×63 Å — unusable MIC)
 # --------------------------------------------------------------------------
 if $RUN_NO_LI; then
     run_variant \
-        "67Li2S-33P2S5 — no Li" \
+        "67Li2S-33P2S5 — no Li  (8×4×4)" \
         "Li7P3S11.cif" \
         "67Li2S-33P2S5" \
-        "5,8,5" \
+        "8,4,4" \
         "glass_67Li2S_noLi"
 fi
 
 if $RUN_WITH_LI; then
     run_variant \
-        "67Li2S-33P2S5 — with Li" \
+        "67Li2S-33P2S5 — with Li  (8×4×4)" \
         "Li7P3S11.cif" \
         "67Li2S-33P2S5" \
-        "5,8,5" \
+        "8,4,4" \
         "glass_67Li2S_withLi" \
         "--keep-li"
 fi
 
 # --------------------------------------------------------------------------
-# 70Li2S–30P2S5   (supercell 5×8×5 of Li7P3S11)
+# 70Li2S–30P2S5   (supercell 8×4×4 of Li7P3S11, near-cubic ~50 Å)
 # --------------------------------------------------------------------------
 if $RUN_NO_LI; then
     run_variant \
-        "70Li2S-30P2S5 — no Li" \
+        "70Li2S-30P2S5 — no Li  (8×4×4)" \
         "Li7P3S11.cif" \
         "70Li2S-30P2S5" \
-        "5,8,5" \
+        "8,4,4" \
         "glass_70Li2S_noLi"
 fi
 
 if $RUN_WITH_LI; then
     run_variant \
-        "70Li2S-30P2S5 — with Li" \
+        "70Li2S-30P2S5 — with Li  (8×4×4)" \
         "Li7P3S11.cif" \
         "70Li2S-30P2S5" \
-        "5,8,5" \
+        "8,4,4" \
         "glass_70Li2S_withLi" \
         "--keep-li"
 fi
 
 # --------------------------------------------------------------------------
-# 75Li2S–25P2S5   (supercell 5×6×9 of Li3PS4_beta)
+# 75Li2S–25P2S5   (supercell 4×6×8 of Li3PS4_beta, near-cubic ~49 Å)
+# 4×6×8 → 48.1×49.3×49.0 Å (within 2.5%); MIC cutoff ≈ 24.5 Å
+# (vs 5×6×9 which gave 60×49×55 Å — a-axis 20% longer than b,c)
 # --------------------------------------------------------------------------
 if $RUN_NO_LI; then
     run_variant \
-        "75Li2S-25P2S5 — no Li" \
+        "75Li2S-25P2S5 — no Li  (4×6×8)" \
         "Li3PS4_beta.cif" \
         "75Li2S-25P2S5" \
-        "5,6,9" \
+        "4,6,8" \
         "glass_75Li2S_noLi"
 fi
 
 if $RUN_WITH_LI; then
     run_variant \
-        "75Li2S-25P2S5 — with Li" \
+        "75Li2S-25P2S5 — with Li  (4×6×8)" \
         "Li3PS4_beta.cif" \
         "75Li2S-25P2S5" \
-        "5,6,9" \
+        "4,6,8" \
         "glass_75Li2S_withLi" \
         "--keep-li"
 fi
