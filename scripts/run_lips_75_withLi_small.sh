@@ -4,10 +4,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR/.."
 
 STEPS=5000
+EXTRA_ARGS=()
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --steps) STEPS="$2"; shift 2 ;;
-        *) echo "Unknown argument: $1"; exit 1 ;;
+        *) EXTRA_ARGS+=("$1"); shift ;;
     esac
 done
 
@@ -26,4 +27,5 @@ python scripts/train.py \
     target=S_Q \
     max_steps="$STEPS" \
     accelerator=cpu \
-    output.plot_interval=100
+    output.plot_interval=100 \
+    "${EXTRA_ARGS[@]}"
