@@ -10,10 +10,10 @@
 #   python scripts/train.py target=G_r                   # G(r) target (for X-ray PDF)
 #   python scripts/train.py structure.supercell.target_atoms=2000  # Larger cell
 
-experiment_name: glass_75Li2S
+experiment_name: SiO2
 defaults:
-  - data: LiPS  #  SiO2 GeO2, LiPS
-  - structure: LiPS # silica,  GeO2, LiPS
+  - data: SiO2  #  SiO2 GeO2, LiPS
+  - structure: silica # silica,  GeO2, LiPS
   - trainer: cooper
   - wandb: enabled
   - _self_
@@ -32,7 +32,7 @@ accelerator: 'cpu'  # cuda, mps, cpu
 #   - g_r: Pair distribution function g(r) → 1 as r → ∞
 #   - G_r: Reduced PDF G(r) = 4πρr[g(r)-1] → 0 as r → ∞ (PDFgetX3 output)
 #   - T_r: Total correlation function T(r) = 4πρr·g(r)
-target: S_Q
+target: F_Q
 
 # =============================================================================
 # Optimization
@@ -71,6 +71,18 @@ stability:
 constraints:
   enabled: true
   use_types: all  # 'all' or [tet, cn, q4, ...]
+  # Set regenerate_json: true to re-run lps_generator before loading constraints.
+  # Requires constraints.generator to be configured (see below).
+  regenerate_json: false
+  # generator: null  # uncomment and fill in when regenerate_json: true
+  #   script: data/cif-generation/lps_generator.py
+  #   input_cif: data/base-crystals/Li7P3S11.cif   # base (not glass) crystal
+  #   target: 67Li2S-33P2S5                          # or 70Li2S-30P2S5 / 75Li2S-25P2S5
+  #   supercell: "4,2,2"
+  #   keep_li: false
+  #   disorder: 0.3
+  #   seed: 42
+  #   output_prefix: null  # inferred from json_path when null
 
 # =============================================================================
 # Order Parameters
@@ -88,9 +100,10 @@ checkpoint_interval: 200
 output:
   write_trajectory: true
   trajectory_path: ${hydra:run.dir}/trajectory
+  trajectory_interval: 100  # steps between trajectory frames
   save_plots: true
   plots_dir: ${hydra:run.dir}/plots
-  plot_interval: 50
+  plot_interval: 100
 
 # =============================================================================
 # Hydra
@@ -99,4 +112,4 @@ hydra:
   run:
     dir: outputs/${experiment_name}_${now:%Y-%m-%d}/${now:%H-%M-%S}
   sweep:
-    dir: outputs/multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}
+    dir: outputs/multirun/${experiment_name}_${now:%Y-%m-%d}/${now:%H-%M-%S}

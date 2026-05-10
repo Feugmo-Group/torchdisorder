@@ -66,13 +66,8 @@ class OutputType(Enum):
 
 @cache
 def get_device_count() -> int:
-    """Return number of available NVIDIA GPUs."""
-    try:
-        import nvidia_smi
-        nvidia_smi.nvmlInit()
-        return nvidia_smi.nvmlDeviceGetCount()
-    except:
-        return torch.cuda.device_count() if torch.cuda.is_available() else 1
+    """Return number of GPUs visible to this process (respects CUDA_VISIBLE_DEVICES)."""
+    return torch.cuda.device_count() if torch.cuda.is_available() else 1
 
 
 def split_chunk(tensor: torch.Tensor) -> Generator[Tuple[str, torch.Tensor], None, None]:
@@ -173,13 +168,15 @@ def get_partial_rdf(
         ) / (kernel_width * (2 * torch.pi) ** 0.5)
         summed = gauss.sum(dim=0)
     except torch.cuda.OutOfMemoryError:
+        # Process in fixed-size chunks on the same device to avoid OOM
+        chunk_size = 50_000
         summed = torch.zeros_like(bins)
-        for device, chunk in split_chunk(in_window):
+        for i in range(0, in_window.shape[0], chunk_size):
+            chunk = in_window[i : i + chunk_size]
             g = torch.exp(
-                -0.5 * ((bins.to(device)[None, :] - chunk[:, None]) / kernel_width) ** 2
+                -0.5 * ((bins[None, :] - chunk[:, None]) / kernel_width) ** 2
             ) / (kernel_width * (2 * torch.pi) ** 0.5)
-            summed = summed.to(device) + g.sum(dim=0)
-        summed = summed.to(bins.device)
+            summed = summed + g.sum(dim=0)
 
     vol = get_cell_volume(cell)
     n_pairs = obs.numel()
@@ -453,9 +450,17 @@ def compute_xray_S_Q(
     rho = n / get_cell_volume(cell)
     elems = set(chemical_symbols)
     frac = {e: chemical_symbols.count(e) / n for e in elems}
-    masks = {e: torch.tensor([s == e for s in chemical_symbols], 
+    masks = {e: torch.tensor([s == e for s in chemical_symbols],
                              dtype=torch.bool, device=positions.device) for e in elems}
-    
+
+    # Clip r_bins to the MIC cutoff so g(r)=0 beyond L/2 never inflates the integral.
+    # Using the shortest cell vector norm as a conservative bound (valid for any cell shape).
+    cell_lengths = torch.stack([cell[i].norm() for i in range(3)])
+    r_mic_cut = 0.5 * cell_lengths.min()
+    r_bins = r_bins[r_bins <= r_mic_cut]
+    if r_bins.numel() == 0:
+        return torch.ones(len(q_bins), device=q_bins.device, dtype=q_bins.dtype)
+
     # Compute Q-dependent form factors f_α(Q)
     ff = _compute_form_factors(elems, q_bins, form_factor_params)
     

@@ -206,17 +206,24 @@ class ConstraintState:
 class EnvironmentConstrainedOptimizer(cooper.ConstrainedMinimizationProblem):
     """
     Constrained optimization with environment-based constraint grouping.
-    
-    Instead of grouping constraints by order parameter type (as in v5),
-    this groups constraints by local atomic environment. This leads to
-    better optimization because atoms in the same environment have
-    correlated constraints.
-    
+
+    Supports two initialization modes detected automatically at runtime:
+
+    **from_cif mode** (atom indices in JSON match P atoms in structure):
+        Constraints are applied to specific P atoms as recorded by lps_generator.py.
+
+    **random_icp mode** (atom indices in JSON don't match P atoms):
+        The JSON's per-atom index table is ignored. Instead, the target environment
+        fractions from ``global_constraints.p_environment_distribution`` are used to
+        distribute environment types proportionally across all P atoms in the structure.
+        Order parameter targets per environment type are taken from the first occurrence
+        of each env type recorded in ``atom_constraints``.
+
     Example environments for Li-P-S glass:
         - PS4_isolated: Tetrahedral PS₄³⁻ (P surrounded by 4 S)
-        - P2S7_bridge: Bridging P in P₂S₇⁴⁻ 
+        - P2S7_bridge: Bridging P in P₂S₇⁴⁻
         - PS3_terminal: Terminal PS₃⁻ (3-coordinated P)
-    
+
     Args:
         model: XRD model for computing spectra
         base_state: Initial SimState
@@ -228,6 +235,17 @@ class EnvironmentConstrainedOptimizer(cooper.ConstrainedMinimizationProblem):
         warmup_steps: Steps before applying full constraint strength
     """
     
+    # Maps the lps_generator label strings (used in global_constraints fractions)
+    # to the short env_type keys used in atom_constraints entries.
+    _LABEL_TO_ENV: Dict[str, str] = {
+        'PS4^3-':              'P4',
+        'P2S7^4- (dimer)':    'Pa',
+        'P2S6^4- (dumbbell)': 'P2',
+        'PS3^-':               'P3',
+    }
+    # Atomic number of phosphorus — used to locate P atoms in SimState.
+    _P_ATOMIC_NUMBER: int = 15
+
     def __init__(
         self,
         model: nn.Module,
@@ -243,7 +261,7 @@ class EnvironmentConstrainedOptimizer(cooper.ConstrainedMinimizationProblem):
         use_adaptive_penalty: bool = True,
     ):
         super().__init__()
-        
+
         self.model = model
         self.base_state = base_state
         self.target = target.F_q_target if hasattr(target, 'F_q_target') else target.S_Q_target
@@ -254,7 +272,7 @@ class EnvironmentConstrainedOptimizer(cooper.ConstrainedMinimizationProblem):
         self.device = torch.device(device)
         self.warmup_steps = warmup_steps
         self.use_adaptive_penalty = use_adaptive_penalty
-        
+
         # Default penalty config
         self.penalty_config = penalty_config or {
             'init': 10.0,
@@ -264,18 +282,18 @@ class EnvironmentConstrainedOptimizer(cooper.ConstrainedMinimizationProblem):
             'min_penalty': 1.0,
             'patience': 10,
         }
-        
-        # Load and parse constraints
+
+        # Load and parse constraints — auto-detects from_cif vs random_icp mode
         self.constraints_data = self._load_constraints(constraints_file)
-        self.env_constraints = self._parse_environment_constraints()
-        
+        self.env_constraints = self._parse_environment_constraints(base_state.atomic_numbers)
+
         # Initialize order parameter calculator
         cutoff = self.constraints_data.get('cutoff', 3.5)
         self.op_calc = TorchSimOrderParameters(cutoff=cutoff, device=str(device))
-        
+
         # Set up Cooper constraints grouped by environment
         self._setup_environment_constraints()
-        
+
         self._print_summary()
     
     def _load_constraints(self, path: Union[str, Path]) -> Dict:
@@ -283,63 +301,137 @@ class EnvironmentConstrainedOptimizer(cooper.ConstrainedMinimizationProblem):
         with open(path, 'r') as f:
             return json.load(f)
     
-    def _parse_environment_constraints(self) -> Dict[str, EnvironmentConstraint]:
+    def _parse_environment_constraints(
+        self,
+        atomic_numbers: torch.Tensor,
+    ) -> Dict[str, EnvironmentConstraint]:
         """
         Parse constraints into environment-grouped structure.
-        
-        Expected JSON format (v6):
-        {
-            "metadata": {...},
-            "cutoff": 3.5,
-            "atom_constraints": {
-                "0": {
-                    "environment": "P4",  # v6 key
-                    "order_parameters": {
-                        "cn": {"target": 4.0, "tolerance": 0.5},
-                        "tet": {"min": 0.7, "max": 1.0}
-                    }
-                },
-                ...
-            },
-            "environment_priorities": {
-                "P4": 2.0,
-                "Pa": 1.5,
-                "P3": 1.0
-            }
-        }
-        
-        Also supports v5 format with "environment_type" key (backward compatible).
+
+        Auto-detects the initialization mode:
+        - **from_cif**: JSON atom indices all map to P atoms in the structure →
+          use indices as-is (per-atom assignment from lps_generator).
+        - **random_icp**: Any JSON atom index maps to a non-P atom →
+          redistribute environment types across all P atoms by target fraction.
+
+        Supports v6 (``"environment"`` key) and v5 (``"environment_type"`` key).
         """
-        env_to_atoms = defaultdict(list)
-        env_to_ops = {}
-        
         atom_constraints = self.constraints_data.get('atom_constraints', {})
         priorities = self.constraints_data.get('environment_priorities', {})
-        
+
+        # --- detect mode ---------------------------------------------------
+        p_index_set = set(
+            int(i) for i, z in enumerate(atomic_numbers.tolist())
+            if int(z) == self._P_ATOMIC_NUMBER
+        )
+        json_indices = [int(k) for k in atom_constraints.keys()]
+        # random_icp: any JSON index is out-of-range or not a P atom
+        is_random = bool(json_indices) and any(
+            idx not in p_index_set for idx in json_indices
+        )
+
+        if is_random:
+            print("[ConstrainedOptimizer] random_icp mode detected — "
+                  "redistributing environments by target fraction.")
+            return self._parse_from_global_fractions(p_index_set, atom_constraints, priorities)
+
+        # --- from_cif: use JSON indices directly ---------------------------
+        print("[ConstrainedOptimizer] from_cif mode — using per-atom JSON assignments.")
+        env_to_atoms: Dict[str, list] = defaultdict(list)
+        env_to_ops: Dict[str, dict] = {}
+
         for atom_idx_str, constraint_data in atom_constraints.items():
             atom_idx = int(atom_idx_str)
-            
-            # v6 uses "environment", v5 used "environment_type"
-            # Support both for backward compatibility
-            env_type = constraint_data.get('environment') or constraint_data.get('environment_type', 'default')
-            
+            env_type = (constraint_data.get('environment')
+                        or constraint_data.get('environment_type', 'default'))
             env_to_atoms[env_type].append(atom_idx)
-            
-            # Store order parameters (assume same within environment)
             if env_type not in env_to_ops:
                 env_to_ops[env_type] = constraint_data.get('order_parameters', {})
-        
-        # Create EnvironmentConstraint objects
-        constraints = {}
-        for env_type, atom_list in env_to_atoms.items():
-            constraints[env_type] = EnvironmentConstraint(
+
+        return {
+            env_type: EnvironmentConstraint(
                 env_type=env_type,
                 atom_indices=atom_list,
                 order_params=env_to_ops.get(env_type, {}),
                 priority=priorities.get(env_type, 1.0),
             )
-        
-        return constraints
+            for env_type, atom_list in env_to_atoms.items()
+        }
+
+    def _parse_from_global_fractions(
+        self,
+        p_index_set: set,
+        atom_constraints: dict,
+        priorities: dict,
+    ) -> Dict[str, EnvironmentConstraint]:
+        """
+        Distribute P atoms across environment types by target fraction.
+
+        Reads ``global_constraints.p_environment_distribution.target_fractions``
+        from the JSON, maps label strings to env_type keys, then assigns
+        P atoms sequentially (sorted by index) in proportion to each fraction.
+        Order parameter targets are taken from the first occurrence of each
+        env_type in ``atom_constraints``.
+        """
+        # --- collect order_params template per env_type from JSON ----------
+        env_to_ops: Dict[str, dict] = {}
+        for constraint_data in atom_constraints.values():
+            env_type = (constraint_data.get('environment')
+                        or constraint_data.get('environment_type', 'default'))
+            if env_type not in env_to_ops:
+                env_to_ops[env_type] = constraint_data.get('order_parameters', {})
+
+        # --- read target fractions from global_constraints -----------------
+        global_fracs: Dict[str, float] = (
+            self.constraints_data
+            .get('global_constraints', {})
+            .get('p_environment_distribution', {})
+            .get('target_fractions', {})
+        )
+        # Map label → env_type, skip zero-fraction or unmapped entries
+        env_fracs: Dict[str, float] = {}
+        for label, frac in global_fracs.items():
+            env_type = self._LABEL_TO_ENV.get(label)
+            if env_type and frac > 0.0:
+                env_fracs[env_type] = frac / 100.0  # stored as percentages
+
+        if not env_fracs:
+            # No usable fractions — fall back to treating all P atoms as P4
+            print("[ConstrainedOptimizer] Warning: no target fractions found; "
+                  "assigning all P atoms to P4 environment.")
+            env_fracs = {'P4': 1.0}
+
+        # --- distribute P atoms by fraction --------------------------------
+        p_indices = sorted(p_index_set)
+        n_p = len(p_indices)
+        total_frac = sum(env_fracs.values())
+        env_to_atoms: Dict[str, list] = {}
+        start = 0
+        items = list(env_fracs.items())
+        for i, (env_type, frac) in enumerate(items):
+            if i == len(items) - 1:
+                # Last environment gets all remaining atoms (avoids rounding gaps)
+                count = n_p - start
+            else:
+                count = round(n_p * frac / total_frac)
+            env_to_atoms[env_type] = p_indices[start: start + count]
+            start += count
+
+        print(f"[ConstrainedOptimizer] P atom assignment ({n_p} total):")
+        for env_type, indices in env_to_atoms.items():
+            print(f"  {env_type}: {len(indices)} atoms "
+                  f"({100*len(indices)/n_p:.1f}%)")
+
+        return {
+            env_type: EnvironmentConstraint(
+                env_type=env_type,
+                atom_indices=atom_list,
+                order_params=env_to_ops.get(env_type, {}),
+                priority=priorities.get(env_type, 1.0),
+            )
+            for env_type, atom_list in env_to_atoms.items()
+            if atom_list  # skip empty groups
+        }
     
     def _setup_environment_constraints(self):
         """

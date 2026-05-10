@@ -1,0 +1,20 @@
+# 70Li2S-30P2S5 Glass — Li-inclusive, small supercell
+# Supercell: 4×2×2 of Li7P3S11 (near-cubic ~20 Å), Li retained
+# Atoms: 112Li + 48P + 176S = 336  |  MIC cutoff after density scaling: ~9.9 Å
+
+root_dir: ${oc.env:PROJECT_ROOT,./}/data
+
+init: from_cif
+cif_path: ${structure.root_dir}/crystal-structures/glass_70Li2S_small_withLi.cif
+
+target_density: 1.85
+
+species: [Li, P, S]
+stoichiometry: [112, 48, 176]
+
+central_element: P
+neighbor_elements: [P, S]
+order_param_cutoff: 5.5
+order_params: [tet, cn, q4]
+
+box_length: 20.0

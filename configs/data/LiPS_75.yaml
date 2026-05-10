@@ -1,0 +1,51 @@
+# 75Li2S-25P2S5 Glass Data Configuration
+# X-ray PDF data — Li3PS4 is exactly 75Li2S-25P2S5 stoichiometry
+
+root_dir: ${oc.env:PROJECT_ROOT,./}/data
+
+scattering_type: xray
+
+data:
+  s_of_q_path: ${data.root_dir}/xrd_measurements/Li3PS4/S_of_Q.csv
+  g_of_r_path: ${data.root_dir}/xrd_measurements/Li3PS4/g_of_r.csv
+  t_of_r_path: null
+  input_is_F_Q: false
+  stride_q: 4
+  stride_r: 1
+
+q_min: 0.5
+q_max: 17.5
+
+r_min: 0.01
+r_max: 50.0
+n_r_bins: 500
+
+kernel_width: 0.03
+# Number density for 75% composition (P+S only, noLi model): 0.0304; with Li: 0.0503
+number_density: 0.0304
+
+neutron_scattering_lengths:
+  Li: -1.90
+  P: 5.13
+  S: 2.847
+
+xray_form_factor_params:
+  Li:
+    a: [1.1282, 0.7508, 0.6175, 0.4653]
+    b: [3.9546, 1.0524, 85.3905, 168.261]
+    c: [0.0377]
+  P:
+    a: [6.4345, 4.1791, 1.78, 1.4908]
+    b: [1.9067, 27.157, 0.526, 68.1645]
+    c: [1.1149]
+  S:
+    a: [6.9053, 5.2034, 1.4379, 1.5863]
+    b: [1.4679, 22.2151, 0.2536, 56.172]
+    c: [0.8669]
+
+central: 'P'
+neighbour: 'S'
+cutoff: 5.5
+
+# Updated by generate_lips_structures.sh
+json_path: ${data.root_dir}/json/glass_75Li2S_noLi_constraints.json

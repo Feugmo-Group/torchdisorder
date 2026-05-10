@@ -23,7 +23,7 @@ data:
   
   # Data subsampling - IMPORTANT for large datasets
   # S_of_Q.csv has 7725 bins - stride_q=4 gives ~1931 bins (much faster!)
-  stride_q: 16
+  stride_q: 4
   stride_r: 1
 
 # =============================================================================
@@ -31,14 +31,14 @@ data:
 # =============================================================================
 # Filter experimental S(Q)/F(Q) data to this range
 q_min: 0.5
-q_max: 20
+q_max: 17.5
 
 # =============================================================================
 # R-space Range (Å)
 # =============================================================================
 # Used for auto-generating r_bins or filtering loaded data
 r_min: 0.01
-r_max: 20.0
+r_max: 50.0
 n_r_bins: 500
 
 # =============================================================================
@@ -82,4 +82,4 @@ cutoff: 5.5
 # =============================================================================
 # Constraints
 # =============================================================================
-json_path: ${data.root_dir}/json/glass_75Li2S_constraints.json
+json_path: ${data.root_dir}/json/glass_67Li2S_small_constraints.json

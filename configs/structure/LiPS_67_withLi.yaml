@@ -1,0 +1,20 @@
+# 67Li2S-33P2S5 Glass — Li-inclusive structure
+# Supercell: 5×8×5 of Li7P3S11, Li retained + non-overlap constraints
+
+root_dir: ${oc.env:PROJECT_ROOT,./}/data
+
+init: from_cif
+cif_path: ${structure.root_dir}/crystal-structures/glass_67Li2S_withLi.cif
+
+target_density: 1.85
+
+species: [Li, P, S]
+stoichiometry: [2800, 1200, 3624]
+
+central_element: P
+neighbor_elements: [P, S]
+order_param_cutoff: 5.5
+order_params: [tet, cn, q4]
+
+# Non-cubic box: ~30.94 × 101.02 × 63.37 Å
+box_length: 58.3

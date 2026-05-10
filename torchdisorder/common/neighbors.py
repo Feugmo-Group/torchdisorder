@@ -706,7 +706,6 @@ def strict_nl(
     return mapping, mapping_batch, shifts_idx
 
 
-@torch.jit.script
 def torch_nl_n2(
     cutoff: float,
     positions: torch.Tensor,
@@ -760,7 +759,6 @@ def torch_nl_n2(
     return mapping, mapping_batch, shifts_idx
 
 
-@torch.jit.script
 def torch_nl_linked_cell(
     cutoff: float,
     positions: torch.Tensor,

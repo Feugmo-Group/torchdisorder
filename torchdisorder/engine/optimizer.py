@@ -21,7 +21,14 @@ from ase.md.velocitydistribution import MaxwellBoltzmannDistribution
 from ase.md.langevin import Langevin
 from ase import units
 from ase.io import write
-from mace.calculators.foundations_models import mace_mp
+# mace is only needed for the legacy perform_melt_quench helper; import lazily
+# so that the torchvision/torch version mismatch does not block module load.
+try:
+    from mace.calculators.foundations_models import mace_mp
+    _MACE_AVAILABLE = True
+except Exception:
+    mace_mp = None  # type: ignore
+    _MACE_AVAILABLE = False
 
 from torchdisorder.model.loss import AugLagLoss
 from torchdisorder.common.target_rdf import TargetRDFData
@@ -730,6 +737,12 @@ def perform_melt_quench(
        write(f'{save_prefix}_pre_melt_{i}.xyz', atoms)
 
 
+       if not _MACE_AVAILABLE:
+           raise RuntimeError(
+               "mace-torch is not importable (likely a torchvision/torch version mismatch). "
+               "perform_melt_quench requires mace. "
+               "Fix: conda run -n torchdisorder pip install --upgrade torchvision"
+           )
        # Create ASE-compatible MACE calculator
        ase_calc = mace_mp(
            model="small",

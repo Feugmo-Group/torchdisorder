@@ -38,7 +38,9 @@ import warnings
 from typing import List, Dict, Optional, Tuple
 
 import torch_sim as ts
-from torch_sim.neighbors import torch_nl_linked_cell, torch_nl_n2, torchsim_nl
+from torch_sim.neighbors import torch_nl_linked_cell, torch_nl_n2
+# torchsim_nl was added in torch-sim 0.5.x; torch_nl_n2 is the equivalent in 0.3.x
+torchsim_nl = torch_nl_n2
 
 # =============================================================================
 # Check for WARP availability
@@ -173,16 +175,22 @@ class PyTorchOrderParameters(nn.Module):
         # Get neighbor list
         positions = state.positions
         cell = state.cell
-        pbc = state.pbc if state.pbc is not None else torch.tensor([True, True, True], device=self.device)
-        
+        _raw_pbc = state.pbc if state.pbc is not None else True
+        # torch_nl_n2 (0.3.x) requires pbc as a bool Tensor, not a Python bool
+        if not isinstance(_raw_pbc, torch.Tensor):
+            pbc = torch.tensor([_raw_pbc] * 3 if not hasattr(_raw_pbc, '__len__') else list(_raw_pbc),
+                               dtype=torch.bool, device=self.device)
+        else:
+            pbc = _raw_pbc.to(device=self.device)
+
         if state.system_idx is None:
             system_idx = torch.zeros(len(positions), dtype=torch.long, device=self.device)
         else:
             system_idx = state.system_idx
-        
+
         # Ensure cell is 3D for torchsim_nl (batch dimension)
         cell_for_nl = cell.unsqueeze(0) if cell.ndim == 2 else cell
-        
+
         # Compute neighbors - only use mapping, ignore shifts (may not be shift vectors)
         mapping = torchsim_nl(
             positions=positions,
@@ -843,16 +851,21 @@ if WARP_AVAILABLE:
             
             positions = state.positions
             cell = state.cell
-            pbc = state.pbc if state.pbc is not None else torch.tensor([True, True, True], device=self.device)
-            
+            _raw_pbc = state.pbc if state.pbc is not None else True
+            if not isinstance(_raw_pbc, torch.Tensor):
+                pbc = torch.tensor([_raw_pbc] * 3 if not hasattr(_raw_pbc, '__len__') else list(_raw_pbc),
+                                   dtype=torch.bool, device=self.device)
+            else:
+                pbc = _raw_pbc.to(device=self.device)
+
             if state.system_idx is None:
                 system_idx = torch.zeros(len(positions), dtype=torch.long, device=self.device)
             else:
                 system_idx = state.system_idx
-            
+
             # Ensure cell is 3D for torchsim_nl
             cell_for_nl = cell.unsqueeze(0) if cell.ndim == 2 else cell
-            
+
             # Only use mapping from torchsim_nl (ignore shifts - may not be shift vectors)
             mapping = torchsim_nl(
                 positions=positions,

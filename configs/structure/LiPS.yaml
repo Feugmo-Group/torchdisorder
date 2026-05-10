@@ -7,7 +7,7 @@ root_dir: ${oc.env:PROJECT_ROOT,./}/data
 init: from_cif
 
 # CIF file path
-cif_path: ${structure.root_dir}/crystal-structures/glass_75Li2S.cif
+cif_path: ${structure.root_dir}/crystal-structures/glass_67Li2S_small.cif
 
 # Target density (g/cm³)
 target_density: 1.85
@@ -23,4 +23,4 @@ order_param_cutoff: 5.5
 order_params: [tet, cn, q4]
 
 # Random initialization settings (if init=random_icp)
-box_length: 110
+box_length: 47.5
