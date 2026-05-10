@@ -1,4 +1,10 @@
 {
+  "overlap_repulsion": {
+    "enabled": true,
+    "r_min": 1.5,
+    "weight": 1.0,
+    "description": "Quadratic penalty for any atom pair closer than r_min (Angstrom). Prevents atomic overlaps without regenerating structures."
+  },
   "cutoff": 3.5,
   "element_filter": [
     15,

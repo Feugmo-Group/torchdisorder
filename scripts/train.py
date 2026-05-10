@@ -1545,21 +1545,43 @@ def main(cfg: DictConfig) -> None:
             print(f"    Min distances: {_min_d}")
 
     # ── Global overlap repulsion (all atom pairs) ─────────────────────────────
+    # ── Global overlap repulsion ───────────────────────────────────────────────
+    # Settings are read from the JSON file first (overlap_repulsion block),
+    # then fall back to config.yaml (constraints.overlap_repulsion).
     overlap_repulsion_fn = None
-    _orep = OmegaConf.select(cfg, 'constraints.overlap_repulsion', default=None)
-    if _orep is not None and OmegaConf.select(cfg, 'constraints.overlap_repulsion.enabled', default=True):
-        _r_min      = float(OmegaConf.select(cfg, 'constraints.overlap_repulsion.r_min',       default=1.5))
-        _orep_w     = float(OmegaConf.select(cfg, 'constraints.overlap_repulsion.weight',      default=1.0))
-        _orep_chunk = OmegaConf.select(cfg, 'constraints.overlap_repulsion.chunk_size', default=None)
+    _orep_json = {}
+    if json_path and Path(json_path).exists():
+        with open(json_path, 'r') as _f:
+            _orep_json = json.load(_f).get('overlap_repulsion', {})
+
+    # JSON takes priority; config.yaml fills in missing keys
+    _orep_enabled = _orep_json.get(
+        'enabled',
+        bool(OmegaConf.select(cfg, 'constraints.overlap_repulsion.enabled', default=True))
+    )
+    if _orep_enabled:
+        _r_min = float(_orep_json.get(
+            'r_min',
+            OmegaConf.select(cfg, 'constraints.overlap_repulsion.r_min', default=1.5)
+        ))
+        _orep_w = float(_orep_json.get(
+            'weight',
+            OmegaConf.select(cfg, 'constraints.overlap_repulsion.weight', default=1.0)
+        ))
+        _orep_chunk = _orep_json.get(
+            'chunk_size',
+            OmegaConf.select(cfg, 'constraints.overlap_repulsion.chunk_size', default=None)
+        )
         if _orep_chunk is not None:
             _orep_chunk = int(_orep_chunk)
+        _orep_src = 'JSON' if _orep_json else 'config'
         overlap_repulsion_fn = OverlapRepulsionLoss(
             r_min=_r_min,
             weight=_orep_w,
             chunk_size=_orep_chunk,
             device=str(device),
         ).to(device)
-        print(f"\n  Overlap repulsion penalty enabled:")
+        print(f"\n  Overlap repulsion penalty enabled (source: {_orep_src}):")
         print(f"    r_min={_r_min} Å, weight={_orep_w}")
 
     print(f"{'=' * 70}\n")
