@@ -1556,7 +1556,7 @@ def main(cfg: DictConfig) -> None:
 
     _r_min = float(_orep_json.get(
         'r_min',
-        OmegaConf.select(cfg, 'constraints.overlap_repulsion.r_min', default=1.5)
+        OmegaConf.select(cfg, 'constraints.overlap_repulsion.r_min', default=1.0)
     ))
     _orep_w = float(_orep_json.get(
         'weight',
