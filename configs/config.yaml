@@ -71,6 +71,11 @@ stability:
 constraints:
   enabled: true
   use_types: all  # 'all' or [tet, cn, q4, ...]
+  overlap_repulsion:
+    enabled: true
+    r_min: 1.5       # Minimum allowed interatomic distance (Angstrom)
+    weight: 1.0      # Penalty weight relative to chi2 loss
+    chunk_size: null # null = auto-size from free GPU memory
   # Set regenerate_json: true to re-run lps_generator before loading constraints.
   # Requires constraints.generator to be configured (see below).
   regenerate_json: false

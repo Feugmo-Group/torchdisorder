@@ -178,6 +178,81 @@ class LiRepulsionLoss:
         return self.weight * penalty.squeeze()
 
 
+class OverlapRepulsionLoss:
+    """
+    Global pairwise soft-sphere repulsion for all atoms.
+
+    Penalizes any pair of atoms closer than r_min with a quadratic penalty,
+    preventing atomic overlaps regardless of species. Processes atoms in
+    chunks to stay within GPU memory limits.
+    """
+
+    def __init__(
+        self,
+        r_min: float = 1.5,
+        weight: float = 1.0,
+        chunk_size: Optional[int] = None,
+        device: str = 'cpu',
+    ):
+        self.r_min = r_min
+        self.weight = weight
+        self._chunk_size = chunk_size  # None → auto-size at first call
+        self.device = device
+
+    def to(self, device):
+        self.device = device
+        return self
+
+    def _auto_chunk(self, n: int, dev: torch.device) -> int:
+        if dev.type == 'cuda':
+            try:
+                free_bytes, _ = torch.cuda.mem_get_info(dev)
+                # diff + frac + mip: ~12 floats per (chunk_row, atom) element
+                bytes_per_row = n * 12 * 4
+                return max(1, int(free_bytes * 0.15 / bytes_per_row))
+            except Exception:
+                pass
+        return 500
+
+    def __call__(self, positions: torch.Tensor, cell: torch.Tensor) -> torch.Tensor:
+        """
+        Args:
+            positions: (N, 3) Cartesian coordinates
+            cell:      (3, 3) lattice vectors in Angstrom
+
+        Returns:
+            Scalar penalty (differentiable w.r.t. positions).
+        """
+        n = positions.shape[0]
+        dev = positions.device
+        chunk_size = self._chunk_size if self._chunk_size is not None else self._auto_chunk(n, dev)
+
+        cell_f = cell.float()
+        cell_inv = torch.linalg.inv(cell_f)
+        penalty = torch.zeros((), device=dev, dtype=positions.dtype)
+
+        for i0 in range(0, n, chunk_size):
+            i1 = min(i0 + chunk_size, n)
+            chunk = positions[i0:i1]                          # (C, 3)
+
+            diff = positions[None, :, :] - chunk[:, None, :]  # (C, N, 3)
+            frac = torch.einsum('ijk,kl->ijl', diff.float(), cell_inv)
+            frac = frac - torch.round(frac)
+            mip  = torch.einsum('ijk,kl->ijl', frac, cell_f).to(diff.dtype)
+            dist = torch.sqrt((mip * mip).sum(dim=-1) + 1e-10)  # (C, N)
+
+            # Upper triangle only: column index j > global row index i
+            col = torch.arange(n, device=dev)
+            row = torch.arange(i0, i1, device=dev).unsqueeze(1)
+            upper = col.unsqueeze(0) > row          # (C, N) bool
+
+            d = dist[upper]
+            viol = torch.clamp(self.r_min - d, min=0.0)
+            penalty = penalty + (viol * viol).sum()
+
+        return self.weight * penalty
+
+
 def to_dict(obj):
     """Safely convert OmegaConf or dict to plain dict."""
     if obj is None:
@@ -1469,6 +1544,24 @@ def main(cfg: DictConfig) -> None:
             print(f"    {len(_li_idx)} Li atoms, weight={_li_weight}")
             print(f"    Min distances: {_min_d}")
 
+    # ── Global overlap repulsion (all atom pairs) ─────────────────────────────
+    overlap_repulsion_fn = None
+    _orep = OmegaConf.select(cfg, 'constraints.overlap_repulsion', default=None)
+    if _orep is not None and OmegaConf.select(cfg, 'constraints.overlap_repulsion.enabled', default=True):
+        _r_min      = float(OmegaConf.select(cfg, 'constraints.overlap_repulsion.r_min',       default=1.5))
+        _orep_w     = float(OmegaConf.select(cfg, 'constraints.overlap_repulsion.weight',      default=1.0))
+        _orep_chunk = OmegaConf.select(cfg, 'constraints.overlap_repulsion.chunk_size', default=None)
+        if _orep_chunk is not None:
+            _orep_chunk = int(_orep_chunk)
+        overlap_repulsion_fn = OverlapRepulsionLoss(
+            r_min=_r_min,
+            weight=_orep_w,
+            chunk_size=_orep_chunk,
+            device=str(device),
+        ).to(device)
+        print(f"\n  Overlap repulsion penalty enabled:")
+        print(f"    r_min={_r_min} Å, weight={_orep_w}")
+
     print(f"{'=' * 70}\n")
 
     # ==========================================
@@ -1717,6 +1810,17 @@ def main(cfg: DictConfig) -> None:
                         primal_optimizer.step()
                     loss = loss.detach() + li_pen.detach()
 
+                # Overlap repulsion: separate gradient step after Cooper
+                if overlap_repulsion_fn is not None:
+                    primal_optimizer.zero_grad()
+                    _cell = base_sim_state.cell
+                    _cell_mat = _cell[0] if _cell.dim() == 3 else _cell
+                    ov_pen = overlap_repulsion_fn(base_sim_state.positions, _cell_mat)
+                    if ov_pen.item() > 0:
+                        ov_pen.backward()
+                        primal_optimizer.step()
+                    loss = loss.detach() + ov_pen.detach()
+
             else:
                 # Unconstrained optimization
                 primal_optimizer.zero_grad()
@@ -1725,12 +1829,18 @@ def main(cfg: DictConfig) -> None:
                 loss = loss_dict['total_loss']
                 chi2_loss = loss_dict.get('chi2_loss', loss)
 
-                # Li repulsion folds into the same backward pass
+                # Li and overlap repulsions fold into the same backward pass
                 if li_repulsion_fn is not None:
                     _cell = base_sim_state.cell
                     _cell_mat = _cell[0] if _cell.dim() == 3 else _cell
                     li_pen = li_repulsion_fn(base_sim_state.positions, _cell_mat)
                     loss = loss + li_pen
+
+                if overlap_repulsion_fn is not None:
+                    _cell = base_sim_state.cell
+                    _cell_mat = _cell[0] if _cell.dim() == 3 else _cell
+                    ov_pen = overlap_repulsion_fn(base_sim_state.positions, _cell_mat)
+                    loss = loss + ov_pen
 
                 loss.backward()
 
