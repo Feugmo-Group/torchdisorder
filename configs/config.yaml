@@ -93,6 +93,16 @@ order_params:
   max_neighbors: 4
 
 # =============================================================================
+# Scattering / KDE
+# =============================================================================
+scattering:
+  # Distances processed per KDE chunk in get_partial_rdf.
+  # null = auto-sized from free GPU memory (recommended for most cases).
+  # Set an integer (e.g. 20000) if auto-sizing is too aggressive or too
+  # conservative for your GPU, or when running on CPU.
+  chunk_size: null
+
+# =============================================================================
 # Output
 # =============================================================================
 checkpoint_interval: 200

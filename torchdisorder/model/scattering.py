@@ -136,6 +136,25 @@ def get_cell_volume(cell: torch.Tensor) -> torch.Tensor:
 # Partial RDF via Gaussian KDE
 # =============================================================================
 
+def _auto_chunk_size(n_bins: int, device: torch.device, safety: float = 0.4) -> int:
+    """
+    Estimate the largest safe chunk of distances that fits in GPU memory.
+
+    Each row of the Gaussian matrix is (n_bins,) float32 = n_bins * 4 bytes.
+    We use `safety` fraction of free memory to leave room for gradients and
+    other tensors already allocated.  Falls back to 10_000 on CPU or when
+    memory info is unavailable.
+    """
+    if device.type == "cuda":
+        try:
+            free_bytes, _ = torch.cuda.mem_get_info(device)
+            bytes_per_row = n_bins * 4  # float32
+            return max(1, int(free_bytes * safety / bytes_per_row))
+        except Exception:
+            pass
+    return 10_000
+
+
 def get_partial_rdf(
     points_1: torch.Tensor,
     points_2: torch.Tensor,
@@ -143,16 +162,25 @@ def get_partial_rdf(
     bins: torch.Tensor,
     *,
     kernel_width: float,
+    chunk_size: Optional[int] = None,
 ) -> torch.Tensor:
     """
     Compute partial RDF g_αβ(r) between two species via Gaussian KDE.
 
+    The KDE matrix (n_distances × n_bins) is always computed in chunks to
+    avoid OOM on large structures.  The chunk size is chosen automatically
+    from free GPU memory unless overridden by `chunk_size`.
+
     Args:
-        points_1: (M, 3) positions of species α
-        points_2: (N, 3) positions of species β
-        cell: (3, 3) lattice vectors
-        bins: (n_r,) r values to evaluate on
-        kernel_width: Gaussian bandwidth
+        points_1:   (M, 3) positions of species α
+        points_2:   (N, 3) positions of species β
+        cell:       (3, 3) lattice vectors
+        bins:       (n_r,) r grid
+        kernel_width: Gaussian bandwidth in Å
+        chunk_size: rows of the KDE matrix to process at once.
+                    None (default) → auto-sized from free GPU memory.
+                    Set explicitly if auto-sizing is too conservative or too
+                    aggressive for your GPU.
 
     Returns:
         (n_r,) partial RDF
@@ -162,25 +190,25 @@ def get_partial_rdf(
     max_bin = torch.max(bins) + 3 * kernel_width
     in_window = obs[(min_bin < obs) & (obs < max_bin)]
 
-    try:
-        gauss = torch.exp(
-            -0.5 * ((bins[None, :] - in_window[:, None]) / kernel_width) ** 2
-        ) / (kernel_width * (2 * torch.pi) ** 0.5)
-        summed = gauss.sum(dim=0)
-    except torch.cuda.OutOfMemoryError:
-        # Process in fixed-size chunks on the same device to avoid OOM
-        chunk_size = 50_000
-        summed = torch.zeros_like(bins)
-        for i in range(0, in_window.shape[0], chunk_size):
-            chunk = in_window[i : i + chunk_size]
-            g = torch.exp(
-                -0.5 * ((bins[None, :] - chunk[:, None]) / kernel_width) ** 2
-            ) / (kernel_width * (2 * torch.pi) ** 0.5)
-            summed = summed + g.sum(dim=0)
+    n_pairs = obs.numel()
+    if n_pairs == 0:
+        return torch.zeros_like(bins)
+
+    # Determine chunk size once, before the loop
+    if chunk_size is None:
+        chunk_size = _auto_chunk_size(bins.numel(), bins.device)
+
+    summed = torch.zeros_like(bins)
+    norm = kernel_width * (2 * torch.pi) ** 0.5
+    for i in range(0, in_window.shape[0], chunk_size):
+        chunk = in_window[i : i + chunk_size]
+        g = torch.exp(
+            -0.5 * ((bins[None, :] - chunk[:, None]) / kernel_width) ** 2
+        ) / norm
+        summed = summed + g.sum(dim=0)
 
     vol = get_cell_volume(cell)
-    n_pairs = obs.numel()
-    return (vol / n_pairs) * summed / (4 * torch.pi * bins ** 2) if n_pairs > 0 else torch.zeros_like(bins)
+    return (vol / n_pairs) * summed / (4 * torch.pi * bins ** 2)
 
 
 # =============================================================================
@@ -195,6 +223,7 @@ def compute_neutron_g_r(
     *,
     kernel_width: float,
     scattering_lengths: Dict[str, float],
+    chunk_size: Optional[int] = None,
 ) -> torch.Tensor:
     """
     Compute neutron-weighted total pair distribution function g(r).
@@ -229,8 +258,8 @@ def compute_neutron_g_r(
         
         # Weight: c_α c_β b_α b_β / <b>² (with symmetry factor 2 for α≠β)
         coeff = f1 * f2 * b1 * b2 * 0.01 / b_mean_sq * (2 if e1 != e2 else 1)
-        g += coeff * get_partial_rdf(pos1, pos2, cell, r_bins, kernel_width=kernel_width)
-    
+        g += coeff * get_partial_rdf(pos1, pos2, cell, r_bins, kernel_width=kernel_width, chunk_size=chunk_size)
+
     return g
 
 
@@ -242,6 +271,7 @@ def compute_neutron_G_r(
     *,
     kernel_width: float,
     scattering_lengths: Dict[str, float],
+    chunk_size: Optional[int] = None,
 ) -> torch.Tensor:
     """
     Compute reduced pair distribution function G(r) = 4πρr[g(r) - 1].
@@ -272,7 +302,7 @@ def compute_neutron_G_r(
         
         # Coefficient includes the -1 from [g(r) - 1]
         coeff = f1 * f2 * b1 * b2 * 0.01 * (2 if e1 != e2 else 1)
-        G += coeff * (get_partial_rdf(pos1, pos2, cell, r_bins, kernel_width=kernel_width) - 1)
+        G += coeff * (get_partial_rdf(pos1, pos2, cell, r_bins, kernel_width=kernel_width, chunk_size=chunk_size) - 1)
     
     return G
 
@@ -435,6 +465,7 @@ def compute_xray_S_Q(
     *,
     kernel_width: float,
     form_factor_params: Dict[str, Dict[str, List[float]]],
+    chunk_size: Optional[int] = None,
 ) -> torch.Tensor:
     """
     Compute X-ray structure factor S(Q) using Faber-Ziman convention.
@@ -498,7 +529,7 @@ def compute_xray_S_Q(
         weight = multiplicity * c1 * c2 * f1 * f2 / f_mean_sq
         
         # Compute partial RDF g_αβ(r)
-        g_partial = get_partial_rdf(pos1, pos2, cell, r_bins, kernel_width=kernel_width)
+        g_partial = get_partial_rdf(pos1, pos2, cell, r_bins, kernel_width=kernel_width, chunk_size=chunk_size)
         
         # Integrate: ρ ∫ 4πr² [g_αβ(r) - 1] sinc(Qr) dr
         integrand = 4 * torch.pi * r_bins[:, None] ** 2 * (g_partial[:, None] - 1) * sinc_qr
@@ -520,13 +551,17 @@ class ScatteringConfig:
     neutron_scattering_lengths: Dict[str, float]
     xray_form_factor_params: Dict[str, Dict[str, List[float]]]
     kernel_width: float
-    
+    # Number of distances to process per KDE chunk.  None = auto-size from
+    # free GPU memory (recommended).  Set explicitly to override auto-sizing.
+    chunk_size: Optional[int] = None
+
     @classmethod
     def from_dict(cls, cfg: Dict[str, Any]) -> "ScatteringConfig":
         return cls(
             neutron_scattering_lengths=cfg["neutron_scattering_lengths"],
             xray_form_factor_params=cfg["xray_form_factor_params"],
             kernel_width=cfg["kernel_width"],
+            chunk_size=cfg.get("chunk_size", None),
         )
 
 
@@ -557,6 +592,7 @@ class UnifiedSpectrumCalculator(nn.Module):
         self.scattering_lengths = config.neutron_scattering_lengths
         self.form_factor_params = config.xray_form_factor_params
         self.kernel_width = config.kernel_width
+        self.chunk_size = config.chunk_size  # None → auto-sized per call
     
     @classmethod
     def from_config_dict(cls, cfg: Dict[str, Any]) -> "UnifiedSpectrumCalculator":
@@ -613,6 +649,7 @@ class UnifiedSpectrumCalculator(nn.Module):
                 symbols, positions, cell, r_bins,
                 kernel_width=self.kernel_width,
                 scattering_lengths=self.scattering_lengths,
+                chunk_size=self.chunk_size,
             )
         
         if output == 'G_r':
@@ -620,6 +657,7 @@ class UnifiedSpectrumCalculator(nn.Module):
                 symbols, positions, cell, r_bins,
                 kernel_width=self.kernel_width,
                 scattering_lengths=self.scattering_lengths,
+                chunk_size=self.chunk_size,
             )
         
         if output == 'T_r':
@@ -627,6 +665,7 @@ class UnifiedSpectrumCalculator(nn.Module):
                 symbols, positions, cell, r_bins,
                 kernel_width=self.kernel_width,
                 scattering_lengths=self.scattering_lengths,
+                chunk_size=self.chunk_size,
             )
             return compute_neutron_T_r(
                 G_r, r_bins, symbols, cell,
@@ -673,6 +712,7 @@ class UnifiedSpectrumCalculator(nn.Module):
                 symbols, positions, cell, q_bins, r_bins,
                 kernel_width=self.kernel_width,
                 form_factor_params=self.form_factor_params,
+                chunk_size=self.chunk_size,
             )
         
         if output == 'F_Q':
@@ -705,6 +745,7 @@ class UnifiedSpectrumCalculator(nn.Module):
                 symbols, positions, cell, r_bins,
                 kernel_width=self.kernel_width,
                 scattering_lengths=self.scattering_lengths,
+                chunk_size=self.chunk_size,
             )
             results['G_r'] = G_r
             
@@ -763,6 +804,7 @@ class UnifiedSpectrumCalculator(nn.Module):
                 symbols, positions, cell, r_bins,
                 kernel_width=self.kernel_width,
                 scattering_lengths=self.scattering_lengths,
+                chunk_size=self.chunk_size,
             )
             results['S_Q_neutron'] = compute_neutron_S_Q(G_r_neutron, r_bins, q_bins, symbols, cell)
         

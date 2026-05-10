@@ -46,6 +46,7 @@ class XRDModelConfig:
     neutron_scattering_lengths: Dict[str, float]
     xray_form_factor_params: Dict[str, Dict[str, List[float]]]
     kernel_width: float = 0.1
+    chunk_size: Optional[int] = None  # None → auto-sized from GPU memory
     
     # Output control
     compute_neutron: bool = True
@@ -63,6 +64,7 @@ class XRDModelConfig:
             neutron_scattering_lengths=d.get('neutron_scattering_lengths', {}),
             xray_form_factor_params=d.get('xray_form_factor_params', {}),
             kernel_width=d.get('kernel_width', 0.1),
+            chunk_size=d.get('chunk_size', None),
             compute_neutron=d.get('compute_neutron', True),
             compute_xray=d.get('compute_xray', False),
             scattering_type=d.get('scattering_type', 'neutron'),
@@ -131,6 +133,7 @@ class XRDModel(nn.Module):
             neutron_scattering_lengths=self.config.neutron_scattering_lengths,
             xray_form_factor_params=self.config.xray_form_factor_params,
             kernel_width=self.config.kernel_width,
+            chunk_size=self.config.chunk_size,
         )
         self.calculator = UnifiedSpectrumCalculator(scatt_config)
         

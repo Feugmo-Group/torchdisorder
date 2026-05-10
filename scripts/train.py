@@ -1306,11 +1306,16 @@ def main(cfg: DictConfig) -> None:
         scattering_type = OmegaConf.select(cfg, 'scattering_type', default='neutron')
     print(f"  scattering_type: {scattering_type}")
     
+    chunk_size = OmegaConf.select(cfg, 'scattering.chunk_size', default=None)
+    if chunk_size is not None:
+        chunk_size = int(chunk_size)
+
     model_config = {
         'kernel_width': kernel_width,
         'neutron_scattering_lengths': neutron_lengths,
         'xray_form_factor_params': xray_params if xray_params else {},
         'scattering_type': scattering_type,
+        'chunk_size': chunk_size,
     }
     
     xrd_model = XRDModel(
