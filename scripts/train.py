@@ -1546,43 +1546,46 @@ def main(cfg: DictConfig) -> None:
 
     # ── Global overlap repulsion (all atom pairs) ─────────────────────────────
     # ── Global overlap repulsion ───────────────────────────────────────────────
-    # Settings are read from the JSON file first (overlap_repulsion block),
-    # then fall back to config.yaml (constraints.overlap_repulsion).
-    overlap_repulsion_fn = None
+    # Always active — independent of whether a JSON or constraints are present.
+    # Parameters come from JSON first (if available), then config.yaml, then
+    # hard-coded defaults. Only disabled by an explicit enabled=false.
     _orep_json = {}
     if json_path and Path(json_path).exists():
         with open(json_path, 'r') as _f:
             _orep_json = json.load(_f).get('overlap_repulsion', {})
 
-    # JSON takes priority; config.yaml fills in missing keys
+    _r_min = float(_orep_json.get(
+        'r_min',
+        OmegaConf.select(cfg, 'constraints.overlap_repulsion.r_min', default=1.5)
+    ))
+    _orep_w = float(_orep_json.get(
+        'weight',
+        OmegaConf.select(cfg, 'constraints.overlap_repulsion.weight', default=1.0)
+    ))
+    _orep_chunk = _orep_json.get(
+        'chunk_size',
+        OmegaConf.select(cfg, 'constraints.overlap_repulsion.chunk_size', default=None)
+    )
+    if _orep_chunk is not None:
+        _orep_chunk = int(_orep_chunk)
+    # Respect an explicit enabled=false, but default to True always
     _orep_enabled = _orep_json.get(
         'enabled',
-        bool(OmegaConf.select(cfg, 'constraints.overlap_repulsion.enabled', default=True))
+        OmegaConf.select(cfg, 'constraints.overlap_repulsion.enabled', default=True)
     )
+    _orep_src = 'JSON' if _orep_json else 'config/default'
     if _orep_enabled:
-        _r_min = float(_orep_json.get(
-            'r_min',
-            OmegaConf.select(cfg, 'constraints.overlap_repulsion.r_min', default=1.5)
-        ))
-        _orep_w = float(_orep_json.get(
-            'weight',
-            OmegaConf.select(cfg, 'constraints.overlap_repulsion.weight', default=1.0)
-        ))
-        _orep_chunk = _orep_json.get(
-            'chunk_size',
-            OmegaConf.select(cfg, 'constraints.overlap_repulsion.chunk_size', default=None)
-        )
-        if _orep_chunk is not None:
-            _orep_chunk = int(_orep_chunk)
-        _orep_src = 'JSON' if _orep_json else 'config'
         overlap_repulsion_fn = OverlapRepulsionLoss(
             r_min=_r_min,
             weight=_orep_w,
             chunk_size=_orep_chunk,
             device=str(device),
         ).to(device)
-        print(f"\n  Overlap repulsion penalty enabled (source: {_orep_src}):")
+        print(f"\n  Overlap repulsion: enabled (source: {_orep_src})")
         print(f"    r_min={_r_min} Å, weight={_orep_w}")
+    else:
+        overlap_repulsion_fn = None
+        print(f"\n  Overlap repulsion: DISABLED (source: {_orep_src})")
 
     print(f"{'=' * 70}\n")
 
