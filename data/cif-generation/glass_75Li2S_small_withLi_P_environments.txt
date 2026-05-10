@@ -1,0 +1,115 @@
+======================================================================
+P ENVIRONMENT SUMMARY FOR  
+======================================================================
+
+Total atoms: 366
+Total P atoms: 48
+Total anionic units: 26
+
+Environment Distribution:
+----------------------------------------------------------------------
+  PS4^3-                             :  84.62% (0 P atoms)
+  PS3^-                              :  11.54% (0 P atoms)
+  P2S7^4- (dimer)                    :   3.85% (0 P atoms)
+  P2S6^4- (dumbbell)                 :   0.00% (0 P atoms)
+
+======================================================================
+ORDER PARAMETER CONSTRAINTS BY ENVIRONMENT
+======================================================================
+
+
+P4 environments (22 atoms):
+----------------------------------------------------------------------
+  cn: target=4.00, weight=1.5
+      (P-S coordination number)
+  tet: target=0.85, range=[0.70, 1.00], weight=2.0
+      (Tetrahedral PS4^3-)
+  q4: target=0.60, range=[0.40, 0.80], weight=0.5
+      (Tetrahedral bond order)
+
+Pa environments (3 atoms):
+----------------------------------------------------------------------
+  cn: target=4.00, weight=1.0
+      (P coordination (3S + 1P))
+  tet: target=0.60, range=[0.40, 0.80], weight=1.5
+      (Distorted tetrahedral (bridging S))
+
+P3 environments (3 atoms):
+----------------------------------------------------------------------
+  cn: target=3.00, weight=1.5
+      (P-S coordination)
+  q2: target=0.50, range=[0.30, 0.70], weight=1.0
+      (Pyramidal symmetry)
+
+======================================================================
+DETAILED P SITE INFORMATION
+======================================================================
+
+
+P4 sites (22 atoms):
+----------------------------------------------------------------------
+  Index  144: PS4^3-                    CN=4 (0P + 4S) xyz=(10.743, 5.737, 3.365)
+      S neighbors: [192, 240, 282, 292]
+  Index  146: PS4^3-                    CN=4 (0P + 4S) xyz=(10.967, 6.608, 15.822)
+      S neighbors: [194, 242, 284, 294]
+  Index  147: PS4^3-                    CN=4 (0P + 4S) xyz=(10.711, 14.839, 3.720)
+      S neighbors: [195, 243, 285, 295]
+  Index  151: PS4^3-                    CN=4 (0P + 4S) xyz=(20.644, 6.789, 11.553)
+      S neighbors: [198, 253, 322, 347]
+  Index  155: PS4^3-                    CN=4 (0P + 4S) xyz=(22.695, 14.412, 16.024)
+      S neighbors: [202, 239, 291, 303]
+  Index  156: PS4^3-                    CN=4 (0P + 4S) xyz=(4.459, 6.327, 5.422)
+      S neighbors: [203, 246, 305, 349]
+  Index  159: PS4^3-                    CN=4 (0P + 4S) xyz=(4.689, 14.574, 5.123)
+      S neighbors: [205, 249, 308, 352]
+  Index  161: PS4^3-                    CN=4 (0P + 4S) xyz=(4.974, 14.124, 17.746)
+      S neighbors: [206, 251, 307, 351]
+  Index  165: PS4^3-                    CN=4 (0P + 4S) xyz=(16.918, 14.494, 5.440)
+      S neighbors: [209, 255, 314, 355]
+  Index  170: PS4^3-                    CN=4 (0P + 4S) xyz=(7.320, 1.957, 13.099)
+      S neighbors: [213, 260, 317, 338]
+  Index  173: PS4^3-                    CN=4 (0P + 4S) xyz=(7.562, 10.371, 12.673)
+      S neighbors: [216, 263, 319, 341]
+  Index  174: PS4^3-                    CN=4 (0P + 4S) xyz=(19.326, 1.391, 0.569)
+      S neighbors: [217, 264, 323, 345]
+  Index  175: PS4^3-                    CN=4 (0P + 4S) xyz=(19.309, 1.611, 6.962)
+      S neighbors: [218, 265, 321, 343]
+  Index  176: PS4^3-                    CN=4 (0P + 4S) xyz=(19.179, 1.930, 12.928)
+      S neighbors: [219, 266, 322, 344]
+  Index  177: PS4^3-                    CN=4 (0P + 4S) xyz=(19.758, 10.328, 0.573)
+      S neighbors: [220, 267, 326, 348]
+  Index  178: PS4^3-                    CN=4 (0P + 4S) xyz=(19.987, 8.917, 8.756)
+      S neighbors: [198, 299, 346, 347]
+  Index  179: PS4^3-                    CN=4 (0P + 4S) xyz=(18.820, 10.295, 12.595)
+      S neighbors: [221, 269, 325, 347]
+  Index  180: PS4^3-                    CN=4 (0P + 4S) xyz=(1.193, 2.155, 2.872)
+      S neighbors: [222, 276, 327, 356]
+  Index  181: PS4^3-                    CN=4 (0P + 4S) xyz=(0.896, 1.974, 8.387)
+      S neighbors: [223, 277, 328, 357]
+  Index  183: PS4^3-                    CN=4 (0P + 4S) xyz=(0.773, 10.534, 2.968)
+      S neighbors: [225, 279, 329, 359]
+  Index  184: PS4^3-                    CN=4 (0P + 4S) xyz=(1.173, 10.836, 8.449)
+      S neighbors: [226, 280, 330, 360]
+  Index  188: PS4^3-                    CN=4 (0P + 4S) xyz=(13.101, 2.272, 14.945)
+      S neighbors: [230, 272, 333, 363]
+
+Pa sites (3 atoms):
+----------------------------------------------------------------------
+  Index  152: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(16.026, 5.109, 12.866)
+      P neighbors: [163]
+      S neighbors: [199, 312, 354]
+  Index  158: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(8.025, 4.378, 11.235)
+      P neighbors: [186]
+      S neighbors: [247, 283, 317]
+  Index  182: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(3.415, 5.585, 11.626)
+      P neighbors: [172]
+      S neighbors: [247, 306, 350]
+
+P3 sites (3 atoms):
+----------------------------------------------------------------------
+  Index  150: PS3^-                     CN=3 (0P + 3S) xyz=(16.634, 7.864, 3.710)
+      S neighbors: [207, 214, 334]
+  Index  153: PS3^-                     CN=3 (0P + 3S) xyz=(22.973, 14.311, 3.286)
+      S neighbors: [237, 290, 301]
+  Index  187: PS3^-                     CN=3 (0P + 3S) xyz=(12.730, 2.788, 8.720)
+      S neighbors: [271, 332, 362]
