@@ -746,7 +746,7 @@ if WARP_AVAILABLE:
             wp_device = "cuda:0"
             
             wp_positions = wp.from_torch(positions.view(-1, 3).contiguous(), dtype=wp.vec3)
-            wp_neighbor_list = wp.from_torch(neighbor_list.contiguous(), dtype=wp.int32)
+            wp_neighbor_list = wp.from_torch(neighbor_list.int().contiguous(), dtype=wp.int32)
             wp_cell_shifts = wp.from_torch(cell_shifts.view(M, K, 3).contiguous(), dtype=wp.vec3)
             wp_valid_mask = wp.from_torch(valid_mask.int().contiguous(), dtype=wp.int32)
             
