@@ -1,0 +1,59 @@
+# Li-halide (Li₃MCl₆, M = Y/In/Sc) Data Configuration
+# Neutron diffraction — update data paths to match your experimental file
+
+root_dir: ${oc.env:PROJECT_ROOT,./}/data
+
+scattering_type: neutron
+
+data:
+  s_of_q_path: ${data.root_dir}/xrd_measurements/lihalide/S_of_Q.csv
+  g_of_r_path: ${data.root_dir}/xrd_measurements/lihalide/g_of_r.csv
+  t_of_r_path: null
+  input_is_F_Q: false
+  stride_q: 1
+  stride_r: 1
+
+q_min: 0.5
+q_max: 20.0
+
+r_min: 0.01
+r_max: 30.0
+n_r_bins: 500
+
+kernel_width: 0.03
+number_density: 0.0350   # Li3YCl6: ~2.55 g/cm³, formula unit 3Li+Y+6Cl = 10 atoms
+
+neutron_scattering_lengths:
+  Li:  -1.90
+  Y:    7.75
+  In:   4.065
+  Sc:  12.29
+  Cl:   9.577
+
+xray_form_factor_params:
+  Li:
+    a: [1.1282, 0.7508, 0.6175, 0.4653]
+    b: [3.9546, 1.0524, 85.3905, 168.261]
+    c: [0.0377]
+  Y:
+    a: [17.7760, 10.2946, 5.7260, 3.2657]
+    b: [0.1220, 1.6127, 14.9430, 209.473]
+    c: [1.1569]
+  In:
+    a: [19.1624, 18.5596, 4.2948, 2.0396]
+    b: [0.5476, 6.3776, 25.8499, 92.8029]
+    c: [4.9391]
+  Sc:
+    a: [9.1892, 7.3679, 1.6409, 1.4681]
+    b: [9.0213, 0.5729, 136.108, 51.3531]
+    c: [1.1469]
+  Cl:
+    a: [11.4604, 7.1964, 6.2556, 1.6455]
+    b: [0.0104, 1.1662, 18.5194, 47.7784]
+    c: [-9.5574]
+
+central: 'Y'    # override per run: data.central=In or data.central=Sc
+neighbour: 'Cl'
+cutoff: 5.5
+
+json_path: ${data.root_dir}/json/lihalide_Li3YCl6_constraints.json

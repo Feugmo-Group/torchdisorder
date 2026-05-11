@@ -1,0 +1,17 @@
+# Li₃InCl₆ halide glass structure
+root_dir: ${oc.env:PROJECT_ROOT,./}/data
+
+init: from_cif
+cif_path: ${structure.root_dir}/crystal-structures/lihalide_Li3InCl6.cif
+
+target_density: 2.80   # g/cm³ for Li₃InCl₆ glass
+
+species: [Li, In, Cl]
+stoichiometry: null
+
+central_element: In
+neighbor_elements: [Cl]
+order_param_cutoff: 5.5
+order_params: [oct, cn, q6, di]
+
+box_length: null

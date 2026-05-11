@@ -69,7 +69,8 @@ class PyTorchOrderParameters(nn.Module):
     SUPPORTED_TYPES = [
         'cn', 'tet', 'oct', 'bcc',
         'q2', 'q4', 'q6',
-        'tri_plan', 'sq_plan', 'tri_pyr'
+        'tri_plan', 'sq_plan', 'tri_pyr',
+        'di',
     ]
     
     def __init__(self, cutoff: float = 3.5, device: str = 'cpu', max_neighbors: int = 64):
@@ -154,6 +155,8 @@ class PyTorchOrderParameters(nn.Module):
                 results[op] = self._compute_q4(thetas, phis, valid_mask)
             elif op == 'q6':
                 results[op] = self._compute_q6(thetas, phis, valid_mask)
+            elif op == 'di':
+                results[op] = self._compute_di(distances, valid_mask)
             else:
                 # Placeholder for unimplemented
                 results[op] = torch.zeros(M, device=self.device)
@@ -291,7 +294,22 @@ class PyTorchOrderParameters(nn.Module):
     def _compute_cn(self, valid_mask: torch.Tensor) -> torch.Tensor:
         """Coordination number."""
         return valid_mask.sum(dim=1).float()
-    
+
+    def _compute_di(self, distances: torch.Tensor, valid_mask: torch.Tensor) -> torch.Tensor:
+        """Bond-length distortion index: coefficient of variation of neighbor distances.
+
+        DI = std(d_i) / mean(d_i) for the valid neighbors of each atom.
+        Zero for atoms with fewer than 2 valid neighbors.
+        """
+        n = valid_mask.sum(dim=1).float().clamp(min=1.0)  # (M,)
+        d = distances * valid_mask.float()                  # zero out invalid slots
+        mean_d = d.sum(dim=1) / n                           # (M,)
+        var_d = (((d - mean_d.unsqueeze(1)) ** 2) * valid_mask.float()).sum(dim=1) / n
+        di = var_d.sqrt() / mean_d.clamp(min=1e-6)
+        # Zero out atoms with <2 neighbors (std is undefined)
+        di = torch.where(valid_mask.sum(dim=1) >= 2, di, torch.zeros_like(di))
+        return di
+
     def _compute_tetrahedral(self, vectors: torch.Tensor, valid_mask: torch.Tensor) -> torch.Tensor:
         """Tetrahedral order parameter."""
         params = self.default_params['tet']
