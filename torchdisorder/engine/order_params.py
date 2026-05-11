@@ -535,11 +535,11 @@ if WARP_AVAILABLE:
         K = vectors.shape[1]
         
         # Count valid neighbors
-        n_neighbors = 0
+        n_neighbors = int(0)
         for j in range(K):
             if valid_mask[i, j] > 0:
                 n_neighbors += 1
-        
+
         if n_neighbors < 2:
             q_tet[i] = 0.0
             return
@@ -594,11 +594,11 @@ if WARP_AVAILABLE:
         i = wp.tid()
         K = vectors.shape[1]
         
-        n_neighbors = 0
+        n_neighbors = int(0)
         for j in range(K):
             if valid_mask[i, j] > 0:
                 n_neighbors += 1
-        
+
         if n_neighbors < 2:
             q_oct[i] = 0.0
             return
@@ -645,11 +645,11 @@ if WARP_AVAILABLE:
         i = wp.tid()
         K = vectors.shape[1]
         
-        n_neighbors = 0
+        n_neighbors = int(0)
         for j in range(K):
             if valid_mask[i, j] > 0:
                 n_neighbors += 1
-        
+
         if n_neighbors < 2:
             q_bcc[i] = 0.0
             return
