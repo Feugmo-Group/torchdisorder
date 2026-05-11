@@ -45,16 +45,6 @@ from omegaconf import DictConfig, OmegaConf
 import wandb
 import torch
 import numpy as np
-
-# MPS (Apple Silicon) has a kernel bug where torch.linalg.inv raises
-# "A_t.is_contiguous() INTERNAL ASSERT FAILED" on non-contiguous inputs
-# produced by boolean-mask indexing (e.g. cell[has_pbc, :, :]).
-# Monkey-patch globally so third-party code (torch_sim) is also covered.
-if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
-    _orig_linalg_inv = torch.linalg.inv
-    def _mps_safe_inv(A, *args, **kwargs):
-        return _orig_linalg_inv(A.contiguous(), *args, **kwargs)
-    torch.linalg.inv = _mps_safe_inv
 from pathlib import Path
 import time
 import signal

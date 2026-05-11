@@ -65,13 +65,13 @@ while [[ $# -gt 0 ]]; do
 done
 
 # ── Auto-detect best accelerator ─────────────────────────────────────────────
+# MPS is skipped: torch_sim's JIT-compiled neighbor code is incompatible with
+# the MPS linalg.inv kernel on non-contiguous tensors (PyTorch bug).
 if [[ -z "$ACCELERATOR" ]]; then
     ACCELERATOR=$(python -c "
 import torch
 if torch.cuda.is_available():
     print('cuda')
-elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
-    print('mps')
 else:
     print('cpu')
 " 2>/dev/null || echo "cpu")
