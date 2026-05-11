@@ -545,7 +545,7 @@ if WARP_AVAILABLE:
             return
         
         # Compute pairwise angles
-        sum_weights = 0.0
+        sum_weights = float(0.0)
         for j in range(K):
             if valid_mask[i, j] == 0:
                 continue
@@ -575,7 +575,7 @@ if WARP_AVAILABLE:
         """Compute coordination number."""
         i = wp.tid()
         K = valid_mask.shape[1]
-        count = 0
+        count = int(0)
         for j in range(K):
             if valid_mask[i, j] > 0:
                 count += 1
@@ -603,20 +603,20 @@ if WARP_AVAILABLE:
             q_oct[i] = 0.0
             return
         
-        sum_contrib = 0.0
+        sum_contrib = float(0.0)
         for j in range(K):
             if valid_mask[i, j] == 0:
                 continue
             v_j = vectors[i, j]
-            
+
             for k in range(j + 1, K):
                 if valid_mask[i, k] == 0:
                     continue
                 v_k = vectors[i, k]
-                
+
                 dot = wp.dot(v_j, v_k)
                 angle = safe_acos_wp(dot)
-                
+
                 if angle >= theta_threshold:
                     diff_180 = angle - 3.141592653589793
                     gauss_180 = wp.exp(-0.5 * (diff_180 / delta_theta_180) ** 2.0)
@@ -654,20 +654,20 @@ if WARP_AVAILABLE:
             q_bcc[i] = 0.0
             return
         
-        sum_contrib = 0.0
+        sum_contrib = float(0.0)
         for j in range(K):
             if valid_mask[i, j] == 0:
                 continue
             v_j = vectors[i, j]
-            
+
             for k in range(j + 1, K):
                 if valid_mask[i, k] == 0:
                     continue
                 v_k = vectors[i, k]
-                
+
                 dot = wp.dot(v_j, v_k)
                 angle = safe_acos_wp(dot)
-                
+
                 if angle >= theta_threshold:
                     diff_180 = angle - 3.141592653589793
                     gauss_180 = wp.exp(-0.5 * (diff_180 / delta_theta) ** 2.0)
