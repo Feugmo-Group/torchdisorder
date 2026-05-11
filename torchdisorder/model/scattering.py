@@ -100,10 +100,11 @@ def get_distance_matrix(
         (M, N) distance matrix
     """
     diff = points_2[None, :, :] - points_1[:, None, :]
-    cell_inv = torch.linalg.inv(cell.float())
+    cell_f = cell.float().contiguous()  # MPS requires contiguous for linalg.inv
+    cell_inv = torch.linalg.inv(cell_f)
     frac = torch.einsum('ijk,kl->ijl', diff.float(), cell_inv)
     frac = frac - torch.round(frac)
-    mip = torch.einsum('ijk,kl->ijl', frac, cell.float())
+    mip = torch.einsum('ijk,kl->ijl', frac, cell_f)
     # Use sqrt(sum_sq + eps) to avoid NaN gradients at zero distance
     return torch.sqrt((mip * mip).sum(dim=-1) + 1e-10).to(diff.dtype)
 
@@ -417,10 +418,11 @@ def compute_neutron_S_Q_direct(
 
     # Compute MIC distances: (N, N)
     diff = positions.unsqueeze(0) - positions.unsqueeze(1)
-    cell_inv = torch.linalg.inv(cell.float())
+    cell_f = cell.float().contiguous()  # MPS requires contiguous for linalg.inv
+    cell_inv = torch.linalg.inv(cell_f)
     diff_frac = torch.einsum('ijk,kl->ijl', diff.float(), cell_inv)
     diff_frac = diff_frac - torch.round(diff_frac)
-    diff = torch.einsum('ijk,kl->ijl', diff_frac, cell.float()).to(dtype)
+    diff = torch.einsum('ijk,kl->ijl', diff_frac, cell_f).to(dtype)
     r_ij = torch.sqrt((diff ** 2).sum(dim=-1) + 1e-10)  # (N, N)
 
     weights = torch.outer(b, b) / (b_mean ** 2)  # (N, N)
