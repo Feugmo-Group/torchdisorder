@@ -43,7 +43,6 @@ $CONDA_PYTHON -c "import torch; print('CUDA Available:', torch.cuda.is_available
 
 # --- 5. Training Execution ---
 export WANDB_MODE=offline
-export CUDA_VISIBLE_DEVICES=0
 
 echo "Starting Training..."
 
