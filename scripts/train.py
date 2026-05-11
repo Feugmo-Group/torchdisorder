@@ -76,7 +76,7 @@ from torchdisorder.common.target_rdf import TargetRDFData
 from torchdisorder.model.generator import generate_atoms_from_config
 from torchdisorder.model.xrd import XRDModel
 from torchdisorder.model.loss import CooperLoss
-from torchdisorder.engine.optimizer import StructureFactorCMPWithConstraints, MACERegularizer, _MACE_AVAILABLE
+from torchdisorder.engine.optimizer import StructureFactorCMPWithConstraints, MLIPRegularizer
 
 
 class LiRepulsionLoss:
@@ -1587,26 +1587,29 @@ def main(cfg: DictConfig) -> None:
         overlap_repulsion_fn = None
         print(f"\n  Overlap repulsion: DISABLED (source: {_orep_src})")
 
-    # ── MACE energy regularizer (optional) ────────────────────────────────────
-    mace_reg = None
-    mace_force_rms = 0.0
-    if OmegaConf.select(cfg, 'mace.enabled', default=False):
-        if not _MACE_AVAILABLE:
-            print("\n  ⚠️  mace.enabled=true but mace-torch is not installed — skipping.")
-        else:
-            mace_reg = MACERegularizer(
-                model_size=OmegaConf.select(cfg, 'mace.model', default='small'),
-                force_weight=float(OmegaConf.select(cfg, 'mace.force_weight', default=1e-3)),
-                apply_every=int(OmegaConf.select(cfg, 'mace.apply_every', default=10)),
-                relax_every=int(OmegaConf.select(cfg, 'mace.relax_every', default=0)),
-                relax_max_steps=int(OmegaConf.select(cfg, 'mace.relax_max_steps', default=20)),
+    # ── MLIP energy regularizer (optional) ────────────────────────────────────
+    mlip_reg = None
+    mlip_force_rms = 0.0
+    if OmegaConf.select(cfg, 'mlip.enabled', default=False):
+        _backend = OmegaConf.select(cfg, 'mlip.backend', default='mace')
+        _model   = OmegaConf.select(cfg, 'mlip.model',   default='small')
+        try:
+            mlip_reg = MLIPRegularizer(
+                backend=_backend,
+                model=_model,
+                force_weight=float(OmegaConf.select(cfg, 'mlip.force_weight', default=1e-3)),
+                apply_every=int(OmegaConf.select(cfg, 'mlip.apply_every', default=10)),
+                relax_every=int(OmegaConf.select(cfg, 'mlip.relax_every', default=0)),
+                relax_max_steps=int(OmegaConf.select(cfg, 'mlip.relax_max_steps', default=20)),
                 device=device,
                 dtype=torch.float32,
             )
-            print(f"\n  MACE regularizer: enabled")
-            print(f"    model={OmegaConf.select(cfg, 'mace.model', default='small')}, "
-                  f"force_weight={mace_reg.force_weight}")
-            print(f"    apply_every={mace_reg.apply_every}, relax_every={mace_reg.relax_every}")
+            print(f"\n  MLIP regularizer: enabled")
+            print(f"    backend={_backend}, model={_model}, "
+                  f"force_weight={mlip_reg.force_weight}")
+            print(f"    apply_every={mlip_reg.apply_every}, relax_every={mlip_reg.relax_every}")
+        except (ImportError, ValueError) as _mlip_err:
+            print(f"\n  ⚠️  mlip.enabled=true but backend '{_backend}' unavailable: {_mlip_err}")
 
     print(f"{'=' * 70}\n")
 
@@ -1867,16 +1870,16 @@ def main(cfg: DictConfig) -> None:
                         primal_optimizer.step()
                     loss = loss.detach() + ov_pen.detach()
 
-                # MACE force penalty: separate gradient step
-                if mace_reg is not None:
-                    _mace_result = mace_reg.force_penalty(base_sim_state, step)
-                    if _mace_result is not None:
-                        _mace_pen, mace_force_rms = _mace_result
+                # MLIP force penalty: separate gradient step
+                if mlip_reg is not None:
+                    _mlip_result = mlip_reg.force_penalty(base_sim_state, step)
+                    if _mlip_result is not None:
+                        _mlip_pen, mlip_force_rms = _mlip_result
                         primal_optimizer.zero_grad()
-                        _mace_pen.backward()
+                        _mlip_pen.backward()
                         primal_optimizer.step()
-                        loss = loss.detach() + abs(_mace_pen.detach().item())
-                    base_sim_state = mace_reg.maybe_relax(base_sim_state, step)
+                        loss = loss.detach() + abs(_mlip_pen.detach().item())
+                    base_sim_state = mlip_reg.maybe_relax(base_sim_state, step)
 
             else:
                 # Unconstrained optimization
@@ -1907,16 +1910,16 @@ def main(cfg: DictConfig) -> None:
 
                 primal_optimizer.step()
 
-                # MACE force penalty: separate gradient step after main backward
-                if mace_reg is not None:
-                    _mace_result = mace_reg.force_penalty(base_sim_state, step)
-                    if _mace_result is not None:
-                        _mace_pen, mace_force_rms = _mace_result
+                # MLIP force penalty: separate gradient step after main backward
+                if mlip_reg is not None:
+                    _mlip_result = mlip_reg.force_penalty(base_sim_state, step)
+                    if _mlip_result is not None:
+                        _mlip_pen, mlip_force_rms = _mlip_result
                         primal_optimizer.zero_grad()
-                        _mace_pen.backward()
+                        _mlip_pen.backward()
                         primal_optimizer.step()
-                        loss = loss.detach() + abs(_mace_pen.detach().item())
-                    base_sim_state = mace_reg.maybe_relax(base_sim_state, step)
+                        loss = loss.detach() + abs(_mlip_pen.detach().item())
+                    base_sim_state = mlip_reg.maybe_relax(base_sim_state, step)
 
                 pred_spectrum = get_prediction(results)
                 avg_viol, max_viol, num_viol = 0.0, 0.0, 0
@@ -1991,8 +1994,8 @@ def main(cfg: DictConfig) -> None:
             if dual_optimizer:
                 log_dict["lr/dual"] = dual_optimizer.param_groups[0]["lr"]
 
-            if mace_reg is not None:
-                log_dict["mace/force_rms"] = mace_force_rms
+            if mlip_reg is not None:
+                log_dict["mlip/force_rms"] = mlip_force_rms
 
             wandb.log(log_dict, step=step)
 

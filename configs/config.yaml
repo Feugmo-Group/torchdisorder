@@ -90,11 +90,18 @@ constraints:
   #   output_prefix: null  # inferred from json_path when null
 
 # =============================================================================
-# MACE Energy Regularization (optional)
+# MLIP Energy Regularization (optional)
 # =============================================================================
-mace:
-  enabled: false          # opt-in; requires mace-torch installed
-  model: "small"          # small, medium, large  (mace_mp foundation model)
+mlip:
+  enabled: false          # opt-in; the chosen backend package must be installed
+  backend: mace           # mace | sevennet | chgnet | m3gnet | orb | mattersim
+  model: "small"          # backend-specific model name/size (see docs below)
+                          #   mace     : small, medium, large
+                          #   sevennet : 7net-0 or path to checkpoint
+                          #   chgnet   : ignored (uses default weights)
+                          #   m3gnet   : M3GNet-MP-2021.2.8-PES or custom
+                          #   orb      : orb_v2, orb_v2_mptraj, etc.
+                          #   mattersim: large or small
   force_weight: 1.0e-3    # λ: scale of force penalty relative to chi2 loss
   apply_every: 10         # apply force penalty every N steps (0 = disabled)
   relax_every: 500        # run FIRE relaxation every N steps (0 = disabled)

@@ -637,24 +637,109 @@ class StructureFactorCMPWithConstraints(cooper.ConstrainedMinimizationProblem):
        return results
 
 
-class MACERegularizer:
+def _make_ase_calculator(backend: str, model: str, device: str):
     """
-    Optional MACE energy regularizer for TorchDisorder training.
+    Factory: return an ASE calculator for the requested MLIP backend.
+
+    Supported backends
+    ------------------
+    mace       mace-torch     mace_mp foundation model (small/medium/large)
+    sevennet   sevenn         SevenNet-0 or custom checkpoint
+    chgnet     chgnet         CHGNet (no model arg needed for default)
+    m3gnet     matgl          M3GNet-MP-2021.2.8-PES or custom
+    orb        orb-models     ORB v2 foundation model
+    mattersim  mattersim      MatterSim large/small foundation model
+    """
+    backend = backend.lower()
+
+    if backend == "mace":
+        try:
+            from mace.calculators.foundations_models import mace_mp
+        except Exception as exc:
+            raise ImportError(
+                "mace-torch is not installed. Install with: pip install mace-torch"
+            ) from exc
+        return mace_mp(model=model or "small", device=device, default_dtype="float32")
+
+    if backend == "sevennet":
+        try:
+            from sevenn.sevennet_calculator import SevenNetCalculator
+        except Exception as exc:
+            raise ImportError(
+                "sevenn is not installed. Install with: pip install sevenn"
+            ) from exc
+        return SevenNetCalculator(model or "7net-0", device=device)
+
+    if backend == "chgnet":
+        try:
+            from chgnet.model.ase_interface import CHGNetCalculator
+        except Exception as exc:
+            raise ImportError(
+                "chgnet is not installed. Install with: pip install chgnet"
+            ) from exc
+        return CHGNetCalculator(use_device=device)
+
+    if backend == "m3gnet":
+        try:
+            import matgl
+            from matgl.ext.ase import M3GNetCalculator
+        except Exception as exc:
+            raise ImportError(
+                "matgl is not installed. Install with: pip install matgl"
+            ) from exc
+        pot = matgl.load_model(model or "M3GNet-MP-2021.2.8-PES")
+        return M3GNetCalculator(pot, stress_weight=0.0)
+
+    if backend == "orb":
+        try:
+            from orb_models.forcefield import pretrained
+            from orb_models.forcefield.calculator import ORBCalculator
+        except Exception as exc:
+            raise ImportError(
+                "orb-models is not installed. Install with: pip install orb-models"
+            ) from exc
+        model_name = model or "orb_v2"
+        orbff = getattr(pretrained, model_name)()
+        return ORBCalculator(orbff, device=device)
+
+    if backend == "mattersim":
+        try:
+            from mattersim.forcefield.potential import Potential
+        except Exception as exc:
+            raise ImportError(
+                "mattersim is not installed. Install with: pip install mattersim"
+            ) from exc
+        potential = Potential.from_checkpoint(model or "large", device=device)
+        return potential.ase_calculator()
+
+    raise ValueError(
+        f"Unknown MLIP backend: {backend!r}. "
+        f"Supported: mace, sevennet, chgnet, m3gnet, orb, mattersim"
+    )
+
+
+class MLIPRegularizer:
+    """
+    MLIP energy regularizer for TorchDisorder training.
+
+    Supports any backend that provides an ASE calculator:
+    mace, sevennet, chgnet, m3gnet, orb, mattersim.
 
     Two regularization modes (both can be active simultaneously):
-      1. Force penalty  — every `apply_every` steps, MACE forces are applied
-         as a differentiable proxy gradient step so positions move downhill
-         on the MACE potential energy surface.
+      1. Force penalty  — every `apply_every` steps, forces from the MLIP
+         are applied as a differentiable proxy gradient step so positions
+         move downhill on the potential energy surface.
       2. Periodic FIRE relaxation — every `relax_every` steps, atomic
-         positions are relaxed with ASE-FIRE using the MACE calculator.
+         positions are relaxed with ASE-FIRE using the chosen MLIP.
 
     Both modes are off by default (apply_every=0 / relax_every=0).
-    Requires mace-torch to be installed; guarded by _MACE_AVAILABLE.
+    The backend package must be installed; errors surface at init time.
     """
 
     def __init__(
         self,
-        model_size: str,
+        backend: str,
+        model: str,
         force_weight: float,
         apply_every: int,
         relax_every: int,
@@ -662,22 +747,21 @@ class MACERegularizer:
         device,
         dtype,
     ):
-        if not _MACE_AVAILABLE:
-            raise ImportError("mace is not installed; cannot create MACERegularizer.")
+        self.backend = backend
         self.force_weight = force_weight
         self.apply_every = apply_every
         self.relax_every = relax_every
         self.relax_max_steps = relax_max_steps
         self.device = device
         self.dtype = dtype
-        self._calc = mace_mp(model=model_size, device=str(device), default_dtype="float32")
+        self._calc = _make_ase_calculator(backend, model, str(device))
 
     def force_penalty(self, state, step) -> Optional[tuple]:
         """
-        Compute MACE forces and return a differentiable proxy loss.
+        Compute MLIP forces and return a differentiable proxy loss.
 
         The proxy loss is  –λ · Σ(F_i · r_i)  whose gradient w.r.t. positions
-        is  –λ F_MACE, so one Adam/SGD step moves atoms downhill on MACE energy.
+        is  –λ F_MLIP, so one Adam/SGD step moves atoms downhill on MLIP energy.
 
         Returns (pen_tensor, force_rms_scalar) or None when not due this step.
         """
@@ -721,6 +805,10 @@ class MACERegularizer:
         new_state = atoms_to_state(relaxed, device=self.device, dtype=self.dtype)
         new_state.positions.requires_grad_(True)
         return new_state
+
+
+# Backwards-compatibility alias
+MACERegularizer = MLIPRegularizer
 
 
 #Defining the FIRE MACE relaxation every few steps
