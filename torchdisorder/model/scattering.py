@@ -37,6 +37,7 @@ from dataclasses import dataclass
 from enum import Enum
 import torch
 import torch.nn as nn
+from torch.utils.checkpoint import checkpoint as _ckpt
 
 
 # =============================================================================
@@ -136,23 +137,33 @@ def get_cell_volume(cell: torch.Tensor) -> torch.Tensor:
 # Partial RDF via Gaussian KDE
 # =============================================================================
 
-def _auto_chunk_size(n_bins: int, device: torch.device, safety: float = 0.4) -> int:
+def _auto_chunk_size(n_bins: int, device: torch.device, safety: float = 0.15) -> int:
     """
-    Estimate the largest safe chunk of distances that fits in GPU memory.
+    Estimate a safe chunk size for the KDE loop.
 
-    Each row of the Gaussian matrix is (n_bins,) float32 = n_bins * 4 bytes.
-    We use `safety` fraction of free memory to leave room for gradients and
-    other tensors already allocated.  Falls back to 10_000 on CPU or when
-    memory info is unavailable.
+    Uses 15% of free GPU memory (conservative: the backward pass stores one
+    (chunk_size × n_bins) gradient tensor per chunk iteration in the autograd
+    graph, so the effective multiplier on chunk memory is ~3-5×).
+    Caps at 500_000 rows to prevent a single oversized chunk.
+    Falls back to 10_000 on CPU or when memory info is unavailable.
     """
     if device.type == "cuda":
         try:
             free_bytes, _ = torch.cuda.mem_get_info(device)
             bytes_per_row = n_bins * 4  # float32
-            return max(1, int(free_bytes * safety / bytes_per_row))
+            auto = int(free_bytes * safety / bytes_per_row)
+            return max(1, min(auto, 500_000))
         except Exception:
             pass
     return 10_000
+
+
+def _kde_chunk_sum(chunk: torch.Tensor, bins: torch.Tensor,
+                   kernel_width: float, norm: float) -> torch.Tensor:
+    """Single KDE chunk → (n_bins,) sum. Wrapped for gradient checkpointing."""
+    return torch.exp(
+        -0.5 * ((bins[None, :] - chunk[:, None]) / kernel_width) ** 2
+    ).sum(dim=0) / norm
 
 
 def get_partial_rdf(
@@ -167,9 +178,9 @@ def get_partial_rdf(
     """
     Compute partial RDF g_αβ(r) between two species via Gaussian KDE.
 
-    The KDE matrix (n_distances × n_bins) is always computed in chunks to
-    avoid OOM on large structures.  The chunk size is chosen automatically
-    from free GPU memory unless overridden by `chunk_size`.
+    The KDE loop uses gradient checkpointing so the backward-pass graph only
+    holds O(chunk_size × n_bins) memory at a time instead of the full
+    O(n_distances × n_bins) — critical for large structures (>1000 atoms).
 
     Args:
         points_1:   (M, 3) positions of species α
@@ -177,10 +188,10 @@ def get_partial_rdf(
         cell:       (3, 3) lattice vectors
         bins:       (n_r,) r grid
         kernel_width: Gaussian bandwidth in Å
-        chunk_size: rows of the KDE matrix to process at once.
+        chunk_size: rows processed per KDE iteration.
                     None (default) → auto-sized from free GPU memory.
-                    Set explicitly if auto-sizing is too conservative or too
-                    aggressive for your GPU.
+                    Set explicitly (e.g. scattering.chunk_size: 50000 in
+                    config) to override the auto-sizing.
 
     Returns:
         (n_r,) partial RDF
@@ -194,18 +205,18 @@ def get_partial_rdf(
     if n_pairs == 0:
         return torch.zeros_like(bins)
 
-    # Determine chunk size once, before the loop
     if chunk_size is None:
         chunk_size = _auto_chunk_size(bins.numel(), bins.device)
 
-    summed = torch.zeros_like(bins)
     norm = kernel_width * (2 * torch.pi) ** 0.5
+    summed = torch.zeros_like(bins)
     for i in range(0, in_window.shape[0], chunk_size):
         chunk = in_window[i : i + chunk_size]
-        g = torch.exp(
-            -0.5 * ((bins[None, :] - chunk[:, None]) / kernel_width) ** 2
-        ) / norm
-        summed = summed + g.sum(dim=0)
+        # gradient checkpointing: recompute g during backward instead of storing it
+        summed = summed + _ckpt(
+            _kde_chunk_sum, chunk, bins, kernel_width, norm,
+            use_reentrant=False,
+        )
 
     vol = get_cell_volume(cell)
     return (vol / n_pairs) * summed / (4 * torch.pi * bins ** 2)
