@@ -37,6 +37,9 @@ module load nvhpc26.3
 
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate torchdisorder
+# --- Hardware & Timing ---
+source "$PROJECT_ROOT/scripts/slurm_utils.sh"
+
 
 CONDA_PYTHON="/home/conrard/.conda/envs/torchdisorder/bin/python"
 $CONDA_PYTHON -c "import torch; print('CUDA Available:', torch.cuda.is_available(), '| Device:', torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'None')"
@@ -44,6 +47,7 @@ $CONDA_PYTHON -c "import torch; print('CUDA Available:', torch.cuda.is_available
 # --- 5. Training Execution ---
 export WANDB_MODE=offline
 
+log_hardware_info "70Li2S-30P2S5, no Li (small)" "$CONDA_PYTHON" logs
 echo "Starting Training..."
 
 $CONDA_PYTHON scripts/train.py \
@@ -55,6 +59,7 @@ $CONDA_PYTHON scripts/train.py \
     accelerator=cuda \
     output.plot_interval=500
 
+log_runtime
 echo "=================================================="
 echo "  Done: $(date)"
 echo "=================================================="
