@@ -637,6 +637,92 @@ class StructureFactorCMPWithConstraints(cooper.ConstrainedMinimizationProblem):
        return results
 
 
+class MACERegularizer:
+    """
+    Optional MACE energy regularizer for TorchDisorder training.
+
+    Two regularization modes (both can be active simultaneously):
+      1. Force penalty  — every `apply_every` steps, MACE forces are applied
+         as a differentiable proxy gradient step so positions move downhill
+         on the MACE potential energy surface.
+      2. Periodic FIRE relaxation — every `relax_every` steps, atomic
+         positions are relaxed with ASE-FIRE using the MACE calculator.
+
+    Both modes are off by default (apply_every=0 / relax_every=0).
+    Requires mace-torch to be installed; guarded by _MACE_AVAILABLE.
+    """
+
+    def __init__(
+        self,
+        model_size: str,
+        force_weight: float,
+        apply_every: int,
+        relax_every: int,
+        relax_max_steps: int,
+        device,
+        dtype,
+    ):
+        if not _MACE_AVAILABLE:
+            raise ImportError("mace is not installed; cannot create MACERegularizer.")
+        self.force_weight = force_weight
+        self.apply_every = apply_every
+        self.relax_every = relax_every
+        self.relax_max_steps = relax_max_steps
+        self.device = device
+        self.dtype = dtype
+        self._calc = mace_mp(model=model_size, device=str(device), default_dtype="float32")
+
+    def force_penalty(self, state, step) -> Optional[tuple]:
+        """
+        Compute MACE forces and return a differentiable proxy loss.
+
+        The proxy loss is  –λ · Σ(F_i · r_i)  whose gradient w.r.t. positions
+        is  –λ F_MACE, so one Adam/SGD step moves atoms downhill on MACE energy.
+
+        Returns (pen_tensor, force_rms_scalar) or None when not due this step.
+        """
+        if self.apply_every <= 0 or step % self.apply_every != 0:
+            return None
+
+        atoms_list = state_to_atoms(state)
+        f_list = []
+        for atoms in atoms_list:
+            atoms.calc = self._calc
+            f_list.append(atoms.get_forces())  # (N_i, 3) float64 numpy
+            atoms.calc = None
+
+        F = torch.tensor(
+            np.vstack(f_list),
+            dtype=state.positions.dtype,
+            device=state.positions.device,
+        )
+
+        # –λ (F · r): gradient = –λ F, so descent moves r in force direction
+        pen = -self.force_weight * (F.detach() * state.positions).sum()
+        force_rms = float(F.pow(2).mean().item())
+        return pen, force_rms
+
+    def maybe_relax(self, state, step):
+        """Run ASE-FIRE relaxation if step % relax_every == 0 (relax_every > 0)."""
+        if self.relax_every <= 0 or step % self.relax_every != 0:
+            return state
+
+        from ase.optimize import FIRE as ASE_FIRE
+
+        atoms_list = state_to_atoms(state)
+        relaxed = []
+        for atoms in atoms_list:
+            atoms.calc = self._calc
+            opt = ASE_FIRE(atoms, logfile=None)
+            opt.run(steps=self.relax_max_steps)
+            atoms.calc = None
+            relaxed.append(atoms)
+
+        new_state = atoms_to_state(relaxed, device=self.device, dtype=self.dtype)
+        new_state.positions.requires_grad_(True)
+        return new_state
+
+
 #Defining the FIRE MACE relaxation every few steps
 # Updated relaxation function
 def perform_fire_relaxation(sim_state, mace_model, device, dtype, max_steps=50):

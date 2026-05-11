@@ -90,6 +90,17 @@ constraints:
   #   output_prefix: null  # inferred from json_path when null
 
 # =============================================================================
+# MACE Energy Regularization (optional)
+# =============================================================================
+mace:
+  enabled: false          # opt-in; requires mace-torch installed
+  model: "small"          # small, medium, large  (mace_mp foundation model)
+  force_weight: 1.0e-3    # λ: scale of force penalty relative to chi2 loss
+  apply_every: 10         # apply force penalty every N steps (0 = disabled)
+  relax_every: 500        # run FIRE relaxation every N steps (0 = disabled)
+  relax_max_steps: 20     # max FIRE steps per relaxation call
+
+# =============================================================================
 # Order Parameters
 # =============================================================================
 order_params:
