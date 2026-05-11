@@ -49,7 +49,7 @@ MACE_MODEL="small"
 FORCE_WEIGHT="1e-3"
 APPLY_EVERY=10
 RELAX_EVERY=100
-ACCELERATOR="auto"      # auto = GPU if available, else CPU
+ACCELERATOR=""          # empty = auto-detect below
 EXTRA_ARGS=()
 
 while [[ $# -gt 0 ]]; do
@@ -63,6 +63,19 @@ while [[ $# -gt 0 ]]; do
         *)        EXTRA_ARGS+=("$1"); shift  ;;
     esac
 done
+
+# ── Auto-detect best accelerator ─────────────────────────────────────────────
+if [[ -z "$ACCELERATOR" ]]; then
+    ACCELERATOR=$(python -c "
+import torch
+if torch.cuda.is_available():
+    print('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    print('mps')
+else:
+    print('cpu')
+" 2>/dev/null || echo "cpu")
+fi
 
 # ── Banner ────────────────────────────────────────────────────────────────────
 echo ""
