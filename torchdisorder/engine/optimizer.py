@@ -26,7 +26,7 @@ from ase.io import write
 try:
     from mace.calculators.foundations_models import mace_mp
     _MACE_AVAILABLE = True
-except Exception:
+except ImportError:
     mace_mp = None  # type: ignore
     _MACE_AVAILABLE = False
 
@@ -88,27 +88,26 @@ class ScalarAdaptivePenalty(PenaltyCoefficient):
         patience: int = 10,
         device: str = 'cuda'
     ):
-        # Don't call super().__init__ to avoid the value setter issue
-        # Just set the attributes we need
+        super().__init__(init=torch.tensor(init, device=device))
         self.expects_constraint_features = False
-        
+
         self.growth_rate = growth_rate
         self.decay_rate = decay_rate
         self.max_penalty = max_penalty
         self.min_penalty = min_penalty
         self.patience = patience
         self.device = device
-        self._init_value = init
-        
+        self._reset_value = init
+
         # Tracking state
         self._current_value = init
         self._best_violation = float('inf')
         self._steps_without_improvement = 0
-    
+
     def __call__(self, constraint_features=None):
         """Return the current penalty value."""
         return torch.tensor(self._current_value, device=self.device)
-    
+
     def update(self, total_violation: float):
         """
         Update penalty based on constraint violation.
@@ -145,7 +144,7 @@ class ScalarAdaptivePenalty(PenaltyCoefficient):
         if init is not None:
             self._current_value = init
         else:
-            self._current_value = self._init_value
+            self._current_value = self._reset_value
         self._best_violation = float('inf')
         self._steps_without_improvement = 0
     
@@ -401,11 +400,12 @@ class StructureFactorCMPWithConstraints(cooper.ConstrainedMinimizationProblem):
                    minv = torch.tensor(op_params['min'], device=self.device, dtype=value.dtype)
                    maxv = torch.tensor(op_params['max'], device=self.device, dtype=value.dtype)
 
-                   # "soft" box violation: relu(min - x) + relu(x - max)
-                   v = torch.relu(minv - value) + torch.relu(value - maxv)
-
+                   box_viol = torch.relu(minv - value) + torch.relu(value - maxv)
                    if self.violation_type == 'hard':
-                       v = torch.relu(minv - value) + torch.relu(value - maxv)
+                       # Squared penalty: stronger gradient signal for large violations
+                       v = box_viol ** 2
+                   else:
+                       v = box_viol
 
                else:
                    target = torch.tensor(op_params['target'], device=self.device, dtype=value.dtype)
@@ -699,6 +699,11 @@ def _make_ase_calculator(backend: str, model: str, device: str):
                 "orb-models is not installed. Install with: pip install orb-models"
             ) from exc
         model_name = model or "orb_v2"
+        if not hasattr(pretrained, model_name):
+            valid = [n for n in dir(pretrained) if not n.startswith("_")]
+            raise ValueError(
+                f"Unknown ORB model {model_name!r}. Valid models: {valid}"
+            )
         orbff = getattr(pretrained, model_name)()
         return ORBCalculator(orbff, device=device)
 
@@ -958,19 +963,18 @@ def perform_melt_quench(
        print(f"  Phase 2: Quenching to {quench_temp} K over {quench_steps} steps...")
 
 
-       # Linear temperature ramp
+       # Linear temperature ramp — one Langevin object, update temperature each step
        temps = np.linspace(melt_temp, quench_temp, quench_steps)
-
+       dyn = Langevin(
+           atoms,
+           timestep=timestep * units.fs,
+           temperature_K=melt_temp,
+           friction=0.01,
+       )
 
        for step, temp in enumerate(temps):
-           dyn = Langevin(
-               atoms,
-               timestep=timestep * units.fs,
-               temperature_K=temp,
-               friction=0.01
-           )
+           dyn.set_temperature(temperature_K=temp)
            dyn.run(1)
-
 
            if (step + 1) % 400 == 0:
                energy = atoms.get_potential_energy()

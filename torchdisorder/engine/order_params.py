@@ -69,7 +69,6 @@ class PyTorchOrderParameters(nn.Module):
     SUPPORTED_TYPES = [
         'cn', 'tet', 'oct', 'bcc',
         'q2', 'q4', 'q6',
-        'tri_plan', 'sq_plan', 'tri_pyr',
         'di',
     ]
     
@@ -157,9 +156,6 @@ class PyTorchOrderParameters(nn.Module):
                 results[op] = self._compute_q6(thetas, phis, valid_mask)
             elif op == 'di':
                 results[op] = self._compute_di(distances, valid_mask)
-            else:
-                # Placeholder for unimplemented
-                results[op] = torch.zeros(M, device=self.device)
         
         return results
     
@@ -709,8 +705,8 @@ if WARP_AVAILABLE:
         Requires NVIDIA GPU and warp-lang package.
         """
         
-        SUPPORTED_TYPES = ['cn', 'tet', 'oct', 'bcc', 'q2', 'q4', 'q6']
-        
+        SUPPORTED_TYPES = ['cn', 'tet', 'oct', 'bcc', 'q2', 'q4', 'q6', 'di']
+
         def __init__(self, cutoff: float = 3.5, device: str = 'cuda', max_neighbors: int = 64):
             super().__init__()
             self.cutoff = cutoff
@@ -820,15 +816,15 @@ if WARP_AVAILABLE:
                              outputs=[wp_qbcc])
                     results[op] = wp.to_torch(wp_qbcc)
                 
-                elif op in ['q2', 'q4', 'q6']:
-                    # Fall back to PyTorch for spherical harmonics
+                elif op in ['q2', 'q4', 'q6', 'di']:
+                    # Fall back to PyTorch for spherical harmonics and distortion index
                     warnings.warn(f"{op} using PyTorch fallback in WARP backend")
                     pytorch_calc = PyTorchOrderParameters(
                         cutoff=self.cutoff, device=str(self.device), max_neighbors=self.max_neighbors
                     )
                     pytorch_results = pytorch_calc(state, atom_indices, [op], element_filter)
                     results[op] = pytorch_results[op]
-            
+
             return results
         
         def _compute_vectors_manual(
@@ -965,8 +961,8 @@ class TorchSimOrderParameters(nn.Module):
         - q2, q4, q6: Steinhardt bond orientational
     """
     
-    SUPPORTED_TYPES = ['cn', 'tet', 'oct', 'bcc', 'q2', 'q4', 'q6']
-    
+    SUPPORTED_TYPES = ['cn', 'tet', 'oct', 'bcc', 'q2', 'q4', 'q6', 'di']
+
     def __init__(
         self,
         cutoff: float = 3.5,
