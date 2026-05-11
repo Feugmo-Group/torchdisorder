@@ -17,6 +17,7 @@ export PYTHONPATH=""
 PROJECT_ROOT="/home/conrard/torchdisorder"
 export PROJECT_ROOT
 export PYTHONPATH="$PROJECT_ROOT:$PYTHONPATH"
+unset TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD
 
 # --- 2. Directory Setup ---
 cd "$PROJECT_ROOT"
