@@ -392,50 +392,57 @@ def compute_neutron_S_Q_direct(
     q_bins: torch.Tensor,
     *,
     scattering_lengths: Dict[str, float],
+    q_chunk_size: Optional[int] = None,
 ) -> torch.Tensor:
     """
     Compute S(Q) directly using Debye formula (no r-space intermediate).
-    
+
     S(Q) = (1/N) Σ_{i,j} (b_i b_j / <b>²) sin(Qr_ij)/(Qr_ij)
-    
-    More efficient for Q-only calculations but O(N²) in memory.
+
+    Chunks over Q to avoid allocating a full (N_Q, N, N) tensor which is
+    O(N²·N_Q) memory — e.g. 10 GiB for N=1120 and N_Q=2200.
     """
     device = positions.device
     dtype = positions.dtype
     n_atoms = len(chemical_symbols)
-    
+
     b = torch.tensor(
         [scattering_lengths.get(s, 0.0) for s in chemical_symbols],
         device=device, dtype=dtype
     )
     b_mean = b.mean()
-    
+
     if b_mean.abs() < 1e-10:
         return torch.ones(len(q_bins), device=device, dtype=dtype)
-    
-    # Compute distances with MIC
+
+    # Compute MIC distances: (N, N)
     diff = positions.unsqueeze(0) - positions.unsqueeze(1)
     cell_inv = torch.linalg.inv(cell.float())
     diff_frac = torch.einsum('ijk,kl->ijl', diff.float(), cell_inv)
     diff_frac = diff_frac - torch.round(diff_frac)
     diff = torch.einsum('ijk,kl->ijl', diff_frac, cell.float()).to(dtype)
-    r_ij = torch.sqrt((diff ** 2).sum(dim=-1) + 1e-10)
-    
-    # Weight matrix
-    weights = torch.outer(b, b) / (b_mean ** 2)
-    
-    # Debye formula
-    Q = q_bins.unsqueeze(-1).unsqueeze(-1)
-    r = r_ij.unsqueeze(0)
-    Qr = Q * r
-    
-    sinc_Qr = torch.where(
-        Qr.abs() < 1e-8,
-        torch.ones_like(Qr),
-        torch.sin(Qr) / (Qr + 1e-10)
-    )
-    
-    return (weights.unsqueeze(0) * sinc_Qr).sum(dim=(-2, -1)) / n_atoms
+    r_ij = torch.sqrt((diff ** 2).sum(dim=-1) + 1e-10)  # (N, N)
+
+    weights = torch.outer(b, b) / (b_mean ** 2)  # (N, N)
+
+    # Auto-size Q chunk to keep peak tensor ≤ ~200 MB
+    if q_chunk_size is None:
+        bytes_per_q = n_atoms * n_atoms * 4  # (N, N) float32 per Q point
+        target_bytes = 200 * 1024 ** 2  # 200 MB
+        q_chunk_size = max(1, target_bytes // bytes_per_q)
+
+    S_Q = torch.zeros(len(q_bins), device=device, dtype=dtype)
+    for qi in range(0, len(q_bins), q_chunk_size):
+        Q_sub = q_bins[qi : qi + q_chunk_size]          # (Qc,)
+        Qr = Q_sub[:, None, None] * r_ij[None, :, :]   # (Qc, N, N)
+        sinc_Qr = torch.where(
+            Qr.abs() < 1e-8,
+            torch.ones_like(Qr),
+            torch.sin(Qr) / (Qr + 1e-10),
+        )
+        S_Q[qi : qi + q_chunk_size] = (weights[None, :, :] * sinc_Qr).sum(dim=(-2, -1)) / n_atoms
+
+    return S_Q
 
 
 # =============================================================================

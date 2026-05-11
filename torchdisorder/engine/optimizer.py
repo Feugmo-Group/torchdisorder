@@ -26,7 +26,7 @@ from ase.io import write
 try:
     from mace.calculators.foundations_models import mace_mp
     _MACE_AVAILABLE = True
-except ImportError:
+except Exception:
     mace_mp = None  # type: ignore
     _MACE_AVAILABLE = False
 

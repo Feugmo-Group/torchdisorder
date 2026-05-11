@@ -1414,6 +1414,15 @@ def main(cfg: DictConfig) -> None:
     except Exception as e:
         print(f"  ERROR: {e}")
         raise
+    finally:
+        # Release the forward-test computation graph and return PyTorch's cached
+        # CUDA memory to the driver so it is available for the training loop.
+        try:
+            del results
+        except NameError:
+            pass
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
     print(f"{'=' * 70}\n")
 
     # ==========================================
