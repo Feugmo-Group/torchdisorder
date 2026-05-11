@@ -46,6 +46,9 @@ echo "============================================================"
 echo ""
 
 export PROJECT_ROOT="$(pwd)"
+source "$PROJECT_ROOT/scripts/slurm_utils.sh"
+
+log_hardware_info "GeO2 Training" python logs
 
 python scripts/train.py \
     experiment_name=GeO2 \

@@ -37,6 +37,7 @@ echo "============================================================"
 echo ""
 
 export PROJECT_ROOT="$(pwd)"
+source "$PROJECT_ROOT/scripts/slurm_utils.sh"
 
 /opt/homebrew/Caskroom/miniconda/base/envs/torchdisorder/bin/python
  scripts/train.py \

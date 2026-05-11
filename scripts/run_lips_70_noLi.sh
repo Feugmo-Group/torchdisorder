@@ -34,6 +34,9 @@ echo "============================================================"
 echo ""
 
 export PROJECT_ROOT="$(pwd)"
+source "$PROJECT_ROOT/scripts/slurm_utils.sh"
+
+log_hardware_info "70Li2S-30P2S5 Glass, Li-free structural model" python logs
 
 python scripts/train.py \
     experiment_name=LiPS_70_noLi \
