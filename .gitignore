@@ -36,3 +36,6 @@ scripts/wandb
 
 # Duplicate data subtree (canonical copy is data/)
 data/data/
+
+# Local Claude Code instructions (stay machine-local)
+CLAUDE.md
