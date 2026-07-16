@@ -119,55 +119,115 @@ def rmse(
 class CooperLoss(nn.Module):
     """
     Loss function for constrained optimization with Cooper.
-    
-    Computes chi-squared loss between predicted and target spectra.
-    
-    Supported targets:
-        - S_Q: Structure factor
-        - T_r: Total correlation function
-        - g_r: Pair distribution function
-        - F_Q: Reduced structure factor
-    
+
+    Computes chi-squared loss between predicted and target spectra, with an
+    optional F_IS (local inversion symmetry) regularization term that steers
+    the optimizer toward a target mean F_IS value derived from a reference
+    structure (e.g. melt-quench MD or a prior TorchDisorder run).
+
+    Supported scattering targets:
+        S_Q, T_r, g_r, G_r, F_Q
+
+    F_IS regularization:
+        When ``fis_target`` is set, the loss gains an additional term::
+
+            fis_weight * (mean_fis - fis_target)²
+
+        where ``mean_fis`` is computed over ``fis_central_z`` atoms at each
+        forward pass.  Because F_IS is fully differentiable, gradients flow
+        directly into atomic positions alongside the scattering chi-squared.
+
+        Reference: Milkus & Zaccone, Phys. Rev. B 93, 094204 (2016).
+        https://doi.org/10.1103/PhysRevB.93.094204
+
     Args:
-        target_data: TargetRDFData with target spectra
-        target_type: Primary target ('S_Q', 'T_r', 'g_r', 'G_r', 'F_Q')
-        device: Computation device
-        uncertainty_floor: Minimum uncertainty value
+        target_data: TargetRDFData with experimental spectra.
+        target_type: Primary scattering target ('S_Q', 'T_r', 'g_r', 'G_r', 'F_Q').
+        device: Computation device.
+        uncertainty_floor: Minimum uncertainty value to avoid division by zero.
+        fis_target: Target mean F_IS value.  ``None`` disables the F_IS term.
+            Use the F_IS mean of a reference glass (e.g. ~0.0 for a-SiO₂).
+        fis_weight: Weight of the F_IS loss relative to the scattering chi².
+        fis_cutoff: Neighbor cutoff in Å for F_IS (should match the first
+            coordination shell of the central species).
+        fis_central_z: Atomic number of the central atoms over which F_IS is
+            averaged (e.g. 14 for Si in SiO₂, 15 for P in Li-P-S).
+        fis_neighbor_z: Atomic number used to filter neighbors (e.g. 8 for O).
+            ``None`` uses all neighbors within the cutoff.
+        fis_mode: Weighting scheme — ``'variable_R'`` (recommended, JCTC 2026)
+            or ``'milkus2016'`` (original uniform weights, PRB 2016).
+        fis_max_neighbors: Max neighbors per atom for the F_IS calculator.
     """
-    
+
     VALID_TARGETS = ['S_Q', 'T_r', 'g_r', 'G_r', 'F_Q']
-    
+
     def __init__(
         self,
         target_data: TargetRDFData,
         target_type: str = 'S_Q',
         device: str = 'cuda',
         uncertainty_floor: float = 0.01,
+        # F_IS regularization
+        fis_target: Optional[float] = None,
+        fis_weight: float = 1.0,
+        fis_cutoff: float = 2.2,
+        fis_central_z: int = 14,
+        fis_neighbor_z: Optional[int] = None,
+        fis_mode: str = 'variable_R',
+        fis_max_neighbors: int = 16,
     ):
         super().__init__()
-        
+
         if target_type not in self.VALID_TARGETS:
             raise ValueError(f"target_type must be one of {self.VALID_TARGETS}")
-        
+
         self.target_data = target_data
         self.target_type = target_type
         self.device = torch.device(device)
         self.uncertainty_floor = uncertainty_floor
-        
+
+        # F_IS regularization
+        self.fis_target = fis_target
+        self.fis_weight = fis_weight
+        self.fis_central_z = fis_central_z
+        self.fis_neighbor_z = fis_neighbor_z
+        self._fis_calc = None
+        if fis_target is not None:
+            from torchdisorder.engine.order_params import TorchSimOrderParameters  # lazy — avoids circular import
+            self._fis_calc = TorchSimOrderParameters(
+                cutoff=fis_cutoff,
+                device=device,
+                max_neighbors=fis_max_neighbors,
+                fis_mode=fis_mode,
+            )
+
         self._logged = False
-    
-    def forward(self, results: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
+
+    def forward(
+        self,
+        results: Dict[str, torch.Tensor],
+        state=None,
+    ) -> Dict[str, torch.Tensor]:
         """
         Compute loss from model results.
-        
+
         Args:
-            results: Dict from XRDModel with spectra
-        
+            results: Dict from XRDModel containing scattering spectra.
+            state: Optional torch_sim SimState.  Required when F_IS
+                regularization is enabled (``fis_target`` is not None).
+
         Returns:
-            Dict with 'total_loss', 'chi2_loss', and individual losses
+            Dict with keys 'total_loss', 'chi2_loss', optional 'fis_loss',
+            and individual per-target losses.
         """
+        # Extract state stashed by optimizer (if present); explicit arg wins
+        if state is None:
+            state = results.pop('_sim_state', None)
+        else:
+            results.pop('_sim_state', None)  # discard stashed copy if explicit provided
+
         losses = {}
-        
+
         # S(Q) loss
         if 'S_Q' in results and self.target_data.has_S_Q():
             pred = results['S_Q']
@@ -228,17 +288,31 @@ class CooperLoss(nn.Module):
             else:
                 total_loss = torch.tensor(1e6, device=self.device, requires_grad=True)
         
+        # F_IS regularization term
+        if self._fis_calc is not None and state is not None:
+            central_idx = torch.where(state.atomic_numbers == self.fis_central_z)[0]
+            neighbor_filter = [self.fis_neighbor_z] if self.fis_neighbor_z is not None else None
+            fis_vals = self._fis_calc(state, central_idx, ['fis'],
+                                      element_filter=neighbor_filter)['fis']
+            fis_mean = fis_vals.mean()
+            fis_loss = self.fis_weight * (fis_mean - self.fis_target) ** 2
+            losses['fis_loss'] = fis_loss
+            losses['fis_mean'] = fis_mean.detach()
+            total_loss = total_loss + fis_loss
+
         # Log once
         if not self._logged:
             print(f"\nCooperLoss:")
             print(f"  Target type: {self.target_type}")
             print(f"  Available losses: {list(losses.keys())}")
             print(f"  Primary loss key: {primary_key}")
+            if self.fis_target is not None:
+                print(f"  F_IS target: {self.fis_target:.4f}  weight: {self.fis_weight}")
             self._logged = True
-        
+
         return {
             'total_loss': total_loss,
-            'chi2_loss': total_loss,
+            'chi2_loss': losses.get(primary_key, total_loss),
             **losses,
         }
 

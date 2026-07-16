@@ -463,6 +463,9 @@ class StructureFactorCMPWithConstraints(cooper.ConstrainedMinimizationProblem):
        out[self.kind] = pred_sq_clamped.unsqueeze(0) if pred_sq_clamped.dim() == 1 else pred_sq_clamped
 
 
+       # Stash current state so CooperLoss can compute F_IS if configured
+       out['_sim_state'] = self.base_state
+
        # Compute chi-squared loss
        loss_dict = self.loss_fn(out)
        # Support both old and new loss key formats

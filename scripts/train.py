@@ -1429,9 +1429,32 @@ def main(cfg: DictConfig) -> None:
     # LOSS FUNCTION
     # ==========================================
     
-    cooper_loss = CooperLoss(target_data=rdf_data, target_type=target_type, device=accelerator)
+    # Optional F_IS regularization — read from config block `fis:`
+    fis_cfg = OmegaConf.select(cfg, 'fis', default=None)
+    fis_target   = float(OmegaConf.select(cfg, 'fis.target',        default=0.0))   if fis_cfg else None
+    fis_weight   = float(OmegaConf.select(cfg, 'fis.weight',        default=1.0))   if fis_cfg else 1.0
+    fis_cutoff   = float(OmegaConf.select(cfg, 'fis.cutoff',        default=2.2))   if fis_cfg else 2.2
+    fis_central  = int(  OmegaConf.select(cfg, 'fis.central_z',     default=14))    if fis_cfg else 14
+    fis_neighbor = OmegaConf.select(cfg, 'fis.neighbor_z', default=None)
+    fis_neighbor = int(fis_neighbor) if fis_neighbor is not None else None
+    fis_mode     = str(  OmegaConf.select(cfg, 'fis.mode',          default='variable_R')) if fis_cfg else 'variable_R'
+
+    cooper_loss = CooperLoss(
+        target_data=rdf_data,
+        target_type=target_type,
+        device=accelerator,
+        fis_target=fis_target,
+        fis_weight=fis_weight,
+        fis_cutoff=fis_cutoff,
+        fis_central_z=fis_central,
+        fis_neighbor_z=fis_neighbor,
+        fis_mode=fis_mode,
+    )
     print(f"CooperLoss initialized with target: {target_type}")
-    
+    if fis_target is not None:
+        print(f"  F_IS regularization: target={fis_target:.4f}  weight={fis_weight}  "
+              f"cutoff={fis_cutoff} Å  central_Z={fis_central}  neighbor_Z={fis_neighbor}")
+
     def loss_fn(desc: dict) -> dict:
         return cooper_loss(desc)
 
