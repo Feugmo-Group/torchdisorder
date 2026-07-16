@@ -2,9 +2,7 @@ from collections import defaultdict
 from typing import TypeVar, Optional, Dict, Any
 import os
 
-import pytorch_lightning as pl
 import torch
-from pytorch_lightning.callbacks import Callback
 from tqdm.auto import tqdm
 
 """

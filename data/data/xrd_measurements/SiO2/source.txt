@@ -1,5 +1,0 @@
-https://www.isis.stfc.ac.uk/Pages/Oxide-Glass-Data.aspx
-
-Some pre-processing was done...
-- Uncertainties for F_of_Q were forced to be 1e-7 where they were previously 0.0
-- T values for T_of_r were forced to be 0.0 before the first large spike.

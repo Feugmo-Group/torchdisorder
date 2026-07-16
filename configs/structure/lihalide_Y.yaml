@@ -1,0 +1,23 @@
+# Li₃YCl₆ halide glass structure
+# Generate the CIF and constraint JSON with:
+#   python data/cif-generation/lihalide_generator.py \
+#     --input data/crystal-structures/Li3YCl6.cif \
+#     --metal Y --supercell 3,3,2 \
+#     --output lihalide_Li3YCl6
+
+root_dir: ${oc.env:PROJECT_ROOT,./}/data
+
+init: from_cif
+cif_path: ${structure.root_dir}/crystal-structures/lihalide_Li3YCl6.cif
+
+target_density: 2.55   # g/cm³ for Li₃YCl₆ glass
+
+species: [Li, Y, Cl]
+stoichiometry: null    # inferred from CIF
+
+central_element: Y
+neighbor_elements: [Cl]
+order_param_cutoff: 5.5
+order_params: [oct, cn, q6, di]
+
+box_length: null

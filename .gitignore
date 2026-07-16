@@ -33,3 +33,6 @@ build/
 .DS_Store
 scripts/outputs
 scripts/wandb
+
+# Duplicate data subtree (canonical copy is data/)
+data/data/

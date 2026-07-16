@@ -76,7 +76,181 @@ from torchdisorder.common.target_rdf import TargetRDFData
 from torchdisorder.model.generator import generate_atoms_from_config
 from torchdisorder.model.xrd import XRDModel
 from torchdisorder.model.loss import CooperLoss
-from torchdisorder.engine.optimizer import StructureFactorCMPWithConstraints
+from torchdisorder.engine.optimizer import StructureFactorCMPWithConstraints, MLIPRegularizer
+
+
+class LiRepulsionLoss:
+    """
+    Soft pairwise repulsion penalty for Li atoms.
+
+    Applies a quadratic penalty whenever a Li–X distance falls below
+    the minimum threshold defined in the JSON li_constraints block.
+    Li atoms are identified by their indices (also from li_constraints).
+    The penalty is differentiable and adds directly to the chi² loss.
+    """
+
+    def __init__(self, li_indices: List[int], min_distances: Dict[str, float],
+                 atom_numbers: List[int], weight: float = 1.0, device: str = 'cpu'):
+        """
+        Args:
+            li_indices: Atom indices of Li atoms in the structure.
+            min_distances: Dict with keys 'Li-S', 'Li-P', 'Li-Li' and values in Å.
+            atom_numbers: Atomic number for every atom (len = n_atoms).
+            weight: Scalar multiplier for the penalty.
+            device: torch device string.
+        """
+        self.li_idx = torch.tensor(li_indices, dtype=torch.long)
+        self.min_distances = min_distances
+        self.weight = weight
+        self.device = device
+
+        # Build per-atom element lookup (6=C,14=Si,15=P,16=S,3=Li)
+        z = torch.tensor(atom_numbers, dtype=torch.long)
+        self.z = z  # kept for reference
+        self.is_li = (z == 3)
+        self.is_p  = (z == 15)
+        self.is_s  = (z == 16)
+
+        # Minimum distance thresholds (as tensors for autograd-friendly comparison)
+        self.d_li_li = min_distances.get('Li-Li', 2.0)
+        self.d_li_p  = min_distances.get('Li-P',  2.8)
+        self.d_li_s  = min_distances.get('Li-S',  2.3)
+
+    def to(self, device):
+        self.device = device
+        self.li_idx = self.li_idx.to(device)
+        self.is_li  = self.is_li.to(device)
+        self.is_p   = self.is_p.to(device)
+        self.is_s   = self.is_s.to(device)
+        return self
+
+    def __call__(self, positions: torch.Tensor, cell: torch.Tensor) -> torch.Tensor:
+        """
+        Compute the Li repulsion penalty.
+
+        Args:
+            positions: (N, 3) fractional or Cartesian coordinates (must match cell).
+            cell: (3, 3) cell matrix (row vectors, Ångström).
+
+        Returns:
+            Scalar penalty tensor (differentiable w.r.t. positions).
+        """
+        if len(self.li_idx) == 0:
+            return torch.zeros(1, device=positions.device, dtype=positions.dtype).squeeze()
+
+        li_pos = positions[self.li_idx]        # (n_Li, 3)
+        all_pos = positions                     # (N, 3)
+
+        # Cartesian displacement: Li vs all atoms (simple, no PBC wrapping)
+        # Δ shape: (n_Li, N, 3)
+        delta = li_pos.unsqueeze(1) - all_pos.unsqueeze(0)
+        # Apply minimum-image convention via cell
+        # Convert to fractional, wrap to [-0.5, 0.5], back to Cartesian
+        cell_inv = torch.linalg.inv(cell)
+        delta_frac = delta @ cell_inv
+        delta_frac = delta_frac - torch.round(delta_frac)
+        delta_cart = delta_frac @ cell
+
+        dist = delta_cart.norm(dim=-1)  # (n_Li, N)
+
+        penalty = torch.zeros(1, device=positions.device, dtype=positions.dtype)
+
+        def _quad_pen(d, d_min):
+            """Quadratic penalty below d_min, zero above."""
+            violation = torch.clamp(d_min - d, min=0.0)
+            return (violation ** 2).sum()
+
+        # Li–Li (upper triangle of Li×Li block, exclude self)
+        li_li_dist = dist[:, self.li_idx]  # (n_Li, n_Li)
+        mask = ~torch.eye(len(self.li_idx), dtype=torch.bool, device=positions.device)
+        penalty = penalty + _quad_pen(li_li_dist[mask], self.d_li_li)
+
+        # Li–P
+        p_cols = self.is_p.nonzero(as_tuple=True)[0]
+        if len(p_cols):
+            penalty = penalty + _quad_pen(dist[:, p_cols], self.d_li_p)
+
+        # Li–S
+        s_cols = self.is_s.nonzero(as_tuple=True)[0]
+        if len(s_cols):
+            penalty = penalty + _quad_pen(dist[:, s_cols], self.d_li_s)
+
+        return self.weight * penalty.squeeze()
+
+
+class OverlapRepulsionLoss:
+    """
+    Global pairwise soft-sphere repulsion for all atoms.
+
+    Penalizes any pair of atoms closer than r_min with a quadratic penalty,
+    preventing atomic overlaps regardless of species. Processes atoms in
+    chunks to stay within GPU memory limits.
+    """
+
+    def __init__(
+        self,
+        r_min: float = 1.5,
+        weight: float = 1.0,
+        chunk_size: Optional[int] = None,
+        device: str = 'cpu',
+    ):
+        self.r_min = r_min
+        self.weight = weight
+        self._chunk_size = chunk_size  # None → auto-size at first call
+        self.device = device
+
+    def to(self, device):
+        self.device = device
+        return self
+
+    def _auto_chunk(self, n: int, dev: torch.device) -> int:
+        if dev.type == 'cuda':
+            try:
+                free_bytes, _ = torch.cuda.mem_get_info(dev)
+                # diff + frac + mip: ~12 floats per (chunk_row, atom) element
+                bytes_per_row = n * 12 * 4
+                return max(1, int(free_bytes * 0.15 / bytes_per_row))
+            except Exception:
+                pass
+        return 500
+
+    def __call__(self, positions: torch.Tensor, cell: torch.Tensor) -> torch.Tensor:
+        """
+        Args:
+            positions: (N, 3) Cartesian coordinates
+            cell:      (3, 3) lattice vectors in Angstrom
+
+        Returns:
+            Scalar penalty (differentiable w.r.t. positions).
+        """
+        n = positions.shape[0]
+        dev = positions.device
+        chunk_size = self._chunk_size if self._chunk_size is not None else self._auto_chunk(n, dev)
+
+        cell_f = cell.float()
+        cell_inv = torch.linalg.inv(cell_f)
+        penalty = torch.zeros((), device=dev, dtype=positions.dtype)
+
+        for i0 in range(0, n, chunk_size):
+            i1 = min(i0 + chunk_size, n)
+            chunk = positions[i0:i1]                          # (C, 3)
+
+            diff = positions[None, :, :] - chunk[:, None, :]  # (C, N, 3)
+            frac = torch.einsum('ijk,kl->ijl', diff.float(), cell_inv)
+            frac = frac - torch.round(frac)
+            mip  = torch.einsum('ijk,kl->ijl', frac, cell_f).to(diff.dtype)
+            dist = torch.sqrt((mip * mip).sum(dim=-1) + 1e-10)  # (C, N)
+
+            # Upper triangle only: column index j > global row index i
+            col = torch.arange(n, device=dev)
+            row = torch.arange(i0, i1, device=dev).unsqueeze(1)
+            upper = col.unsqueeze(0) > row          # (C, N) bool
+
+            d = dist[upper]
+            viol = torch.clamp(self.r_min - d, min=0.0)
+            penalty = penalty + (viol * viol).sum()
+
+        return self.weight * penalty
 
 
 def to_dict(obj):
@@ -109,8 +283,8 @@ TARGET_CONFIG = {
     'S_Q': {
         'name': 'Structure Factor',
         'symbol': 'S(Q)',
-        'xlabel': 'Q (Å⁻¹)',
-        'ylabel': 'S(Q)',
+        'xlabel': r'$Q$ (Å$^{-1}$)',
+        'ylabel': r'$S(Q)$',
         'space': 'Q',
         'target_attr': 'S_Q_target',
         'uncert_attr': 'S_Q_uncert',
@@ -120,8 +294,8 @@ TARGET_CONFIG = {
     'F_Q': {
         'name': 'Reduced Structure Factor',
         'symbol': 'F(Q)',
-        'xlabel': 'Q (Å⁻¹)',
-        'ylabel': 'F(Q) = Q[S(Q)-1]',
+        'xlabel': r'$Q$ (Å$^{-1}$)',
+        'ylabel': r'$F(Q) = Q[S(Q)-1]$',
         'space': 'Q',
         'target_attr': 'F_q_target',  # Use F(Q) target directly
         'uncert_attr': 'F_q_uncert',  # Use F(Q) uncertainty directly
@@ -131,8 +305,8 @@ TARGET_CONFIG = {
     'T_r': {
         'name': 'Total Correlation Function',
         'symbol': 'T(r)',
-        'xlabel': 'r (Å)',
-        'ylabel': 'T(r)',
+        'xlabel': r'$r$ (Å)',
+        'ylabel': r'$T(r)$',
         'space': 'r',
         'target_attr': 'T_r_target',
         'uncert_attr': 'T_r_uncert',
@@ -142,8 +316,8 @@ TARGET_CONFIG = {
     'g_r': {
         'name': 'Pair Distribution Function',
         'symbol': 'g(r)',
-        'xlabel': 'r (Å)',
-        'ylabel': 'g(r)',
+        'xlabel': r'$r$ (Å)',
+        'ylabel': r'$g(r)$',
         'space': 'r',
         'target_attr': 'g_r_target',
         'uncert_attr': 'g_r_uncert',
@@ -153,8 +327,8 @@ TARGET_CONFIG = {
     'G_r': {
         'name': 'Reduced Pair Distribution Function',
         'symbol': 'G(r)',
-        'xlabel': 'r (Å)',
-        'ylabel': 'G(r) = 4πρr[g(r)-1]',
+        'xlabel': r'$r$ (Å)',
+        'ylabel': r'$G(r) = 4\pi\rho r[g(r)-1]$',
         'space': 'r',
         'target_attr': 'G_r_target',
         'uncert_attr': 'G_r_uncert',
@@ -180,7 +354,30 @@ class SpectraPlotter:
         'Si': 100, 'O': 60, 'Ge': 120, 'P': 90, 'S': 80,
         'Li': 50, 'Na': 70, 'Fe': 100, 'N': 55, 'Cl': 75, 'Ta': 130
     }
-    
+
+    # Wong (2011) colourblind-safe palette
+    C_BLUE   = "#0072B2"
+    C_ORANGE = "#E69F00"
+    C_GREEN  = "#009E73"
+    C_RED    = "#D55E00"
+    C_PURPLE = "#CC79A7"
+    C_GREY   = "#999999"
+
+    # Shared ACS publication rcParams (single-column: 3.5 in; double: 7.0 in)
+    _ACS_RC = {
+        "font.family": "sans-serif",
+        "font.sans-serif": ["DejaVu Sans", "Arial", "Helvetica"],
+        "font.size": 8, "axes.titlesize": 9, "axes.labelsize": 8,
+        "xtick.labelsize": 7, "ytick.labelsize": 7, "legend.fontsize": 7,
+        "lines.linewidth": 1.0, "axes.linewidth": 0.8,
+        "xtick.major.width": 0.8, "ytick.major.width": 0.8,
+        "xtick.minor.width": 0.5, "ytick.minor.width": 0.5,
+        "xtick.direction": "in", "ytick.direction": "in",
+        "xtick.minor.visible": True, "ytick.minor.visible": True,
+        "figure.dpi": 300, "savefig.dpi": 300,
+        "savefig.bbox": "tight", "savefig.pad_inches": 0.03,
+    }
+
     def __init__(self, output_dir: Path, target_type: str):
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -311,39 +508,34 @@ class SpectraPlotter:
             if uncert_data.numel() > 0 and len(uncert_data) == len(y_target):
                 y_uncert = uncert_data.cpu().numpy()
         
-        # Create figure
-        fig, ax = plt.subplots(figsize=(12, 6))
-        
-        # Plot uncertainty band
-        if y_uncert is not None:
-            ax.fill_between(x, y_target - y_uncert, y_target + y_uncert,
-                           alpha=0.3, color='blue', label='Uncertainty (σ)')
-        
-        # Plot target
-        ax.plot(x, y_target, 'b-', linewidth=2, label='Experimental Data', alpha=0.9)
-        
-        # Labels
-        ax.set_xlabel(cfg['xlabel'], fontsize=14)
-        ax.set_ylabel(cfg['ylabel'], fontsize=14)
-        
-        # Title with file info
-        file_info = data_files.get(f'{cfg["target_attr"]}_file', 'Unknown')
-        title = f"Experimental {cfg['name']} {cfg['symbol']}\nFile: {Path(file_info).name if file_info else 'N/A'}"
-        ax.set_title(title, fontsize=14)
-        
-        ax.legend(loc='best', fontsize=11)
-        ax.grid(True, alpha=0.3)
-        plt.tight_layout()
-        
-        # Save
-        png_path = self.output_dir / f"experimental_{self.target_type}.png"
-        pdf_path = self.output_dir / f"experimental_{self.target_type}.pdf"
-        
-        plt.savefig(png_path, dpi=150, bbox_inches='tight')
-        plt.savefig(pdf_path, bbox_inches='tight')
-        plt.close(fig)
-        
-        # Log to wandb
+        import matplotlib.ticker as _ticker
+        with plt.rc_context(self._ACS_RC):
+            fig, ax = plt.subplots(figsize=(3.5, 2.6))
+
+            if y_uncert is not None:
+                ax.fill_between(x, y_target - y_uncert, y_target + y_uncert,
+                               alpha=0.25, color=self.C_BLUE, linewidth=0,
+                               label=r'Exp. $\pm\sigma$')
+
+            ax.plot(x, y_target, color=self.C_BLUE, linewidth=1.0,
+                    label='Experiment')
+
+            ax.set_xlabel(cfg['xlabel'])
+            ax.set_ylabel(cfg['ylabel'])
+            ax.set_title(f"Experimental {cfg['name']} {cfg['symbol']}")
+            ax.legend(frameon=False, loc='best')
+            ax.grid(True, linewidth=0.3, color='#dddddd')
+            ax.xaxis.set_minor_locator(_ticker.AutoMinorLocator(5))
+            ax.yaxis.set_minor_locator(_ticker.AutoMinorLocator(4))
+            ax.tick_params(which='both', top=True, right=True)
+            fig.tight_layout(pad=0.3)
+
+            png_path = self.output_dir / f"experimental_{self.target_type}.png"
+            pdf_path = self.output_dir / f"experimental_{self.target_type}.pdf"
+            fig.savefig(png_path)
+            fig.savefig(pdf_path)
+            plt.close(fig)
+
         wandb.log({"experimental_spectrum": wandb.Image(str(png_path))})
         
         return {'png': png_path, 'pdf': pdf_path}
@@ -521,55 +713,62 @@ class SpectraPlotter:
         if hasattr(rdf_data, uncert_attr) and getattr(rdf_data, uncert_attr) is not None:
             y_uncert = getattr(rdf_data, uncert_attr).cpu().numpy()[:min_len]
         
-        # Create figure
-        fig, ax = plt.subplots(figsize=(10, 6))
+        import matplotlib.ticker as _ticker
+        with plt.rc_context(self._ACS_RC):
+            fig, ax = plt.subplots(figsize=(3.5, 2.6))
+
+            if y_uncert is not None:
+                ax.fill_between(x, y_target - y_uncert, y_target + y_uncert,
+                               alpha=0.25, color=self.C_BLUE, linewidth=0,
+                               label=r'Exp. $\pm\sigma$')
+
+            ax.plot(x, y_target, color=self.C_BLUE, linewidth=1.0,
+                    label='Experiment')
+            ax.plot(x, y_pred, color=self.C_RED, linewidth=1.0,
+                    linestyle='--', label='TorchDisorder')
+
+            mask = ~np.isnan(y_target) & ~np.isnan(y_pred)
+            if mask.sum() > 0:
+                ss_res = np.sum((y_target[mask] - y_pred[mask])**2)
+                ss_tot = np.sum((y_target[mask] - y_target[mask].mean())**2)
+                r2 = 1 - ss_res / (ss_tot + 1e-10)
+                rmse = np.sqrt(np.mean((y_target[mask] - y_pred[mask])**2))
+                ax.text(0.97, 0.96,
+                        f'$R^2$ = {r2:.4f}\nRMSE = {rmse:.4f}',
+                        transform=ax.transAxes, fontsize=6,
+                        va='top', ha='right',
+                        bbox=dict(boxstyle='round,pad=0.3',
+                                  facecolor='white', edgecolor='#cccccc',
+                                  linewidth=0.5, alpha=0.85))
+
+            ax.set_xlabel(cfg['xlabel'])
+            ax.set_ylabel(cfg['ylabel'])
+            ax.set_title(f"{cfg['name']} {cfg['symbol']}")
+            ax.legend(frameon=False, loc='best')
+            ax.grid(True, linewidth=0.3, color='#dddddd')
+            ax.xaxis.set_minor_locator(_ticker.AutoMinorLocator(5))
+            ax.yaxis.set_minor_locator(_ticker.AutoMinorLocator(4))
+            ax.tick_params(which='both', top=True, right=True)
+            fig.tight_layout(pad=0.3)
+
+            base = f"{prefix}{self.target_type}"
+            png_path = self.output_dir / f"{base}.png"
+            pdf_path = self.output_dir / f"{base}.pdf"
+            fig.savefig(png_path)
+            fig.savefig(pdf_path)
+            plt.close(fig)
+
+            # CSV export of final model spectrum for post-processing
+            csv_path = self.output_dir / f"{base}_data.csv"
+            import csv as _csv
+            with open(csv_path, 'w', newline='') as _f:
+                _w = _csv.writer(_f)
+                _w.writerow([cfg.get('x_label', 'x'), 'target', 'model'])
+                for xi, yt, yp in zip(x, y_target, y_pred):
+                    _w.writerow([xi, yt, yp])
         
-        # Plot uncertainty band
-        if y_uncert is not None:
-            ax.fill_between(x, y_target - y_uncert, y_target + y_uncert,
-                           alpha=0.3, color='blue', label='Target ± σ')
-        
-        # Plot target and prediction
-        ax.plot(x, y_target, 'b-', linewidth=2, label='Target (Experimental)', alpha=0.8)
-        ax.plot(x, y_pred, 'r-', linewidth=2, label='Predicted (Model)', alpha=0.9)
-        
-        # Compute metrics
-        mask = ~np.isnan(y_target) & ~np.isnan(y_pred)
-        if mask.sum() > 0:
-            ss_res = np.sum((y_target[mask] - y_pred[mask])**2)
-            ss_tot = np.sum((y_target[mask] - y_target[mask].mean())**2)
-            r2 = 1 - ss_res / (ss_tot + 1e-10)
-            rmse = np.sqrt(np.mean((y_target[mask] - y_pred[mask])**2))
-            
-            textstr = f'R² = {r2:.4f}\nRMSE = {rmse:.4f}'
-            props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
-            ax.text(0.95, 0.95, textstr, transform=ax.transAxes, fontsize=11,
-                   verticalalignment='top', horizontalalignment='right', bbox=props)
-        
-        # Labels
-        ax.set_xlabel(cfg['xlabel'], fontsize=12)
-        ax.set_ylabel(cfg['ylabel'], fontsize=12)
-        
-        title = f"{cfg['name']} {cfg['symbol']}"
-        if step is not None:
-            title += f' - Step {step}'
-        ax.set_title(title, fontsize=14)
-        
-        ax.legend(loc='best', fontsize=10)
-        ax.grid(True, alpha=0.3)
-        plt.tight_layout()
-        
-        # Save
-        base = f"{prefix}{self.target_type}"
-        png_path = self.output_dir / f"{base}.png"
-        pdf_path = self.output_dir / f"{base}.pdf"
-        
-        plt.savefig(png_path, dpi=150, bbox_inches='tight')
-        plt.savefig(pdf_path, bbox_inches='tight')
-        plt.close(fig)
-        
-        return {'png': png_path, 'pdf': pdf_path}
-    
+        return {'png': png_path, 'pdf': pdf_path, 'csv': csv_path}
+
     def plot_loss_history(self, prefix: str = "") -> Optional[Dict[str, Path]]:
         """Plot loss curves over training."""
         
@@ -577,90 +776,165 @@ class SpectraPlotter:
         if len(steps) < 2:
             return None
         
-        fig, axes = plt.subplots(1, 2, figsize=(14, 5))
-        
-        # Loss plot
-        ax = axes[0]
-        losses = np.array(self.history['total_loss'])
-        ax.semilogy(steps, losses, 'b-', linewidth=2, label=f'{self.target_config["symbol"]} Loss')
-        ax.set_xlabel('Step', fontsize=12)
-        ax.set_ylabel('Loss (log scale)', fontsize=12)
-        ax.set_title(f'Training Loss - Target: {self.target_config["symbol"]}', fontsize=14)
-        ax.legend()
-        ax.grid(True, alpha=0.3)
-        
-        # Violations plot
-        ax = axes[1]
-        if any(v > 0 for v in self.history['avg_violation']):
-            ax.plot(steps, self.history['avg_violation'], 'b-', linewidth=2, label='Avg Violation')
-            ax.plot(steps, self.history['max_violation'], 'r--', linewidth=1.5, label='Max Violation')
-            ax.legend()
-        ax.set_xlabel('Step', fontsize=12)
-        ax.set_ylabel('Violation', fontsize=12)
-        ax.set_title('Constraint Violations', fontsize=14)
-        ax.grid(True, alpha=0.3)
-        
-        plt.tight_layout()
-        
-        # Save
-        png_path = self.output_dir / f'{prefix}loss_history.png'
-        pdf_path = self.output_dir / f'{prefix}loss_history.pdf'
-        plt.savefig(png_path, dpi=150, bbox_inches='tight')
-        plt.savefig(pdf_path, bbox_inches='tight')
-        plt.close(fig)
+        import matplotlib.ticker as _ticker
+        with plt.rc_context(self._ACS_RC):
+            fig, axes = plt.subplots(1, 2, figsize=(7.0, 2.6),
+                                     constrained_layout=True)
+
+            # Loss panel
+            ax = axes[0]
+            losses = np.array(self.history['total_loss'])
+            ax.semilogy(steps, losses, color=self.C_BLUE, linewidth=1.0,
+                        label=f'{self.target_config["symbol"]} loss')
+            ax.set_xlabel('Step')
+            ax.set_ylabel('Loss (log scale)')
+            ax.set_title(f'Training loss — {self.target_config["symbol"]}')
+            ax.legend(frameon=False)
+            ax.grid(True, linewidth=0.3, color='#dddddd')
+            ax.xaxis.set_minor_locator(_ticker.AutoMinorLocator(5))
+            ax.tick_params(which='both', top=True, right=True)
+
+            # Violations panel
+            ax = axes[1]
+            has_violations = any(v > 0 for v in self.history['avg_violation'])
+            if has_violations:
+                ax.plot(steps, self.history['avg_violation'],
+                        color=self.C_ORANGE, linewidth=1.0, label='Avg violation')
+                ax.plot(steps, self.history['max_violation'],
+                        color=self.C_RED, linewidth=1.0, linestyle='--',
+                        label='Max violation')
+                ax.legend(frameon=False)
+            ax.set_xlabel('Step')
+            ax.set_ylabel('Constraint violation')
+            ax.set_title('Constraint violations')
+            ax.grid(True, linewidth=0.3, color='#dddddd')
+            ax.xaxis.set_minor_locator(_ticker.AutoMinorLocator(5))
+            ax.yaxis.set_minor_locator(_ticker.AutoMinorLocator(4))
+            ax.tick_params(which='both', top=True, right=True)
+
+            png_path = self.output_dir / f'{prefix}loss_history.png'
+            pdf_path = self.output_dir / f'{prefix}loss_history.pdf'
+            fig.savefig(png_path)
+            fig.savefig(pdf_path)
+            plt.close(fig)
         
         return {'png': png_path, 'pdf': pdf_path}
     
     def plot_structure_3d(self, atoms, title: str = "Structure", prefix: str = "") -> Dict[str, Path]:
         """Plot 3D structure."""
         
-        fig = plt.figure(figsize=(10, 8))
-        ax = fig.add_subplot(111, projection='3d')
-        
-        positions = atoms.get_positions()
-        symbols = atoms.get_chemical_symbols()
-        unique_symbols = list(set(symbols))
-        
-        for symbol in unique_symbols:
-            mask = np.array([s == symbol for s in symbols])
-            pos = positions[mask]
-            color = self.ELEMENT_COLORS.get(symbol, '#808080')
-            size = self.ELEMENT_SIZES.get(symbol, 80)
-            ax.scatter(pos[:, 0], pos[:, 1], pos[:, 2],
-                      c=color, s=size, label=symbol, alpha=0.8, edgecolors='black', linewidths=0.5)
-        
-        # Draw unit cell
-        cell = atoms.get_cell()
-        origin = np.array([0, 0, 0])
-        a, b, c = cell[0], cell[1], cell[2]
-        edges = [
-            (origin, origin + a), (origin, origin + b), (origin, origin + c),
-            (origin + a, origin + a + b), (origin + a, origin + a + c),
-            (origin + b, origin + b + a), (origin + b, origin + b + c),
-            (origin + c, origin + c + a), (origin + c, origin + c + b),
-            (origin + a + b, origin + a + b + c),
-            (origin + a + c, origin + a + b + c),
-            (origin + b + c, origin + a + b + c),
-        ]
-        for start, end in edges:
-            ax.plot3D([start[0], end[0]], [start[1], end[1]], [start[2], end[2]],
-                     'k-', alpha=0.5, linewidth=1)
-        
-        ax.set_xlabel('x (Å)')
-        ax.set_ylabel('y (Å)')
-        ax.set_zlabel('z (Å)')
-        ax.set_title(title)
-        ax.legend(loc='upper left')
-        plt.tight_layout()
-        
-        # Save
-        png_path = self.output_dir / f'{prefix}structure_3d.png'
-        pdf_path = self.output_dir / f'{prefix}structure_3d.pdf'
-        plt.savefig(png_path, dpi=150, bbox_inches='tight')
-        plt.savefig(pdf_path, bbox_inches='tight')
-        plt.close(fig)
+        with plt.rc_context({**self._ACS_RC, "font.size": 7,
+                              "axes.labelsize": 7, "xtick.labelsize": 6,
+                              "ytick.labelsize": 6, "legend.fontsize": 6}):
+            fig = plt.figure(figsize=(3.5, 3.5))
+            ax = fig.add_subplot(111, projection='3d')
+
+            positions = atoms.get_positions()
+            symbols = atoms.get_chemical_symbols()
+            for symbol in sorted(set(symbols)):
+                mask = np.array([s == symbol for s in symbols])
+                pos = positions[mask]
+                color = self.ELEMENT_COLORS.get(symbol, '#808080')
+                size = self.ELEMENT_SIZES.get(symbol, 80)
+                ax.scatter(pos[:, 0], pos[:, 1], pos[:, 2],
+                          c=color, s=size * 0.5, label=symbol,
+                          alpha=0.85, edgecolors='black', linewidths=0.3)
+
+            # Unit cell edges
+            cell = atoms.get_cell()
+            origin = np.zeros(3)
+            a, b, c = cell[0], cell[1], cell[2]
+            edges = [
+                (origin, origin+a), (origin, origin+b), (origin, origin+c),
+                (origin+a, origin+a+b), (origin+a, origin+a+c),
+                (origin+b, origin+b+a), (origin+b, origin+b+c),
+                (origin+c, origin+c+a), (origin+c, origin+c+b),
+                (origin+a+b, origin+a+b+c),
+                (origin+a+c, origin+a+b+c),
+                (origin+b+c, origin+a+b+c),
+            ]
+            for start, end in edges:
+                ax.plot3D([start[0], end[0]], [start[1], end[1]], [start[2], end[2]],
+                         color='#555555', alpha=0.5, linewidth=0.6)
+
+            ax.set_xlabel('x (Å)')
+            ax.set_ylabel('y (Å)')
+            ax.set_zlabel('z (Å)')
+            ax.set_title(title)
+            ax.legend(loc='upper left', markerscale=0.7)
+            fig.tight_layout(pad=0.3)
+
+            png_path = self.output_dir / f'{prefix}structure_3d.png'
+            pdf_path = self.output_dir / f'{prefix}structure_3d.pdf'
+            fig.savefig(png_path)
+            fig.savefig(pdf_path)
+            plt.close(fig)
         
         return {'png': png_path, 'pdf': pdf_path}
+
+
+# =============================================================================
+# CONSTRAINT REGENERATION
+# =============================================================================
+
+def _run_lps_generator(gen_cfg, json_path: Path) -> None:
+    """
+    Invoke data/cif-generation/lps_generator.py to regenerate CIF + JSON.
+
+    Required keys in gen_cfg:
+        script        – path to lps_generator.py
+        input_cif     – base crystal CIF (e.g. Li7P3S11.cif)
+        target        – composition string (e.g. '67Li2S-33P2S5')
+        supercell     – comma-separated ints (e.g. '4,2,2')
+        output_prefix – file prefix for generated outputs (stem of json_path if omitted)
+
+    Optional keys:
+        keep_li       – bool (default false)
+        disorder      – float in Å (default 0.3)
+        seed          – int (default 42)
+    """
+    import subprocess, sys as _sys
+
+    script = OmegaConf.select(gen_cfg, 'script', default=None)
+    if script is None:
+        raise ValueError(
+            "constraints.generator.script must point to lps_generator.py "
+            "when constraints.regenerate_json=true"
+        )
+
+    input_cif  = str(OmegaConf.select(gen_cfg, 'input_cif'))
+    target     = str(OmegaConf.select(gen_cfg, 'target'))
+    supercell  = str(OmegaConf.select(gen_cfg, 'supercell'))
+    # Output prefix: strip '_constraints.json' or '.json' suffix
+    if OmegaConf.select(gen_cfg, 'output_prefix', default=None) is not None:
+        output_prefix = str(gen_cfg.output_prefix)
+    else:
+        stem = json_path.name
+        for suffix in ('_constraints.json', '.json'):
+            if stem.endswith(suffix):
+                stem = stem[: -len(suffix)]
+                break
+        output_prefix = str(json_path.parent / stem)
+
+    cmd = [
+        _sys.executable, str(script),
+        '--input',     input_cif,
+        '--target',    target,
+        '--supercell', supercell,
+        '--output',    output_prefix,
+    ]
+    if OmegaConf.select(gen_cfg, 'keep_li', default=False):
+        cmd.append('--keep-li')
+    disorder = OmegaConf.select(gen_cfg, 'disorder', default=None)
+    if disorder is not None:
+        cmd += ['--disorder', str(disorder)]
+    seed = OmegaConf.select(gen_cfg, 'seed', default=None)
+    if seed is not None:
+        cmd += ['--seed', str(seed)]
+
+    print(f"  [regenerate_json] Running: {' '.join(cmd)}")
+    subprocess.run(cmd, check=True)
+    print(f"  [regenerate_json] Done — output written to {output_prefix}.*")
 
 
 # =============================================================================
@@ -889,9 +1163,19 @@ def main(cfg: DictConfig) -> None:
         print(f"  Using stride_q={stride_q} for Q-space subsampling")
     if stride_r > 1:
         print(f"  Using stride_r={stride_r} for r-space subsampling")
-    
+
+    # Merge nested data section with top-level parameters so that
+    # q_min/q_max/r_min/r_max/n_r_bins/kernel_width defined at the top level
+    # of the data YAML are visible to TargetRDFData.from_dict()
+    rdf_config = to_dict(data_cfg)
+    for param in ['r_min', 'r_max', 'q_min', 'q_max', 'n_r_bins', 'kernel_width']:
+        if param not in rdf_config:
+            value = OmegaConf.select(cfg.data, param, default=None)
+            if value is not None:
+                rdf_config[param] = value
+
     rdf_data = TargetRDFData.from_dict(
-        to_dict(data_cfg), 
+        rdf_config,
         device=accelerator,
         stride_q=stride_q,
         stride_r=stride_r
@@ -1097,11 +1381,16 @@ def main(cfg: DictConfig) -> None:
         scattering_type = OmegaConf.select(cfg, 'scattering_type', default='neutron')
     print(f"  scattering_type: {scattering_type}")
     
+    chunk_size = OmegaConf.select(cfg, 'scattering.chunk_size', default=None)
+    if chunk_size is not None:
+        chunk_size = int(chunk_size)
+
     model_config = {
         'kernel_width': kernel_width,
         'neutron_scattering_lengths': neutron_lengths,
         'xray_form_factor_params': xray_params if xray_params else {},
         'scattering_type': scattering_type,
+        'chunk_size': chunk_size,
     }
     
     xrd_model = XRDModel(
@@ -1125,6 +1414,15 @@ def main(cfg: DictConfig) -> None:
     except Exception as e:
         print(f"  ERROR: {e}")
         raise
+    finally:
+        # Release the forward-test computation graph and return PyTorch's cached
+        # CUDA memory to the driver so it is available for the training loop.
+        try:
+            del results
+        except NameError:
+            pass
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
     print(f"{'=' * 70}\n")
 
     # ==========================================
@@ -1153,10 +1451,20 @@ def main(cfg: DictConfig) -> None:
     print(f"  Use types: {constraints_use_types}")
     
     json_path = OmegaConf.select(cfg, 'data.json_path', default=None)
-    
+
+    # Optionally force-regenerate the CIF + JSON before loading
+    regenerate_json = OmegaConf.select(cfg, 'constraints.regenerate_json', default=False)
+    if regenerate_json and json_path:
+        gen_cfg = OmegaConf.select(cfg, 'constraints.generator', default=None)
+        if gen_cfg is None:
+            print("  WARNING: constraints.regenerate_json=true but constraints.generator "
+                  "is not configured — skipping regeneration.")
+        else:
+            _run_lps_generator(gen_cfg, Path(json_path))
+
     use_constraints = False
     cooper_problem = None
-    
+
     if json_path and constraints_enabled:
         json_path = Path(json_path)
         print(f"  Constraints file: {json_path}")
@@ -1222,7 +1530,96 @@ def main(cfg: DictConfig) -> None:
     
     if not use_constraints:
         print("\n  >>> Running UNCONSTRAINED optimization <<<")
-    
+
+    # ── Li repulsion penalty (only when li_constraints block is present) ──────
+    li_repulsion_fn = None
+    if json_path and constraints_enabled and Path(json_path).exists():
+        with open(json_path, 'r') as _f:
+            _cdata = json.load(_f)
+        _li_block = _cdata.get('li_constraints', None)
+        if _li_block is not None:
+            _li_idx = _li_block.get('li_atom_indices', [])
+            _min_d  = _li_block.get('minimum_distances', {})
+            _atom_numbers = base_sim_state.atomic_numbers.tolist()
+            _li_weight = OmegaConf.select(cfg, 'li_repulsion_weight', default=0.1)
+            li_repulsion_fn = LiRepulsionLoss(
+                li_indices=_li_idx,
+                min_distances=_min_d,
+                atom_numbers=_atom_numbers,
+                weight=_li_weight,
+                device=str(device),
+            ).to(device)
+            print(f"\n  Li repulsion penalty enabled:")
+            print(f"    {len(_li_idx)} Li atoms, weight={_li_weight}")
+            print(f"    Min distances: {_min_d}")
+
+    # ── Global overlap repulsion (all atom pairs) ─────────────────────────────
+    # ── Global overlap repulsion ───────────────────────────────────────────────
+    # Always active — independent of whether a JSON or constraints are present.
+    # Parameters come from JSON first (if available), then config.yaml, then
+    # hard-coded defaults. Only disabled by an explicit enabled=false.
+    _orep_json = {}
+    if json_path and Path(json_path).exists():
+        with open(json_path, 'r') as _f:
+            _orep_json = json.load(_f).get('overlap_repulsion', {})
+
+    _r_min = float(_orep_json.get(
+        'r_min',
+        OmegaConf.select(cfg, 'constraints.overlap_repulsion.r_min', default=1.0)
+    ))
+    _orep_w = float(_orep_json.get(
+        'weight',
+        OmegaConf.select(cfg, 'constraints.overlap_repulsion.weight', default=1.0)
+    ))
+    _orep_chunk = _orep_json.get(
+        'chunk_size',
+        OmegaConf.select(cfg, 'constraints.overlap_repulsion.chunk_size', default=None)
+    )
+    if _orep_chunk is not None:
+        _orep_chunk = int(_orep_chunk)
+    # Respect an explicit enabled=false, but default to True always
+    _orep_enabled = _orep_json.get(
+        'enabled',
+        OmegaConf.select(cfg, 'constraints.overlap_repulsion.enabled', default=True)
+    )
+    _orep_src = 'JSON' if _orep_json else 'config/default'
+    if _orep_enabled:
+        overlap_repulsion_fn = OverlapRepulsionLoss(
+            r_min=_r_min,
+            weight=_orep_w,
+            chunk_size=_orep_chunk,
+            device=str(device),
+        ).to(device)
+        print(f"\n  Overlap repulsion: enabled (source: {_orep_src})")
+        print(f"    r_min={_r_min} Å, weight={_orep_w}")
+    else:
+        overlap_repulsion_fn = None
+        print(f"\n  Overlap repulsion: DISABLED (source: {_orep_src})")
+
+    # ── MLIP energy regularizer (optional) ────────────────────────────────────
+    mlip_reg = None
+    mlip_force_rms = 0.0
+    if OmegaConf.select(cfg, 'mlip.enabled', default=False):
+        _backend = OmegaConf.select(cfg, 'mlip.backend', default='mace')
+        _model   = OmegaConf.select(cfg, 'mlip.model',   default='small')
+        try:
+            mlip_reg = MLIPRegularizer(
+                backend=_backend,
+                model=_model,
+                force_weight=float(OmegaConf.select(cfg, 'mlip.force_weight', default=1e-3)),
+                apply_every=int(OmegaConf.select(cfg, 'mlip.apply_every', default=10)),
+                relax_every=int(OmegaConf.select(cfg, 'mlip.relax_every', default=0)),
+                relax_max_steps=int(OmegaConf.select(cfg, 'mlip.relax_max_steps', default=20)),
+                device=device,
+                dtype=torch.float32,
+            )
+            print(f"\n  MLIP regularizer: enabled")
+            print(f"    backend={_backend}, model={_model}, "
+                  f"force_weight={mlip_reg.force_weight}")
+            print(f"    apply_every={mlip_reg.apply_every}, relax_every={mlip_reg.relax_every}")
+        except (ImportError, ValueError) as _mlip_err:
+            print(f"\n  ⚠️  mlip.enabled=true but backend '{_backend}' unavailable: {_mlip_err}")
+
     print(f"{'=' * 70}\n")
 
     # ==========================================
@@ -1259,6 +1656,7 @@ def main(cfg: DictConfig) -> None:
     max_steps = int(OmegaConf.select(cfg, 'max_steps', default=50000))
     checkpoint_interval = OmegaConf.select(cfg, 'checkpoint_interval', default=10000)
     plot_interval = OmegaConf.select(cfg, 'output.plot_interval', default=1000)
+    trajectory_interval = int(OmegaConf.select(cfg, 'output.trajectory_interval', default=1000))
     
     initial_loss = None
     lr_reduced = False
@@ -1454,10 +1852,44 @@ def main(cfg: DictConfig) -> None:
                     if cs.violation is not None:
                         all_v.append(cs.violation.reshape(-1))
                 violations = torch.cat(all_v) if all_v else torch.zeros(1, device=device)
-                
+
                 avg_viol = violations.mean().item()
                 max_viol = violations.max().item()
                 num_viol = (violations > 0).sum().item()
+
+                # Li repulsion: separate gradient step (Cooper already stepped)
+                if li_repulsion_fn is not None:
+                    primal_optimizer.zero_grad()
+                    _cell = base_sim_state.cell
+                    _cell_mat = _cell[0] if _cell.dim() == 3 else _cell
+                    li_pen = li_repulsion_fn(base_sim_state.positions, _cell_mat)
+                    if li_pen.item() > 0:
+                        li_pen.backward()
+                        primal_optimizer.step()
+                    loss = loss.detach() + li_pen.detach()
+
+                # Overlap repulsion: separate gradient step after Cooper
+                if overlap_repulsion_fn is not None:
+                    primal_optimizer.zero_grad()
+                    _cell = base_sim_state.cell
+                    _cell_mat = _cell[0] if _cell.dim() == 3 else _cell
+                    ov_pen = overlap_repulsion_fn(base_sim_state.positions, _cell_mat)
+                    if ov_pen.item() > 0:
+                        ov_pen.backward()
+                        primal_optimizer.step()
+                    loss = loss.detach() + ov_pen.detach()
+
+                # MLIP force penalty: separate gradient step
+                if mlip_reg is not None:
+                    _mlip_result = mlip_reg.force_penalty(base_sim_state, step)
+                    if _mlip_result is not None:
+                        _mlip_pen, mlip_force_rms = _mlip_result
+                        primal_optimizer.zero_grad()
+                        _mlip_pen.backward()
+                        primal_optimizer.step()
+                        loss = loss.detach() + abs(_mlip_pen.detach().item())
+                    base_sim_state = mlip_reg.maybe_relax(base_sim_state, step)
+
             else:
                 # Unconstrained optimization
                 primal_optimizer.zero_grad()
@@ -1465,14 +1897,39 @@ def main(cfg: DictConfig) -> None:
                 loss_dict = loss_fn(results)
                 loss = loss_dict['total_loss']
                 chi2_loss = loss_dict.get('chi2_loss', loss)
+
+                # Li and overlap repulsions fold into the same backward pass
+                if li_repulsion_fn is not None:
+                    _cell = base_sim_state.cell
+                    _cell_mat = _cell[0] if _cell.dim() == 3 else _cell
+                    li_pen = li_repulsion_fn(base_sim_state.positions, _cell_mat)
+                    loss = loss + li_pen
+
+                if overlap_repulsion_fn is not None:
+                    _cell = base_sim_state.cell
+                    _cell_mat = _cell[0] if _cell.dim() == 3 else _cell
+                    ov_pen = overlap_repulsion_fn(base_sim_state.positions, _cell_mat)
+                    loss = loss + ov_pen
+
                 loss.backward()
-                
+
                 # Gradient clipping for unconstrained path
                 if grad_clip_norm is not None:
                     torch.nn.utils.clip_grad_norm_(primal_params, grad_clip_norm)
-                
+
                 primal_optimizer.step()
-                
+
+                # MLIP force penalty: separate gradient step after main backward
+                if mlip_reg is not None:
+                    _mlip_result = mlip_reg.force_penalty(base_sim_state, step)
+                    if _mlip_result is not None:
+                        _mlip_pen, mlip_force_rms = _mlip_result
+                        primal_optimizer.zero_grad()
+                        _mlip_pen.backward()
+                        primal_optimizer.step()
+                        loss = loss.detach() + abs(_mlip_pen.detach().item())
+                    base_sim_state = mlip_reg.maybe_relax(base_sim_state, step)
+
                 pred_spectrum = get_prediction(results)
                 avg_viol, max_viol, num_viol = 0.0, 0.0, 0
                 violations = torch.zeros(1, device=device)
@@ -1545,7 +2002,10 @@ def main(cfg: DictConfig) -> None:
             log_dict["lr/primal"] = primal_optimizer.param_groups[0]["lr"]
             if dual_optimizer:
                 log_dict["lr/dual"] = dual_optimizer.param_groups[0]["lr"]
-            
+
+            if mlip_reg is not None:
+                log_dict["mlip/force_rms"] = mlip_force_rms
+
             wandb.log(log_dict, step=step)
 
             # Periodic plotting and wandb spectrum logging
@@ -1555,9 +2015,14 @@ def main(cfg: DictConfig) -> None:
                     paths = plotter.plot_target_spectrum(rdf_data, pred_spectrum, step=step, prefix=f"step_{step}_")
                     if paths:
                         wandb.log({f"plots/{target_cfg['symbol']}": wandb.Image(str(paths['png']))}, step=step)
-                    
+
                     # Log live spectrum comparison to wandb
                     plotter.log_spectrum_to_wandb(rdf_data, pred_spectrum, step)
+
+                # Save loss + constraint-violation history plot
+                loss_paths = plotter.plot_loss_history(prefix=f"step_{step}_")
+                if loss_paths:
+                    wandb.log({"plots/loss_history": wandb.Image(str(loss_paths['png']))}, step=step)
 
             # Checkpointing
             if step > 0 and step % checkpoint_interval == 0:
@@ -1569,7 +2034,7 @@ def main(cfg: DictConfig) -> None:
                 print(f"Checkpoint saved: {ckpt_dir}")
 
             # Trajectory
-            if write_trajectory and step % 1000 == 0:
+            if write_trajectory and step % trajectory_interval == 0:
                 traj_path = Path(trajectory_path)
                 traj_path.mkdir(parents=True, exist_ok=True)
                 atoms_curr = state_to_atoms(base_sim_state)

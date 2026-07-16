@@ -21,7 +21,14 @@ from ase.md.velocitydistribution import MaxwellBoltzmannDistribution
 from ase.md.langevin import Langevin
 from ase import units
 from ase.io import write
-from mace.calculators.foundations_models import mace_mp
+# mace is only needed for the legacy perform_melt_quench helper; import lazily
+# so that the torchvision/torch version mismatch does not block module load.
+try:
+    from mace.calculators.foundations_models import mace_mp
+    _MACE_AVAILABLE = True
+except Exception:
+    mace_mp = None  # type: ignore
+    _MACE_AVAILABLE = False
 
 from torchdisorder.model.loss import AugLagLoss
 from torchdisorder.common.target_rdf import TargetRDFData
@@ -81,27 +88,26 @@ class ScalarAdaptivePenalty(PenaltyCoefficient):
         patience: int = 10,
         device: str = 'cuda'
     ):
-        # Don't call super().__init__ to avoid the value setter issue
-        # Just set the attributes we need
+        super().__init__(init=torch.tensor(init, device=device))
         self.expects_constraint_features = False
-        
+
         self.growth_rate = growth_rate
         self.decay_rate = decay_rate
         self.max_penalty = max_penalty
         self.min_penalty = min_penalty
         self.patience = patience
         self.device = device
-        self._init_value = init
-        
+        self._reset_value = init
+
         # Tracking state
         self._current_value = init
         self._best_violation = float('inf')
         self._steps_without_improvement = 0
-    
+
     def __call__(self, constraint_features=None):
         """Return the current penalty value."""
         return torch.tensor(self._current_value, device=self.device)
-    
+
     def update(self, total_violation: float):
         """
         Update penalty based on constraint violation.
@@ -138,7 +144,7 @@ class ScalarAdaptivePenalty(PenaltyCoefficient):
         if init is not None:
             self._current_value = init
         else:
-            self._current_value = self._init_value
+            self._current_value = self._reset_value
         self._best_violation = float('inf')
         self._steps_without_improvement = 0
     
@@ -394,11 +400,12 @@ class StructureFactorCMPWithConstraints(cooper.ConstrainedMinimizationProblem):
                    minv = torch.tensor(op_params['min'], device=self.device, dtype=value.dtype)
                    maxv = torch.tensor(op_params['max'], device=self.device, dtype=value.dtype)
 
-                   # "soft" box violation: relu(min - x) + relu(x - max)
-                   v = torch.relu(minv - value) + torch.relu(value - maxv)
-
+                   box_viol = torch.relu(minv - value) + torch.relu(value - maxv)
                    if self.violation_type == 'hard':
-                       v = torch.relu(minv - value) + torch.relu(value - maxv)
+                       # Squared penalty: stronger gradient signal for large violations
+                       v = box_viol ** 2
+                   else:
+                       v = box_viol
 
                else:
                    target = torch.tensor(op_params['target'], device=self.device, dtype=value.dtype)
@@ -630,6 +637,185 @@ class StructureFactorCMPWithConstraints(cooper.ConstrainedMinimizationProblem):
        return results
 
 
+def _make_ase_calculator(backend: str, model: str, device: str):
+    """
+    Factory: return an ASE calculator for the requested MLIP backend.
+
+    Supported backends
+    ------------------
+    mace       mace-torch     mace_mp foundation model (small/medium/large)
+    sevennet   sevenn         SevenNet-0 or custom checkpoint
+    chgnet     chgnet         CHGNet (no model arg needed for default)
+    m3gnet     matgl          M3GNet-MP-2021.2.8-PES or custom
+    orb        orb-models     ORB v2 foundation model
+    mattersim  mattersim      MatterSim large/small foundation model
+    """
+    backend = backend.lower()
+
+    if backend == "mace":
+        try:
+            from mace.calculators.foundations_models import mace_mp
+        except Exception as exc:
+            raise ImportError(
+                "mace-torch is not installed. Install with: pip install mace-torch"
+            ) from exc
+        return mace_mp(model=model or "small", device=device, default_dtype="float32")
+
+    if backend == "sevennet":
+        try:
+            from sevenn.sevennet_calculator import SevenNetCalculator
+        except Exception as exc:
+            raise ImportError(
+                "sevenn is not installed. Install with: pip install sevenn"
+            ) from exc
+        return SevenNetCalculator(model or "7net-0", device=device)
+
+    if backend == "chgnet":
+        try:
+            from chgnet.model.ase_interface import CHGNetCalculator
+        except Exception as exc:
+            raise ImportError(
+                "chgnet is not installed. Install with: pip install chgnet"
+            ) from exc
+        return CHGNetCalculator(use_device=device)
+
+    if backend == "m3gnet":
+        try:
+            import matgl
+            from matgl.ext.ase import M3GNetCalculator
+        except Exception as exc:
+            raise ImportError(
+                "matgl is not installed. Install with: pip install matgl"
+            ) from exc
+        pot = matgl.load_model(model or "M3GNet-MP-2021.2.8-PES")
+        return M3GNetCalculator(pot, stress_weight=0.0)
+
+    if backend == "orb":
+        try:
+            from orb_models.forcefield import pretrained
+            from orb_models.forcefield.calculator import ORBCalculator
+        except Exception as exc:
+            raise ImportError(
+                "orb-models is not installed. Install with: pip install orb-models"
+            ) from exc
+        model_name = model or "orb_v2"
+        if not hasattr(pretrained, model_name):
+            valid = [n for n in dir(pretrained) if not n.startswith("_")]
+            raise ValueError(
+                f"Unknown ORB model {model_name!r}. Valid models: {valid}"
+            )
+        orbff = getattr(pretrained, model_name)()
+        return ORBCalculator(orbff, device=device)
+
+    if backend == "mattersim":
+        try:
+            from mattersim.forcefield.potential import Potential
+        except Exception as exc:
+            raise ImportError(
+                "mattersim is not installed. Install with: pip install mattersim"
+            ) from exc
+        potential = Potential.from_checkpoint(model or "large", device=device)
+        return potential.ase_calculator()
+
+    raise ValueError(
+        f"Unknown MLIP backend: {backend!r}. "
+        f"Supported: mace, sevennet, chgnet, m3gnet, orb, mattersim"
+    )
+
+
+class MLIPRegularizer:
+    """
+    MLIP energy regularizer for TorchDisorder training.
+
+    Supports any backend that provides an ASE calculator:
+    mace, sevennet, chgnet, m3gnet, orb, mattersim.
+
+    Two regularization modes (both can be active simultaneously):
+      1. Force penalty  — every `apply_every` steps, forces from the MLIP
+         are applied as a differentiable proxy gradient step so positions
+         move downhill on the potential energy surface.
+      2. Periodic FIRE relaxation — every `relax_every` steps, atomic
+         positions are relaxed with ASE-FIRE using the chosen MLIP.
+
+    Both modes are off by default (apply_every=0 / relax_every=0).
+    The backend package must be installed; errors surface at init time.
+    """
+
+    def __init__(
+        self,
+        backend: str,
+        model: str,
+        force_weight: float,
+        apply_every: int,
+        relax_every: int,
+        relax_max_steps: int,
+        device,
+        dtype,
+    ):
+        self.backend = backend
+        self.force_weight = force_weight
+        self.apply_every = apply_every
+        self.relax_every = relax_every
+        self.relax_max_steps = relax_max_steps
+        self.device = device
+        self.dtype = dtype
+        self._calc = _make_ase_calculator(backend, model, str(device))
+
+    def force_penalty(self, state, step) -> Optional[tuple]:
+        """
+        Compute MLIP forces and return a differentiable proxy loss.
+
+        The proxy loss is  –λ · Σ(F_i · r_i)  whose gradient w.r.t. positions
+        is  –λ F_MLIP, so one Adam/SGD step moves atoms downhill on MLIP energy.
+
+        Returns (pen_tensor, force_rms_scalar) or None when not due this step.
+        """
+        if self.apply_every <= 0 or step % self.apply_every != 0:
+            return None
+
+        atoms_list = state_to_atoms(state)
+        f_list = []
+        for atoms in atoms_list:
+            atoms.calc = self._calc
+            f_list.append(atoms.get_forces())  # (N_i, 3) float64 numpy
+            atoms.calc = None
+
+        F = torch.tensor(
+            np.vstack(f_list),
+            dtype=state.positions.dtype,
+            device=state.positions.device,
+        )
+
+        # –λ (F · r): gradient = –λ F, so descent moves r in force direction
+        pen = -self.force_weight * (F.detach() * state.positions).sum()
+        force_rms = float(F.pow(2).mean().item())
+        return pen, force_rms
+
+    def maybe_relax(self, state, step):
+        """Run ASE-FIRE relaxation if step % relax_every == 0 (relax_every > 0)."""
+        if self.relax_every <= 0 or step % self.relax_every != 0:
+            return state
+
+        from ase.optimize import FIRE as ASE_FIRE
+
+        atoms_list = state_to_atoms(state)
+        relaxed = []
+        for atoms in atoms_list:
+            atoms.calc = self._calc
+            opt = ASE_FIRE(atoms, logfile=None)
+            opt.run(steps=self.relax_max_steps)
+            atoms.calc = None
+            relaxed.append(atoms)
+
+        new_state = atoms_to_state(relaxed, device=self.device, dtype=self.dtype)
+        new_state.positions.requires_grad_(True)
+        return new_state
+
+
+# Backwards-compatibility alias
+MACERegularizer = MLIPRegularizer
+
+
 #Defining the FIRE MACE relaxation every few steps
 # Updated relaxation function
 def perform_fire_relaxation(sim_state, mace_model, device, dtype, max_steps=50):
@@ -730,6 +916,12 @@ def perform_melt_quench(
        write(f'{save_prefix}_pre_melt_{i}.xyz', atoms)
 
 
+       if not _MACE_AVAILABLE:
+           raise RuntimeError(
+               "mace-torch is not importable (likely a torchvision/torch version mismatch). "
+               "perform_melt_quench requires mace. "
+               "Fix: conda run -n torchdisorder pip install --upgrade torchvision"
+           )
        # Create ASE-compatible MACE calculator
        ase_calc = mace_mp(
            model="small",
@@ -771,19 +963,18 @@ def perform_melt_quench(
        print(f"  Phase 2: Quenching to {quench_temp} K over {quench_steps} steps...")
 
 
-       # Linear temperature ramp
+       # Linear temperature ramp — one Langevin object, update temperature each step
        temps = np.linspace(melt_temp, quench_temp, quench_steps)
-
+       dyn = Langevin(
+           atoms,
+           timestep=timestep * units.fs,
+           temperature_K=melt_temp,
+           friction=0.01,
+       )
 
        for step, temp in enumerate(temps):
-           dyn = Langevin(
-               atoms,
-               timestep=timestep * units.fs,
-               temperature_K=temp,
-               friction=0.01
-           )
+           dyn.set_temperature(temperature_K=temp)
            dyn.run(1)
-
 
            if (step + 1) % 400 == 0:
                energy = atoms.get_potential_energy()

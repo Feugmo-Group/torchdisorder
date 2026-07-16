@@ -1,0 +1,824 @@
+======================================================================
+P ENVIRONMENT SUMMARY FOR  
+======================================================================
+
+Total atoms: 3224
+Total P atoms: 768
+Total anionic units: 317
+
+Environment Distribution:
+----------------------------------------------------------------------
+  PS4^3-                             :  47.95% (0 P atoms)
+  PS3^-                              :  42.27% (0 P atoms)
+  P2S7^4- (dimer)                    :   9.15% (0 P atoms)
+  P2S6^4- (dumbbell)                 :   0.63% (0 P atoms)
+
+======================================================================
+ORDER PARAMETER CONSTRAINTS BY ENVIRONMENT
+======================================================================
+
+
+P4 environments (152 atoms):
+----------------------------------------------------------------------
+  cn: target=4.00, weight=1.5
+      (P-S coordination number)
+  tet: target=0.85, range=[0.70, 1.00], weight=2.0
+      (Tetrahedral PS4^3-)
+  q4: target=0.60, range=[0.40, 0.80], weight=0.5
+      (Tetrahedral bond order)
+
+Pa environments (58 atoms):
+----------------------------------------------------------------------
+  cn: target=4.00, weight=1.0
+      (P coordination (3S + 1P))
+  tet: target=0.60, range=[0.40, 0.80], weight=1.5
+      (Distorted tetrahedral (bridging S))
+
+P2 environments (4 atoms):
+----------------------------------------------------------------------
+  cn: target=4.00, weight=1.0
+      (P coordination (3S + 1P))
+  tet: target=0.65, range=[0.40, 0.85], weight=1.5
+      (Tetrahedral with P-P bond)
+
+P3 environments (134 atoms):
+----------------------------------------------------------------------
+  cn: target=3.00, weight=1.5
+      (P-S coordination)
+  q2: target=0.50, range=[0.30, 0.70], weight=1.0
+      (Pyramidal symmetry)
+
+======================================================================
+DETAILED P SITE INFORMATION
+======================================================================
+
+
+P4 sites (152 atoms):
+----------------------------------------------------------------------
+  Index   26: PS4^3-                    CN=4 (0P + 4S) xyz=(0.090, 28.379, 17.246)
+      S neighbors: [893, 984, 1164, 1848]
+  Index   37: PS4^3-                    CN=4 (0P + 4S) xyz=(10.360, 16.893, 6.261)
+      S neighbors: [902, 988, 1175, 1859]
+  Index   43: PS4^3-                    CN=4 (0P + 4S) xyz=(6.202, 28.598, 28.884)
+      S neighbors: [907, 991, 1181, 1865]
+  Index   47: PS4^3-                    CN=4 (0P + 4S) xyz=(2.898, 40.000, 24.324)
+      S neighbors: [910, 995, 1184, 1869]
+  Index   73: PS4^3-                    CN=4 (0P + 4S) xyz=(14.072, 28.132, -3.107)
+      S neighbors: [1194, 1313, 2703, 2815]
+  Index   76: PS4^3-                    CN=4 (0P + 4S) xyz=(14.423, 39.865, -15.999)
+      S neighbors: [931, 1010, 1213, 1898]
+  Index   81: PS4^3-                    CN=4 (0P + 4S) xyz=(31.812, 5.448, 6.287)
+      S neighbors: [936, 1012, 1218, 1903]
+  Index   84: PS4^3-                    CN=4 (0P + 4S) xyz=(28.254, 17.115, -10.440)
+      S neighbors: [937, 1015, 1221, 1906]
+  Index   93: PS4^3-                    CN=4 (0P + 4S) xyz=(21.082, 39.759, -4.741)
+      S neighbors: [945, 1018, 1230, 1915]
+  Index  101: PS4^3-                    CN=4 (0P + 4S) xyz=(34.224, 17.173, 1.571)
+      S neighbors: [952, 1022, 1238, 1923]
+  Index  103: PS4^3-                    CN=4 (0P + 4S) xyz=(34.331, 16.961, 26.708)
+      S neighbors: [954, 1023, 1240, 1925]
+  Index  107: PS4^3-                    CN=4 (0P + 4S) xyz=(30.653, 28.283, 22.400)
+      S neighbors: [958, 1025, 1244, 1929]
+  Index  108: PS4^3-                    CN=4 (0P + 4S) xyz=(26.798, 39.427, -19.197)
+      S neighbors: [959, 1026, 1245, 1930]
+  Index  109: PS4^3-                    CN=4 (0P + 4S) xyz=(30.155, 33.222, -5.329)
+      S neighbors: [852, 1712, 2059, 2511]
+  Index  120: PS4^3-                    CN=4 (0P + 4S) xyz=(36.553, 28.466, -16.440)
+      S neighbors: [966, 1033, 1257, 1942]
+  Index  133: PS4^3-                    CN=4 (0P + 4S) xyz=(-1.312, 20.402, 10.988)
+      S neighbors: [773, 974, 1376, 1518]
+  Index  137: PS4^3-                    CN=4 (0P + 4S) xyz=(-5.275, 31.688, 6.584)
+      S neighbors: [776, 976, 1380, 1522]
+  Index  139: PS4^3-                    CN=4 (0P + 4S) xyz=(-5.198, 32.175, 32.032)
+      S neighbors: [778, 977, 1382, 1524]
+  Index  140: PS4^3-                    CN=4 (0P + 4S) xyz=(-8.301, 43.796, -9.809)
+      S neighbors: [779, 978, 1383, 1525]
+  Index  157: PS4^3-                    CN=4 (0P + 4S) xyz=(-2.206, 43.321, 1.338)
+      S neighbors: [793, 985, 1400, 1542]
+  Index  173: PS4^3-                    CN=4 (0P + 4S) xyz=(3.100, 43.234, 0.201)
+      S neighbors: [804, 993, 1416, 1558]
+  Index  174: PS4^3-                    CN=4 (0P + 4S) xyz=(3.713, 43.661, 12.875)
+      S neighbors: [805, 994, 1417, 1559]
+  Index  175: PS4^3-                    CN=4 (0P + 4S) xyz=(3.402, 43.924, 25.304)
+      S neighbors: [806, 995, 1418, 1560]
+  Index  179: PS4^3-                    CN=4 (0P + 4S) xyz=(20.084, 9.334, 35.050)
+      S neighbors: [808, 999, 1422, 1564]
+  Index  188: PS4^3-                    CN=4 (0P + 4S) xyz=(9.467, 43.400, -13.571)
+      S neighbors: [814, 1003, 1430, 1572]
+  Index  189: PS4^3-                    CN=4 (0P + 4S) xyz=(6.468, 40.331, 6.925)
+      S neighbors: [1199, 1317, 2694, 3184]
+  Index  197: PS4^3-                    CN=4 (0P + 4S) xyz=(15.674, 11.742, 30.081)
+      S neighbors: [1062, 1663, 1765, 3065]
+  Index  199: PS4^3-                    CN=4 (0P + 4S) xyz=(22.426, 20.575, 29.470)
+      S neighbors: [822, 1348, 1441, 1583]
+  Index  200: PS4^3-                    CN=4 (0P + 4S) xyz=(22.710, 24.256, 3.133)
+      S neighbors: [881, 1106, 2023, 2623]
+  Index  203: PS4^3-                    CN=4 (0P + 4S) xyz=(19.145, 32.061, 26.503)
+      S neighbors: [826, 1009, 1445, 1587]
+  Index  204: PS4^3-                    CN=4 (0P + 4S) xyz=(15.812, 43.322, -15.777)
+      S neighbors: [827, 1010, 1446, 1588]
+  Index  209: PS4^3-                    CN=4 (0P + 4S) xyz=(32.240, 8.848, 6.928)
+      S neighbors: [832, 1012, 1451, 1593]
+  Index  210: PS4^3-                    CN=4 (0P + 4S) xyz=(32.307, 8.822, 19.215)
+      S neighbors: [833, 1013, 1452, 1594]
+  Index  211: PS4^3-                    CN=4 (0P + 4S) xyz=(32.795, 8.877, 32.302)
+      S neighbors: [834, 1014, 1453, 1595]
+  Index  220: PS4^3-                    CN=4 (0P + 4S) xyz=(21.821, 43.178, -17.396)
+      S neighbors: [842, 1017, 1461, 1604]
+  Index  225: PS4^3-                    CN=4 (0P + 4S) xyz=(37.947, 8.832, 5.791)
+      S neighbors: [846, 1020, 1466, 1609]
+  Index  229: PS4^3-                    CN=4 (0P + 4S) xyz=(37.613, 21.207, -5.024)
+      S neighbors: [849, 2523, 3131, 3219]
+  Index  231: PS4^3-                    CN=4 (0P + 4S) xyz=(34.955, 20.455, 27.298)
+      S neighbors: [851, 1023, 1472, 1615]
+  Index  233: PS4^3-                    CN=4 (0P + 4S) xyz=(30.901, 31.765, -2.579)
+      S neighbors: [852, 1474, 1617, 1712]
+  Index  235: PS4^3-                    CN=4 (0P + 4S) xyz=(26.739, 34.254, 15.144)
+      S neighbors: [854, 1806, 2388, 3121]
+  Index  236: PS4^3-                    CN=4 (0P + 4S) xyz=(27.667, 43.461, -18.461)
+      S neighbors: [855, 1026, 1477, 1620]
+  Index  245: PS4^3-                    CN=4 (0P + 4S) xyz=(26.768, 23.135, 2.799)
+      S neighbors: [881, 1106, 1455, 2039]
+  Index  247: PS4^3-                    CN=4 (0P + 4S) xyz=(40.612, 20.796, 25.479)
+      S neighbors: [864, 1032, 1488, 1504]
+  Index  257: PS4^3-                    CN=4 (0P + 4S) xyz=(4.795, 2.015, 22.393)
+      S neighbors: [1735, 2152, 2279, 2663]
+  Index  259: PS4^3-                    CN=4 (0P + 4S) xyz=(19.574, 14.314, 38.807)
+      S neighbors: [1737, 2333, 2605, 2702]
+  Index  261: PS4^3-                    CN=4 (0P + 4S) xyz=(0.812, 12.735, 18.702)
+      S neighbors: [1739, 2156, 2283, 2666]
+  Index  265: PS4^3-                    CN=4 (0P + 4S) xyz=(-0.183, 29.802, 23.199)
+      S neighbors: [1759, 2094, 2785, 2913]
+  Index  266: PS4^3-                    CN=4 (0P + 4S) xyz=(-2.178, 25.017, 27.859)
+      S neighbors: [1743, 2161, 2288, 2670]
+  Index  277: PS4^3-                    CN=4 (0P + 4S) xyz=(6.476, 13.462, 16.921)
+      S neighbors: [1752, 2172, 2299, 2676]
+  Index  278: PS4^3-                    CN=4 (0P + 4S) xyz=(7.124, 13.680, 30.017)
+      S neighbors: [1753, 2173, 2300, 2677]
+  Index  283: PS4^3-                    CN=4 (0P + 4S) xyz=(20.137, 14.537, 30.976)
+      S neighbors: [927, 1757, 2005, 2205]
+  Index  286: PS4^3-                    CN=4 (0P + 4S) xyz=(0.334, 36.134, 22.891)
+      S neighbors: [1758, 2181, 2308, 2683]
+  Index  290: PS4^3-                    CN=4 (0P + 4S) xyz=(17.111, 1.341, 32.510)
+      S neighbors: [1761, 2185, 2312, 2686]
+  Index  302: PS4^3-                    CN=4 (0P + 4S) xyz=(6.038, 36.401, 21.287)
+      S neighbors: [1771, 2197, 2324, 2695]
+  Index  307: PS4^3-                    CN=4 (0P + 4S) xyz=(22.833, 2.278, 43.437)
+      S neighbors: [1775, 2198, 2329, 2699]
+  Index  322: PS4^3-                    CN=4 (0P + 4S) xyz=(32.363, 20.393, 17.379)
+      S neighbors: [1471, 1598, 1786, 2989]
+  Index  331: PS4^3-                    CN=4 (0P + 4S) xyz=(21.578, 24.344, 34.247)
+      S neighbors: [1792, 2222, 2353, 2718]
+  Index  332: PS4^3-                    CN=4 (0P + 4S) xyz=(30.891, 20.461, -5.944)
+      S neighbors: [1596, 1793, 2987, 3115]
+  Index  349: PS4^3-                    CN=4 (0P + 4S) xyz=(23.851, 36.281, 4.200)
+      S neighbors: [1805, 2244, 2371, 2730]
+  Index  351: PS4^3-                    CN=4 (0P + 4S) xyz=(24.436, 36.103, 29.153)
+      S neighbors: [1807, 2242, 2373, 2732]
+  Index  355: PS4^3-                    CN=4 (0P + 4S) xyz=(40.232, 2.112, 39.340)
+      S neighbors: [1810, 2246, 2377, 2736]
+  Index  356: PS4^3-                    CN=4 (0P + 4S) xyz=(37.054, 13.494, -2.295)
+      S neighbors: [1811, 2251, 2378, 2737]
+  Index  357: PS4^3-                    CN=4 (0P + 4S) xyz=(37.403, 13.774, 10.358)
+      S neighbors: [1812, 2252, 2379, 2738]
+  Index  358: PS4^3-                    CN=4 (0P + 4S) xyz=(36.778, 13.278, 23.791)
+      S neighbors: [1813, 2253, 2380, 2739]
+  Index  362: PS4^3-                    CN=4 (0P + 4S) xyz=(33.426, 25.043, 19.370)
+      S neighbors: [1817, 2257, 2384, 2743]
+  Index  363: PS4^3-                    CN=4 (0P + 4S) xyz=(33.333, 24.784, 31.483)
+      S neighbors: [1818, 2254, 2385, 2744]
+  Index  364: PS4^3-                    CN=4 (0P + 4S) xyz=(17.880, 30.873, -2.119)
+      S neighbors: [843, 1210, 1819, 3192]
+  Index  365: PS4^3-                    CN=4 (0P + 4S) xyz=(30.448, 36.144, 2.686)
+      S neighbors: [1820, 2260, 2387, 2746]
+  Index  374: PS4^3-                    CN=4 (0P + 4S) xyz=(43.346, 13.603, 21.630)
+      S neighbors: [1726, 2269, 2396, 2752]
+  Index  375: PS4^3-                    CN=4 (0P + 4S) xyz=(43.326, 13.700, 34.250)
+      S neighbors: [1727, 2266, 2397, 2753]
+  Index  380: PS4^3-                    CN=4 (0P + 4S) xyz=(36.052, 35.868, -11.059)
+      S neighbors: [1732, 2275, 2402, 2755]
+  Index  388: PS4^3-                    CN=4 (0P + 4S) xyz=(-5.833, 21.002, -6.551)
+      S neighbors: [1628, 2522, 3022, 3143]
+  Index  411: PS4^3-                    CN=4 (0P + 4S) xyz=(-3.257, 32.650, 26.596)
+      S neighbors: [1645, 2417, 3041, 3157]
+  Index  412: PS4^3-                    CN=4 (0P + 4S) xyz=(-0.919, 37.724, 2.306)
+      S neighbors: [1299, 1851, 1979, 2106]
+  Index  416: PS4^3-                    CN=4 (0P + 4S) xyz=(10.016, 9.607, -5.729)
+      S neighbors: [1649, 2422, 3050, 3159]
+  Index  419: PS4^3-                    CN=4 (0P + 4S) xyz=(10.511, 9.642, 32.351)
+      S neighbors: [1652, 2425, 3049, 3161]
+  Index  421: PS4^3-                    CN=4 (0P + 4S) xyz=(6.132, 20.362, 3.551)
+      S neighbors: [1653, 2427, 3051, 3163]
+  Index  424: PS4^3-                    CN=4 (0P + 4S) xyz=(2.926, 32.454, -13.562)
+      S neighbors: [1656, 2430, 3058, 3166]
+  Index  439: PS4^3-                    CN=4 (0P + 4S) xyz=(12.231, 20.884, 27.691)
+      S neighbors: [1666, 2445, 3069, 3178]
+  Index  440: PS4^3-                    CN=4 (0P + 4S) xyz=(8.418, 32.155, 35.480)
+      S neighbors: [1667, 2446, 3074, 3179]
+  Index  444: PS4^3-                    CN=4 (0P + 4S) xyz=(4.742, 44.319, -18.242)
+      S neighbors: [1670, 2450, 3078, 3182]
+  Index  445: PS4^3-                    CN=4 (0P + 4S) xyz=(5.105, 43.820, -5.505)
+      S neighbors: [1671, 2451, 3075, 3183]
+  Index  447: PS4^3-                    CN=4 (0P + 4S) xyz=(21.637, 29.291, 22.721)
+      S neighbors: [944, 1212, 1228, 1672]
+  Index  449: PS4^3-                    CN=4 (0P + 4S) xyz=(21.670, 9.723, 3.989)
+      S neighbors: [1674, 2455, 3079, 3187]
+  Index  462: PS4^3-                    CN=4 (0P + 4S) xyz=(10.450, 44.101, 5.403)
+      S neighbors: [1682, 2468, 3092, 3193]
+  Index  464: PS4^3-                    CN=4 (0P + 4S) xyz=(22.730, 12.547, 4.483)
+      S neighbors: [1674, 1684, 1891, 2219]
+  Index  469: PS4^3-                    CN=4 (0P + 4S) xyz=(24.298, 20.874, -0.802)
+      S neighbors: [1688, 2475, 3099, 3198]
+  Index  473: PS4^3-                    CN=4 (0P + 4S) xyz=(20.584, 32.323, -5.017)
+      S neighbors: [1692, 2479, 3103, 3200]
+  Index  478: PS4^3-                    CN=4 (0P + 4S) xyz=(23.552, 43.188, -2.431)
+      S neighbors: [1018, 1605, 2996, 3124]
+  Index  483: PS4^3-                    CN=4 (0P + 4S) xyz=(34.154, 9.349, 26.599)
+      S neighbors: [1699, 2489, 3113, 3207]
+  Index  485: PS4^3-                    CN=4 (0P + 4S) xyz=(30.008, 21.176, -2.851)
+      S neighbors: [1701, 2491, 3115, 3208]
+  Index  486: PS4^3-                    CN=4 (0P + 4S) xyz=(30.198, 21.176, 10.612)
+      S neighbors: [1702, 2492, 3116, 3209]
+  Index  493: PS4^3-                    CN=4 (0P + 4S) xyz=(23.104, 44.109, -10.540)
+      S neighbors: [1707, 2499, 3123, 3213]
+  Index  495: PS4^3-                    CN=4 (0P + 4S) xyz=(23.288, 44.287, 15.266)
+      S neighbors: [1708, 2501, 3125, 3215]
+  Index  496: PS4^3-                    CN=4 (0P + 4S) xyz=(24.766, 20.096, 2.456)
+      S neighbors: [881, 1007, 1455, 3198]
+  Index  497: PS4^3-                    CN=4 (0P + 4S) xyz=(39.630, 10.003, -0.019)
+      S neighbors: [1341, 2503, 3127, 3216]
+  Index  500: PS4^3-                    CN=4 (0P + 4S) xyz=(36.305, 21.114, -16.861)
+      S neighbors: [1711, 2506, 3134, 3218]
+  Index  503: PS4^3-                    CN=4 (0P + 4S) xyz=(36.470, 21.516, 21.436)
+      S neighbors: [1714, 2509, 3133, 3220]
+  Index  513: PS4^3-                    CN=4 (0P + 4S) xyz=(0.922, 6.053, 19.488)
+      S neighbors: [1265, 2079, 2760, 2888]
+  Index  517: PS4^3-                    CN=4 (0P + 4S) xyz=(-0.341, 19.822, 15.848)
+      S neighbors: [1268, 2764, 2892, 3036]
+  Index  526: PS4^3-                    CN=4 (0P + 4S) xyz=(-4.708, 37.495, 13.805)
+      S neighbors: [1276, 1746, 1852, 2164]
+  Index  529: PS4^3-                    CN=4 (0P + 4S) xyz=(6.939, 6.228, 17.561)
+      S neighbors: [1278, 2088, 2776, 2904]
+  Index  530: PS4^3-                    CN=4 (0P + 4S) xyz=(1.900, 21.722, 23.700)
+      S neighbors: [1279, 1393, 1519, 2304]
+  Index  531: PS4^3-                    CN=4 (0P + 4S) xyz=(7.095, 5.835, 42.928)
+      S neighbors: [1280, 2090, 2778, 2906]
+  Index  536: PS4^3-                    CN=4 (0P + 4S) xyz=(2.851, 20.898, -1.619)
+      S neighbors: [1285, 1391, 2302, 2907]
+  Index  539: PS4^3-                    CN=4 (0P + 4S) xyz=(15.173, 33.083, 30.020)
+      S neighbors: [1288, 1571, 2357, 3090]
+  Index  541: PS4^3-                    CN=4 (0P + 4S) xyz=(-3.581, 40.353, 6.418)
+      S neighbors: [1290, 2096, 2788, 2916]
+  Index  543: PS4^3-                    CN=4 (0P + 4S) xyz=(-3.696, 40.570, 31.787)
+      S neighbors: [1292, 2097, 2790, 2918]
+  Index  568: PS4^3-                    CN=4 (0P + 4S) xyz=(7.697, 35.528, -9.640)
+      S neighbors: [929, 1083, 1994, 2594]
+  Index  591: PS4^3-                    CN=4 (0P + 4S) xyz=(5.705, 35.236, 27.695)
+      S neighbors: [1073, 1328, 1997, 2597]
+  Index  593: PS4^3-                    CN=4 (0P + 4S) xyz=(31.375, 5.933, 12.474)
+      S neighbors: [1330, 2122, 2840, 2968]
+  Index  597: PS4^3-                    CN=4 (0P + 4S) xyz=(27.792, 17.341, 7.873)
+      S neighbors: [1333, 2124, 2844, 2972]
+  Index  602: PS4^3-                    CN=4 (0P + 4S) xyz=(24.003, 29.074, 16.513)
+      S neighbors: [1337, 2126, 2849, 2977]
+  Index  604: PS4^3-                    CN=4 (0P + 4S) xyz=(20.737, 40.805, -12.165)
+      S neighbors: [1338, 2128, 2851, 2979]
+  Index  608: PS4^3-                    CN=4 (0P + 4S) xyz=(38.059, 7.619, -1.273)
+      S neighbors: [1341, 2503, 2855, 2983]
+  Index  616: PS4^3-                    CN=4 (0P + 4S) xyz=(29.844, 28.466, -10.179)
+      S neighbors: [1349, 1677, 2863, 2991]
+  Index  617: PS4^3-                    CN=4 (0P + 4S) xyz=(14.983, 35.580, 8.091)
+      S neighbors: [1350, 1678, 1783, 2228]
+  Index  620: PS4^3-                    CN=4 (0P + 4S) xyz=(26.137, 40.479, -13.930)
+      S neighbors: [1353, 2137, 2867, 2995]
+  Index  621: PS4^3-                    CN=4 (0P + 4S) xyz=(26.505, 40.458, -0.950)
+      S neighbors: [1354, 2138, 2868, 2996]
+  Index  623: PS4^3-                    CN=4 (0P + 4S) xyz=(26.400, 40.427, 24.659)
+      S neighbors: [1356, 2139, 2870, 2998]
+  Index  624: PS4^3-                    CN=4 (0P + 4S) xyz=(43.437, 5.747, -3.750)
+      S neighbors: [1357, 2140, 2871, 2999]
+  Index  626: PS4^3-                    CN=4 (0P + 4S) xyz=(43.257, 6.580, 21.192)
+      S neighbors: [1359, 2141, 2873, 3001]
+  Index  627: PS4^3-                    CN=4 (0P + 4S) xyz=(43.136, 5.758, 34.506)
+      S neighbors: [1360, 2142, 2874, 3002]
+  Index  631: PS4^3-                    CN=4 (0P + 4S) xyz=(40.088, 17.609, 30.363)
+      S neighbors: [1364, 2144, 2878, 3006]
+  Index  638: PS4^3-                    CN=4 (0P + 4S) xyz=(32.194, 40.493, 10.107)
+      S neighbors: [1369, 2148, 2885, 3013]
+  Index  639: PS4^3-                    CN=4 (0P + 4S) xyz=(32.799, 40.606, 22.708)
+      S neighbors: [1370, 2149, 2886, 3014]
+  Index  640: PS4^3-                    CN=4 (0P + 4S) xyz=(2.965, 10.533, 17.628)
+      S neighbors: [788, 1514, 1739, 3032]
+  Index  643: PS4^3-                    CN=4 (0P + 4S) xyz=(0.304, 2.448, 43.487)
+      S neighbors: [1037, 2065, 2080, 2537]
+  Index  650: PS4^3-                    CN=4 (0P + 4S) xyz=(-7.026, 25.296, 23.808)
+      S neighbors: [1043, 2072, 2084, 2544]
+  Index  654: PS4^3-                    CN=4 (0P + 4S) xyz=(-10.045, 36.315, 19.765)
+      S neighbors: [1047, 2076, 2085, 2548]
+  Index  655: PS4^3-                    CN=4 (0P + 4S) xyz=(-10.891, 36.433, 32.794)
+      S neighbors: [1048, 2077, 2086, 2549]
+  Index  657: PS4^3-                    CN=4 (0P + 4S) xyz=(6.134, 2.302, 17.744)
+      S neighbors: [1049, 1951, 2088, 2551]
+  Index  658: PS4^3-                    CN=4 (0P + 4S) xyz=(6.204, 2.653, 29.764)
+      S neighbors: [1050, 1952, 2089, 2552]
+  Index  667: PS4^3-                    CN=4 (0P + 4S) xyz=(-0.462, 25.766, 34.916)
+      S neighbors: [1057, 1961, 2095, 2561]
+  Index  697: PS4^3-                    CN=4 (0P + 4S) xyz=(16.495, 19.669, 21.045)
+      S neighbors: [1000, 1567, 2813, 2941]
+  Index  707: PS4^3-                    CN=4 (0P + 4S) xyz=(26.279, 2.810, 35.987)
+      S neighbors: [1089, 1889, 2017, 2113]
+  Index  719: PS4^3-                    CN=4 (0P + 4S) xyz=(13.877, 36.611, 26.781)
+      S neighbors: [1097, 2013, 2121, 2613]
+  Index  721: PS4^3-                    CN=4 (0P + 4S) xyz=(30.372, 2.267, 11.135)
+      S neighbors: [1099, 2015, 2122, 2615]
+  Index  731: PS4^3-                    CN=4 (0P + 4S) xyz=(23.839, 25.194, 29.146)
+      S neighbors: [1108, 2025, 2127, 2625]
+  Index  732: PS4^3-                    CN=4 (0P + 4S) xyz=(19.065, 37.065, -13.033)
+      S neighbors: [1109, 2026, 2128, 2626]
+  Index  734: PS4^3-                    CN=4 (0P + 4S) xyz=(19.894, 36.936, 12.320)
+      S neighbors: [1111, 2028, 2129, 2628]
+  Index  736: PS4^3-                    CN=4 (0P + 4S) xyz=(36.498, 2.101, -2.539)
+      S neighbors: [1112, 2030, 2131, 2630]
+  Index  743: PS4^3-                    CN=4 (0P + 4S) xyz=(32.379, 14.526, 31.617)
+      S neighbors: [1118, 2037, 2134, 2637]
+  Index  746: PS4^3-                    CN=4 (0P + 4S) xyz=(29.159, 25.263, 14.627)
+      S neighbors: [1120, 2040, 2136, 2640]
+  Index  748: PS4^3-                    CN=4 (0P + 4S) xyz=(25.074, 37.248, -13.465)
+      S neighbors: [1122, 2042, 2137, 2642]
+  Index  752: PS4^3-                    CN=4 (0P + 4S) xyz=(33.213, 17.451, -5.899)
+      S neighbors: [1345, 1793, 2859, 2987]
+  Index  755: PS4^3-                    CN=4 (0P + 4S) xyz=(42.716, 2.362, 33.794)
+      S neighbors: [1126, 2049, 2142, 2649]
+  Index  757: PS4^3-                    CN=4 (0P + 4S) xyz=(38.477, 13.834, 4.657)
+      S neighbors: [1128, 2051, 2143, 2651]
+  Index  759: PS4^3-                    CN=4 (0P + 4S) xyz=(38.360, 14.075, 30.355)
+      S neighbors: [1130, 2053, 2144, 2653]
+  Index  760: PS4^3-                    CN=4 (0P + 4S) xyz=(35.589, 25.643, -11.682)
+      S neighbors: [1131, 2054, 2145, 2654]
+  Index  763: PS4^3-                    CN=4 (0P + 4S) xyz=(35.206, 25.448, 26.724)
+      S neighbors: [1134, 2057, 2146, 2657]
+  Index  764: PS4^3-                    CN=4 (0P + 4S) xyz=(31.649, 37.282, -15.798)
+      S neighbors: [1135, 2058, 2147, 2658]
+
+P2 sites (4 atoms):
+----------------------------------------------------------------------
+  Index   61: P2S6^4- (dumbbell)        CN=4 (1P + 3S) xyz=(8.588, 40.116, -1.928)
+      P neighbors: [574]
+      S neighbors: [920, 1198, 1883]
+  Index  264: P2S6^4- (dumbbell)        CN=4 (1P + 3S) xyz=(-2.489, 24.892, 2.089)
+      P neighbors: [385]
+      S neighbors: [1742, 2286, 2668]
+  Index  389: P2S6^4- (dumbbell)        CN=4 (1P + 3S) xyz=(-2.653, 13.849, 9.822)
+      P neighbors: [1]
+      S neighbors: [1724, 1827, 2267]
+  Index  472: P2S6^4- (dumbbell)        CN=4 (1P + 3S) xyz=(29.869, 24.834, -0.612)
+      P neighbors: [630]
+      S neighbors: [1701, 1927, 2039]
+
+Pa sites (58 atoms):
+----------------------------------------------------------------------
+  Index    8: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(17.366, 17.705, 0.910)
+      P neighbors: [625]
+      S neighbors: [1190, 1309, 3190]
+  Index   20: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(18.158, 17.447, 7.532)
+      P neighbors: [614]
+      S neighbors: [1875, 2114, 2812]
+  Index   21: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(8.625, 20.622, 9.382)
+      P neighbors: [313]
+      S neighbors: [1408, 1534, 2924]
+  Index   27: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(3.964, 22.310, 27.440)
+      P neighbors: [678]
+      S neighbors: [2177, 2304, 2429]
+  Index   32: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(14.242, 5.157, -2.335)
+      P neighbors: [672]
+      S neighbors: [898, 1170, 1854]
+  Index   33: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(13.628, 4.845, 10.674)
+      P neighbors: [369]
+      S neighbors: [899, 1171, 1855]
+  Index   45: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(2.882, 39.382, -0.638)
+      P neighbors: [206]
+      S neighbors: [909, 993, 1867]
+  Index   52: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(20.051, 23.599, -10.407)
+      P neighbors: [216]
+      S neighbors: [1093, 1675, 2022]
+  Index   71: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(27.493, 15.729, 18.656)
+      P neighbors: [598]
+      S neighbors: [1104, 1809, 2845]
+  Index   86: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(27.645, 16.875, 15.317)
+      P neighbors: [465]
+      S neighbors: [939, 1223, 1908]
+  Index   91: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(26.665, 31.785, 20.232)
+      P neighbors: [366]
+      S neighbors: [841, 1705, 2497]
+  Index  102: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(25.521, 13.988, 21.646)
+      P neighbors: [435]
+      S neighbors: [1092, 2020, 2620]
+  Index  105: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(26.407, 28.638, 3.486)
+      P neighbors: [360]
+      S neighbors: [972, 1815, 2848]
+  Index  110: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(26.731, 38.723, 13.391)
+      P neighbors: [622]
+      S neighbors: [1124, 1355, 2644]
+  Index  131: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(3.011, 18.430, 22.587)
+      P neighbors: [22]
+      S neighbors: [771, 890, 1393]
+  Index  153: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(-0.497, 29.543, 6.241)
+      P neighbors: [377]
+      S neighbors: [790, 983, 1396]
+  Index  166: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(10.572, 12.452, 20.103)
+      P neighbors: [273]
+      S neighbors: [1651, 1860, 2188]
+  Index  193: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(26.269, 9.183, 8.082)
+      P neighbors: [577]
+      S neighbors: [819, 1435, 1577]
+  Index  215: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(28.226, 20.850, 28.554)
+      P neighbors: [343]
+      S neighbors: [837, 1456, 1599]
+  Index  240: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(32.605, 7.617, 14.889)
+      P neighbors: [563]
+      S neighbors: [1330, 2488, 3206]
+  Index  248: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(20.749, 36.056, -3.761)
+      P neighbors: [588]
+      S neighbors: [865, 1692, 1915]
+  Index  260: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(5.137, 21.836, 14.562)
+      P neighbors: [281]
+      S neighbors: [1738, 2428, 3052]
+  Index  270: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(9.793, 34.844, 14.661)
+      P neighbors: [299]
+      S neighbors: [921, 1085, 2012]
+  Index  289: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(17.337, 5.642, 8.660)
+      P neighbors: [17]
+      S neighbors: [911, 1186, 1661]
+  Index  299: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(8.051, 33.360, 13.443)
+      P neighbors: [270]
+      S neighbors: [803, 1085, 2448]
+  Index  303: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(18.736, 39.611, 14.118)
+      P neighbors: [606]
+      S neighbors: [2129, 2628, 2837]
+  Index  327: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(22.007, 13.213, 22.687)
+      P neighbors: [435]
+      S neighbors: [1092, 1763, 2604]
+  Index  350: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(24.142, 35.505, 17.078)
+      P neighbors: [751]
+      S neighbors: [1806, 2245, 2372]
+  Index  360: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(26.392, 28.238, 3.209)
+      P neighbors: [105]
+      S neighbors: [972, 1815, 2848]
+  Index  367: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(23.696, 34.622, 9.545)
+      P neighbors: [333]
+      S neighbors: [810, 1693, 2044]
+  Index  407: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(0.708, 20.402, 30.205)
+      P neighbors: [642]
+      S neighbors: [2413, 3037, 3154]
+  Index  417: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(9.117, 9.639, 6.911)
+      P neighbors: [293]
+      S neighbors: [2423, 3047, 3160]
+  Index  422: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(8.165, 27.369, 21.086)
+      P neighbors: [575]
+      S neighbors: [1654, 2691, 2801]
+  Index  431: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(1.666, 30.506, 28.061)
+      P neighbors: [287]
+      S neighbors: [791, 1165, 1640]
+  Index  452: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(14.914, 18.312, -9.842)
+      P neighbors: [36]
+      S neighbors: [1189, 1312, 3176]
+  Index  466: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(31.734, 18.437, 6.767)
+      P neighbors: [121]
+      S neighbors: [1346, 2844, 2988]
+  Index  484: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(28.578, 28.426, -3.146)
+      P neighbors: [750]
+      S neighbors: [956, 1242, 1927]
+  Index  490: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(30.349, 30.155, 6.219)
+      P neighbors: [489]
+      S neighbors: [1243, 1816, 2512]
+  Index  509: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(29.457, 35.882, -10.237)
+      P neighbors: [744]
+      S neighbors: [2259, 2386, 2745]
+  Index  510: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(18.028, 35.428, 4.407)
+      P neighbors: [681]
+      S neighbors: [1314, 2355, 2720]
+  Index  549: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(5.409, 16.224, 13.331)
+      P neighbors: [533]
+      S neighbors: [1039, 1282, 2780]
+  Index  563: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(31.326, 7.611, 16.462)
+      P neighbors: [240]
+      S neighbors: [833, 1219, 2488]
+  Index  585: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(10.353, 28.882, 14.805)
+      P neighbors: [191]
+      S neighbors: [918, 1195, 1287]
+  Index  598: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(27.168, 17.555, 20.434)
+      P neighbors: [71]
+      S neighbors: [1334, 2845, 2973]
+  Index  606: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(20.202, 40.289, 12.549)
+      P neighbors: [303]
+      S neighbors: [2129, 2853, 2981]
+  Index  611: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(27.848, 11.823, 27.441)
+      P neighbors: [467]
+      S neighbors: [1344, 1687, 3097]
+  Index  619: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(29.408, 28.501, 27.807)
+      P neighbors: [379]
+      S neighbors: [1352, 2866, 2994]
+  Index  622: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(26.746, 40.173, 11.846)
+      P neighbors: [110]
+      S neighbors: [1355, 2869, 2997]
+  Index  644: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(13.452, 22.219, -6.483)
+      P neighbors: [456]
+      S neighbors: [799, 1038, 1423]
+  Index  663: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(2.879, 11.708, 33.386)
+      P neighbors: [130]
+      S neighbors: [2157, 2409, 3033]
+  Index  678: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(4.805, 19.723, 26.871)
+      P neighbors: [27]
+      S neighbors: [2429, 2909, 3053]
+  Index  686: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(7.874, 37.244, 12.198)
+      P neighbors: [702]
+      S neighbors: [921, 1884, 2196]
+  Index  693: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(14.941, 14.240, 10.511)
+      P neighbors: [596]
+      S neighbors: [1079, 1987, 2587]
+  Index  698: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(21.583, 22.150, 24.871)
+      P neighbors: [195]
+      S neighbors: [1348, 2477, 3085]
+  Index  704: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(22.333, 14.210, 15.150)
+      P neighbors: [353]
+      S neighbors: [1086, 1892, 2220]
+  Index  728: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(23.169, 25.583, -9.212)
+      P neighbors: [216]
+      S neighbors: [1105, 2022, 2622]
+  Index  741: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(32.311, 14.595, 5.639)
+      P neighbors: [756]
+      S neighbors: [1116, 2035, 2635]
+  Index  742: P2S7^4- (dimer)           CN=4 (1P + 3S) xyz=(32.680, 13.921, 19.291)
+      P neighbors: [354]
+      S neighbors: [1117, 2036, 2636]
+
+P3 sites (134 atoms):
+----------------------------------------------------------------------
+  Index    0: PS3^-                     CN=3 (0P + 3S) xyz=(1.259, 4.807, 1.389)
+      S neighbors: [871, 1138, 1822]
+  Index    2: PS3^-                     CN=3 (0P + 3S) xyz=(1.800, 5.700, 26.271)
+      S neighbors: [873, 1140, 1824]
+  Index    6: PS3^-                     CN=3 (0P + 3S) xyz=(-2.237, 16.643, 22.404)
+      S neighbors: [877, 1144, 1828]
+  Index    9: PS3^-                     CN=3 (0P + 3S) xyz=(-2.736, 22.322, 17.468)
+      S neighbors: [1740, 2160, 2412]
+  Index   10: PS3^-                     CN=3 (0P + 3S) xyz=(-5.972, 28.281, 18.419)
+      S neighbors: [879, 1148, 1832]
+  Index   15: PS3^-                     CN=3 (0P + 3S) xyz=(-9.553, 39.898, 27.178)
+      S neighbors: [884, 1153, 1837]
+  Index   18: PS3^-                     CN=3 (0P + 3S) xyz=(7.371, 5.477, 24.813)
+      S neighbors: [886, 1156, 1840]
+  Index   19: PS3^-                     CN=3 (0P + 3S) xyz=(7.755, 5.096, 37.724)
+      S neighbors: [887, 1157, 1841]
+  Index   28: PS3^-                     CN=3 (0P + 3S) xyz=(-3.319, 39.951, -12.137)
+      S neighbors: [895, 1166, 1850]
+  Index   31: PS3^-                     CN=3 (0P + 3S) xyz=(-2.979, 39.614, 25.944)
+      S neighbors: [897, 1169, 1853]
+  Index   35: PS3^-                     CN=3 (0P + 3S) xyz=(17.169, 21.436, 29.252)
+      S neighbors: [809, 960, 1568]
+  Index   59: PS3^-                     CN=3 (0P + 3S) xyz=(11.471, 28.022, 26.651)
+      S neighbors: [919, 1196, 1881]
+  Index   63: PS3^-                     CN=3 (0P + 3S) xyz=(8.943, 40.200, 22.990)
+      S neighbors: [922, 1200, 1885]
+  Index   67: PS3^-                     CN=3 (0P + 3S) xyz=(31.929, 3.621, 19.550)
+      S neighbors: [924, 1219, 1904]
+  Index   69: PS3^-                     CN=3 (0P + 3S) xyz=(21.476, 16.917, 4.230)
+      S neighbors: [925, 1206, 1891]
+  Index   72: PS3^-                     CN=3 (0P + 3S) xyz=(18.284, 28.372, -12.378)
+      S neighbors: [928, 1209, 1894]
+  Index   75: PS3^-                     CN=3 (0P + 3S) xyz=(9.944, 30.562, 9.593)
+      S neighbors: [789, 3072, 3180]
+  Index   77: PS3^-                     CN=3 (0P + 3S) xyz=(15.438, 39.896, -3.959)
+      S neighbors: [932, 1214, 1899]
+  Index   78: PS3^-                     CN=3 (0P + 3S) xyz=(14.809, 40.361, 9.168)
+      S neighbors: [933, 1215, 1900]
+  Index   88: PS3^-                     CN=3 (0P + 3S) xyz=(23.478, 28.568, -13.971)
+      S neighbors: [941, 1225, 1910]
+  Index   89: PS3^-                     CN=3 (0P + 3S) xyz=(24.267, 28.355, -0.951)
+      S neighbors: [942, 1226, 1911]
+  Index   94: PS3^-                     CN=3 (0P + 3S) xyz=(19.078, 33.589, 10.208)
+      S neighbors: [825, 946, 2480]
+  Index   96: PS3^-                     CN=3 (0P + 3S) xyz=(36.949, 5.415, -7.705)
+      S neighbors: [948, 1233, 1918]
+  Index   97: PS3^-                     CN=3 (0P + 3S) xyz=(37.363, 4.994, 4.698)
+      S neighbors: [1020, 1234, 1919]
+  Index  104: PS3^-                     CN=3 (0P + 3S) xyz=(27.357, 16.485, 0.064)
+      S neighbors: [955, 1222, 1332]
+  Index  112: PS3^-                     CN=3 (0P + 3S) xyz=(43.426, 5.115, -8.739)
+      S neighbors: [961, 1249, 1934]
+  Index  113: PS3^-                     CN=3 (0P + 3S) xyz=(43.304, 4.916, 3.892)
+      S neighbors: [962, 1250, 1935]
+  Index  114: PS3^-                     CN=3 (0P + 3S) xyz=(43.339, 5.286, 15.637)
+      S neighbors: [963, 1251, 1936]
+  Index  115: PS3^-                     CN=3 (0P + 3S) xyz=(44.013, 5.081, 28.857)
+      S neighbors: [964, 1252, 1937]
+  Index  118: PS3^-                     CN=3 (0P + 3S) xyz=(39.670, 17.028, 12.577)
+      S neighbors: [965, 1255, 1940]
+  Index  123: PS3^-                     CN=3 (0P + 3S) xyz=(36.311, 28.270, 20.637)
+      S neighbors: [969, 1260, 1945]
+  Index  124: PS3^-                     CN=3 (0P + 3S) xyz=(32.850, 40.402, -20.738)
+      S neighbors: [970, 1261, 1946]
+  Index  125: PS3^-                     CN=3 (0P + 3S) xyz=(32.870, 39.494, -7.751)
+      S neighbors: [971, 1262, 1947]
+  Index  126: PS3^-                     CN=3 (0P + 3S) xyz=(27.892, 32.129, 3.935)
+      S neighbors: [972, 2992, 3120]
+  Index  129: PS3^-                     CN=3 (0P + 3S) xyz=(2.709, 8.811, 14.036)
+      S neighbors: [769, 1372, 1514]
+  Index  132: PS3^-                     CN=3 (0P + 3S) xyz=(-1.337, 20.462, -2.455)
+      S neighbors: [772, 1375, 1517]
+  Index  136: PS3^-                     CN=3 (0P + 3S) xyz=(-4.739, 31.252, -6.240)
+      S neighbors: [775, 1379, 1521]
+  Index  141: PS3^-                     CN=3 (0P + 3S) xyz=(-8.851, 43.367, 2.690)
+      S neighbors: [780, 1384, 1526]
+  Index  142: PS3^-                     CN=3 (0P + 3S) xyz=(-8.677, 43.644, 15.743)
+      S neighbors: [781, 1385, 1527]
+  Index  151: PS3^-                     CN=3 (0P + 3S) xyz=(3.668, 12.871, 20.557)
+      S neighbors: [788, 1639, 1739]
+  Index  155: PS3^-                     CN=3 (0P + 3S) xyz=(1.277, 32.235, 30.871)
+      S neighbors: [791, 1398, 1540]
+  Index  158: PS3^-                     CN=3 (0P + 3S) xyz=(11.606, 37.760, 9.612)
+      S neighbors: [933, 1884, 2212]
+  Index  162: PS3^-                     CN=3 (0P + 3S) xyz=(13.690, 8.949, 23.539)
+      S neighbors: [797, 1405, 1547]
+  Index  168: PS3^-                     CN=3 (0P + 3S) xyz=(7.654, 32.112, -8.679)
+      S neighbors: [801, 1411, 1553]
+  Index  190: PS3^-                     CN=3 (0P + 3S) xyz=(9.692, 43.384, 10.729)
+      S neighbors: [816, 1432, 1574]
+  Index  192: PS3^-                     CN=3 (0P + 3S) xyz=(26.369, 8.842, -4.583)
+      S neighbors: [818, 1434, 1576]
+  Index  208: PS3^-                     CN=3 (0P + 3S) xyz=(32.163, 8.579, -5.632)
+      S neighbors: [831, 1450, 1592]
+  Index  213: PS3^-                     CN=3 (0P + 3S) xyz=(28.804, 20.353, 3.030)
+      S neighbors: [835, 1455, 1597]
+  Index  214: PS3^-                     CN=3 (0P + 3S) xyz=(24.849, 19.835, 6.487)
+      S neighbors: [1007, 1581, 2972]
+  Index  219: PS3^-                     CN=3 (0P + 3S) xyz=(25.486, 31.859, 25.093)
+      S neighbors: [841, 1460, 1603]
+  Index  223: PS3^-                     CN=3 (0P + 3S) xyz=(21.285, 42.954, 20.554)
+      S neighbors: [844, 1464, 1607]
+  Index  226: PS3^-                     CN=3 (0P + 3S) xyz=(38.344, 9.064, 18.472)
+      S neighbors: [847, 1467, 1610]
+  Index  227: PS3^-                     CN=3 (0P + 3S) xyz=(38.414, 9.501, 30.743)
+      S neighbors: [848, 1468, 1611]
+  Index  230: PS3^-                     CN=3 (0P + 3S) xyz=(34.147, 20.891, 13.863)
+      S neighbors: [850, 1471, 1614]
+  Index  232: PS3^-                     CN=3 (0P + 3S) xyz=(16.293, 24.184, -8.781)
+      S neighbors: [1038, 1093, 2006]
+  Index  234: PS3^-                     CN=3 (0P + 3S) xyz=(31.129, 32.606, 11.421)
+      S neighbors: [853, 1475, 1618]
+  Index  239: PS3^-                     CN=3 (0P + 3S) xyz=(18.957, 36.347, 19.300)
+      S neighbors: [858, 2229, 2356]
+  Index  250: PS3^-                     CN=3 (0P + 3S) xyz=(37.330, 32.298, 9.653)
+      S neighbors: [867, 1491, 1507]
+  Index  254: PS3^-                     CN=3 (0P + 3S) xyz=(32.429, 24.428, 15.734)
+      S neighbors: [1120, 1786, 2656]
+  Index  255: PS3^-                     CN=3 (0P + 3S) xyz=(34.276, 29.976, 9.699)
+      S neighbors: [968, 1491, 1698]
+  Index  258: PS3^-                     CN=3 (0P + 3S) xyz=(-1.832, 20.014, 20.106)
+      S neighbors: [774, 1740, 2412]
+  Index  271: PS3^-                     CN=3 (0P + 3S) xyz=(-6.139, 36.900, 36.072)
+      S neighbors: [1748, 2293, 2672]
+  Index  280: PS3^-                     CN=3 (0P + 3S) xyz=(3.726, 24.405, 1.833)
+      S neighbors: [1755, 2175, 2302]
+  Index  291: PS3^-                     CN=3 (0P + 3S) xyz=(16.896, 1.980, 45.569)
+      S neighbors: [1762, 2182, 2687]
+  Index  298: PS3^-                     CN=3 (0P + 3S) xyz=(9.950, 24.698, 25.122)
+      S neighbors: [1769, 2193, 2320]
+  Index  321: PS3^-                     CN=3 (0P + 3S) xyz=(15.618, 8.279, 13.379)
+      S neighbors: [876, 1546, 2936]
+  Index  335: PS3^-                     CN=3 (0P + 3S) xyz=(18.725, 37.013, 30.898)
+      S neighbors: [1794, 2226, 2722]
+  Index  336: PS3^-                     CN=3 (0P + 3S) xyz=(19.303, 14.396, 3.665)
+      S neighbors: [1776, 1795, 2203]
+  Index  338: PS3^-                     CN=3 (0P + 3S) xyz=(37.502, 10.044, 15.504)
+      S neighbors: [847, 1486, 2504]
+  Index  359: PS3^-                     CN=3 (0P + 3S) xyz=(37.408, 14.131, -14.692)
+      S neighbors: [1814, 2250, 2740]
+  Index  393: PS3^-                     CN=3 (0P + 3S) xyz=(5.710, 20.972, 11.430)
+      S neighbors: [1534, 1633, 3052]
+  Index  398: PS3^-                     CN=3 (0P + 3S) xyz=(-3.349, 35.288, 19.626)
+      S neighbors: [1059, 1655, 2564]
+  Index  404: PS3^-                     CN=3 (0P + 3S) xyz=(0.715, 15.497, -1.032)
+      S neighbors: [1641, 1826, 1954]
+  Index  426: PS3^-                     CN=3 (0P + 3S) xyz=(-0.586, 33.458, 13.575)
+      S neighbors: [1297, 1658, 2432]
+  Index  427: PS3^-                     CN=3 (0P + 3S) xyz=(12.709, 29.693, 18.308)
+      S neighbors: [1650, 2817, 2945]
+  Index  428: PS3^-                     CN=3 (0P + 3S) xyz=(5.114, 38.310, -11.340)
+      S neighbors: [929, 1866, 1994]
+  Index  446: PS3^-                     CN=3 (0P + 3S) xyz=(13.499, 36.454, 12.849)
+      S neighbors: [1096, 2012, 2612]
+  Index  468: PS3^-                     CN=3 (0P + 3S) xyz=(19.535, 12.548, 15.168)
+      S neighbors: [1751, 2204, 2331]
+  Index  480: PS3^-                     CN=3 (0P + 3S) xyz=(23.371, 7.367, -4.096)
+      S neighbors: [923, 1434, 1697]
+  Index  504: PS3^-                     CN=3 (0P + 3S) xyz=(38.667, 12.365, 12.976)
+      S neighbors: [1486, 1710, 2252]
+  Index  512: PS3^-                     CN=3 (0P + 3S) xyz=(1.014, 12.347, 1.658)
+      S neighbors: [1641, 1954, 2554]
+  Index  514: PS3^-                     CN=3 (0P + 3S) xyz=(0.655, 5.935, 31.847)
+      S neighbors: [1266, 2761, 2889]
+  Index  515: PS3^-                     CN=3 (0P + 3S) xyz=(9.277, 8.767, 40.658)
+      S neighbors: [1267, 1532, 3050]
+  Index  518: PS3^-                     CN=3 (0P + 3S) xyz=(-2.035, 16.953, 28.183)
+      S neighbors: [1269, 2765, 2893]
+  Index  519: PS3^-                     CN=3 (0P + 3S) xyz=(-2.580, 17.576, 40.563)
+      S neighbors: [1270, 2766, 2894]
+  Index  521: PS3^-                     CN=3 (0P + 3S) xyz=(-5.356, 24.957, 9.959)
+      S neighbors: [1272, 2071, 2543]
+  Index  523: PS3^-                     CN=3 (0P + 3S) xyz=(-6.026, 29.317, 37.239)
+      S neighbors: [1273, 2770, 2898]
+  Index  524: PS3^-                     CN=3 (0P + 3S) xyz=(-9.713, 40.461, -4.867)
+      S neighbors: [1274, 2771, 2899]
+  Index  525: PS3^-                     CN=3 (0P + 3S) xyz=(-10.040, 40.469, 7.972)
+      S neighbors: [1275, 2772, 2900]
+  Index  527: PS3^-                     CN=3 (0P + 3S) xyz=(7.874, 43.025, 25.701)
+      S neighbors: [1433, 1721, 2950]
+  Index  535: PS3^-                     CN=3 (0P + 3S) xyz=(3.653, 18.146, 39.277)
+      S neighbors: [1284, 2782, 2910]
+  Index  545: PS3^-                     CN=3 (0P + 3S) xyz=(15.747, 10.756, 7.218)
+      S neighbors: [796, 1662, 2439]
+  Index  558: PS3^-                     CN=3 (0P + 3S) xyz=(2.432, 40.082, 17.704)
+      S neighbors: [1303, 2805, 2933]
+  Index  559: PS3^-                     CN=3 (0P + 3S) xyz=(2.741, 40.475, 30.603)
+      S neighbors: [1304, 2806, 2934]
+  Index  569: PS3^-                     CN=3 (0P + 3S) xyz=(18.303, 31.585, 4.595)
+      S neighbors: [1314, 2960, 3104]
+  Index  571: PS3^-                     CN=3 (0P + 3S) xyz=(11.824, 28.907, 32.878)
+      S neighbors: [1315, 2818, 2946]
+  Index  572: PS3^-                     CN=3 (0P + 3S) xyz=(8.833, 40.721, -9.472)
+      S neighbors: [1316, 2819, 2947]
+  Index  576: PS3^-                     CN=3 (0P + 3S) xyz=(20.648, 6.548, 3.164)
+      S neighbors: [1293, 1305, 2807]
+  Index  582: PS3^-                     CN=3 (0P + 3S) xyz=(21.529, 17.378, 22.157)
+      S neighbors: [1322, 2829, 2957]
+  Index  584: PS3^-                     CN=3 (0P + 3S) xyz=(17.985, 29.478, -7.025)
+      S neighbors: [1324, 2831, 2959]
+  Index  589: PS3^-                     CN=3 (0P + 3S) xyz=(14.201, 39.984, 1.663)
+      S neighbors: [1326, 2836, 2964]
+  Index  592: PS3^-                     CN=3 (0P + 3S) xyz=(34.794, 8.016, 5.410)
+      S neighbors: [832, 1466, 1593]
+  Index  594: PS3^-                     CN=3 (0P + 3S) xyz=(30.674, 5.610, 24.527)
+      S neighbors: [1331, 2841, 2969]
+  Index  605: PS3^-                     CN=3 (0P + 3S) xyz=(20.278, 40.811, 0.700)
+      S neighbors: [1339, 2852, 2980]
+  Index  615: PS3^-                     CN=3 (0P + 3S) xyz=(24.954, 19.816, 27.094)
+      S neighbors: [822, 940, 1348]
+  Index  628: PS3^-                     CN=3 (0P + 3S) xyz=(39.103, 17.633, -7.678)
+      S neighbors: [1361, 2875, 3003]
+  Index  632: PS3^-                     CN=3 (0P + 3S) xyz=(33.105, 27.784, -9.561)
+      S neighbors: [1677, 2741, 2863]
+  Index  633: PS3^-                     CN=3 (0P + 3S) xyz=(35.548, 29.306, 1.275)
+      S neighbors: [1365, 2880, 3008]
+  Index  637: PS3^-                     CN=3 (0P + 3S) xyz=(33.318, 41.051, -2.186)
+      S neighbors: [1368, 2884, 3012]
+  Index  641: PS3^-                     CN=3 (0P + 3S) xyz=(4.458, 12.206, 7.830)
+      S neighbors: [1067, 1638, 2171]
+  Index  647: PS3^-                     CN=3 (0P + 3S) xyz=(9.834, 17.455, 33.374)
+      S neighbors: [989, 1177, 1861]
+  Index  659: PS3^-                     CN=3 (0P + 3S) xyz=(20.109, 3.120, 34.322)
+      S neighbors: [1343, 1761, 1873]
+  Index  668: PS3^-                     CN=3 (0P + 3S) xyz=(-4.571, 37.009, -7.121)
+      S neighbors: [1058, 1962, 2562]
+  Index  674: PS3^-                     CN=3 (0P + 3S) xyz=(13.033, 2.667, 28.052)
+      S neighbors: [1061, 1968, 2568]
+  Index  680: PS3^-                     CN=3 (0P + 3S) xyz=(4.872, 15.196, 5.573)
+      S neighbors: [1067, 1159, 2171]
+  Index  683: PS3^-                     CN=3 (0P + 3S) xyz=(5.168, 25.679, 33.637)
+      S neighbors: [1069, 1977, 2577]
+  Index  684: PS3^-                     CN=3 (0P + 3S) xyz=(1.115, 37.502, -8.608)
+      S neighbors: [1070, 1978, 2578]
+  Index  689: PS3^-                     CN=3 (0P + 3S) xyz=(17.914, 2.974, 14.681)
+      S neighbors: [1075, 1983, 2583]
+  Index  690: PS3^-                     CN=3 (0P + 3S) xyz=(18.331, 2.931, 26.813)
+      S neighbors: [1076, 1984, 2584]
+  Index  691: PS3^-                     CN=3 (0P + 3S) xyz=(18.238, 2.449, 39.497)
+      S neighbors: [1077, 1985, 2585]
+  Index  692: PS3^-                     CN=3 (0P + 3S) xyz=(14.663, 14.274, -2.234)
+      S neighbors: [1078, 1986, 2586]
+  Index  695: PS3^-                     CN=3 (0P + 3S) xyz=(14.676, 13.957, 35.736)
+      S neighbors: [1080, 1989, 2589]
+  Index  701: PS3^-                     CN=3 (0P + 3S) xyz=(7.292, 36.759, 2.629)
+      S neighbors: [1084, 1995, 2595]
+  Index  705: PS3^-                     CN=3 (0P + 3S) xyz=(24.399, 2.316, 12.463)
+      S neighbors: [1087, 1999, 2599]
+  Index  708: PS3^-                     CN=3 (0P + 3S) xyz=(20.987, 14.000, -3.698)
+      S neighbors: [1090, 2002, 2602]
+  Index  711: PS3^-                     CN=3 (0P + 3S) xyz=(13.434, 10.248, 38.670)
+      S neighbors: [1267, 1406, 1548]
+  Index  720: PS3^-                     CN=3 (0P + 3S) xyz=(30.171, 2.521, -1.405)
+      S neighbors: [1098, 2014, 2614]
+  Index  724: PS3^-                     CN=3 (0P + 3S) xyz=(27.009, 13.659, -5.713)
+      S neighbors: [1102, 2018, 2618]
+  Index  737: PS3^-                     CN=3 (0P + 3S) xyz=(36.247, 2.613, 10.258)
+      S neighbors: [1113, 2031, 2631]
+  Index  740: PS3^-                     CN=3 (0P + 3S) xyz=(32.920, 13.758, -6.584)
+      S neighbors: [1115, 2034, 2634]
+  Index  753: PS3^-                     CN=3 (0P + 3S) xyz=(42.521, 2.302, 8.457)
+      S neighbors: [1125, 2047, 2647]
+  Index  758: PS3^-                     CN=3 (0P + 3S) xyz=(39.096, 13.797, 17.002)
+      S neighbors: [1129, 2052, 2652]
+  Index  762: PS3^-                     CN=3 (0P + 3S) xyz=(35.113, 25.021, 13.268)
+      S neighbors: [1133, 2056, 2656]
+  Index  767: PS3^-                     CN=3 (0P + 3S) xyz=(18.432, 33.061, 29.373)
+      S neighbors: [1288, 2357, 2962]

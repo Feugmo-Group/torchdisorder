@@ -38,7 +38,9 @@ import warnings
 from typing import List, Dict, Optional, Tuple
 
 import torch_sim as ts
-from torch_sim.neighbors import torch_nl_linked_cell, torch_nl_n2, torchsim_nl
+from torch_sim.neighbors import torch_nl_linked_cell, torch_nl_n2
+# torchsim_nl was added in torch-sim 0.5.x; torch_nl_n2 is the equivalent in 0.3.x
+torchsim_nl = torch_nl_n2
 
 # =============================================================================
 # Check for WARP availability
@@ -67,7 +69,7 @@ class PyTorchOrderParameters(nn.Module):
     SUPPORTED_TYPES = [
         'cn', 'tet', 'oct', 'bcc',
         'q2', 'q4', 'q6',
-        'tri_plan', 'sq_plan', 'tri_pyr'
+        'di',
     ]
     
     def __init__(self, cutoff: float = 3.5, device: str = 'cpu', max_neighbors: int = 64):
@@ -152,9 +154,8 @@ class PyTorchOrderParameters(nn.Module):
                 results[op] = self._compute_q4(thetas, phis, valid_mask)
             elif op == 'q6':
                 results[op] = self._compute_q6(thetas, phis, valid_mask)
-            else:
-                # Placeholder for unimplemented
-                results[op] = torch.zeros(M, device=self.device)
+            elif op == 'di':
+                results[op] = self._compute_di(distances, valid_mask)
         
         return results
     
@@ -173,16 +174,22 @@ class PyTorchOrderParameters(nn.Module):
         # Get neighbor list
         positions = state.positions
         cell = state.cell
-        pbc = state.pbc if state.pbc is not None else torch.tensor([True, True, True], device=self.device)
-        
+        _raw_pbc = state.pbc if state.pbc is not None else True
+        # torch_nl_n2 (0.3.x) requires pbc as a bool Tensor, not a Python bool
+        if not isinstance(_raw_pbc, torch.Tensor):
+            pbc = torch.tensor([_raw_pbc] * 3 if not hasattr(_raw_pbc, '__len__') else list(_raw_pbc),
+                               dtype=torch.bool, device=self.device)
+        else:
+            pbc = _raw_pbc.to(device=self.device)
+
         if state.system_idx is None:
             system_idx = torch.zeros(len(positions), dtype=torch.long, device=self.device)
         else:
             system_idx = state.system_idx
-        
+
         # Ensure cell is 3D for torchsim_nl (batch dimension)
         cell_for_nl = cell.unsqueeze(0) if cell.ndim == 2 else cell
-        
+
         # Compute neighbors - only use mapping, ignore shifts (may not be shift vectors)
         mapping = torchsim_nl(
             positions=positions,
@@ -283,7 +290,22 @@ class PyTorchOrderParameters(nn.Module):
     def _compute_cn(self, valid_mask: torch.Tensor) -> torch.Tensor:
         """Coordination number."""
         return valid_mask.sum(dim=1).float()
-    
+
+    def _compute_di(self, distances: torch.Tensor, valid_mask: torch.Tensor) -> torch.Tensor:
+        """Bond-length distortion index: coefficient of variation of neighbor distances.
+
+        DI = std(d_i) / mean(d_i) for the valid neighbors of each atom.
+        Zero for atoms with fewer than 2 valid neighbors.
+        """
+        n = valid_mask.sum(dim=1).float().clamp(min=1.0)  # (M,)
+        d = distances * valid_mask.float()                  # zero out invalid slots
+        mean_d = d.sum(dim=1) / n                           # (M,)
+        var_d = (((d - mean_d.unsqueeze(1)) ** 2) * valid_mask.float()).sum(dim=1) / n
+        di = var_d.sqrt() / mean_d.clamp(min=1e-6)
+        # Zero out atoms with <2 neighbors (std is undefined)
+        di = torch.where(valid_mask.sum(dim=1) >= 2, di, torch.zeros_like(di))
+        return di
+
     def _compute_tetrahedral(self, vectors: torch.Tensor, valid_mask: torch.Tensor) -> torch.Tensor:
         """Tetrahedral order parameter."""
         params = self.default_params['tet']
@@ -527,17 +549,17 @@ if WARP_AVAILABLE:
         K = vectors.shape[1]
         
         # Count valid neighbors
-        n_neighbors = 0
+        n_neighbors = int(0)
         for j in range(K):
             if valid_mask[i, j] > 0:
                 n_neighbors += 1
-        
+
         if n_neighbors < 2:
             q_tet[i] = 0.0
             return
         
         # Compute pairwise angles
-        sum_weights = 0.0
+        sum_weights = float(0.0)
         for j in range(K):
             if valid_mask[i, j] == 0:
                 continue
@@ -567,7 +589,7 @@ if WARP_AVAILABLE:
         """Compute coordination number."""
         i = wp.tid()
         K = valid_mask.shape[1]
-        count = 0
+        count = int(0)
         for j in range(K):
             if valid_mask[i, j] > 0:
                 count += 1
@@ -586,29 +608,29 @@ if WARP_AVAILABLE:
         i = wp.tid()
         K = vectors.shape[1]
         
-        n_neighbors = 0
+        n_neighbors = int(0)
         for j in range(K):
             if valid_mask[i, j] > 0:
                 n_neighbors += 1
-        
+
         if n_neighbors < 2:
             q_oct[i] = 0.0
             return
         
-        sum_contrib = 0.0
+        sum_contrib = float(0.0)
         for j in range(K):
             if valid_mask[i, j] == 0:
                 continue
             v_j = vectors[i, j]
-            
+
             for k in range(j + 1, K):
                 if valid_mask[i, k] == 0:
                     continue
                 v_k = vectors[i, k]
-                
+
                 dot = wp.dot(v_j, v_k)
                 angle = safe_acos_wp(dot)
-                
+
                 if angle >= theta_threshold:
                     diff_180 = angle - 3.141592653589793
                     gauss_180 = wp.exp(-0.5 * (diff_180 / delta_theta_180) ** 2.0)
@@ -637,29 +659,29 @@ if WARP_AVAILABLE:
         i = wp.tid()
         K = vectors.shape[1]
         
-        n_neighbors = 0
+        n_neighbors = int(0)
         for j in range(K):
             if valid_mask[i, j] > 0:
                 n_neighbors += 1
-        
+
         if n_neighbors < 2:
             q_bcc[i] = 0.0
             return
         
-        sum_contrib = 0.0
+        sum_contrib = float(0.0)
         for j in range(K):
             if valid_mask[i, j] == 0:
                 continue
             v_j = vectors[i, j]
-            
+
             for k in range(j + 1, K):
                 if valid_mask[i, k] == 0:
                     continue
                 v_k = vectors[i, k]
-                
+
                 dot = wp.dot(v_j, v_k)
                 angle = safe_acos_wp(dot)
-                
+
                 if angle >= theta_threshold:
                     diff_180 = angle - 3.141592653589793
                     gauss_180 = wp.exp(-0.5 * (diff_180 / delta_theta) ** 2.0)
@@ -683,8 +705,8 @@ if WARP_AVAILABLE:
         Requires NVIDIA GPU and warp-lang package.
         """
         
-        SUPPORTED_TYPES = ['cn', 'tet', 'oct', 'bcc', 'q2', 'q4', 'q6']
-        
+        SUPPORTED_TYPES = ['cn', 'tet', 'oct', 'bcc', 'q2', 'q4', 'q6', 'di']
+
         def __init__(self, cutoff: float = 3.5, device: str = 'cuda', max_neighbors: int = 64):
             super().__init__()
             self.cutoff = cutoff
@@ -738,7 +760,7 @@ if WARP_AVAILABLE:
             wp_device = "cuda:0"
             
             wp_positions = wp.from_torch(positions.view(-1, 3).contiguous(), dtype=wp.vec3)
-            wp_neighbor_list = wp.from_torch(neighbor_list.contiguous(), dtype=wp.int32)
+            wp_neighbor_list = wp.from_torch(neighbor_list.int().contiguous(), dtype=wp.int32)
             wp_cell_shifts = wp.from_torch(cell_shifts.view(M, K, 3).contiguous(), dtype=wp.vec3)
             wp_valid_mask = wp.from_torch(valid_mask.int().contiguous(), dtype=wp.int32)
             
@@ -794,15 +816,15 @@ if WARP_AVAILABLE:
                              outputs=[wp_qbcc])
                     results[op] = wp.to_torch(wp_qbcc)
                 
-                elif op in ['q2', 'q4', 'q6']:
-                    # Fall back to PyTorch for spherical harmonics
+                elif op in ['q2', 'q4', 'q6', 'di']:
+                    # Fall back to PyTorch for spherical harmonics and distortion index
                     warnings.warn(f"{op} using PyTorch fallback in WARP backend")
                     pytorch_calc = PyTorchOrderParameters(
                         cutoff=self.cutoff, device=str(self.device), max_neighbors=self.max_neighbors
                     )
                     pytorch_results = pytorch_calc(state, atom_indices, [op], element_filter)
                     results[op] = pytorch_results[op]
-            
+
             return results
         
         def _compute_vectors_manual(
@@ -843,16 +865,21 @@ if WARP_AVAILABLE:
             
             positions = state.positions
             cell = state.cell
-            pbc = state.pbc if state.pbc is not None else torch.tensor([True, True, True], device=self.device)
-            
+            _raw_pbc = state.pbc if state.pbc is not None else True
+            if not isinstance(_raw_pbc, torch.Tensor):
+                pbc = torch.tensor([_raw_pbc] * 3 if not hasattr(_raw_pbc, '__len__') else list(_raw_pbc),
+                                   dtype=torch.bool, device=self.device)
+            else:
+                pbc = _raw_pbc.to(device=self.device)
+
             if state.system_idx is None:
                 system_idx = torch.zeros(len(positions), dtype=torch.long, device=self.device)
             else:
                 system_idx = state.system_idx
-            
+
             # Ensure cell is 3D for torchsim_nl
             cell_for_nl = cell.unsqueeze(0) if cell.ndim == 2 else cell
-            
+
             # Only use mapping from torchsim_nl (ignore shifts - may not be shift vectors)
             mapping = torchsim_nl(
                 positions=positions,
@@ -934,8 +961,8 @@ class TorchSimOrderParameters(nn.Module):
         - q2, q4, q6: Steinhardt bond orientational
     """
     
-    SUPPORTED_TYPES = ['cn', 'tet', 'oct', 'bcc', 'q2', 'q4', 'q6']
-    
+    SUPPORTED_TYPES = ['cn', 'tet', 'oct', 'bcc', 'q2', 'q4', 'q6', 'di']
+
     def __init__(
         self,
         cutoff: float = 3.5,

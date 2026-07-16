@@ -1,0 +1,20 @@
+# 70Li2S-30P2S5 Glass — Li-free, full supercell
+# Supercell: 8×4×4 of Li7P3S11 (near-cubic ~50 Å), Li removed
+# Raw cell: 49.5×50.5×50.7 Å (within 2.4%)  |  MIC cutoff after density scaling: ~25.5 Å
+
+root_dir: ${oc.env:PROJECT_ROOT,./}/data
+
+init: from_cif
+cif_path: ${structure.root_dir}/crystal-structures/glass_70Li2S_noLi.cif
+
+target_density: 1.85
+
+species: [P, S]
+stoichiometry: [384, 1408]
+
+central_element: P
+neighbor_elements: [P, S]
+order_param_cutoff: 5.5
+order_params: [tet, cn, q4]
+
+box_length: 52.0

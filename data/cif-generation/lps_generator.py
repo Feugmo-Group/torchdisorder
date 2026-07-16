@@ -504,7 +504,8 @@ class GlassStructureGenerator:
         'P3': 1.2,   # PS3^- pyramidal - less strict
     }
 
-    def generate_order_parameter_constraints(self, classifications: Dict, stats: Dict) -> Dict:
+    def generate_order_parameter_constraints(self, classifications: Dict, stats: Dict,
+                                             keep_li: bool = False) -> Dict:
         """
         Generate per-atom order parameter constraints for v6 constrained optimizer.
         
@@ -583,6 +584,29 @@ class GlassStructureGenerator:
             'target_composition': self.target_composition
         }
 
+        # Add Li non-overlap constraints when Li atoms are kept
+        if keep_li:
+            # Collect Li atom indices from the structure
+            li_indices = [
+                i for i, site in enumerate(self.structure)
+                if site.specie.symbol == 'Li'
+            ]
+            constraints['li_constraints'] = {
+                'li_atom_indices': li_indices,
+                'n_li_atoms': len(li_indices),
+                'minimum_distances': {
+                    'Li-S': 2.3,   # Å — typical Li–S contact in sulfide glasses
+                    'Li-P': 2.8,   # Å — Li–P kept well apart
+                    'Li-Li': 2.0,  # Å — Li–Li repulsion
+                },
+                'description': (
+                    'Soft repulsive penalty applied to Li atoms to prevent '
+                    'unphysical overlaps. Li atoms are EXCLUDED from the '
+                    'neighbour search used for P order-parameter calculations '
+                    '(element_filter already restricts to Z=15,16).'
+                ),
+            }
+
         # Add metadata
         constraints['metadata'] = {
             'version': 'v6',  # Mark as v6 format
@@ -601,7 +625,8 @@ class GlassStructureGenerator:
                 'Pa': 'P2S7^4- dimer with bridging S',
                 'P2': 'P2S6^4- dumbbell with P-P bond',
                 'P3': 'Pyramidal PS3^-'
-            }
+            },
+            'contains_li': keep_li,
         }
 
         return constraints
@@ -623,7 +648,8 @@ class GlassStructureGenerator:
         else:
             return obj
 
-    def write_output(self, output_prefix: str, classifications: Dict, stats: Dict):
+    def write_output(self, output_prefix: str, classifications: Dict, stats: Dict,
+                     keep_li: bool = False):
         """Write output CIF, summary, and constraint files."""
         # Write CIF
         cif_file = f"{output_prefix}.cif"
@@ -633,7 +659,9 @@ class GlassStructureGenerator:
 
         # Write order parameter constraints for augmented Lagrangian
         constraints_file = f"{output_prefix}_constraints.json"
-        constraints = self.generate_order_parameter_constraints(classifications, stats)
+        constraints = self.generate_order_parameter_constraints(
+            classifications, stats, keep_li=keep_li
+        )
 
         with open(constraints_file, 'w') as f:
             json.dump(constraints, f, indent=2)
@@ -749,6 +777,9 @@ def main():
                         help='Random displacement magnitude (Å)')
     parser.add_argument('--seed', type=int, default=42,
                         help='Random seed for reproducibility')
+    parser.add_argument('--keep-li', action='store_true',
+                        help='Keep Li atoms in the output CIF and add Li '
+                             'minimum-distance constraints to the JSON')
 
     args = parser.parse_args()
 
@@ -775,22 +806,26 @@ def main():
     # Add disorder
     generator.add_disorder(displacement=args.disorder)
 
-    # ===== CHANGE: remove Li, then RECLASSIFY on Li-free structure (fresh indexing) =====
-    generator.structure.remove_species(["Li+"])
+    # Optionally remove Li, then reclassify on the resulting structure
+    if not args.keep_li:
+        # Remove both Li+ (Li7P3S11) and neutral Li (Li3PS4_beta)
+        generator.structure.remove_species(["Li+", "Li"])
+
     generator.classifier = PEnvironmentClassifier(generator.structure)
     classifications = generator.classifier.classify_all_p()
     stats = generator.classifier.get_statistics(classifications)
-    # ================================================================================
 
     # Write output
-    generator.write_output(args.output, classifications, stats)
+    generator.write_output(args.output, classifications, stats, keep_li=args.keep_li)
 
     print("\n" + "=" * 70)
     print("GENERATION COMPLETE!")
     print("=" * 70)
+    li_note = " (Li atoms retained)" if args.keep_li else " (Li atoms removed)"
     print(f"\nOutput files:")
-    print(f"  1. {args.output}.cif - Structure file ")
-    print(f"  2. {args.output}_constraints.json - Order parameter constraints")
+    print(f"  1. {args.output}.cif - Structure file{li_note}")
+    print(f"  2. {args.output}_constraints.json - Order parameter constraints"
+          + (" + Li non-overlap constraints" if args.keep_li else ""))
     print(f"  3. {args.output}_P_environments.txt - Human-readable summary")
     print(f"  4. {args.output}_P_environments.json - Machine-readable data")
     print("\nNext steps:")

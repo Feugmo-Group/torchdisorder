@@ -1,0 +1,23 @@
+# Li₆PS₅Cl argyrodite glass — Li-containing, full supercell
+# Generate the CIF and constraint JSON with:
+#   python data/cif-generation/argyrodite_generator.py \
+#     --input data/crystal-structures/Li6PS5Cl.cif \
+#     --halide Cl --supercell 3,3,3 \
+#     --output argyrodite_Li6PS5Cl
+
+root_dir: ${oc.env:PROJECT_ROOT,./}/data
+
+init: from_cif
+cif_path: ${structure.root_dir}/crystal-structures/argyrodite_Li6PS5Cl.cif
+
+target_density: 1.80   # g/cm³ for Li₆PS₅Cl glass
+
+species: [Li, P, S, Cl]
+stoichiometry: null     # inferred from CIF when null
+
+central_element: P
+neighbor_elements: [S, Cl]
+order_param_cutoff: 5.5
+order_params: [tet, cn, q4]
+
+box_length: null        # inferred from CIF when null

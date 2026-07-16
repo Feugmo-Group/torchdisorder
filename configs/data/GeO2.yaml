@@ -18,7 +18,8 @@ data:
   g_of_r_path: null
   
   # Input format: null=auto-detect, true=F(Q), false=S(Q)
-  input_is_F_Q: null
+  # F_of_Q.csv contains F(Q)=Q[S(Q)-1] directly — do NOT recompute
+  input_is_F_Q: true
   
   # Data subsampling (1 = no subsampling)
   stride_q: 1
@@ -29,21 +30,22 @@ data:
 # =============================================================================
 # Filter experimental S(Q)/F(Q) data to this range
 # Set to null to use full data range
-q_min: 0.2
-q_max: 22.0
+q_min: 0.5
+q_max: 25.0
 
 # =============================================================================
 # R-space Range (Å)
 # =============================================================================
 # Used for auto-generating r_bins or filtering loaded data
-r_min: 0.5
-r_max: 25.0
+r_min: 0.01
+r_max: 10.0
 n_r_bins: 500
 
 # =============================================================================
 # Spectrum Calculation
 # =============================================================================
 kernel_width: 0.035
+number_density: 0.0698  # atoms/Å³ from geo2_glass.cif (3.63 g/cm³ → 0.0627 bulk)
 
 # =============================================================================
 # Neutron Scattering Lengths (fm)
@@ -75,6 +77,4 @@ cutoff: 2.4
 # =============================================================================
 # Constraints
 # =============================================================================
-# Note: Uses SiO2 constraints as template (same tetrahedral structure)
-# For custom GeO2 constraints, create data/json/geo2_glass_constraints.json
 json_path: ${data.root_dir}/json/geo2_glass_constraints.json
