@@ -19,7 +19,8 @@ Differentiable structure optimization from scattering data with environment-base
 11. [Available Structures and Run Scripts](#available-structures-and-run-scripts)
 12. [Scattering Functions](#scattering-functions)
 13. [Environment Types](#environment-types)
-14. [Module Structure](#module-structure)
+14. [Local Inversion Symmetry — F_IS](#local-inversion-symmetry--f_is)
+15. [Module Structure](#module-structure)
 
 ---
 
@@ -176,7 +177,7 @@ order_params: [tet, cn, q4]
 | `central_element` | order params | The atom type whose environments are constrained (usually P or Si) |
 | `neighbor_elements` | order params | Elements included in neighbor search |
 | `order_param_cutoff` | order params | Neighbor cutoff in Å for order parameter calculation |
-| `order_params` | order params | Which order parameters to compute: `tet`, `cn`, `q4` |
+| `order_params` | order params | Which order parameters to compute: `tet`, `cn`, `q4`, `fis` |
 
 ---
 
@@ -577,6 +578,98 @@ Fourier relationship:
 | `Si3` / `Ge3` | Under-coordinated (defect) | 3 | 1.0 |
 | `Si5` / `Ge5` | Five-coordinate | 5 | 1.2 |
 | `Si6` / `Ge6` | Octahedral | 6 | 1.5 |
+
+---
+
+## Local Inversion Symmetry — F_IS
+
+### What is F_IS?
+
+F_IS (local inversion symmetry order parameter) was introduced by Milkus and Zaccone (PRB 2016) to quantify how centrosymmetric the local atomic environment of each atom is. Where Bond-Orientational Order (BOO) parameters such as q4 and q6 capture the angular arrangement of neighbors, F_IS measures whether those neighbors are paired into antiparallel ("inversion-symmetric") directions. This makes F_IS sensitive to the type of structural disorder rather than just its degree.
+
+Empirically, F_IS correlates more strongly with vibrational and mechanical properties than q4 or q6. In particular, the fraction of low-F_IS environments tracks closely with the density of soft (quasi-localized) vibrational modes and with shear modulus heterogeneity, making it a useful structural fingerprint for glasses.
+
+### Mathematics
+
+For atom *i* with neighbors *j*, F_IS is computed from the bond-unit vectors **n**ij = **r**ij / |**r**ij| and scalar weights w_ij:
+
+```
+                   | Σ_j  w_ij  n̂^μ_ij  n̂^ν_ij  n̂^λ_ij |²
+F_IS_i  =  1  -   ─────────────────────────────────────────
+                        [ Σ_j  w_ij  n̂^μ_ij  n̂^ν_ij ]²
+```
+
+The numerator and denominator are summed over Cartesian index pairs (μ, ν, λ) for a set of shear strains, and the ratio is averaged over those shears. A value close to 1 means the environment is centrosymmetric; a value close to 0 means it is not.
+
+**Analytical limits:**
+
+| Configuration | F_IS |
+|---|---|
+| Two antiparallel bonds (perfectly centrosymmetric) | 1 |
+| Single bond (no inversion partner) | 0 |
+| Perfect SiO₄ tetrahedron (Td — no inversion center) | −1/3 |
+
+The SiO₄ result (F_IS = −1/3) is notable: a regular tetrahedron has *lower* inversion symmetry than a random arrangement, so F_IS can be negative.
+
+### Computation modes
+
+Two weighting schemes are available via the `mode` argument:
+
+| Mode | Weights w_ij | Notes |
+|---|---|---|
+| `variable_R` | w_ij = |**r**ij| (bond length) | **Recommended.** Down-weights distant neighbors naturally; produces smoother distributions. |
+| `milkus2016` | w_ij = 1 (uniform) | Matches the original Milkus & Zaccone (2016) definition exactly. |
+
+### Usage
+
+Add `'fis'` to `order_params` in the structure config:
+
+```yaml
+# configs/structure/LiPS_67_noLi_small.yaml
+order_params: [tet, cn, fis]
+```
+
+Compute F_IS directly via `TorchSimOrderParameters`:
+
+```python
+from torchdisorder.engine.order_params import TorchSimOrderParameters
+
+op = TorchSimOrderParameters(
+    cutoff=5.5,
+    element_filter=[15, 16],   # atomic numbers of P and S
+    mode="variable_R",         # recommended
+)
+
+# positions: (N, 3) tensor of fractional or Cartesian coords
+# cell:      (3, 3) cell matrix
+fis_values = op.compute_fis(positions, cell)
+# fis_values: (N,) tensor, one value per central atom
+```
+
+### Comparing F_IS with BOO
+
+```python
+import torch
+from torchdisorder.engine.order_params import TorchSimOrderParameters
+
+op = TorchSimOrderParameters(
+    cutoff=5.5,
+    element_filter=[15, 16],
+    mode="variable_R",
+)
+
+fis = op.compute_fis(positions, cell)         # local inversion symmetry
+q4  = op.compute_steinhardt(positions, cell, l=4)  # BOO l=4
+q6  = op.compute_steinhardt(positions, cell, l=6)  # BOO l=6
+
+print(f"F_IS  — mean: {fis.mean():.3f}  std: {fis.std():.3f}")
+print(f"q4    — mean: {q4.mean():.3f}  std: {q4.std():.3f}")
+print(f"q6    — mean: {q6.mean():.3f}  std: {q6.std():.3f}")
+```
+
+### Reference
+
+> A. Milkus and A. Zaccone, "Local inversion-symmetry breaking controls the boson peak in glasses and crystals," *Phys. Rev. B* **93**, 094204 (2016). https://doi.org/10.1103/PhysRevB.93.094204
 
 ---
 

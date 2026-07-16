@@ -69,14 +69,21 @@ class PyTorchOrderParameters(nn.Module):
     SUPPORTED_TYPES = [
         'cn', 'tet', 'oct', 'bcc',
         'q2', 'q4', 'q6',
-        'di',
+        'di', 'fis',
     ]
-    
-    def __init__(self, cutoff: float = 3.5, device: str = 'cpu', max_neighbors: int = 64):
+
+    def __init__(
+        self,
+        cutoff: float = 3.5,
+        device: str = 'cpu',
+        max_neighbors: int = 64,
+        fis_mode: str = "variable_R",
+    ):
         super().__init__()
         self.cutoff = cutoff
         self.device = torch.device(device)
         self.max_neighbors = max_neighbors
+        self.fis_mode = fis_mode
         self.default_params = self._initialize_default_params()
     
     def _initialize_default_params(self) -> Dict[str, Dict[str, float]]:
@@ -156,7 +163,9 @@ class PyTorchOrderParameters(nn.Module):
                 results[op] = self._compute_q6(thetas, phis, valid_mask)
             elif op == 'di':
                 results[op] = self._compute_di(distances, valid_mask)
-        
+            elif op == 'fis':
+                results[op] = self._compute_fis(vectors, distances, valid_mask, self.fis_mode)
+
         return results
     
     def _build_neighbor_data(
@@ -305,6 +314,51 @@ class PyTorchOrderParameters(nn.Module):
         # Zero out atoms with <2 neighbors (std is undefined)
         di = torch.where(valid_mask.sum(dim=1) >= 2, di, torch.zeros_like(di))
         return di
+
+    def _compute_fis(
+        self,
+        vectors: torch.Tensor,
+        distances: torch.Tensor,
+        valid_mask: torch.Tensor,
+        mode: str = "variable_R",
+    ) -> torch.Tensor:
+        """Per-atom local inversion symmetry parameter (Milkus & Zaccone, PRB 2016).
+
+        F_IS_i = 1 - |Σ_j w_ij n̂^μ_ij n̂^ν_ij n̂_ij|² / Σ_j (w_ij n̂^μ_ij n̂^ν_ij)²
+        averaged over shear planes (μ,ν) ∈ {xy, xz, yz}.
+
+        mode="variable_R": w_ij = R_ij  (JCTC 2026 generalization, recommended)
+        mode="milkus2016": w_ij = 1     (original PRB 2016 constant spring constant)
+
+        Returns:
+            (M,) tensor in [0, 1]; 0 = no inversion symmetry, 1 = perfect centrosymmetry.
+        """
+        shear_pairs = [(0, 1), (0, 2), (1, 2)]
+        local_fis_shears = []
+
+        for mu, nu in shear_pairs:
+            # orient = n̂^μ * n̂^ν; 0 for invalid slots (vectors already zeroed there)
+            orient = vectors[..., mu] * vectors[..., nu]  # (M, K)
+
+            if mode == "variable_R":
+                w_orient = distances * orient              # (M, K)
+            else:
+                w_orient = orient                          # (M, K)
+
+            # Xi_i = Σ_j w_orient_j * n̂_j   shape (M, 3)
+            Xi = (w_orient.unsqueeze(-1) * vectors).sum(dim=1)
+            num_i = (Xi * Xi).sum(dim=-1)                 # (M,)
+            denom_i = (w_orient * w_orient).sum(dim=1)    # (M,)
+
+            has_bonds = denom_i > 1e-10
+            local_fis = torch.where(
+                has_bonds,
+                1.0 - num_i / (denom_i + 1e-10),
+                torch.zeros_like(num_i),
+            )
+            local_fis_shears.append(local_fis)
+
+        return torch.stack(local_fis_shears).mean(dim=0)  # (M,)
 
     def _compute_tetrahedral(self, vectors: torch.Tensor, valid_mask: torch.Tensor) -> torch.Tensor:
         """Tetrahedral order parameter."""
@@ -705,14 +759,21 @@ if WARP_AVAILABLE:
         Requires NVIDIA GPU and warp-lang package.
         """
         
-        SUPPORTED_TYPES = ['cn', 'tet', 'oct', 'bcc', 'q2', 'q4', 'q6', 'di']
+        SUPPORTED_TYPES = ['cn', 'tet', 'oct', 'bcc', 'q2', 'q4', 'q6', 'di', 'fis']
 
-        def __init__(self, cutoff: float = 3.5, device: str = 'cuda', max_neighbors: int = 64):
+        def __init__(
+            self,
+            cutoff: float = 3.5,
+            device: str = 'cuda',
+            max_neighbors: int = 64,
+            fis_mode: str = "variable_R",
+        ):
             super().__init__()
             self.cutoff = cutoff
             self.device = torch.device(device)
             self.max_neighbors = max_neighbors
-            
+            self.fis_mode = fis_mode
+
             if self.device.type != 'cuda':
                 raise ValueError("WARP backend requires CUDA device")
             
@@ -816,11 +877,12 @@ if WARP_AVAILABLE:
                              outputs=[wp_qbcc])
                     results[op] = wp.to_torch(wp_qbcc)
                 
-                elif op in ['q2', 'q4', 'q6', 'di']:
-                    # Fall back to PyTorch for spherical harmonics and distortion index
+                elif op in ['q2', 'q4', 'q6', 'di', 'fis']:
+                    # Fall back to PyTorch for spherical harmonics, distortion index, and F_IS
                     warnings.warn(f"{op} using PyTorch fallback in WARP backend")
                     pytorch_calc = PyTorchOrderParameters(
-                        cutoff=self.cutoff, device=str(self.device), max_neighbors=self.max_neighbors
+                        cutoff=self.cutoff, device=str(self.device),
+                        max_neighbors=self.max_neighbors, fis_mode=self.fis_mode,
                     )
                     pytorch_results = pytorch_calc(state, atom_indices, [op], element_filter)
                     results[op] = pytorch_results[op]
@@ -961,7 +1023,7 @@ class TorchSimOrderParameters(nn.Module):
         - q2, q4, q6: Steinhardt bond orientational
     """
     
-    SUPPORTED_TYPES = ['cn', 'tet', 'oct', 'bcc', 'q2', 'q4', 'q6', 'di']
+    SUPPORTED_TYPES = ['cn', 'tet', 'oct', 'bcc', 'q2', 'q4', 'q6', 'di', 'fis']
 
     def __init__(
         self,
@@ -969,12 +1031,14 @@ class TorchSimOrderParameters(nn.Module):
         device: str = 'cpu',
         max_neighbors: int = 64,
         backend: str = 'auto',
+        fis_mode: str = "variable_R",
     ):
         super().__init__()
         self.cutoff = cutoff
         self.device = torch.device(device)
         self.max_neighbors = max_neighbors
-        
+        self.fis_mode = fis_mode
+
         # Select backend
         if backend == 'auto':
             if WARP_AVAILABLE and self.device.type == 'cuda':
@@ -997,10 +1061,16 @@ class TorchSimOrderParameters(nn.Module):
         
         # Initialize backend
         if self._backend == 'warp':
-            self._calc = WarpOrderParameters(cutoff=cutoff, device=str(device), max_neighbors=max_neighbors)
+            self._calc = WarpOrderParameters(
+                cutoff=cutoff, device=str(device),
+                max_neighbors=max_neighbors, fis_mode=fis_mode,
+            )
             print(f"  ✓ Order parameters: WARP backend (10-100x faster for large systems)")
         else:
-            self._calc = PyTorchOrderParameters(cutoff=cutoff, device=str(device), max_neighbors=max_neighbors)
+            self._calc = PyTorchOrderParameters(
+                cutoff=cutoff, device=str(device),
+                max_neighbors=max_neighbors, fis_mode=fis_mode,
+            )
             if self.device.type == 'cuda' and not WARP_AVAILABLE:
                 print(f"  ⚠ Order parameters: PyTorch backend (install warp-lang for 10-100x speedup)")
             else:
