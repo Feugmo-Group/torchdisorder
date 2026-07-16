@@ -1439,6 +1439,18 @@ def main(cfg: DictConfig) -> None:
     fis_neighbor = int(fis_neighbor) if fis_neighbor is not None else None
     fis_mode     = str(  OmegaConf.select(cfg, 'fis.mode',          default='variable_R')) if fis_cfg else 'variable_R'
 
+    # Optional adaptive loss aggregator — read from config block `loss_aggregator:`
+    agg_name = OmegaConf.select(cfg, 'loss_aggregator.name', default=None)
+    aggregator = None
+    if agg_name and fis_target is not None:
+        from torchdisorder.model.aggregators import build_aggregator
+        agg_kwargs = dict(OmegaConf.to_container(
+            OmegaConf.select(cfg, 'loss_aggregator', default={}), resolve=True
+        ))
+        agg_kwargs.pop('name', None)
+        aggregator = build_aggregator(agg_name, params=[], num_losses=2, **agg_kwargs)
+        print(f"  Loss aggregator: {agg_name}  kwargs={agg_kwargs}")
+
     cooper_loss = CooperLoss(
         target_data=rdf_data,
         target_type=target_type,
@@ -1449,6 +1461,7 @@ def main(cfg: DictConfig) -> None:
         fis_central_z=fis_central,
         fis_neighbor_z=fis_neighbor,
         fis_mode=fis_mode,
+        aggregator=aggregator,
     )
     print(f"CooperLoss initialized with target: {target_type}")
     if fis_target is not None:

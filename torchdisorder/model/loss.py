@@ -22,6 +22,7 @@ import torch.nn as nn
 from omegaconf import OmegaConf
 
 from torchdisorder.common.target_rdf import TargetRDFData
+from torchdisorder.model.aggregators import Aggregator, build_aggregator  # noqa: F401
 
 
 # =============================================================================
@@ -157,6 +158,23 @@ class CooperLoss(nn.Module):
         fis_mode: Weighting scheme — ``'variable_R'`` (recommended, JCTC 2026)
             or ``'milkus2016'`` (original uniform weights, PRB 2016).
         fis_max_neighbors: Max neighbors per atom for the F_IS calculator.
+        aggregator: Optional ``Aggregator`` instance from
+            ``torchdisorder.model.aggregators``.  When set, the scattering
+            chi-squared and F_IS loss are combined via the aggregator rather
+            than a fixed weighted sum.  Build one with::
+
+                from torchdisorder.model.aggregators import build_aggregator
+                agg = build_aggregator('relobralo', params=[], num_losses=2)
+
+            Recommended strategies for TorchDisorder:
+              - ``'relobralo'``  — tracks relative progress from t=0 (robust default)
+              - ``'brdr'``       — equalises relative decay rates of all terms
+              - ``'ema'``        — lightweight EMA magnitude normalisation
+              - ``'soft_adapt'`` — up-weights whichever term is improving slowest
+
+            Gradient-based strategies (``grad_norm``, ``lr_annealing``, ``ntk``)
+            work but require an extra backward pass per term per step — expensive
+            for large structures.
     """
 
     VALID_TARGETS = ['S_Q', 'T_r', 'g_r', 'G_r', 'F_Q']
@@ -175,6 +193,8 @@ class CooperLoss(nn.Module):
         fis_neighbor_z: Optional[int] = None,
         fis_mode: str = 'variable_R',
         fis_max_neighbors: int = 16,
+        # Adaptive loss weighting
+        aggregator: Optional[Aggregator] = None,
     ):
         super().__init__()
 
@@ -201,6 +221,9 @@ class CooperLoss(nn.Module):
                 fis_mode=fis_mode,
             )
 
+        # Adaptive aggregator (optional)
+        self.aggregator = aggregator
+        self._step = 0          # internal step counter for the aggregator
         self._logged = False
 
     def forward(
@@ -298,7 +321,23 @@ class CooperLoss(nn.Module):
             fis_loss = self.fis_weight * (fis_mean - self.fis_target) ** 2
             losses['fis_loss'] = fis_loss
             losses['fis_mean'] = fis_mean.detach()
-            total_loss = total_loss + fis_loss
+
+        # Combine scattering + F_IS via aggregator or fixed sum
+        agg_inputs = {k: v for k, v in losses.items()
+                      if k in (primary_key, 'fis_loss') and isinstance(v, torch.Tensor)
+                      and v.requires_grad}
+
+        if self.aggregator is not None and len(agg_inputs) > 1:
+            total_loss = self.aggregator(agg_inputs, self._step)
+            losses['agg_weights'] = torch.tensor(
+                self.aggregator.current_weights or [], dtype=torch.float32
+            )
+        elif 'fis_loss' in losses:
+            total_loss = total_loss + losses['fis_loss']
+        # (else: total_loss already set above from primary scattering key)
+
+        if self.training:
+            self._step += 1
 
         # Log once
         if not self._logged:
@@ -308,6 +347,8 @@ class CooperLoss(nn.Module):
             print(f"  Primary loss key: {primary_key}")
             if self.fis_target is not None:
                 print(f"  F_IS target: {self.fis_target:.4f}  weight: {self.fis_weight}")
+            if self.aggregator is not None:
+                print(f"  Aggregator: {type(self.aggregator).__name__}")
             self._logged = True
 
         return {
@@ -484,6 +525,9 @@ __all__ = [
     'CooperLoss',
     'AugLagHyper',
     'AugLagLoss',
+    # Adaptive aggregators (re-exported for convenience)
+    'Aggregator',
+    'build_aggregator',
     # Backward compatibility
     'ChiSquaredObjective',
     'ConstraintChiSquared',
