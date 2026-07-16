@@ -667,6 +667,78 @@ print(f"q4    — mean: {q4.mean():.3f}  std: {q4.std():.3f}")
 print(f"q6    — mean: {q6.mean():.3f}  std: {q6.std():.3f}")
 ```
 
+### F_IS as an optimization objective (CooperLoss)
+
+F_IS is fully differentiable, so it can be used directly inside the
+scattering optimization loop as an additional loss term alongside the
+chi-squared scattering fit:
+
+```
+L_total = χ²(F_Q)  +  w × (mean_F_IS − F_IS_target)²
+```
+
+This steers the optimizer toward a target mean F_IS derived from a
+reference structure (e.g. a prior TorchDisorder run, a melt-quench MD, or
+the published glass values below) without requiring any additional
+experimental measurement.
+
+**Measured F_IS on a-SiO₂ (TorchDisorder BOO-optimized glass):**
+
+| Structure | F_IS mean | q4 mean | tet mean |
+|---|---|---|---|
+| c-SiO₂ (crystal) | −0.331 | +0.250 | +0.997 |
+| a-SiO₂ (glass)   | +0.005 | +0.152 | +0.489 |
+| Δ (glass − crystal) | **+0.336** | −0.099 | −0.508 |
+
+F_IS shifts by 0.34 between crystal and glass — more than three times the
+shift in q4 (0.10) — making it the most sensitive discriminator.
+
+**Run SiO₂ optimization with F_IS regularization:**
+
+```bash
+python scripts/train.py data=SiO2 structure=silica target=F_Q \
+  fis.target=0.005 fis.weight=5.0 fis.cutoff=2.2 \
+  fis.central_z=14 fis.neighbor_z=8
+```
+
+All `fis.*` keys are optional Hydra overrides. Omitting them disables the
+F_IS term entirely (backward compatible). Available parameters:
+
+| Key | Default | Description |
+|---|---|---|
+| `fis.target` | — | Target mean F_IS (enables the term when set) |
+| `fis.weight` | `1.0` | Weight relative to scattering χ² |
+| `fis.cutoff` | `2.2` | Neighbor cutoff in Å (first coordination shell) |
+| `fis.central_z` | `14` | Atomic number of central atoms (Si=14, Ge=32, P=15) |
+| `fis.neighbor_z` | `None` | Atomic number of neighbor filter (O=8); `None` = all |
+| `fis.mode` | `variable_R` | Weighting scheme (`variable_R` or `milkus2016`) |
+
+**Python API (direct use in custom training loops):**
+
+```python
+from torchdisorder.model.loss import CooperLoss
+
+loss = CooperLoss(
+    target_data=rdf_data,
+    target_type='F_Q',
+    device='cpu',
+    fis_target=0.005,    # target mean F_IS for a-SiO₂
+    fis_weight=5.0,
+    fis_cutoff=2.2,
+    fis_central_z=14,    # Si
+    fis_neighbor_z=8,    # O only
+)
+
+# In your training loop:
+results = xrd_model(state)          # scattering spectra
+loss_dict = loss(results, state)    # or loss(results) — state auto-extracted when called from optimizer
+
+chi2   = loss_dict['chi2_loss']
+fis_l  = loss_dict.get('fis_loss')   # present only when fis_target is set
+fis_mu = loss_dict.get('fis_mean')   # current mean F_IS (detached, for logging)
+total  = loss_dict['total_loss']     # chi2 + fis_loss
+```
+
 ### Reference
 
 > A. Milkus and A. Zaccone, "Local inversion-symmetry breaking controls the boson peak in glasses and crystals," *Phys. Rev. B* **93**, 094204 (2016). https://doi.org/10.1103/PhysRevB.93.094204
