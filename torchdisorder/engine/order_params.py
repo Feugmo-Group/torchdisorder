@@ -322,16 +322,46 @@ class PyTorchOrderParameters(nn.Module):
         valid_mask: torch.Tensor,
         mode: str = "variable_R",
     ) -> torch.Tensor:
-        """Per-atom local inversion symmetry parameter (Milkus & Zaccone, PRB 2016).
+        """Per-atom local inversion symmetry (F_IS) order parameter.
 
-        F_IS_i = 1 - |Σ_j w_ij n̂^μ_ij n̂^ν_ij n̂_ij|² / Σ_j (w_ij n̂^μ_ij n̂^ν_ij)²
-        averaged over shear planes (μ,ν) ∈ {xy, xz, yz}.
+        Quantifies how centrosymmetric the local coordination environment of each
+        atom is.  Defined as:
 
-        mode="variable_R": w_ij = R_ij  (JCTC 2026 generalization, recommended)
-        mode="milkus2016": w_ij = 1     (original PRB 2016 constant spring constant)
+            Xi_i^(μν)  = Σ_j  w_ij  n̂_ij^μ  n̂_ij^ν  n̂_ij        (3-vector)
+            D_i^(μν)   = Σ_j  (w_ij  n̂_ij^μ  n̂_ij^ν)²
+            F_IS_i     = 1 − mean_{(μ,ν)} [ |Xi_i^(μν)|² / D_i^(μν) ]
 
-        Returns:
-            (M,) tensor in [0, 1]; 0 = no inversion symmetry, 1 = perfect centrosymmetry.
+        where the mean is taken over shear planes (μ,ν) ∈ {(x,y), (x,z), (y,z)}.
+
+        Analytical limits:
+          - Two antiparallel bonds of equal length  →  F_IS =  1  (perfect inversion)
+          - Single bond                             →  F_IS =  0  (no inversion partner)
+          - Perfect SiO₄ tetrahedron (Td symmetry) →  F_IS = −1/3
+            (Td has no inversion centre; all four n̂^x n̂^y n̂^z contributions
+            add coherently rather than cancelling)
+
+        F_IS correlates with the local elastic stiffness and the density of soft
+        vibrational modes in glasses more strongly than BOO parameters (q4, q6).
+
+        Weighting modes
+        ---------------
+        mode="variable_R":  w_ij = R_ij  (bond length).  Recommended — generalisation
+            to distance-weighted spring constants; produces smoother distributions.
+            See: Zaccone group, JCTC (2026).
+        mode="milkus2016":  w_ij = 1 (uniform weights).  Matches the original
+            constant-spring-constant definition exactly.
+
+        References
+        ----------
+        A. Milkus & A. Zaccone, "Local inversion-symmetry breaking controls the boson
+        peak in glasses and crystals," Phys. Rev. B 93, 094204 (2016).
+        https://doi.org/10.1103/PhysRevB.93.094204
+
+        Returns
+        -------
+        Tensor of shape (M,) with one F_IS value per queried atom.
+        Can be negative (e.g. −1/3 for perfect tetrahedra); values near +1
+        indicate a centrosymmetric environment.
         """
         shear_pairs = [(0, 1), (0, 2), (1, 2)]
         local_fis_shears = []

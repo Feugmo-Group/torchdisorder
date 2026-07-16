@@ -37,5 +37,6 @@ scripts/wandb
 # Duplicate data subtree (canonical copy is data/)
 data/data/
 
-# Local Claude Code instructions (stay machine-local)
+# Local-only files (not for the repo)
 CLAUDE.md
+Localsymmetrypredictors/
