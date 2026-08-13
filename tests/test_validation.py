@@ -143,3 +143,50 @@ def test_accepts_a_file_path(tmp_path):
     path = tmp_path / "s.cif"
     write(str(path), _sio4_network(), format="cif")
     assert validate_structure(str(path))
+
+
+def test_plateau_tolerates_cutoffs_below_the_first_shell():
+    """The lowest cutoffs sit below the first-shell peak; that is not a failure.
+
+    A physical a-SiO2 network gives <CN> = 3.29 at 1.8 A and 3.99/4.00/4.00/4.00
+    above it.  Judging the raw max-min spread over the whole window rejects that
+    perfectly good structure, so the check must locate the flat run instead.
+    """
+    from torchdisorder.common.validation import validate_structure
+
+    profile = {1.8: 3.293, 2.0: 3.990, 2.2: 4.001, 2.4: 4.001, 2.6: 4.002}
+    import torchdisorder.common.validation as V
+
+    real = V.coordination_profile
+    V.coordination_profile = lambda *a, **k: profile
+    try:
+        report = validate_structure(
+            _sio4_network(), check_plateau=True, central="Si", neighbour="O",
+            expected_cn=4.0,
+        )
+    finally:
+        V.coordination_profile = real
+
+    assert report, report.summary()
+    assert report.plateau_ok
+
+
+def test_plateau_rejects_a_monotonic_climb():
+    """A structure with no first shell climbs steadily and must still fail."""
+    from torchdisorder.common.validation import validate_structure
+    import torchdisorder.common.validation as V
+
+    # The withdrawn a-SiO2: <CN> rises with cutoff, never flattening.
+    profile = {1.8: 2.149, 2.0: 2.517, 2.2: 2.984, 2.4: 3.459, 2.6: 3.880}
+    real = V.coordination_profile
+    V.coordination_profile = lambda *a, **k: profile
+    try:
+        report = validate_structure(
+            _sio4_network(), check_plateau=True, central="Si", neighbour="O",
+            expected_cn=4.0,
+        )
+    finally:
+        V.coordination_profile = real
+
+    assert not report
+    assert not report.plateau_ok

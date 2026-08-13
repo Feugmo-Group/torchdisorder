@@ -182,22 +182,58 @@ class OverlapRepulsionLoss:
     """
     Global pairwise soft-sphere repulsion for all atoms.
 
-    Penalizes any pair of atoms closer than r_min with a quadratic penalty,
-    preventing atomic overlaps regardless of species. Processes atoms in
-    chunks to stay within GPU memory limits.
+    Penalises any pair closer than a minimum separation with a quadratic penalty.
+
+    The floor is **per element pair**, taken from covalent radii, rather than one
+    global number.  A single ``r_min`` cannot work for a multi-species system: the
+    value that correctly protects Si-O (~1.4 A) permits O-O and Si-Si pairs to
+    approach far inside their real contact distances (~2.2 and ~2.6 A).  The old
+    default of 1.0 A permitted Si-O at 1.05 A -- well inside a physical bond -- so
+    the term was effectively inert against the overlaps it existed to prevent.
+
+    Pass ``r_min`` to override with a single hard floor for every pair; otherwise
+    the floor for a pair (i, j) is ``covalent_scale * (r_cov[i] + r_cov[j])``.
+
+    Processes atoms in chunks to stay within GPU memory limits.
     """
 
     def __init__(
         self,
-        r_min: float = 1.5,
+        r_min: Optional[float] = None,
         weight: float = 1.0,
         chunk_size: Optional[int] = None,
         device: str = 'cpu',
+        atomic_numbers: Optional[torch.Tensor] = None,
+        covalent_scale: float = 0.85,
     ):
         self.r_min = r_min
         self.weight = weight
         self._chunk_size = chunk_size  # None → auto-size at first call
         self.device = device
+        self.covalent_scale = covalent_scale
+
+        # Per-atom covalent radius, so the pair floor is r_i + r_j scaled.
+        self._radii = None
+        if atomic_numbers is not None:
+            from ase.data import covalent_radii
+            z = atomic_numbers.detach().cpu().numpy()
+            self._radii = torch.tensor(
+                covalent_radii[z] * covalent_scale, dtype=torch.float32
+            )
+
+        if self._radii is None and self.r_min is None:
+            raise ValueError(
+                "OverlapRepulsionLoss needs either atomic_numbers (for per-pair "
+                "covalent floors) or an explicit r_min."
+            )
+
+    def describe(self) -> str:
+        if self._radii is None:
+            return f"uniform floor r_min={self.r_min} A"
+        return (f"per-pair covalent floors "
+                f"({self.covalent_scale:.2f} x summed radii, "
+                f"{2 * float(self._radii.min()):.2f}-{2 * float(self._radii.max()):.2f} A)"
+                + (f", hard floor {self.r_min} A" if self.r_min else ""))
 
     def to(self, device):
         self.device = device
@@ -227,9 +263,16 @@ class OverlapRepulsionLoss:
         dev = positions.device
         chunk_size = self._chunk_size if self._chunk_size is not None else self._auto_chunk(n, dev)
 
-        cell_f = cell.float()
+        # torch_sim stores the cell column-wise (cell[:, k] is lattice vector k), so
+        # the row-vector matrix needed for fractional coordinates is its transpose.
+        # Using the un-transposed form makes the minimum image wrong on any
+        # non-orthogonal cell, so the penalty is computed from bogus distances and
+        # fails to push apart the atoms it is meant to separate.
+        cell_f = cell.float().transpose(-2, -1)
         cell_inv = torch.linalg.inv(cell_f)
         penalty = torch.zeros((), device=dev, dtype=positions.dtype)
+
+        radii = self._radii.to(dev) if self._radii is not None else None
 
         for i0 in range(0, n, chunk_size):
             i1 = min(i0 + chunk_size, n)
@@ -246,8 +289,16 @@ class OverlapRepulsionLoss:
             row = torch.arange(i0, i1, device=dev).unsqueeze(1)
             upper = col.unsqueeze(0) > row          # (C, N) bool
 
+            if radii is None:
+                floor = self.r_min
+            else:
+                floor = radii[None, :] + radii[i0:i1, None]    # (C, N)
+                if self.r_min is not None:
+                    floor = torch.clamp(floor, min=self.r_min)
+                floor = floor[upper]
+
             d = dist[upper]
-            viol = torch.clamp(self.r_min - d, min=0.0)
+            viol = torch.clamp(floor - d, min=0.0)
             penalty = penalty + (viol * viol).sum()
 
         return self.weight * penalty
@@ -1618,6 +1669,16 @@ def main(cfg: DictConfig) -> None:
         'enabled',
         OmegaConf.select(cfg, 'constraints.overlap_repulsion.enabled', default=True)
     )
+    # Per-element covalent floors by default.  A single r_min cannot serve a
+    # multi-species system: the value that protects Si-O lets O-O and Si-Si collapse.
+    _orep_cov = bool(_orep_json.get(
+        'covalent_floors',
+        OmegaConf.select(cfg, 'constraints.overlap_repulsion.covalent_floors', default=True)
+    ))
+    _orep_scale = float(_orep_json.get(
+        'covalent_scale',
+        OmegaConf.select(cfg, 'constraints.overlap_repulsion.covalent_scale', default=0.85)
+    ))
     _orep_src = 'JSON' if _orep_json else 'config/default'
     if _orep_enabled:
         overlap_repulsion_fn = OverlapRepulsionLoss(
@@ -1625,9 +1686,11 @@ def main(cfg: DictConfig) -> None:
             weight=_orep_w,
             chunk_size=_orep_chunk,
             device=str(device),
+            atomic_numbers=base_sim_state.atomic_numbers if _orep_cov else None,
+            covalent_scale=_orep_scale,
         ).to(device)
         print(f"\n  Overlap repulsion: enabled (source: {_orep_src})")
-        print(f"    r_min={_r_min} Å, weight={_orep_w}")
+        print(f"    {overlap_repulsion_fn.describe()}, weight={_orep_w}")
     else:
         overlap_repulsion_fn = None
         print(f"\n  Overlap repulsion: DISABLED (source: {_orep_src})")

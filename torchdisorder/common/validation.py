@@ -232,19 +232,44 @@ def validate_structure(
             plateau_ok = False
             failures.append(f"no atoms of species {central!r} to build a coordination profile")
         else:
+            cuts = np.array(list(profile))
             values = np.array(list(profile.values()))
-            spread = float(values.max() - values.min())
-            plateau_ok = spread <= plateau_spread
+
+            # Find the LONGEST FLAT RUN, rather than requiring the whole window to
+            # be flat.  The lowest cutoffs deliberately sit below the first-shell
+            # peak, so <CN> is still climbing there even for a perfect network:
+            # a physical a-SiO2 gives 3.29 at 1.8 A and 3.99/4.00/4.00/4.00 above
+            # it.  Judging the raw max-min spread would reject that outright, and a
+            # checker that fails good structures gets switched off.
+            best_i, best_j = 0, 0
+            for i in range(len(values)):
+                j = i
+                while j + 1 < len(values) and (
+                    values[i : j + 2].max() - values[i : j + 2].min() <= plateau_spread
+                ):
+                    j += 1
+                if j - i > best_j - best_i:
+                    best_i, best_j = i, j
+            run = values[best_i : best_j + 1]
+
+            # A plateau needs at least three consecutive cutoffs to mean anything.
+            plateau_ok = len(run) >= 3
             if not plateau_ok:
                 failures.append(
-                    f"<CN> varies by {spread:.2f} across cutoffs {plateau_cutoffs[0]}-"
-                    f"{plateau_cutoffs[-1]} A — no resolved first shell"
+                    f"<CN> never holds flat over 3 consecutive cutoffs in "
+                    f"{plateau_cutoffs[0]}-{plateau_cutoffs[-1]} A "
+                    f"(varies by {values.max() - values.min():.2f}) — no resolved first shell"
                 )
             if expected_cn is not None:
-                mid = float(np.median(values))
-                if abs(mid - expected_cn) > cn_tol:
+                # Judge the plateau itself, not the pre-shell cutoffs.
+                level = float(np.median(run))
+                if abs(level - expected_cn) > cn_tol:
                     plateau_ok = False
-                    failures.append(f"<CN> = {mid:.2f}, expected {expected_cn:.2f} +/- {cn_tol}")
+                    failures.append(
+                        f"plateau <CN> = {level:.2f} over "
+                        f"{cuts[best_i]:.1f}-{cuts[best_j]:.1f} A, "
+                        f"expected {expected_cn:.2f} +/- {cn_tol}"
+                    )
 
     return ValidationReport(
         n_atoms=len(atoms),
