@@ -26,9 +26,8 @@
 #SBATCH --array=0-5%4
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=6
-#SBATCH --gres=gpu:1
-#SBATCH --mem=48G
+#SBATCH --cpus-per-task=5
+#SBATCH --mem=60G
 #SBATCH --time=12:00:00
 #SBATCH --output=logs/sio2_scan_%A_%a.out
 #SBATCH --error=logs/sio2_scan_%A_%a.err
@@ -63,6 +62,7 @@ LABEL="${ENTRY%%|*}"
 OVERRIDES="${ENTRY#*|}"
 
 STEPS="${STEPS:-3000}"
+ACCEL="${ACCEL:-cpu}"
 
 echo "=================================================="
 echo "  Job ID    : $SLURM_JOB_ID  (task $SLURM_ARRAY_TASK_ID)"
@@ -71,6 +71,7 @@ echo "  GPU       : $CUDA_VISIBLE_DEVICES"
 echo "  Variant   : $LABEL"
 echo "  Overrides : $OVERRIDES"
 echo "  Steps     : $STEPS"
+echo "  Accelerator: $ACCEL"
 echo "  Start     : $(date)"
 echo "=================================================="
 
@@ -79,7 +80,7 @@ source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate torchdisorder
 CONDA_PYTHON="/home/conrard/.conda/envs/torchdisorder/bin/python"
 
-$CONDA_PYTHON -c "import torch; print('CUDA:', torch.cuda.is_available(), '|', torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CPU')"
+$CONDA_PYTHON -c "import torch; print('torch', torch.__version__, '| CUDA available:', torch.cuda.is_available())"
 
 # The order-parameter backends have separate neighbour-list implementations.
 # Confirm they agree here rather than discovering a divergence in the results:
@@ -88,12 +89,16 @@ $CONDA_PYTHON -m pytest -q tests/test_fis.py -k "neighbor_list or warp_backend" 
 
 export WANDB_MODE=offline
 
-# Memory: 5184 atoms means 26.9M pairs through O(N^2) kernels.  The chunk-size
-# autosizer reads *free* GPU memory once at startup, which overshoots whenever
-# another job lands on the same card -- that is what produced a 10.8 GiB
-# allocation request against 10.5 GiB free and killed the first attempt at step 0.
-# Size them explicitly instead of letting the autosizer guess.
+# Runs on CPU by default (ACCEL=cpu).  On an A30 this system asks for 10.81 GiB
+# on top of 12.80 GiB already held and dies at step 0.  Profiling shows the
+# scattering forward+backward peaks at only 0.73 GiB, so the allocation is
+# elsewhere in the training loop and is NOT yet isolated -- setting
+# scattering.chunk_size did not change the request by a byte.  Until that is
+# understood, CPU is the honest choice: 503 GB of RAM and no silent truncation.
+# Override with:  sbatch --gres=gpu:1 --export=ALL,ACCEL=cuda ...
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-5}"
+export MKL_NUM_THREADS="${SLURM_CPUS_PER_TASK:-5}"
 
 source "$PROJECT_ROOT/scripts/slurm_utils.sh"
 log_hardware_info "SiO2 balance scan: $LABEL" "$CONDA_PYTHON" logs
@@ -107,7 +112,7 @@ $CONDA_PYTHON scripts/train.py \
     structure=silica \
     target=F_Q \
     max_steps="$STEPS" \
-    accelerator=cuda \
+    accelerator="$ACCEL" \
     stability.constraint_warmup_steps=0 \
     +health.check_interval=250 \
     +health.expected_cn=4.0 \
