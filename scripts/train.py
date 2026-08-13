@@ -50,6 +50,7 @@ from pathlib import Path
 import time
 import signal
 import sys
+import math
 import json
 from typing import Dict, List, Optional, Any
 
@@ -1883,6 +1884,7 @@ def main(cfg: DictConfig) -> None:
     
     initial_loss = None
     lr_reduced = False
+    run_failed = None      # set if the optimization aborts; feeds the health verdict
     loss = None
     cmp_state = None
     step = 0
@@ -1915,6 +1917,22 @@ def main(cfg: DictConfig) -> None:
         neighbour = cfg.data.get('neighbour')
 
         lines, all_ok = [], True
+
+        # A structural check alone is not enough to call a run good.  A job that
+        # died at step 0 leaves the seed untouched, so the geometry validates
+        # perfectly and the report says PASS -- which is exactly backwards.  The
+        # run's own outcome has to be part of the verdict.
+        if run_failed:
+            all_ok = False
+            lines.append(f"RUN DID NOT COMPLETE: {run_failed}")
+        loss_val_final = float(loss.item()) if loss is not None and torch.is_tensor(loss) else None
+        if loss_val_final is not None and not math.isfinite(loss_val_final):
+            all_ok = False
+            lines.append(f"NON-FINITE FINAL LOSS: {loss_val_final}")
+        if step < 1:
+            all_ok = False
+            lines.append(f"NO OPTIMIZATION STEPS COMPLETED (step={step})")
+
         for idx, atoms_obj in enumerate(final_atoms):
             report = validate_structure(
                 atoms_obj,
@@ -2077,8 +2095,19 @@ def main(cfg: DictConfig) -> None:
                         }
                     )
                 except RuntimeError as e:
-                    print(f"\n⚠️ Error in Cooper roll at step {step}: {e}")
-                    print("This often happens when positions become NaN or invalid.")
+                    # Distinguish the causes: an OOM is a resource problem with a
+                    # different remedy from a diverged structure, and reporting the
+                    # wrong one sends you looking in the wrong place.
+                    if "out of memory" in str(e).lower():
+                        print(f"\n✗ CUDA OUT OF MEMORY at step {step}: {e}")
+                        print("  The structure is fine; the run does not fit on this GPU.")
+                        print("  Reduce scattering.chunk_size and "
+                              "constraints.overlap_repulsion.chunk_size, use a smaller\n"
+                              "  cell, or request an exclusive GPU.")
+                    else:
+                        print(f"\n✗ Error in Cooper roll at step {step}: {e}")
+                        print("  Often means positions became NaN or invalid.")
+                    run_failed = f"{type(e).__name__} at step {step}: {e}"
                     break
                 
                 # --- Gradient clipping (applied retroactively via position clamping) ---

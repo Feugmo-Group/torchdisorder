@@ -87,6 +87,14 @@ $CONDA_PYTHON -c "import torch; print('CUDA:', torch.cuda.is_available(), '|', t
 $CONDA_PYTHON -m pytest -q tests/test_fis.py -k "neighbor_list or warp_backend" 2>&1 | tail -3
 
 export WANDB_MODE=offline
+
+# Memory: 5184 atoms means 26.9M pairs through O(N^2) kernels.  The chunk-size
+# autosizer reads *free* GPU memory once at startup, which overshoots whenever
+# another job lands on the same card -- that is what produced a 10.8 GiB
+# allocation request against 10.5 GiB free and killed the first attempt at step 0.
+# Size them explicitly instead of letting the autosizer guess.
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+
 source "$PROJECT_ROOT/scripts/slurm_utils.sh"
 log_hardware_info "SiO2 balance scan: $LABEL" "$CONDA_PYTHON" logs
 
@@ -104,6 +112,8 @@ $CONDA_PYTHON scripts/train.py \
     +health.check_interval=250 \
     +health.expected_cn=4.0 \
     output.plot_interval=500 \
+    scattering.chunk_size=20000 \
+    constraints.overlap_repulsion.chunk_size=1000 \
     $OVERRIDES
 
 log_runtime
