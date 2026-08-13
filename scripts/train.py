@@ -1634,7 +1634,7 @@ def main(cfg: DictConfig) -> None:
 
     # ── MLIP energy regularizer (optional) ────────────────────────────────────
     mlip_reg = None
-    mlip_force_rms = 0.0
+    mlip_diag: Dict[str, float] = {}
     if OmegaConf.select(cfg, 'mlip.enabled', default=False):
         _backend = OmegaConf.select(cfg, 'mlip.backend', default='mace')
         _model   = OmegaConf.select(cfg, 'mlip.model',   default='small')
@@ -1642,17 +1642,27 @@ def main(cfg: DictConfig) -> None:
             mlip_reg = MLIPRegularizer(
                 backend=_backend,
                 model=_model,
-                force_weight=float(OmegaConf.select(cfg, 'mlip.force_weight', default=1e-3)),
-                apply_every=int(OmegaConf.select(cfg, 'mlip.apply_every', default=10)),
+                force_weight=float(OmegaConf.select(cfg, 'mlip.force_weight', default=1e-5)),
+                apply_every=int(OmegaConf.select(cfg, 'mlip.apply_every', default=50)),
                 relax_every=int(OmegaConf.select(cfg, 'mlip.relax_every', default=0)),
                 relax_max_steps=int(OmegaConf.select(cfg, 'mlip.relax_max_steps', default=20)),
                 device=device,
                 dtype=torch.float32,
+                warmup_steps=int(OmegaConf.select(cfg, 'mlip.warmup_steps', default=500)),
+                max_force_clip=float(OmegaConf.select(cfg, 'mlip.max_force_clip', default=5.0)),
+                adaptive_weight=bool(OmegaConf.select(cfg, 'mlip.adaptive_weight', default=False)),
+                target_ratio=float(OmegaConf.select(cfg, 'mlip.target_ratio', default=0.005)),
+                adapt_rate=float(OmegaConf.select(cfg, 'mlip.adapt_rate', default=0.15)),
+                force_weight_min=float(OmegaConf.select(cfg, 'mlip.force_weight_min', default=1e-7)),
+                force_weight_max=float(OmegaConf.select(cfg, 'mlip.force_weight_max', default=1e-3)),
             )
             print(f"\n  MLIP regularizer: enabled")
-            print(f"    backend={_backend}, model={_model}, "
-                  f"force_weight={mlip_reg.force_weight}")
-            print(f"    apply_every={mlip_reg.apply_every}, relax_every={mlip_reg.relax_every}")
+            print(f"    backend={_backend}, model={_model}")
+            _adaptive_str = f" (adaptive → target {mlip_reg.target_ratio:.3f})" if mlip_reg.adaptive_weight else " (fixed)"
+            print(f"    force_weight={mlip_reg.force_weight}{_adaptive_str}")
+            print(f"    apply_every={mlip_reg.apply_every}, warmup_steps={mlip_reg.warmup_steps}")
+            print(f"    max_force_clip={mlip_reg.max_force_clip} eV/Å  (clips strained amorphous bonds)")
+            print(f"    relax_every={mlip_reg.relax_every}")
         except (ImportError, ValueError) as _mlip_err:
             print(f"\n  ⚠️  mlip.enabled=true but backend '{_backend}' unavailable: {_mlip_err}")
 
@@ -1686,9 +1696,53 @@ def main(cfg: DictConfig) -> None:
         )
 
     # ==========================================
+    # F_IS FEEDBACK CALLBACK (optional)
+    # ==========================================
+    fis_feedback_cb = None
+    fis_fb_cfg = OmegaConf.select(cfg, 'data.fis_feedback', default=None)
+    if (fis_fb_cfg is not None
+            and bool(OmegaConf.select(cfg, 'data.fis_feedback.enabled', default=False))
+            and use_constraints
+            and fis_target is not None):
+        from torchdisorder.engine.callbacks import FISFeedbackCallback
+        fis_feedback_cb = FISFeedbackCallback(
+            optimizer=cooper_problem,
+            fis_target=fis_target,
+            central_z=fis_central,
+            neighbor_z=fis_neighbor,
+            update_interval=int(OmegaConf.select(cfg, 'data.fis_feedback.update_interval', default=200)),
+            feedback_strength=float(OmegaConf.select(cfg, 'data.fis_feedback.feedback_strength', default=2.0)),
+            min_scale=float(OmegaConf.select(cfg, 'data.fis_feedback.min_scale', default=0.5)),
+            max_scale=float(OmegaConf.select(cfg, 'data.fis_feedback.max_scale', default=5.0)),
+            warmup_steps=int(OmegaConf.select(cfg, 'data.fis_feedback.warmup_steps', default=500)),
+        )
+        print(f"  F_IS feedback: enabled  "
+              f"update_interval={fis_feedback_cb.update_interval}  "
+              f"strength={fis_feedback_cb.feedback_strength}  "
+              f"scale=[{fis_feedback_cb.min_scale}, {fis_feedback_cb.max_scale}]")
+
+    # ==========================================
+    # STRUCTURE HEALTH MONITOR
+    # ==========================================
+    # A falling chi^2 says nothing about whether the atoms still occupy distinct
+    # positions.  Check periodically so an underdetermined fit that is quietly
+    # collapsing the structure surfaces while the run is still cheap to abandon.
+    from torchdisorder.engine.callbacks import StructureHealthCallback
+
+    health_cb = StructureHealthCallback(
+        check_interval=int(OmegaConf.select(cfg, 'health.check_interval', default=500)),
+        central=cfg.data.get('central'),
+        neighbour=cfg.data.get('neighbour'),
+        expected_cn=OmegaConf.select(cfg, 'health.expected_cn', default=None),
+        overlap_tol=float(OmegaConf.select(cfg, 'health.overlap_tol', default=0.6)),
+        raise_on_fail=bool(OmegaConf.select(cfg, 'health.raise_on_fail', default=False)),
+    )
+    print(f"  Structure health: checking every {health_cb.check_interval} steps")
+
+    # ==========================================
     # TRAINING STATE
     # ==========================================
-    
+
     max_steps = int(OmegaConf.select(cfg, 'max_steps', default=50000))
     checkpoint_interval = OmegaConf.select(cfg, 'checkpoint_interval', default=10000)
     plot_interval = OmegaConf.select(cfg, 'output.plot_interval', default=1000)
@@ -1714,6 +1768,51 @@ def main(cfg: DictConfig) -> None:
                 return misc_or_results['Y']
         return None
 
+    def _write_health_report(output_dir, final_atoms):
+        """Validate the final structure and record the verdict beside it.
+
+        Kept separate from the rest of ``save_final_results`` so that a problem in
+        the checker can never prevent the structure itself from being saved.
+        """
+        from torchdisorder.common.validation import validate_structure
+
+        # central/neighbour sit on cfg.data itself, not the nested cfg.data.data
+        # that data_cfg points at.
+        central = cfg.data.get('central')
+        neighbour = cfg.data.get('neighbour')
+
+        lines, all_ok = [], True
+        for idx, atoms_obj in enumerate(final_atoms):
+            report = validate_structure(
+                atoms_obj,
+                check_plateau=central is not None,
+                central=central,
+                neighbour=neighbour,
+            )
+            all_ok &= bool(report)
+            lines.append(f"system {idx}: {report.summary()}")
+
+        text = "\n".join(lines)
+        (output_dir / "structure_health.txt").write_text(text + "\n")
+
+        banner = "=" * 70
+        if all_ok:
+            print(f"\n{banner}\nSTRUCTURE HEALTH: PASS\n{text}\n{banner}")
+        else:
+            # Loud, because the loss curve will look perfectly reasonable.
+            print(
+                f"\n{banner}\n"
+                f"STRUCTURE HEALTH: FAIL — this structure is NOT physically usable\n"
+                f"{text}\n"
+                f"Fitting the target spectrum does not make a structure real; do not\n"
+                f"quote order parameters or derived quantities from this run.\n"
+                f"{banner}"
+            )
+        try:
+            wandb.log({"final/structure_health_ok": int(all_ok)})
+        except Exception:
+            pass
+
     def save_final_results():
         """Save final results."""
         try:
@@ -1726,6 +1825,12 @@ def main(cfg: DictConfig) -> None:
                 write(str(output_dir / "final_structure.xyz"), atoms_obj, format="xyz")
                 write(str(output_dir / "final_structure.cif"), atoms_obj, format="cif")
                 plotter.plot_structure_3d(atoms_obj, title="Final Structure", prefix="final_")
+
+            # Physical-plausibility gate.  A good chi^2 says nothing about whether the
+            # atoms overlap, so record the verdict next to the structure and make a
+            # failure impossible to miss.  Written, not withheld: an unphysical result
+            # is still evidence, and silently discarding it would hide the failure.
+            _write_health_report(output_dir, final_atoms)
 
             # Save state
             torch.save({
@@ -1917,13 +2022,15 @@ def main(cfg: DictConfig) -> None:
 
                 # MLIP force penalty: separate gradient step
                 if mlip_reg is not None:
-                    _mlip_result = mlip_reg.force_penalty(base_sim_state, step)
+                    _chi2_val = float(chi2_loss.detach().item()) if hasattr(chi2_loss, 'detach') else 0.0
+                    _mlip_result = mlip_reg.force_penalty(base_sim_state, step, chi2=_chi2_val)
                     if _mlip_result is not None:
-                        _mlip_pen, mlip_force_rms = _mlip_result
+                        _mlip_pen = _mlip_result["penalty"]
+                        mlip_diag = {k: v for k, v in _mlip_result.items() if k != "penalty"}
                         primal_optimizer.zero_grad()
                         _mlip_pen.backward()
                         primal_optimizer.step()
-                        loss = loss.detach() + abs(_mlip_pen.detach().item())
+                        loss = loss.detach() + abs(_mlip_result["penalty_value"])
                     base_sim_state = mlip_reg.maybe_relax(base_sim_state, step)
 
             else:
@@ -1957,13 +2064,15 @@ def main(cfg: DictConfig) -> None:
 
                 # MLIP force penalty: separate gradient step after main backward
                 if mlip_reg is not None:
-                    _mlip_result = mlip_reg.force_penalty(base_sim_state, step)
+                    _chi2_val = float(chi2_loss.detach().item()) if hasattr(chi2_loss, 'detach') else 0.0
+                    _mlip_result = mlip_reg.force_penalty(base_sim_state, step, chi2=_chi2_val)
                     if _mlip_result is not None:
-                        _mlip_pen, mlip_force_rms = _mlip_result
+                        _mlip_pen = _mlip_result["penalty"]
+                        mlip_diag = {k: v for k, v in _mlip_result.items() if k != "penalty"}
                         primal_optimizer.zero_grad()
                         _mlip_pen.backward()
                         primal_optimizer.step()
-                        loss = loss.detach() + abs(_mlip_pen.detach().item())
+                        loss = loss.detach() + abs(_mlip_result["penalty_value"])
                     base_sim_state = mlip_reg.maybe_relax(base_sim_state, step)
 
                 pred_spectrum = get_prediction(results)
@@ -2007,10 +2116,35 @@ def main(cfg: DictConfig) -> None:
                 'num_violated': num_viol,
             })
 
+            # F_IS feedback: update environment priorities
+            fis_env_log: Dict[str, float] = {}
+            if fis_feedback_cb is not None:
+                fis_env_log = fis_feedback_cb(step, base_sim_state)
+                if fis_env_log and (step % 100 == 0):
+                    scales = fis_feedback_cb.history[-1]["scales"] if fis_feedback_cb.history else {}
+                    parts = ", ".join(f"{e}={v:.3f}(×{scales.get(e,1):.2f})"
+                                     for e, v in fis_env_log.items())
+                    print(f"  [FIS feedback] {parts}")
+
+            # Structure health: catch an underdetermined fit collapsing the geometry.
+            health_log = health_cb(step, base_sim_state)
+            if health_log:
+                wandb.log(health_log, step=step)
+
             # Print progress
             if step % 100 == 0 or step < 10:
                 viol_str = f", Viol: {avg_viol:.4f}/{max_viol:.4f} ({num_viol})" if use_constraints else ""
                 print(f"Step {step}: Loss={loss_val:.6f} ({current_reduction:.1f}%){viol_str}")
+                if mlip_reg is not None and mlip_diag:
+                    _chi2 = float(chi2_loss.detach().item()) if hasattr(chi2_loss, 'detach') else loss_val
+                    _ratio = abs(mlip_diag.get("penalty_value", 0.0)) / max(_chi2, 1e-12)
+                    _fw = mlip_diag.get("force_weight", mlip_reg.force_weight)
+                    print(f"  [MACE] F_rms={mlip_diag.get('force_rms',0):.3f} eV/Å"
+                          f"  F_max={mlip_diag.get('force_max',0):.2f}"
+                          f"  clipped={mlip_diag.get('n_clipped',0)}"
+                          f"  penalty={mlip_diag.get('penalty_value',0):.3e}"
+                          f"  λ={_fw:.2e}"
+                          f"  ratio={_ratio:.4f} (keep < 0.01)")
 
             # =========================================================
             # WANDB LOGGING - All metrics
@@ -2039,8 +2173,20 @@ def main(cfg: DictConfig) -> None:
             if dual_optimizer:
                 log_dict["lr/dual"] = dual_optimizer.param_groups[0]["lr"]
 
-            if mlip_reg is not None:
-                log_dict["mlip/force_rms"] = mlip_force_rms
+            if mlip_reg is not None and mlip_diag:
+                log_dict["mlip/force_rms"]    = mlip_diag.get("force_rms", 0.0)
+                log_dict["mlip/force_max"]    = mlip_diag.get("force_max", 0.0)
+                log_dict["mlip/n_clipped"]    = mlip_diag.get("n_clipped", 0)
+                log_dict["mlip/penalty"]      = mlip_diag.get("penalty_value", 0.0)
+                log_dict["mlip/force_weight"] = mlip_diag.get("force_weight", mlip_reg.force_weight)
+                # Key diagnostic: ratio of MACE penalty to scattering chi² loss
+                _chi2 = float(chi2_loss.detach().item()) if hasattr(chi2_loss, 'detach') else float(loss.detach().item())
+                if _chi2 > 0:
+                    log_dict["mlip/penalty_chi2_ratio"] = abs(mlip_diag.get("penalty_value", 0.0)) / _chi2
+
+            # Per-environment F_IS values (populated when feedback callback fires)
+            for env_type, fis_mean in fis_env_log.items():
+                log_dict[f"fis_env/{env_type}"] = fis_mean
 
             wandb.log(log_dict, step=step)
 

@@ -199,6 +199,14 @@ class PyTorchOrderParameters(nn.Module):
         # Ensure cell is 3D for torchsim_nl (batch dimension)
         cell_for_nl = cell.unsqueeze(0) if cell.ndim == 2 else cell
 
+        # torchsim_nl expects ROW-vector convention (rows = lattice vectors), but
+        # state.cell is stored column-wise.  Handing it the un-transposed matrix makes
+        # it search a transposed lattice: on hexagonal c-SiO2 that simultaneously
+        # dropped 100 real Si-O bonds and invented others, giving <CN> = 4.32 against
+        # a true 4.000.  With the transpose the edge list matches ASE exactly —
+        # 1500 Si-O pairs, none missing, none spurious.
+        cell_for_nl = cell_for_nl.transpose(-2, -1)
+
         # Compute neighbors - only use mapping, ignore shifts (may not be shift vectors)
         mapping = torchsim_nl(
             positions=positions,
@@ -212,10 +220,19 @@ class PyTorchOrderParameters(nn.Module):
         M = len(atom_indices)
         K = self.max_neighbors
         
-        # Get the 2D cell matrix for minimum image convention
+        # Get the 2D cell matrix for minimum image convention.
+        #
+        # torch_sim stores the cell in COLUMN-vector convention: cell[:, k] is
+        # lattice vector k, i.e. state.cell is the transpose of ASE's get_cell().
+        # Cartesian = cell @ frac for a column frac, so for row-batched dr the
+        # fractional coordinates are dr @ cell_inv.T, NOT dr @ cell_inv.
+        # Using the un-transposed form silently picks wrong periodic images on any
+        # non-orthogonal cell — on hexagonal c-SiO2 it inflated <CN> from the true
+        # 4.000 to 4.32, corrupting every order parameter and constraint built on it.
         cell_2d = cell[0] if cell.ndim == 3 else cell
-        cell_inv = torch.linalg.inv(cell_2d.float())
-        
+        cell_row = cell_2d.transpose(-2, -1)             # rows = lattice vectors
+        cell_inv_row = torch.linalg.inv(cell_row.float())
+
         # Pre-allocate
         neighbor_indices = torch.full((M, K), -1, dtype=torch.long, device=self.device)
         neighbor_positions_pbc = torch.zeros((M, K, 3), dtype=positions.dtype, device=self.device)
@@ -236,19 +253,33 @@ class PyTorchOrderParameters(nn.Module):
                 )
                 neighs = neighs[elem_mask]
             
-            n = min(len(neighs), K)
-            if n > 0:
-                neighbor_indices[i, :n] = neighs[:n]
-                valid_mask[i, :n] = True
-                
-                # Compute PBC-corrected positions using minimum image convention
-                # dr = pos[neighbor] - pos[center]
-                dr = positions[neighs[:n]] - positions[atom_idx].unsqueeze(0)  # (n, 3)
-                # Convert to fractional, wrap, convert back
-                frac = dr.float() @ cell_inv                     # (n, 3)
+            if len(neighs) > 0:
+                # Minimum image for every candidate, before any truncation.
+                dr_all = positions[neighs] - positions[atom_idx].unsqueeze(0)  # (n_all, 3)
+                frac = dr_all.float() @ cell_inv_row
                 frac = frac - torch.round(frac)                  # wrap to [-0.5, 0.5]
-                dr_pbc = frac @ cell_2d.float()                  # (n, 3)
-                neighbor_positions_pbc[i, :n] = (positions[atom_idx] + dr_pbc).to(positions.dtype)
+                dr_all = (frac @ cell_row.float()).to(positions.dtype)
+
+                # Re-apply the cutoff.  The backend returns candidate edges keyed to
+                # its own periodic images, so an edge can be inside the cutoff through
+                # some image while its minimum-image separation is far larger — on
+                # hexagonal c-SiO2 this admitted pairs 10.8 A apart and inflated <CN>
+                # from 4.000 to 4.320.  Trusting the edge list without this test
+                # corrupts every order parameter and constraint downstream.
+                within = dr_all.norm(dim=-1) <= self.cutoff
+                neighs, dr_all = neighs[within], dr_all[within]
+
+                # When more neighbours remain than fit in K slots, keep the CLOSEST.
+                # Slicing the edge list in its arbitrary order would drop real
+                # first-shell bonds and retain distant ones.
+                if len(neighs) > K:
+                    order = torch.argsort(dr_all.norm(dim=-1))[:K]
+                    neighs, dr_all = neighs[order], dr_all[order]
+                n = len(neighs)
+
+                neighbor_indices[i, :n] = neighs
+                valid_mask[i, :n] = True
+                neighbor_positions_pbc[i, :n] = positions[atom_idx] + dr_all
         
         return neighbor_indices, neighbor_positions_pbc, valid_mask, center_indices
     
@@ -329,9 +360,9 @@ class PyTorchOrderParameters(nn.Module):
 
             Xi_i^(μν)  = Σ_j  w_ij  n̂_ij^μ  n̂_ij^ν  n̂_ij        (3-vector)
             D_i^(μν)   = Σ_j  (w_ij  n̂_ij^μ  n̂_ij^ν)²
-            F_IS_i     = 1 − mean_{(μ,ν)} [ |Xi_i^(μν)|² / D_i^(μν) ]
+            F_IS_i     = 1 − Σ_{(μ,ν)} |Xi_i^(μν)|² / Σ_{(μ,ν)} D_i^(μν)
 
-        where the mean is taken over shear planes (μ,ν) ∈ {(x,y), (x,z), (y,z)}.
+        where both sums run over the shear planes (μ,ν) ∈ {(x,y), (x,z), (y,z)}.
 
         Analytical limits:
           - Two antiparallel bonds of equal length  →  F_IS =  1  (perfect inversion)
@@ -339,6 +370,22 @@ class PyTorchOrderParameters(nn.Module):
           - Perfect SiO₄ tetrahedron (Td symmetry) →  F_IS = −1/3
             (Td has no inversion centre; all four n̂^x n̂^y n̂^z contributions
             add coherently rather than cancelling)
+
+        Combining the planes at the numerator/denominator level (rather than
+        averaging the three per-plane ratios) is required for correctness, not
+        just tidiness.  A shear plane in which n̂^μ n̂^ν vanishes for every bond is
+        degenerate: D_i^(μν) = 0 and it carries no information.  Averaging ratios
+        forces such a plane to contribute a spurious 0, so an environment rotated
+        about a *single* axis — i.e. any crystal with a symmetry axis along a cell
+        vector — has two degenerate planes and yields (1+0+0)/3 = +1/3 for a
+        perfectly centrosymmetric octahedron instead of +1.  Summing first lets the
+        empty planes drop out of both sums.  The two schemes agree for generic
+        orientations and for the ideal tetrahedron.  Scheme suggested by A. Zaccone;
+        see ``scripts/validate_fis_tetrahedron.py`` tests [5] and [7].
+
+        An environment that is degenerate in *all three* planes (e.g. an exactly
+        axis-aligned octahedron, a measure-zero set) has no well-defined F_IS and is
+        reported as 0.
 
         F_IS correlates with the local elastic stiffness and the density of soft
         vibrational modes in glasses more strongly than BOO parameters (q4, q6).
@@ -364,7 +411,8 @@ class PyTorchOrderParameters(nn.Module):
         indicate a centrosymmetric environment.
         """
         shear_pairs = [(0, 1), (0, 2), (1, 2)]
-        local_fis_shears = []
+        num = torch.zeros(vectors.shape[0], device=vectors.device, dtype=vectors.dtype)
+        denom = torch.zeros_like(num)
 
         for mu, nu in shear_pairs:
             # orient = n̂^μ * n̂^ν; 0 for invalid slots (vectors already zeroed there)
@@ -377,18 +425,16 @@ class PyTorchOrderParameters(nn.Module):
 
             # Xi_i = Σ_j w_orient_j * n̂_j   shape (M, 3)
             Xi = (w_orient.unsqueeze(-1) * vectors).sum(dim=1)
-            num_i = (Xi * Xi).sum(dim=-1)                 # (M,)
-            denom_i = (w_orient * w_orient).sum(dim=1)    # (M,)
+            num = num + (Xi * Xi).sum(dim=-1)             # (M,)
+            denom = denom + (w_orient * w_orient).sum(dim=1)
 
-            has_bonds = denom_i > 1e-10
-            local_fis = torch.where(
-                has_bonds,
-                1.0 - num_i / (denom_i + 1e-10),
-                torch.zeros_like(num_i),
-            )
-            local_fis_shears.append(local_fis)
-
-        return torch.stack(local_fis_shears).mean(dim=0)  # (M,)
+        # Degenerate in every plane (or no bonds at all) -> F_IS undefined, report 0.
+        has_bonds = denom > 1e-10
+        return torch.where(
+            has_bonds,
+            1.0 - num / (denom + 1e-10),
+            torch.zeros_like(num),
+        )
 
     def _compute_tetrahedral(self, vectors: torch.Tensor, valid_mask: torch.Tensor) -> torch.Tensor:
         """Tetrahedral order parameter."""

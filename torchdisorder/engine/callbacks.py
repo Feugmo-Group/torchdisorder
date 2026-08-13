@@ -1,7 +1,8 @@
 from collections import defaultdict
-from typing import TypeVar, Optional, Dict, Any
+from typing import TypeVar, Optional, Dict, Any, List
 import os
 
+import numpy as np
 import torch
 from tqdm.auto import tqdm
 
@@ -210,6 +211,209 @@ class PlateauDetector:
 
         return current_state, False
 
+
+class FISFeedbackCallback:
+    """Dynamically adjusts environment constraint priorities based on per-environment F_IS error.
+
+    For each structural environment (e.g. Fe4, Fe6, Ta6, PO4, PO3N), computes the
+    mean F_IS of the atoms in that environment and scales its ``priority`` proportionally
+    to how far it is from the F_IS target.  Environments with large F_IS error receive
+    higher penalty weight so the optimizer focuses more effort there.
+
+    Priority update rule (applied every ``update_interval`` steps, after ``warmup_steps``):
+        error_e  = |mean_F_IS_e − target|
+        scale_e  = clip(1 + feedback_strength * error_e, min_scale, max_scale)
+        priority_e = base_priority_e * scale_e
+
+    Args:
+        optimizer:          EnvironmentConstrainedOptimizer instance.
+        fis_target:         Global F_IS target value from config.
+        central_z:          Atomic number of the central species (e.g. 26 for Fe).
+        neighbor_z:         Atomic number of the neighbor species (None = all).
+        update_interval:    Steps between priority updates.
+        feedback_strength:  Scales how aggressively priorities shift (≥0).
+        min_scale:          Minimum priority multiplier (keeps base floor).
+        max_scale:          Maximum priority multiplier (prevents explosion).
+        warmup_steps:       Do not update until after this many steps.
+    """
+
+    def __init__(
+        self,
+        optimizer,
+        fis_target: float,
+        central_z: int,
+        neighbor_z: Optional[int] = None,
+        update_interval: int = 200,
+        feedback_strength: float = 2.0,
+        min_scale: float = 0.5,
+        max_scale: float = 5.0,
+        warmup_steps: int = 500,
+    ):
+        self.optimizer = optimizer
+        self.fis_target = fis_target
+        self.central_z = central_z
+        self.neighbor_z = neighbor_z
+        self.update_interval = update_interval
+        self.feedback_strength = feedback_strength
+        self.min_scale = min_scale
+        self.max_scale = max_scale
+        self.warmup_steps = warmup_steps
+
+        # Snapshot the initial priorities so we always scale from the original baseline
+        self._base_priorities: Dict[str, float] = {
+            env_type: info["env_constraint"].priority
+            for env_type, info in optimizer.constraint_dict.items()
+        }
+
+        # Running log: list of dicts {step, fis_by_env, scales}
+        self.history: List[Dict] = []
+
+    def __call__(self, step: int, state) -> Dict[str, float]:
+        """Compute per-environment F_IS and update priorities.
+
+        Returns a dict mapping env_type → mean F_IS (empty dict if not an update step).
+        """
+        if step < self.warmup_steps or step % self.update_interval != 0:
+            return {}
+
+        fis_by_env = self._compute_fis_by_env(state)
+        if not fis_by_env:
+            return {}
+
+        scales: Dict[str, float] = {}
+        for env_type, fis_mean in fis_by_env.items():
+            error = abs(fis_mean - self.fis_target)
+            scale = float(np.clip(1.0 + self.feedback_strength * error,
+                                  self.min_scale, self.max_scale))
+            new_priority = self._base_priorities.get(env_type, 1.0) * scale
+            self.optimizer.constraint_dict[env_type]["env_constraint"].priority = new_priority
+            scales[env_type] = scale
+
+        self.history.append({"step": step, "fis_by_env": dict(fis_by_env), "scales": scales})
+        return fis_by_env
+
+    def _compute_fis_by_env(self, state) -> Dict[str, float]:
+        """Return mean F_IS per environment type using the optimizer's own op_calc."""
+        all_indices = []
+        for info in self.optimizer.constraint_dict.values():
+            all_indices.extend(info["env_constraint"].atom_indices)
+        if not all_indices:
+            return {}
+
+        device = state.positions.device
+        constrained_indices = torch.tensor(
+            sorted(set(all_indices)), dtype=torch.long, device=device
+        )
+
+        element_filter = [self.neighbor_z] if self.neighbor_z is not None else None
+        try:
+            with torch.no_grad():
+                op_results = self.optimizer.op_calc(
+                    state,
+                    constrained_indices,
+                    order_params=["fis"],
+                    element_filter=element_filter,
+                )
+        except Exception:
+            return {}
+
+        fis_values = op_results.get("fis")
+        if fis_values is None or fis_values.numel() == 0:
+            return {}
+
+        idx_map = {int(a): k for k, a in enumerate(constrained_indices.cpu().tolist())}
+
+        fis_by_env: Dict[str, float] = {}
+        for env_type, info in self.optimizer.constraint_dict.items():
+            vals = [fis_values[idx_map[ai]].item()
+                    for ai in info["env_constraint"].atom_indices
+                    if ai in idx_map]
+            if vals:
+                fis_by_env[env_type] = float(np.mean(vals))
+
+        return fis_by_env
+
+
+class StructureHealthCallback:
+    """Warns as soon as a refinement starts producing physically impossible geometry.
+
+    Fitting a 1-D scattering function is underdetermined, so chi-squared can fall
+    happily while atoms pass through one another.  An audit of 35 archived runs
+    found 25 of them ended with overlapping atoms that no loss curve revealed.
+    This callback surfaces that while the run is still cheap to abandon.
+
+    It only ever *reports* — the decision to stop belongs to the caller, which
+    reads :attr:`failed`.  Set ``raise_on_fail`` to turn the first violation into
+    an exception instead.
+
+    Args:
+        check_interval:  Steps between checks (each one builds a neighbour list,
+                         so keep this well above 1).
+        central/neighbour: Species for the coordination-plateau check; omit to
+                         check overlap only.
+        expected_cn:     Optional target coordination for the plateau check.
+        overlap_tol:     Fraction of summed covalent radii below which a contact
+                         counts as an overlap.
+        raise_on_fail:   Raise ``RuntimeError`` on the first failed check.
+        verbose:         Print the full report when a check fails.
+    """
+
+    def __init__(
+        self,
+        check_interval: int = 200,
+        central=None,
+        neighbour=None,
+        expected_cn: Optional[float] = None,
+        overlap_tol: float = 0.6,
+        raise_on_fail: bool = False,
+        verbose: bool = True,
+    ):
+        self.check_interval = max(int(check_interval), 1)
+        self.central = central
+        self.neighbour = neighbour
+        self.expected_cn = expected_cn
+        self.overlap_tol = overlap_tol
+        self.raise_on_fail = raise_on_fail
+        self.verbose = verbose
+
+        self.failed = False
+        self.first_failure_step: Optional[int] = None
+        self.history: List[Dict[str, Any]] = []
+
+    def __call__(self, step: int, state) -> Dict[str, float]:
+        """Validate the current state.  Returns metrics suitable for wandb.log."""
+        if step % self.check_interval:
+            return {}
+
+        from torchdisorder.common.validation import validate_structure
+
+        report = validate_structure(
+            state,
+            overlap_tol=self.overlap_tol,
+            check_plateau=self.central is not None,
+            central=self.central,
+            neighbour=self.neighbour,
+            expected_cn=self.expected_cn,
+        )
+
+        metrics = {
+            "health/n_overlaps": float(report.n_overlaps),
+            "health/min_distance": float(report.min_distance),
+            "health/worst_ratio": float(report.worst_ratio),
+        }
+        self.history.append({"step": step, **metrics})
+
+        if not report:
+            if not self.failed:
+                self.first_failure_step = step
+            self.failed = True
+            message = f"[structure health] step {step}: {report.summary()}"
+            if self.raise_on_fail:
+                raise RuntimeError(message)
+            if self.verbose:
+                print(f"\n{message}\n")
+
+        return metrics
 
 
 # import wandb

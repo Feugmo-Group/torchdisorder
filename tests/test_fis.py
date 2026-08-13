@@ -77,14 +77,20 @@ def _ref_fis_numpy(
     neighbor_vecs: list,       # list[list[np.ndarray]] — displacement vectors per atom
     mode: str = "variable_R",
 ) -> np.ndarray:
-    """Per-atom F_IS averaged over xy, xz, yz, matching the JCTC reference code."""
+    """Per-atom F_IS combined over the xy, xz and yz shear planes.
+
+    Numerators and denominators are summed across planes before the ratio is taken,
+    so a plane in which n^mu n^nu vanishes for every bond drops out instead of
+    contributing a spurious zero.  See ``_compute_fis`` for why averaging the
+    per-plane ratios is wrong for singly-axis-rotated environments.
+    """
     shear_pairs = [(0, 1), (0, 2), (1, 2)]
     n = len(positions_np)
-    local_per_shear = []
+    num = np.zeros(n, dtype=float)
+    denom = np.zeros(n, dtype=float)
 
     for mu, nu in shear_pairs:
         Xi = np.zeros((n, 3), dtype=float)
-        denom = np.zeros(n, dtype=float)
 
         for i, nbrs in enumerate(neighbor_vecs):
             for rij in nbrs:
@@ -97,12 +103,12 @@ def _ref_fis_numpy(
                 Xi[i] += weight * orient * nhat
                 denom[i] += (weight * orient) ** 2
 
-        valid = denom > 1e-10
-        local = np.zeros(n, dtype=float)
-        local[valid] = 1.0 - np.sum(Xi[valid] ** 2, axis=1) / denom[valid]
-        local_per_shear.append(local)
+        num += np.sum(Xi ** 2, axis=1)
 
-    return np.mean(local_per_shear, axis=0)
+    valid = denom > 1e-10
+    out = np.zeros(n, dtype=float)
+    out[valid] = 1.0 - num[valid] / denom[valid]
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -136,6 +142,59 @@ def test_fis_antiparallel_bonds():
     ])
     state = _make_state(positions)
     calc = _calc(cutoff=3.0)
+    result = calc(state, torch.tensor([0]), ["fis"])
+    assert result["fis"][0].item() == pytest.approx(1.0, abs=1e-5)
+
+
+# ---------------------------------------------------------------------------
+# Shear-plane combination: centrosymmetric octahedron → F_IS = 1
+# ---------------------------------------------------------------------------
+
+def test_fis_octahedron_rotated_about_single_axis():
+    """Centrosymmetric octahedron rotated about one axis → F_IS = 1, not 1/3.
+
+    Rotating about a single axis leaves the xz and yz shear planes degenerate
+    (n^mu n^nu vanishes for every bond).  Averaging the per-plane ratios would
+    zero-fill those planes and return (1+0+0)/3 = 1/3 — a 3x error on exactly
+    the environments that CIF-derived octahedral systems (Fe2O3, Li2HfCl6)
+    produce.  Summing numerators and denominators first gives the correct 1.
+    """
+    d, theta = 2.0, math.radians(15.0)
+    c, s = math.cos(theta), math.sin(theta)
+    axes = torch.tensor([
+        [ 1.0, 0.0, 0.0], [-1.0,  0.0, 0.0],
+        [ 0.0, 1.0, 0.0], [ 0.0, -1.0, 0.0],
+        [ 0.0, 0.0, 1.0], [ 0.0,  0.0, -1.0],
+    ]) * d
+    rot_z = torch.tensor([[c, -s, 0.0], [s, c, 0.0], [0.0, 0.0, 1.0]])
+    positions = torch.cat([torch.zeros(1, 3), axes @ rot_z.T])
+
+    state = _make_state(positions)
+    calc = _calc(cutoff=2.5)
+    result = calc(state, torch.tensor([0]), ["fis"])
+    assert result["fis"][0].item() == pytest.approx(1.0, abs=1e-5)
+
+
+def test_fis_octahedron_generic_orientation():
+    """A generically-oriented octahedron is centrosymmetric → F_IS = 1.
+
+    No plane is degenerate here, so both combination schemes agree; this guards
+    the case the sum-then-ratio change must leave untouched.
+    """
+    d = 2.0
+    axes = torch.tensor([
+        [ 1.0, 0.0, 0.0], [-1.0,  0.0, 0.0],
+        [ 0.0, 1.0, 0.0], [ 0.0, -1.0, 0.0],
+        [ 0.0, 0.0, 1.0], [ 0.0,  0.0, -1.0],
+    ]) * d
+    # Arbitrary rotation with no axis aligned to a Cartesian direction.
+    rot, _ = torch.linalg.qr(torch.tensor([
+        [0.31, -0.87, 0.42], [0.66, 0.49, 0.57], [-0.68, 0.05, 0.73],
+    ]))
+    positions = torch.cat([torch.zeros(1, 3), axes @ rot.T])
+
+    state = _make_state(positions)
+    calc = _calc(cutoff=2.5)
     result = calc(state, torch.tensor([0]), ["fis"])
     assert result["fis"][0].item() == pytest.approx(1.0, abs=1e-5)
 
@@ -332,7 +391,11 @@ def test_fis_sio2_crystal():
 
     state = ts.SimState(
         positions=cart,
-        cell=cell_mat.unsqueeze(0),
+        # torch_sim stores cells COLUMN-wise (cell[:, k] is lattice vector k), while
+        # pymatgen's lattice.matrix is row-wise.  Building the state without this
+        # transpose silently searches a transposed lattice -- on this hexagonal cell
+        # that inflates <CN> from 4.000 to 4.32.
+        cell=cell_mat.T.unsqueeze(0),
         atomic_numbers=znums,
         pbc=torch.tensor([True, True, True]),
         masses=znums.float(),
@@ -377,3 +440,47 @@ def test_fis_sio2_crystal():
     assert abs(mean_fis - ref_mean) < 1e-3, (
         f"PyTorch mean F_IS={mean_fis:.5f}, numpy mean F_IS={ref_mean:.5f}"
     )
+
+
+# ---------------------------------------------------------------------------
+# Neighbour-list correctness on a non-orthogonal cell
+# ---------------------------------------------------------------------------
+
+def test_neighbor_list_matches_ase_on_hexagonal_cell():
+    """Coordination from the library must equal ASE's on a non-orthogonal cell.
+
+    Regression test for a cell-convention bug: torch_sim stores cells column-wise
+    but the neighbour backend expects row-wise, so the search ran on a transposed
+    lattice.  On hexagonal c-SiO2 (gamma = 120 deg) that dropped 100 real Si-O
+    bonds and admitted pairs 10.8 A apart, reporting <CN> = 4.32 where the true
+    value is exactly 4.000 -- corrupting every order parameter and constraint
+    built on those vectors.  An orthorhombic cell would NOT catch this.
+    """
+    ase_io = pytest.importorskip("ase.io")
+    from ase.neighborlist import neighbor_list
+    from torch_sim.io import atoms_to_state
+
+    atoms = ase_io.read(str(SIO2_CIF))
+    cell = np.array(atoms.get_cell())
+    assert abs(cell[0] @ cell[1]) > 1e-6, "fixture must be non-orthogonal to be meaningful"
+
+    z = atoms.get_atomic_numbers()
+    i, j, _ = neighbor_list("ijd", atoms, 2.2)
+    m = (z[i] == SI_Z) & (z[j] == O_Z)
+    ase_cn = np.bincount(i[m], minlength=len(atoms))[z == SI_Z].mean()
+    assert ase_cn == pytest.approx(4.0), "c-SiO2 reference must be exactly 4-coordinated"
+
+    state = atoms_to_state(atoms, device=torch.device("cpu"), dtype=torch.float64)
+    si = torch.where(state.atomic_numbers == SI_Z)[0]
+
+    # Must hold regardless of how many neighbour slots are allocated.
+    for max_neighbors in (4, 8, 16):
+        calc = PyTorchOrderParameters(cutoff=2.2, device="cpu", max_neighbors=max_neighbors)
+        out = calc(state, si, ["cn", "fis"], element_filter=[O_Z])
+        assert out["cn"].mean().item() == pytest.approx(ase_cn, abs=1e-6), (
+            f"max_neighbors={max_neighbors}: <CN>={out['cn'].mean().item():.4f} "
+            f"but ASE gives {ase_cn:.4f}"
+        )
+        # Perfect tetrahedra -> -1/3, with only the small real alpha-quartz distortion.
+        assert out["fis"].mean().item() == pytest.approx(-1 / 3, abs=0.01)
+        assert out["fis"].std().item() < 0.02, "a crystal cannot have a broad F_IS spread"

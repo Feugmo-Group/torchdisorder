@@ -358,8 +358,8 @@ class TargetRDFData:
         if s_path and str(s_path).lower() not in ['null', 'none', ''] and Path(s_path).exists():
             df = load_csv_safe(s_path)
 
-            Q_col = find_column(df, ['Q', 'q'])
-            S_col = find_column(df, ['F', 'SQ', 'S', 'S(Q)', 'F(Q)'])
+            Q_col = find_column(df, ['Q', 'q', 'Q_inv_angstrom'])
+            S_col = find_column(df, ['F', 'SQ', 'S', 'S(Q)', 'F(Q)', 'F_Q', 'f_q'])
 
             # Drop rows where Q or the signal column is NaN (trailing blank lines)
             df = df.dropna(subset=[Q_col, S_col])

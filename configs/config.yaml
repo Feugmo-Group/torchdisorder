@@ -10,7 +10,7 @@
 #   python scripts/train.py target=G_r                   # G(r) target (for X-ray PDF)
 #   python scripts/train.py structure.supercell.target_atoms=2000  # Larger cell
 
-experiment_name: SiO2
+experiment_name: ${data.experiment_name}
 defaults:
   - data: SiO2  #  SiO2 GeO2, LiPS
   - structure: silica # silica,  GeO2, LiPS
@@ -102,10 +102,17 @@ mlip:
                           #   m3gnet   : M3GNet-MP-2021.2.8-PES or custom
                           #   orb      : orb_v2, orb_v2_mptraj, etc.
                           #   mattersim: large or small
-  force_weight: 1.0e-3    # λ: scale of force penalty relative to chi2 loss
-  apply_every: 10         # apply force penalty every N steps (0 = disabled)
-  relax_every: 500        # run FIRE relaxation every N steps (0 = disabled)
+  force_weight: 1.0e-5    # λ: initial weight; if adaptive_weight=true this is tuned automatically
+  apply_every: 50         # apply force penalty every N steps (was 10, too frequent)
+  relax_every: 0          # run FIRE relaxation every N steps (0 = disabled)
   relax_max_steps: 20     # max FIRE steps per relaxation call
+  warmup_steps: 500       # steps before MACE activates (let scattering converge first)
+  max_force_clip: 5.0     # clip per-component forces (eV/Å) — prevents runaway on strained bonds
+  adaptive_weight: false  # dynamically adjust force_weight to keep |penalty|/chi2 ≈ target_ratio
+  target_ratio: 0.005     # target |penalty|/chi2 (0.5%) — MACE as gentle nudge not dominant
+  adapt_rate: 0.15        # multiplicative step size for weight updates (per fire)
+  force_weight_min: 1.0e-7  # lower clamp for adaptive weight
+  force_weight_max: 1.0e-3  # upper clamp for adaptive weight
 
 # =============================================================================
 # Order Parameters

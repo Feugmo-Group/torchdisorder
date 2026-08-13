@@ -20,7 +20,8 @@ Differentiable structure optimization from scattering data with environment-base
 12. [Scattering Functions](#scattering-functions)
 13. [Environment Types](#environment-types)
 14. [Local Inversion Symmetry — F_IS](#local-inversion-symmetry--f_is)
-15. [Module Structure](#module-structure)
+15. [MLIP Energy Regularizer (MACE)](#mlip-energy-regularizer-mace)
+16. [Module Structure](#module-structure)
 
 ---
 
@@ -594,22 +595,27 @@ Empirically, F_IS correlates more strongly with vibrational and mechanical prope
 For atom *i* with neighbors *j*, F_IS is computed from the bond-unit vectors **n**ij = **r**ij / |**r**ij| and scalar weights w_ij:
 
 ```
-                   | Σ_j  w_ij  n̂^μ_ij  n̂^ν_ij  n̂^λ_ij |²
-F_IS_i  =  1  -   ─────────────────────────────────────────
-                        [ Σ_j  w_ij  n̂^μ_ij  n̂^ν_ij ]²
+                  Σ_(μ,ν)  | Σ_j  w_ij  n̂^μ_ij  n̂^ν_ij  n̂_ij |²
+F_IS_i  =  1  -   ────────────────────────────────────────────────
+                  Σ_(μ,ν)  Σ_j  [ w_ij  n̂^μ_ij  n̂^ν_ij ]²
 ```
 
-The numerator and denominator are summed over Cartesian index pairs (μ, ν, λ) for a set of shear strains, and the ratio is averaged over those shears. A value close to 1 means the environment is centrosymmetric; a value close to 0 means it is not.
+Both sums run over the shear planes (μ, ν) ∈ {(x,y), (x,z), (y,z)}. A value close to 1 means the environment is centrosymmetric; a value close to 0 means it is not.
+
+Note that the planes are combined **at the numerator/denominator level, not by averaging the three per-plane ratios**. This is a correctness requirement, not a convention. A shear plane in which n̂^μ n̂^ν vanishes for every bond is degenerate and carries no information; averaging ratios forces it to contribute a spurious 0. An environment rotated about a *single* axis — i.e. any structure taken from a CIF with a symmetry axis along a cell vector — has two such degenerate planes, so averaging returns (1+0+0)/3 = **+1/3 for a perfectly centrosymmetric octahedron** instead of +1. Summing first lets the empty planes drop out of both sums. The two schemes agree for generic orientations and for the ideal tetrahedron. (Combination scheme suggested by A. Zaccone; verified by `scripts/validate_fis_tetrahedron.py`.)
+
+An environment degenerate in *all three* planes — e.g. an octahedron sitting exactly on the Cartesian axes, a measure-zero set — has no well-defined F_IS and is reported as 0.
 
 **Analytical limits:**
 
 | Configuration | F_IS |
 |---|---|
 | Two antiparallel bonds (perfectly centrosymmetric) | 1 |
+| Octahedron (Oh — has an inversion center) | 1 |
 | Single bond (no inversion partner) | 0 |
 | Perfect SiO₄ tetrahedron (Td — no inversion center) | −1/3 |
 
-The SiO₄ result (F_IS = −1/3) is notable: a regular tetrahedron has *lower* inversion symmetry than a random arrangement, so F_IS can be negative.
+The SiO₄ result (F_IS = −1/3) is notable: a regular tetrahedron has *lower* inversion symmetry than a random arrangement, so F_IS can be negative. The numerator is a squared vector *sum* (with cross terms) while the denominator is a sum of squares, so F_IS is **not** bounded to [0, 1].
 
 ### Computation modes
 
@@ -678,20 +684,44 @@ L_total = χ²(F_Q)  +  w × (mean_F_IS − F_IS_target)²
 ```
 
 This steers the optimizer toward a target mean F_IS derived from a
-reference structure (e.g. a prior TorchDisorder run, a melt-quench MD, or
-the published glass values below) without requiring any additional
-experimental measurement.
+reference structure (e.g. a prior TorchDisorder run or a melt-quench MD)
+without requiring any additional experimental measurement.
 
-**Measured F_IS on a-SiO₂ (TorchDisorder BOO-optimized glass):**
+**Reference value — c-SiO₂ (α-quartz, 375 Si, cutoff 2.2 Å):**
 
 | Structure | F_IS mean | q4 mean | tet mean |
 |---|---|---|---|
 | c-SiO₂ (crystal) | −0.331 | +0.250 | +0.997 |
-| a-SiO₂ (glass)   | +0.005 | +0.152 | +0.489 |
-| Δ (glass − crystal) | **+0.336** | −0.099 | −0.508 |
 
-F_IS shifts by 0.34 between crystal and glass — more than three times the
-shift in q4 (0.10) — making it the most sensitive discriminator.
+The crystal value is pure local tetrahedral geometry: an SiO₄ unit isolated
+from the structure gives −0.3309 ± 0.0015 on its own, against −1/3 for an
+ideal tetrahedron. The +0.0025 offset is the genuine α-quartz distortion.
+
+> ⚠️ **Withdrawn:** earlier revisions of this README quoted a glass value
+> (F_IS = +0.005, Δ = +0.336) and the claim that F_IS is "more than three
+> times as sensitive as q4". The a-SiO₂ structure those numbers came from is
+> unphysical — ⟨CN⟩ = 2.98 with 240 Si–O contacts below 1.4 Å (minimum
+> 0.342 Å) and no first-shell peak. It reproduces the experimental F(Q) via
+> the classic underdetermined-fit failure mode. The Δ therefore conflated
+> tetrahedral distortion with a 4→3 coordination change and atom overlap.
+> Do not quote it.
+>
+> **Root cause — the seed, not the refinement.** MLIP regularization *was*
+> enabled in that run. The problem is that the seed structure
+> `data/crystal-structures/sio2_glass.cif` is itself broken before any
+> optimization (⟨CN⟩ = 3.02, min Si–O 0.185 Å, 298 contacts < 1.4 Å), and the
+> refinement never repairs it — checkpoints sit at ⟨CN⟩ ≈ 3.0 from step 200 to
+> step 2000. A `force_weight` of 1e-5 applied every 50 steps cannot undo a
+> 0.2 Å overlap, and `max_force_clip: 5.0` discards the very forces that would.
+> Use `scripts/build_sio2_glass.py` to generate a physical seed by MACE
+> melt-quench, and check ⟨CN⟩ = 4.000 over a cutoff plateau with no Si–O
+> contacts below ~1.5 Å before refining;
+> `scripts/validate_fis_tetrahedron.py` test [9] runs this health check.
+>
+> Note also that α-quartz is *itself* non-centrosymmetric, so a crystal→glass
+> change in F_IS should not be described as "loss of inversion symmetry" —
+> both phases lack an inversion centre. What changes is the coherent
+> tetrahedral addition in the affine force field.
 
 **Run SiO₂ optimization with F_IS regularization:**
 
@@ -739,9 +769,132 @@ fis_mu = loss_dict.get('fis_mean')   # current mean F_IS (detached, for logging)
 total  = loss_dict['total_loss']     # chi2 + fis_loss
 ```
 
+### Target F_IS values for common materials
+
+Use these as starting points for `fis.target`. Values are approximate; amorphous structures will deviate from their crystalline references.
+
+| System | central_z | neighbor_z | Crystalline F_IS | Amorphous target | Notes |
+|---|---|---|---|---|---|
+| a-SiO₂ | 14 (Si) | 8 (O) | −0.331 | ~0.005 | Tetrahedra disorder significantly |
+| a-GeO₂ | 32 (Ge) | 8 (O) | −0.331 | ~0.005 | Same topology as SiO₂ |
+| a-Fe₂O₃ | 26 (Fe) | 8 (O) | +1.0 | ~0.4–0.7 | Octahedral Fe sites |
+| Li₂HfCl₆ (ordered) | 72 (Hf) | 17 (Cl) | +1.0 | ~0.6–0.9 | Hf octahedra; drops with F⁻ substitution |
+| Li₂HfCl₆₋ₓFₓ | 72 (Hf) | 17 (Cl) | +1.0 | <0.9, decreasing with x | Mixed Cl/F coordination |
+| LiPON (PO₄) | 15 (P) | 8 (O) | −0.333 | ~−0.1 | Tetrahedral P; slight disorder |
+
+**CLI examples:**
+
+```bash
+# SiO₂ — drive toward amorphous target
+python scripts/train.py data=SiO2 structure=silica target=F_Q \
+  fis.target=0.005 fis.weight=5.0 fis.cutoff=2.2 \
+  fis.central_z=14 fis.neighbor_z=8
+
+# Fe₂O₃ — octahedral iron
+python scripts/train.py data=Fe2O3 structure=Fe2O3 target=F_Q \
+  fis.target=0.5 fis.weight=0.5 fis.cutoff=2.2 \
+  fis.central_z=26 fis.neighbor_z=8
+
+# Li₂HfCl₆ — halide SSE
+python scripts/train.py data=LiHfCl6 structure=LiHfCl6 target=S_Q \
+  fis.target=0.7 fis.weight=1.0 fis.cutoff=2.7 \
+  fis.central_z=72 fis.neighbor_z=17
+```
+
+### Dynamic F_IS feedback
+
+`fis_feedback` dynamically increases the F_IS penalty for environments that are violating the target most severely, focusing optimization resources where they matter most.
+
+| Key | Default | Description |
+|---|---|---|
+| `fis_feedback.enabled` | `false` | Enable dynamic per-environment weight adjustment |
+| `fis_feedback.update_interval` | `200` | Steps between weight updates |
+| `fis_feedback.feedback_strength` | `2.0` | Multiplier applied to the worst-violating environments |
+| `fis_feedback.warmup_steps` | `500` | Steps before feedback begins (let scattering converge first) |
+
+```bash
+python scripts/train.py data=Fe2O3 structure=Fe2O3 target=F_Q \
+  fis.target=0.5 fis.weight=0.5 fis.central_z=26 fis.neighbor_z=8 \
+  fis_feedback.enabled=true \
+  fis_feedback.update_interval=200 \
+  fis_feedback.feedback_strength=2.0 \
+  fis_feedback.warmup_steps=500
+```
+
 ### Reference
 
 > A. Milkus and A. Zaccone, "Local inversion-symmetry breaking controls the boson peak in glasses and crystals," *Phys. Rev. B* **93**, 094204 (2016). https://doi.org/10.1103/PhysRevB.93.094204
+
+---
+
+## MLIP Energy Regularizer (MACE)
+
+`MLIPRegularizer` (`engine/optimizer.py`) applies a machine-learning interatomic potential (MACE by default) as a soft regularizer during scattering optimization. It nudges atoms toward physically reasonable geometries without dominating the scattering fit.
+
+**Why it is needed:** Scattering optimization alone is insensitive to unphysical short contacts, stretched bonds, and extreme local geometries. MACE forces penalize these without requiring a full MD trajectory.
+
+**How it works:** Every `apply_every` steps (default 50), MACE computes forces on the current structure. A proxy loss `L_MLIP = −λ · Σ(F_clip · Δr)` is added, where forces are clipped to `max_force_clip` eV/Å per component to prevent runaway in highly disordered structures. The chi-squared scattering loss always dominates; MACE is a small correction.
+
+### Activation
+
+```bash
+python scripts/train.py data=SiO2 structure=silica mlip.enabled=true
+```
+
+MACE is **disabled by default**. Enabling it requires `mace-torch` to be installed.
+
+### Configuration parameters
+
+All keys live under `mlip:` in `configs/config.yaml` or as CLI overrides.
+
+| Key | Default | Description |
+|---|---|---|
+| `mlip.enabled` | `false` | Must be `true` to load and use MACE |
+| `mlip.backend` | `mace` | Potential backend: `mace`, `sevennet`, `chgnet`, `m3gnet`, `orb`, `mattersim` |
+| `mlip.model` | `small` | Backend-specific model name (e.g. `small`, `medium`, `large` for MACE) |
+| `mlip.force_weight` | `1e-5` | λ — initial regularization weight; keep `\|penalty\|/chi²` < 1% |
+| `mlip.apply_every` | `50` | Apply the force penalty every N steps |
+| `mlip.warmup_steps` | `500` | Steps before MACE activates; let scattering converge first |
+| `mlip.max_force_clip` | `5.0` | Per-component force clip in eV/Å — prevents runaway on strained bonds |
+| `mlip.adaptive_weight` | `false` | Dynamically tune `force_weight` to track `target_ratio` |
+| `mlip.target_ratio` | `0.005` | Target `\|penalty\|/chi²` ratio (0.5%) when `adaptive_weight=true` |
+| `mlip.adapt_rate` | `0.15` | Multiplicative step per MACE fire (shrinks 15% if ratio too high) |
+| `mlip.force_weight_min` | `1e-7` | Lower bound for the adaptive weight |
+| `mlip.force_weight_max` | `1e-3` | Upper bound for the adaptive weight |
+
+### Recommended settings
+
+Amorphous structures start far from the MACE energy minimum so forces are large (F_rms ~ 100–10000 eV/Å). The defaults are tuned to be conservative:
+
+```bash
+# Fixed weight (safe starting point)
+python scripts/train.py data=SiO2 structure=silica mlip.enabled=true \
+  mlip.force_weight=1e-5 mlip.apply_every=50 \
+  mlip.warmup_steps=500 mlip.max_force_clip=5.0
+
+# Adaptive weight (preferred — self-tunes λ to stay at 0.5% of chi²)
+python scripts/train.py data=SiO2 structure=silica mlip.enabled=true \
+  mlip.adaptive_weight=true mlip.warmup_steps=500
+```
+
+### Diagnostic output
+
+Every 100 steps (and logged to wandb under `mlip/`) a diagnostic line is printed:
+
+```
+[MACE] F_rms=3.21 eV/Å  F_max=12.4  clipped=3  penalty=1.2e-04  λ=1.00e-05  ratio=0.0003 (keep < 0.01)
+```
+
+| Field | Meaning |
+|---|---|
+| `F_rms` | RMS force magnitude over all atoms (eV/Å) |
+| `F_max` | Maximum per-component force before clipping |
+| `clipped` | Number of force components that were clipped |
+| `penalty` | The MACE proxy loss value added to chi² |
+| `λ` | Current force weight (changes when `adaptive_weight=true`) |
+| `ratio` | `\|penalty\|/chi²` — keep below 0.01 to prevent MACE dominating |
+
+With `adaptive_weight=true`, `λ` is printed each step and logged to wandb as `mlip/force_weight`.
 
 ---
 

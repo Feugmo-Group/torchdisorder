@@ -742,6 +742,29 @@ class MLIPRegularizer:
 
     Both modes are off by default (apply_every=0 / relax_every=0).
     The backend package must be installed; errors surface at init time.
+
+    Tuning guidance
+    ---------------
+    Amorphous structures are far from any MLIP energy minimum, so raw MACE
+    forces are large.  Key parameters to prevent MACE from dominating:
+
+      force_weight  : start at 1e-5 (not 1e-3). Rule of thumb: MACE penalty at
+                      step 0 should be < 1% of the scattering chi² loss.
+      apply_every   : 50–100 (not 10). MACE is expensive; fire it sparingly.
+      warmup_steps  : 500–1000. Allow scattering loss to stabilise before MACE
+                      starts pushing atoms. Mirrors constraint_warmup_steps.
+      max_force_clip: clip per-atom forces above this threshold (eV/Å) before
+                      forming the proxy loss. Prevents runaway gradients on
+                      severely strained amorphous bonds. Default: 5.0 eV/Å.
+
+    Diagnostic outputs (returned by force_penalty)
+    -----------------------------------------------
+    Returns a dict with keys:
+      penalty       : the proxy loss tensor (backprop through this)
+      force_rms     : RMS of MACE forces before clipping (eV/Å)
+      force_max     : max per-atom force magnitude
+      n_clipped     : number of atoms whose forces were clipped
+      penalty_value : float value of penalty (for logging)
     """
 
     def __init__(
@@ -754,6 +777,13 @@ class MLIPRegularizer:
         relax_max_steps: int,
         device,
         dtype,
+        warmup_steps: int = 0,
+        max_force_clip: float = 5.0,
+        adaptive_weight: bool = False,
+        target_ratio: float = 0.005,
+        adapt_rate: float = 0.15,
+        force_weight_min: float = 1e-7,
+        force_weight_max: float = 1e-3,
     ):
         self.backend = backend
         self.force_weight = force_weight
@@ -762,18 +792,41 @@ class MLIPRegularizer:
         self.relax_max_steps = relax_max_steps
         self.device = device
         self.dtype = dtype
+        self.warmup_steps = warmup_steps
+        self.max_force_clip = max_force_clip
+        self.adaptive_weight = adaptive_weight
+        self.target_ratio = target_ratio
+        self.adapt_rate = adapt_rate
+        self.force_weight_min = force_weight_min
+        self.force_weight_max = force_weight_max
         self._calc = _make_ase_calculator(backend, model, str(device))
 
-    def force_penalty(self, state, step) -> Optional[tuple]:
+    def force_penalty(self, state, step, chi2: float = 0.0) -> Optional[dict]:
         """
         Compute MLIP forces and return a differentiable proxy loss.
 
-        The proxy loss is  –λ · Σ(F_i · r_i)  whose gradient w.r.t. positions
-        is  –λ F_MLIP, so one Adam/SGD step moves atoms downhill on MLIP energy.
+        The proxy loss is  –λ · Σ(F_clipped_i · r_i)  whose gradient w.r.t.
+        positions is  –λ F_clipped, so one Adam/SGD step moves atoms downhill
+        on the MLIP potential energy surface.
 
-        Returns (pen_tensor, force_rms_scalar) or None when not due this step.
+        Forces are clipped to max_force_clip (eV/Å) per component before
+        forming the proxy — this prevents runaway gradients on strained bonds
+        in amorphous structures that are far from any MLIP energy minimum.
+
+        If adaptive_weight=True, force_weight is adjusted after each fire so
+        that |penalty|/chi2 tracks target_ratio (default 0.5%).
+
+        Args:
+            state: current simulation state
+            step:  current training step
+            chi2:  current scattering chi² value (used for adaptive scaling)
+
+        Returns dict with keys (penalty, force_rms, force_max, n_clipped,
+        penalty_value, force_weight) or None when not due this step.
         """
         if self.apply_every <= 0 or step % self.apply_every != 0:
+            return None
+        if step < self.warmup_steps:
             return None
 
         atoms_list = state_to_atoms(state)
@@ -789,10 +842,39 @@ class MLIPRegularizer:
             device=state.positions.device,
         )
 
-        # –λ (F · r): gradient = –λ F, so descent moves r in force direction
-        pen = -self.force_weight * (F.detach() * state.positions).sum()
-        force_rms = float(F.pow(2).mean().item())
-        return pen, force_rms
+        force_rms = float(F.pow(2).mean().sqrt().item())
+        force_max = float(F.abs().max().item())
+
+        # Clip per-component forces — prevents large MACE forces on strained
+        # amorphous bonds from swamping the scattering gradient
+        F_clip = F.detach().clamp(-self.max_force_clip, self.max_force_clip)
+        n_clipped = int((F.detach().abs() > self.max_force_clip).any(dim=-1).sum().item())
+
+        # –λ (F_clip · r): gradient = –λ F_clip → descent in force direction
+        pen = -self.force_weight * (F_clip * state.positions).sum()
+        penalty_value = float(pen.detach().item())
+
+        # Adaptive weight: keep |penalty|/chi2 ≈ target_ratio
+        if self.adaptive_weight and chi2 > 0:
+            ratio = abs(penalty_value) / chi2
+            if ratio > self.target_ratio * 2.0:
+                # MACE dominating → shrink weight
+                self.force_weight *= (1.0 - self.adapt_rate)
+            elif ratio < self.target_ratio * 0.5:
+                # MACE too weak → grow weight (more slowly to stay conservative)
+                self.force_weight *= (1.0 + self.adapt_rate * 0.5)
+            self.force_weight = float(
+                max(self.force_weight_min, min(self.force_weight_max, self.force_weight))
+            )
+
+        return {
+            "penalty": pen,
+            "force_rms": force_rms,
+            "force_max": force_max,
+            "n_clipped": n_clipped,
+            "penalty_value": penalty_value,
+            "force_weight": self.force_weight,
+        }
 
     def maybe_relax(self, state, step):
         """Run ASE-FIRE relaxation if step % relax_every == 0 (relax_every > 0)."""
