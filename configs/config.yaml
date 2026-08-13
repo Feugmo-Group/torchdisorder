@@ -49,11 +49,38 @@ lr:
 # =============================================================================
 # Adaptive Penalty
 # =============================================================================
+# target_ratio holds  penalty * sum(violation^2)  at this fraction of chi^2.
+# Prefer it over tuning `init` directly: chi^2 for an unnormalised F(Q) fit is
+# O(1e8), so the old absolute defaults (init=10, max=1e3) left the constraint term
+# at ~1e-6 of the objective and the optimizer traded local geometry away for
+# spectral agreement.  Reaching a useful ratio on SiO2 needs penalty ~1e5, which
+# the old 1e3 ceiling forbade outright.  Because chi^2 magnitude varies by orders
+# of magnitude between materials, a fixed penalty tuned on one system is wrong on
+# the next -- fixing the ratio is what transfers.
+# Set target_ratio: null to fall back to the improvement-driven growth/decay rule.
+#
+# Three balancing strategies, in order of precedence:
+#
+#   1. aggregator: <name>   one of the adaptive loss aggregators (relobralo,
+#                           soft_adapt, ema, brdr, res_norm, homoscedastic, ...)
+#                           decides the chi2-vs-constraint balance each step.
+#                           Gradient-based ones (grad_norm, lr_annealing) cannot
+#                           be used here and fall back to target_ratio.
+#   2. target_ratio: <x>    hold the constraint term at a fixed fraction of chi2.
+#   3. neither              legacy improvement-driven growth/decay rule.
+#
+# Override on the CLI, e.g.
+#   python scripts/train.py penalty.aggregator=relobralo
+#   python scripts/train.py penalty.target_ratio=0.2 penalty.aggregator=null
 penalty:
   init: 10.0
-  growth_rate: 1.5
-  decay_rate: 0.95
-  max_penalty: 1000.0
+  aggregator: null        # null | relobralo | soft_adapt | ema | brdr | res_norm | ...
+  aggregator_kwargs: {}
+  target_ratio: 0.05      # constraint term ≈ 5% of chi^2
+  adapt_rate: 0.15        # multiplicative step toward the target, per update
+  growth_rate: 1.5        # only used when both above are null
+  decay_rate: 0.95        # only used when both above are null
+  max_penalty: 1.0e+9     # a ceiling, not a setpoint; warns if it ever binds
   min_penalty: 1.0
   patience: 10
 

@@ -1,0 +1,445 @@
+{
+  "cutoff": 2.2,
+  "element_filter": [
+    8,
+    26
+  ],
+  "atom_constraints": {
+    "0": {
+      "atom_index": 0,
+      "element": "Fe",
+      "environment": "Fe5",
+      "environment_label": "FeO5 (five-coordinate, defect)",
+      "target_coordination": 5,
+      "order_parameters": {
+        "cn": {
+          "target": 5.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "Fe-O coordination number (five-coordinate, defect)"
+        }
+      },
+      "o_neighbor_indices": [
+        16,
+        24,
+        29,
+        33,
+        38
+      ],
+      "cn": 5
+    },
+    "1": {
+      "atom_index": 1,
+      "element": "Fe",
+      "environment": "Fe5",
+      "environment_label": "FeO5 (five-coordinate, defect)",
+      "target_coordination": 5,
+      "order_parameters": {
+        "cn": {
+          "target": 5.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "Fe-O coordination number (five-coordinate, defect)"
+        }
+      },
+      "o_neighbor_indices": [
+        17,
+        25,
+        28,
+        32,
+        39
+      ],
+      "cn": 5
+    },
+    "2": {
+      "atom_index": 2,
+      "element": "Fe",
+      "environment": "Fe5",
+      "environment_label": "FeO5 (five-coordinate, defect)",
+      "target_coordination": 5,
+      "order_parameters": {
+        "cn": {
+          "target": 5.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "Fe-O coordination number (five-coordinate, defect)"
+        }
+      },
+      "o_neighbor_indices": [
+        18,
+        26,
+        31,
+        35,
+        36
+      ],
+      "cn": 5
+    },
+    "3": {
+      "atom_index": 3,
+      "element": "Fe",
+      "environment": "Fe5",
+      "environment_label": "FeO5 (five-coordinate, defect)",
+      "target_coordination": 5,
+      "order_parameters": {
+        "cn": {
+          "target": 5.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "Fe-O coordination number (five-coordinate, defect)"
+        }
+      },
+      "o_neighbor_indices": [
+        19,
+        27,
+        30,
+        34,
+        37
+      ],
+      "cn": 5
+    },
+    "4": {
+      "atom_index": 4,
+      "element": "Fe",
+      "environment": "Fe4",
+      "environment_label": "FeO4 (tetrahedral, \u03b5-Fe\u2082O\u2083 Fe1 site)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "tet": {
+          "target": 0.78,
+          "min": 0.6,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality of FeO4 (\u03b5-Fe2O3 Fe1 site)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "Fe-O coordination number (tetrahedral)"
+        }
+      },
+      "o_neighbor_indices": [
+        24,
+        27,
+        32,
+        38
+      ],
+      "cn": 4
+    },
+    "5": {
+      "atom_index": 5,
+      "element": "Fe",
+      "environment": "Fe4",
+      "environment_label": "FeO4 (tetrahedral, \u03b5-Fe\u2082O\u2083 Fe1 site)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "tet": {
+          "target": 0.78,
+          "min": 0.6,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality of FeO4 (\u03b5-Fe2O3 Fe1 site)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "Fe-O coordination number (tetrahedral)"
+        }
+      },
+      "o_neighbor_indices": [
+        25,
+        26,
+        33,
+        39
+      ],
+      "cn": 4
+    },
+    "6": {
+      "atom_index": 6,
+      "element": "Fe",
+      "environment": "Fe4",
+      "environment_label": "FeO4 (tetrahedral, \u03b5-Fe\u2082O\u2083 Fe1 site)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "tet": {
+          "target": 0.78,
+          "min": 0.6,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality of FeO4 (\u03b5-Fe2O3 Fe1 site)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "Fe-O coordination number (tetrahedral)"
+        }
+      },
+      "o_neighbor_indices": [
+        25,
+        26,
+        34,
+        36
+      ],
+      "cn": 4
+    },
+    "7": {
+      "atom_index": 7,
+      "element": "Fe",
+      "environment": "Fe4",
+      "environment_label": "FeO4 (tetrahedral, \u03b5-Fe\u2082O\u2083 Fe1 site)",
+      "target_coordination": 4,
+      "order_parameters": {
+        "tet": {
+          "target": 0.78,
+          "min": 0.6,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality of FeO4 (\u03b5-Fe2O3 Fe1 site)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "Fe-O coordination number (tetrahedral)"
+        }
+      },
+      "o_neighbor_indices": [
+        24,
+        27,
+        35,
+        37
+      ],
+      "cn": 4
+    },
+    "8": {
+      "atom_index": 8,
+      "element": "Fe",
+      "environment": "Fe6",
+      "environment_label": "FeO6 (octahedral)",
+      "target_coordination": 6,
+      "order_parameters": {
+        "cn": {
+          "target": 6.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "Fe-O coordination number (octahedral)"
+        }
+      },
+      "o_neighbor_indices": [
+        20,
+        23,
+        28,
+        32,
+        35,
+        39
+      ],
+      "cn": 6
+    },
+    "9": {
+      "atom_index": 9,
+      "element": "Fe",
+      "environment": "Fe6",
+      "environment_label": "FeO6 (octahedral)",
+      "target_coordination": 6,
+      "order_parameters": {
+        "cn": {
+          "target": 6.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "Fe-O coordination number (octahedral)"
+        }
+      },
+      "o_neighbor_indices": [
+        21,
+        22,
+        29,
+        33,
+        34,
+        38
+      ],
+      "cn": 6
+    },
+    "10": {
+      "atom_index": 10,
+      "element": "Fe",
+      "environment": "Fe6",
+      "environment_label": "FeO6 (octahedral)",
+      "target_coordination": 6,
+      "order_parameters": {
+        "cn": {
+          "target": 6.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "Fe-O coordination number (octahedral)"
+        }
+      },
+      "o_neighbor_indices": [
+        21,
+        22,
+        30,
+        33,
+        34,
+        37
+      ],
+      "cn": 6
+    },
+    "11": {
+      "atom_index": 11,
+      "element": "Fe",
+      "environment": "Fe6",
+      "environment_label": "FeO6 (octahedral)",
+      "target_coordination": 6,
+      "order_parameters": {
+        "cn": {
+          "target": 6.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "Fe-O coordination number (octahedral)"
+        }
+      },
+      "o_neighbor_indices": [
+        20,
+        23,
+        31,
+        32,
+        35,
+        36
+      ],
+      "cn": 6
+    },
+    "12": {
+      "atom_index": 12,
+      "element": "Fe",
+      "environment": "Fe5",
+      "environment_label": "FeO5 (five-coordinate, defect)",
+      "target_coordination": 5,
+      "order_parameters": {
+        "cn": {
+          "target": 5.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "Fe-O coordination number (five-coordinate, defect)"
+        }
+      },
+      "o_neighbor_indices": [
+        16,
+        19,
+        23,
+        29,
+        39
+      ],
+      "cn": 5
+    },
+    "13": {
+      "atom_index": 13,
+      "element": "Fe",
+      "environment": "Fe5",
+      "environment_label": "FeO5 (five-coordinate, defect)",
+      "target_coordination": 5,
+      "order_parameters": {
+        "cn": {
+          "target": 5.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "Fe-O coordination number (five-coordinate, defect)"
+        }
+      },
+      "o_neighbor_indices": [
+        17,
+        18,
+        22,
+        28,
+        38
+      ],
+      "cn": 5
+    },
+    "14": {
+      "atom_index": 14,
+      "element": "Fe",
+      "environment": "Fe5",
+      "environment_label": "FeO5 (five-coordinate, defect)",
+      "target_coordination": 5,
+      "order_parameters": {
+        "cn": {
+          "target": 5.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "Fe-O coordination number (five-coordinate, defect)"
+        }
+      },
+      "o_neighbor_indices": [
+        17,
+        18,
+        21,
+        31,
+        37
+      ],
+      "cn": 5
+    },
+    "15": {
+      "atom_index": 15,
+      "element": "Fe",
+      "environment": "Fe5",
+      "environment_label": "FeO5 (five-coordinate, defect)",
+      "target_coordination": 5,
+      "order_parameters": {
+        "cn": {
+          "target": 5.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "Fe-O coordination number (five-coordinate, defect)"
+        }
+      },
+      "o_neighbor_indices": [
+        16,
+        19,
+        20,
+        30,
+        36
+      ],
+      "cn": 5
+    }
+  },
+  "environment_priorities": {
+    "Fe5": 1.0,
+    "Fe6": 2.0,
+    "Fe4": 3.0
+  },
+  "global_constraints": {
+    "description": "Per-Fe order parameter constraints for Fe2O3 glass",
+    "total_fe_atoms": 16,
+    "environment_fractions": {
+      "Fe5": 50.0,
+      "Fe4": 25.0,
+      "Fe6": 25.0
+    },
+    "included_environments": [
+      "Fe5",
+      "Fe6",
+      "Fe4"
+    ]
+  },
+  "metadata": {
+    "version": "v6",
+    "structure_type": "fe2o3",
+    "total_atoms": 40,
+    "composition": "Fe16 O24",
+    "included_environments": [
+      "Fe5",
+      "Fe6",
+      "Fe4"
+    ],
+    "order_parameter_types": [
+      "tet",
+      "cn"
+    ],
+    "notes": "v6 constraints for EnvironmentConstrainedOptimizer. Fe4 = tetrahedral (unique to \u03b5-Fe2O3, multiferroic Fe1 site). Fe6 = octahedral (dominant in all polymorphs). F_IS distinguishes these environments experimentally.",
+    "environment_types": {
+      "Fe4": "Tetrahedral FeO4 (\u03b5-Fe2O3 Fe1 site, multiferroic)",
+      "Fe6": "Octahedral FeO6 (Fe2/3/4 sites)",
+      "Fe5": "Five-coordinate FeO5 (defect / disordered glass)"
+    }
+  }
+}

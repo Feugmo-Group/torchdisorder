@@ -1,0 +1,4058 @@
+{
+  "cutoff": 1.95,
+  "element_filter": [
+    7,
+    8,
+    15
+  ],
+  "atom_constraints": {
+    "376": {
+      "atom_index": 376,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        552,
+        568,
+        584,
+        664
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "377": {
+      "atom_index": 377,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        553,
+        569,
+        585,
+        665
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "378": {
+      "atom_index": 378,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        554,
+        570,
+        586,
+        666
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "379": {
+      "atom_index": 379,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        555,
+        571,
+        587,
+        667
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "380": {
+      "atom_index": 380,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        556,
+        572,
+        588,
+        668
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "381": {
+      "atom_index": 381,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        557,
+        573,
+        589,
+        669
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "382": {
+      "atom_index": 382,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        558,
+        574,
+        590,
+        670
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "383": {
+      "atom_index": 383,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        559,
+        575,
+        591,
+        671
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "384": {
+      "atom_index": 384,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        633,
+        706,
+        812
+      ],
+      "n_neighbor_indices": [
+        504
+      ],
+      "cn": 4
+    },
+    "385": {
+      "atom_index": 385,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        632,
+        707,
+        813
+      ],
+      "n_neighbor_indices": [
+        505
+      ],
+      "cn": 4
+    },
+    "386": {
+      "atom_index": 386,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        635,
+        704,
+        814
+      ],
+      "n_neighbor_indices": [
+        506
+      ],
+      "cn": 4
+    },
+    "387": {
+      "atom_index": 387,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        634,
+        705,
+        815
+      ],
+      "n_neighbor_indices": [
+        507
+      ],
+      "cn": 4
+    },
+    "388": {
+      "atom_index": 388,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        637,
+        710,
+        808
+      ],
+      "n_neighbor_indices": [
+        508
+      ],
+      "cn": 4
+    },
+    "389": {
+      "atom_index": 389,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        636,
+        711,
+        809
+      ],
+      "n_neighbor_indices": [
+        509
+      ],
+      "cn": 4
+    },
+    "390": {
+      "atom_index": 390,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        639,
+        708,
+        810
+      ],
+      "n_neighbor_indices": [
+        510
+      ],
+      "cn": 4
+    },
+    "391": {
+      "atom_index": 391,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        638,
+        709,
+        811
+      ],
+      "n_neighbor_indices": [
+        511
+      ],
+      "cn": 4
+    },
+    "392": {
+      "atom_index": 392,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        608,
+        624,
+        648,
+        728
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "393": {
+      "atom_index": 393,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        609,
+        625,
+        649,
+        729
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "394": {
+      "atom_index": 394,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        610,
+        626,
+        650,
+        730
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "395": {
+      "atom_index": 395,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        611,
+        627,
+        651,
+        731
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "396": {
+      "atom_index": 396,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        612,
+        628,
+        652,
+        732
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "397": {
+      "atom_index": 397,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        613,
+        629,
+        653,
+        733
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "398": {
+      "atom_index": 398,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        614,
+        630,
+        654,
+        734
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "399": {
+      "atom_index": 399,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        615,
+        631,
+        655,
+        735
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "400": {
+      "atom_index": 400,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        592,
+        770,
+        868
+      ],
+      "n_neighbor_indices": [
+        512
+      ],
+      "cn": 4
+    },
+    "401": {
+      "atom_index": 401,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        593,
+        771,
+        869
+      ],
+      "n_neighbor_indices": [
+        513
+      ],
+      "cn": 4
+    },
+    "402": {
+      "atom_index": 402,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        594,
+        768,
+        870
+      ],
+      "n_neighbor_indices": [
+        514
+      ],
+      "cn": 4
+    },
+    "403": {
+      "atom_index": 403,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        595,
+        769,
+        871
+      ],
+      "n_neighbor_indices": [
+        515
+      ],
+      "cn": 4
+    },
+    "404": {
+      "atom_index": 404,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        596,
+        774,
+        864
+      ],
+      "n_neighbor_indices": [
+        516
+      ],
+      "cn": 4
+    },
+    "405": {
+      "atom_index": 405,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        597,
+        775,
+        865
+      ],
+      "n_neighbor_indices": [
+        517
+      ],
+      "cn": 4
+    },
+    "406": {
+      "atom_index": 406,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        598,
+        772,
+        866
+      ],
+      "n_neighbor_indices": [
+        518
+      ],
+      "cn": 4
+    },
+    "407": {
+      "atom_index": 407,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        599,
+        773,
+        867
+      ],
+      "n_neighbor_indices": [
+        519
+      ],
+      "cn": 4
+    },
+    "408": {
+      "atom_index": 408,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        546,
+        672,
+        688,
+        712
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "409": {
+      "atom_index": 409,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        547,
+        673,
+        689,
+        713
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "410": {
+      "atom_index": 410,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        544,
+        674,
+        690,
+        714
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "411": {
+      "atom_index": 411,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        545,
+        675,
+        691,
+        715
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "412": {
+      "atom_index": 412,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        550,
+        676,
+        692,
+        716
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "413": {
+      "atom_index": 413,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        551,
+        677,
+        693,
+        717
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "414": {
+      "atom_index": 414,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        548,
+        678,
+        694,
+        718
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "415": {
+      "atom_index": 415,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        549,
+        679,
+        695,
+        719
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "416": {
+      "atom_index": 416,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        576,
+        656,
+        761,
+        916
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "417": {
+      "atom_index": 417,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        577,
+        657,
+        760,
+        917
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "418": {
+      "atom_index": 418,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        578,
+        658,
+        763,
+        918
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "419": {
+      "atom_index": 419,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        579,
+        659,
+        762,
+        919
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "420": {
+      "atom_index": 420,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        580,
+        660,
+        765,
+        912
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "421": {
+      "atom_index": 421,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        581,
+        661,
+        764,
+        913
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "422": {
+      "atom_index": 422,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        582,
+        662,
+        767,
+        914
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "423": {
+      "atom_index": 423,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        583,
+        663,
+        766,
+        915
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "424": {
+      "atom_index": 424,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        602,
+        736,
+        752,
+        776
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "425": {
+      "atom_index": 425,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        603,
+        737,
+        753,
+        777
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "426": {
+      "atom_index": 426,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        600,
+        738,
+        754,
+        778
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "427": {
+      "atom_index": 427,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        601,
+        739,
+        755,
+        779
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "428": {
+      "atom_index": 428,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        606,
+        740,
+        756,
+        780
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "429": {
+      "atom_index": 429,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        607,
+        741,
+        757,
+        781
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "430": {
+      "atom_index": 430,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        604,
+        742,
+        758,
+        782
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "431": {
+      "atom_index": 431,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        605,
+        743,
+        759,
+        783
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "432": {
+      "atom_index": 432,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        640,
+        696,
+        720,
+        956
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "433": {
+      "atom_index": 433,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        641,
+        697,
+        721,
+        957
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "434": {
+      "atom_index": 434,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        642,
+        698,
+        722,
+        958
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "435": {
+      "atom_index": 435,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        643,
+        699,
+        723,
+        959
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "436": {
+      "atom_index": 436,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        644,
+        700,
+        724,
+        952
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "437": {
+      "atom_index": 437,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        645,
+        701,
+        725,
+        953
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "438": {
+      "atom_index": 438,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        646,
+        702,
+        726,
+        954
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "439": {
+      "atom_index": 439,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        647,
+        703,
+        727,
+        955
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "440": {
+      "atom_index": 440,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        800,
+        816,
+        840,
+        904
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "441": {
+      "atom_index": 441,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        801,
+        817,
+        841,
+        905
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "442": {
+      "atom_index": 442,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        802,
+        818,
+        842,
+        906
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "443": {
+      "atom_index": 443,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        803,
+        819,
+        843,
+        907
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "444": {
+      "atom_index": 444,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        804,
+        820,
+        844,
+        908
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "445": {
+      "atom_index": 445,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        805,
+        821,
+        845,
+        909
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "446": {
+      "atom_index": 446,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        806,
+        822,
+        846,
+        910
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "447": {
+      "atom_index": 447,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        807,
+        823,
+        847,
+        911
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "448": {
+      "atom_index": 448,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        560,
+        784,
+        873,
+        930
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "449": {
+      "atom_index": 449,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        561,
+        785,
+        872,
+        931
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "450": {
+      "atom_index": 450,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        562,
+        786,
+        875,
+        928
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "451": {
+      "atom_index": 451,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        563,
+        787,
+        874,
+        929
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "452": {
+      "atom_index": 452,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        564,
+        788,
+        877,
+        934
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "453": {
+      "atom_index": 453,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        565,
+        789,
+        876,
+        935
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "454": {
+      "atom_index": 454,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        566,
+        790,
+        879,
+        932
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "455": {
+      "atom_index": 455,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        567,
+        791,
+        878,
+        933
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "456": {
+      "atom_index": 456,
+      "element": "P",
+      "environment": "PO1N",
+      "environment_label": "PO1N (strongly defected)",
+      "target_coordination": 2,
+      "n_o": 1,
+      "n_n": 1,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P-(O+N) coordination number (strongly defected)"
+        }
+      },
+      "o_neighbor_indices": [
+        888
+      ],
+      "n_neighbor_indices": [
+        520
+      ],
+      "cn": 2
+    },
+    "457": {
+      "atom_index": 457,
+      "element": "P",
+      "environment": "PO1N",
+      "environment_label": "PO1N (strongly defected)",
+      "target_coordination": 2,
+      "n_o": 1,
+      "n_n": 1,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P-(O+N) coordination number (strongly defected)"
+        }
+      },
+      "o_neighbor_indices": [
+        889
+      ],
+      "n_neighbor_indices": [
+        521
+      ],
+      "cn": 2
+    },
+    "458": {
+      "atom_index": 458,
+      "element": "P",
+      "environment": "PO1N",
+      "environment_label": "PO1N (strongly defected)",
+      "target_coordination": 2,
+      "n_o": 1,
+      "n_n": 1,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P-(O+N) coordination number (strongly defected)"
+        }
+      },
+      "o_neighbor_indices": [
+        890
+      ],
+      "n_neighbor_indices": [
+        522
+      ],
+      "cn": 2
+    },
+    "459": {
+      "atom_index": 459,
+      "element": "P",
+      "environment": "PO1N",
+      "environment_label": "PO1N (strongly defected)",
+      "target_coordination": 2,
+      "n_o": 1,
+      "n_n": 1,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P-(O+N) coordination number (strongly defected)"
+        }
+      },
+      "o_neighbor_indices": [
+        891
+      ],
+      "n_neighbor_indices": [
+        523
+      ],
+      "cn": 2
+    },
+    "460": {
+      "atom_index": 460,
+      "element": "P",
+      "environment": "PO1N",
+      "environment_label": "PO1N (strongly defected)",
+      "target_coordination": 2,
+      "n_o": 1,
+      "n_n": 1,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P-(O+N) coordination number (strongly defected)"
+        }
+      },
+      "o_neighbor_indices": [
+        892
+      ],
+      "n_neighbor_indices": [
+        524
+      ],
+      "cn": 2
+    },
+    "461": {
+      "atom_index": 461,
+      "element": "P",
+      "environment": "PO1N",
+      "environment_label": "PO1N (strongly defected)",
+      "target_coordination": 2,
+      "n_o": 1,
+      "n_n": 1,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P-(O+N) coordination number (strongly defected)"
+        }
+      },
+      "o_neighbor_indices": [
+        893
+      ],
+      "n_neighbor_indices": [
+        525
+      ],
+      "cn": 2
+    },
+    "462": {
+      "atom_index": 462,
+      "element": "P",
+      "environment": "PO1N",
+      "environment_label": "PO1N (strongly defected)",
+      "target_coordination": 2,
+      "n_o": 1,
+      "n_n": 1,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P-(O+N) coordination number (strongly defected)"
+        }
+      },
+      "o_neighbor_indices": [
+        894
+      ],
+      "n_neighbor_indices": [
+        526
+      ],
+      "cn": 2
+    },
+    "463": {
+      "atom_index": 463,
+      "element": "P",
+      "environment": "PO1N",
+      "environment_label": "PO1N (strongly defected)",
+      "target_coordination": 2,
+      "n_o": 1,
+      "n_n": 1,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.0,
+          "description": "P-(O+N) coordination number (strongly defected)"
+        }
+      },
+      "o_neighbor_indices": [
+        895
+      ],
+      "n_neighbor_indices": [
+        527
+      ],
+      "cn": 2
+    },
+    "464": {
+      "atom_index": 464,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        616,
+        824,
+        848,
+        978
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "465": {
+      "atom_index": 465,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        617,
+        825,
+        849,
+        979
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "466": {
+      "atom_index": 466,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        618,
+        826,
+        850,
+        976
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "467": {
+      "atom_index": 467,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        619,
+        827,
+        851,
+        977
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "468": {
+      "atom_index": 468,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        620,
+        828,
+        852,
+        982
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "469": {
+      "atom_index": 469,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        621,
+        829,
+        853,
+        983
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "470": {
+      "atom_index": 470,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        622,
+        830,
+        854,
+        980
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "471": {
+      "atom_index": 471,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        623,
+        831,
+        855,
+        981
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "472": {
+      "atom_index": 472,
+      "element": "P",
+      "environment": "PO2N",
+      "environment_label": "PO2N (defect, CN=3 O+N)",
+      "target_coordination": 3,
+      "n_o": 2,
+      "n_n": 1,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number (defect)"
+        }
+      },
+      "o_neighbor_indices": [
+        794,
+        936
+      ],
+      "n_neighbor_indices": [
+        528
+      ],
+      "cn": 3
+    },
+    "473": {
+      "atom_index": 473,
+      "element": "P",
+      "environment": "PO2N",
+      "environment_label": "PO2N (defect, CN=3 O+N)",
+      "target_coordination": 3,
+      "n_o": 2,
+      "n_n": 1,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number (defect)"
+        }
+      },
+      "o_neighbor_indices": [
+        795,
+        937
+      ],
+      "n_neighbor_indices": [
+        529
+      ],
+      "cn": 3
+    },
+    "474": {
+      "atom_index": 474,
+      "element": "P",
+      "environment": "PO2N",
+      "environment_label": "PO2N (defect, CN=3 O+N)",
+      "target_coordination": 3,
+      "n_o": 2,
+      "n_n": 1,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number (defect)"
+        }
+      },
+      "o_neighbor_indices": [
+        792,
+        938
+      ],
+      "n_neighbor_indices": [
+        530
+      ],
+      "cn": 3
+    },
+    "475": {
+      "atom_index": 475,
+      "element": "P",
+      "environment": "PO2N",
+      "environment_label": "PO2N (defect, CN=3 O+N)",
+      "target_coordination": 3,
+      "n_o": 2,
+      "n_n": 1,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number (defect)"
+        }
+      },
+      "o_neighbor_indices": [
+        793,
+        939
+      ],
+      "n_neighbor_indices": [
+        531
+      ],
+      "cn": 3
+    },
+    "476": {
+      "atom_index": 476,
+      "element": "P",
+      "environment": "PO2N",
+      "environment_label": "PO2N (defect, CN=3 O+N)",
+      "target_coordination": 3,
+      "n_o": 2,
+      "n_n": 1,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number (defect)"
+        }
+      },
+      "o_neighbor_indices": [
+        798,
+        940
+      ],
+      "n_neighbor_indices": [
+        532
+      ],
+      "cn": 3
+    },
+    "477": {
+      "atom_index": 477,
+      "element": "P",
+      "environment": "PO2N",
+      "environment_label": "PO2N (defect, CN=3 O+N)",
+      "target_coordination": 3,
+      "n_o": 2,
+      "n_n": 1,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number (defect)"
+        }
+      },
+      "o_neighbor_indices": [
+        799,
+        941
+      ],
+      "n_neighbor_indices": [
+        533
+      ],
+      "cn": 3
+    },
+    "478": {
+      "atom_index": 478,
+      "element": "P",
+      "environment": "PO2N",
+      "environment_label": "PO2N (defect, CN=3 O+N)",
+      "target_coordination": 3,
+      "n_o": 2,
+      "n_n": 1,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number (defect)"
+        }
+      },
+      "o_neighbor_indices": [
+        796,
+        942
+      ],
+      "n_neighbor_indices": [
+        534
+      ],
+      "cn": 3
+    },
+    "479": {
+      "atom_index": 479,
+      "element": "P",
+      "environment": "PO2N",
+      "environment_label": "PO2N (defect, CN=3 O+N)",
+      "target_coordination": 3,
+      "n_o": 2,
+      "n_n": 1,
+      "order_parameters": {
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number (defect)"
+        }
+      },
+      "o_neighbor_indices": [
+        797,
+        943
+      ],
+      "n_neighbor_indices": [
+        535
+      ],
+      "cn": 3
+    },
+    "480": {
+      "atom_index": 480,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        680,
+        832,
+        896,
+        969
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "481": {
+      "atom_index": 481,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        681,
+        833,
+        897,
+        968
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "482": {
+      "atom_index": 482,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        682,
+        834,
+        898,
+        971
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "483": {
+      "atom_index": 483,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        683,
+        835,
+        899,
+        970
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "484": {
+      "atom_index": 484,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        684,
+        836,
+        900,
+        973
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "485": {
+      "atom_index": 485,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        685,
+        837,
+        901,
+        972
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "486": {
+      "atom_index": 486,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        686,
+        838,
+        902,
+        975
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "487": {
+      "atom_index": 487,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        687,
+        839,
+        903,
+        974
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "488": {
+      "atom_index": 488,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        858,
+        960,
+        984
+      ],
+      "n_neighbor_indices": [
+        536
+      ],
+      "cn": 4
+    },
+    "489": {
+      "atom_index": 489,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        859,
+        961,
+        985
+      ],
+      "n_neighbor_indices": [
+        537
+      ],
+      "cn": 4
+    },
+    "490": {
+      "atom_index": 490,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        856,
+        962,
+        986
+      ],
+      "n_neighbor_indices": [
+        538
+      ],
+      "cn": 4
+    },
+    "491": {
+      "atom_index": 491,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        857,
+        963,
+        987
+      ],
+      "n_neighbor_indices": [
+        539
+      ],
+      "cn": 4
+    },
+    "492": {
+      "atom_index": 492,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        862,
+        964,
+        988
+      ],
+      "n_neighbor_indices": [
+        540
+      ],
+      "cn": 4
+    },
+    "493": {
+      "atom_index": 493,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        863,
+        965,
+        989
+      ],
+      "n_neighbor_indices": [
+        541
+      ],
+      "cn": 4
+    },
+    "494": {
+      "atom_index": 494,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        860,
+        966,
+        990
+      ],
+      "n_neighbor_indices": [
+        542
+      ],
+      "cn": 4
+    },
+    "495": {
+      "atom_index": 495,
+      "element": "P",
+      "environment": "PO3N",
+      "environment_label": "PO3N (N-substituted tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "order_parameters": {
+        "tet": {
+          "target": 0.85,
+          "min": 0.65,
+          "max": 1.0,
+          "weight": 2.5,
+          "description": "Tetrahedrality around P (PO3N)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 2.0,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        861,
+        967,
+        991
+      ],
+      "n_neighbor_indices": [
+        543
+      ],
+      "cn": 4
+    },
+    "496": {
+      "atom_index": 496,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        744,
+        880,
+        920,
+        944
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "497": {
+      "atom_index": 497,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        745,
+        881,
+        921,
+        945
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "498": {
+      "atom_index": 498,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        746,
+        882,
+        922,
+        946
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "499": {
+      "atom_index": 499,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        747,
+        883,
+        923,
+        947
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "500": {
+      "atom_index": 500,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        748,
+        884,
+        924,
+        948
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "501": {
+      "atom_index": 501,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        749,
+        885,
+        925,
+        949
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "502": {
+      "atom_index": 502,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        750,
+        886,
+        926,
+        950
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    },
+    "503": {
+      "atom_index": 503,
+      "element": "P",
+      "environment": "PO4",
+      "environment_label": "PO4 (orthophosphate tetrahedral)",
+      "target_coordination": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "order_parameters": {
+        "tet": {
+          "target": 0.88,
+          "min": 0.7,
+          "max": 1.0,
+          "weight": 2.0,
+          "description": "Tetrahedrality around P (PO4)"
+        },
+        "cn": {
+          "target": 4.0,
+          "tolerance": 0.5,
+          "weight": 1.5,
+          "description": "P-(O+N) coordination number"
+        }
+      },
+      "o_neighbor_indices": [
+        751,
+        887,
+        927,
+        951
+      ],
+      "n_neighbor_indices": [],
+      "cn": 4
+    }
+  },
+  "environment_priorities": {
+    "PO2N": 1.5,
+    "PO1N": 1.0,
+    "PO3N": 3.0,
+    "PO4": 2.0
+  },
+  "global_constraints": {
+    "description": "Per-P order parameter constraints for LiPON glass",
+    "total_p_atoms": 128,
+    "environment_fractions": {
+      "PO4": 68.75,
+      "PO3N": 18.75,
+      "PO1N": 6.25,
+      "PO2N": 6.25
+    },
+    "included_environments": [
+      "PO4",
+      "PO3N",
+      "PO2N",
+      "PO1N",
+      "P_other"
+    ]
+  },
+  "metadata": {
+    "version": "v6",
+    "structure_type": "lipon",
+    "total_atoms": 992,
+    "composition": "Li376 P128 N40 O448",
+    "included_environments": [
+      "PO4",
+      "PO3N",
+      "PO2N",
+      "PO1N",
+      "P_other"
+    ],
+    "order_parameter_types": [
+      "cn",
+      "tet"
+    ],
+    "notes": "PO3N is the N-substituted tetrahedral environment that gives LiPON its ionic conductivity. F_IS distinguishes PO4 from PO3N. v6 constraints for EnvironmentConstrainedOptimizer with adaptive penalties.",
+    "environment_types": {
+      "PO4": "Standard orthophosphate tetrahedral (n_O=4, n_N=0)",
+      "PO3N": "N-substituted tetrahedral (n_O=3, n_N=1) - key LiPON feature",
+      "PO2N": "Defect environment (n_O=2, n_N=1)",
+      "PO1N": "Strongly defected (n_O=1, n_N=1)",
+      "P_other": "Catch-all for unrecognized P environments"
+    }
+  }
+}

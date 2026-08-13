@@ -3,7 +3,9 @@
     "enabled": true,
     "r_min": 1.0,
     "weight": 1.0,
-    "description": "Quadratic penalty for any atom pair closer than r_min (Angstrom). Prevents atomic overlaps without regenerating structures."
+    "description": "Quadratic penalty for atom pairs closer than a per-element-pair floor derived from covalent radii (covalent_scale * (r_i + r_j)). r_min is a hard lower clamp only. A single global r_min cannot serve a multi-species system: the value that protects Si-O (~1.4 A) lets O-O (2.2 A) and Si-Si (2.6 A) collapse, so the previous r_min=1.0 admitted Si-O at 1.05 A.",
+    "covalent_floors": true,
+    "covalent_scale": 0.85
   },
   "cutoff": 2.2,
   "element_filter": [

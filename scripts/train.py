@@ -41,6 +41,7 @@ WandB Logging:
 """
 
 import hydra
+from hydra.core.hydra_config import HydraConfig
 from omegaconf import DictConfig, OmegaConf
 import wandb
 import torch
@@ -1161,13 +1162,56 @@ def setup_state_wrapper(state, atoms_list, device):
     return wrapped
 
 
+class _Tee:
+    """Duplicate a stream to a file, so the console transcript survives the run.
+
+    This module reports through ``print``, but Hydra's ``train.log`` only captures
+    the ``logging`` module — so every archived run ended up with an empty log and
+    no record of what actually happened. That is how a run could report a healthy
+    fit while its MLIP regularizer, constraint counts and health warnings went
+    unrecorded. Teeing is a smaller change than converting hundreds of prints, and
+    it captures third-party output too.
+    """
+
+    def __init__(self, stream, path):
+        self._stream = stream
+        self._file = open(path, "a", buffering=1, encoding="utf-8")
+
+    def write(self, data):
+        self._stream.write(data)
+        self._file.write(data)
+        return len(data)
+
+    def flush(self):
+        self._stream.flush()
+        self._file.flush()
+
+    def isatty(self):
+        return self._stream.isatty()
+
+    def close(self):
+        try:
+            self._file.close()
+        except Exception:
+            pass
+
+
 # =============================================================================
 # MAIN
 # =============================================================================
 
 @hydra.main(config_path=str(MODELS_PROJECT_ROOT / "configs"), config_name="config", version_base="1.3")
 def main(cfg: DictConfig) -> None:
-    
+
+    # Capture the transcript before anything else runs.
+    try:
+        _log_path = Path(HydraConfig.get().run.dir) / "train.log"
+        _log_path.parent.mkdir(parents=True, exist_ok=True)
+        sys.stdout = _Tee(sys.stdout, _log_path)
+        sys.stderr = _Tee(sys.stderr, _log_path)
+    except Exception as _e:  # never let logging setup kill a run
+        print(f"  (could not tee output to train.log: {_e})")
+
     run_timestamp = int(time.time())
     run_name = f"run_{run_timestamp}"
     
@@ -2086,6 +2130,18 @@ def main(cfg: DictConfig) -> None:
                 avg_viol = violations.mean().item()
                 max_viol = violations.max().item()
                 num_viol = (violations > 0).sum().item()
+
+                # Drive the penalty coefficient.  Without this call the "adaptive"
+                # penalty never moves off its init value -- growth_rate, decay_rate,
+                # patience and max_penalty are all inert -- so the constraint term
+                # stays ~1e-6 of chi2 and the optimizer trades away local geometry
+                # for spectral agreement unopposed.
+                _pen = getattr(cooper_problem, 'penalty_coeff', None)
+                if _pen is not None and hasattr(_pen, 'update'):
+                    _pen.update(
+                        float((violations ** 2).sum().item()),
+                        chi2=float(chi2_loss.item()) if torch.is_tensor(chi2_loss) else None,
+                    )
 
                 # Li repulsion: separate gradient step (Cooper already stepped)
                 if li_repulsion_fn is not None:

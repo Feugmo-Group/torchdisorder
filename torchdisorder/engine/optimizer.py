@@ -4,6 +4,7 @@ from pathlib import Path
 from dataclasses import dataclass
 from collections import defaultdict
 import json
+import warnings
 
 import torch
 import torch.nn as nn
@@ -86,7 +87,11 @@ class ScalarAdaptivePenalty(PenaltyCoefficient):
         max_penalty: float = 1000.0,
         min_penalty: float = 1.0,
         patience: int = 10,
-        device: str = 'cuda'
+        device: str = 'cuda',
+        target_ratio: Optional[float] = None,
+        adapt_rate: float = 0.15,
+        aggregator: Optional[str] = None,
+        aggregator_kwargs: Optional[Dict] = None,
     ):
         super().__init__(init=torch.tensor(init, device=device))
         self.expects_constraint_features = False
@@ -99,27 +104,128 @@ class ScalarAdaptivePenalty(PenaltyCoefficient):
         self.device = device
         self._reset_value = init
 
+        # Ratio targeting: hold penalty*sum(violation^2) at a fixed fraction of chi^2.
+        #
+        # Absolute penalty values cannot work here.  chi^2 for an unnormalised F(Q)
+        # fit over ~1000 points is O(1e8), while the constraint term with rho = 10 is
+        # O(1e2) -- a ratio of 7e-6, so the constraints contribute nothing and the
+        # optimizer freely trades local geometry for spectral agreement.  Reaching a
+        # 5% ratio needs rho ~ 7e4, which the default max_penalty of 1e3 forbids by a
+        # factor of 70.  The right quantity to fix is the ratio, not the coefficient,
+        # because chi^2 magnitude varies by orders of magnitude between systems and
+        # any hand-tuned rho breaks on the next material.  Mirrors the approach
+        # already used by MLIPRegularizer.adaptive_weight.
+        self.target_ratio = target_ratio
+        self.adapt_rate = adapt_rate
+
+        # Optional: let one of the adaptive loss aggregators choose the balance
+        # instead of a fixed ratio.  Set via `aggregator=<name>`.
+        self._aggregator = None
+        self._aggregator_name = aggregator
+        if aggregator is not None:
+            from torchdisorder.model.aggregators import build_aggregator
+            self._aggregator = build_aggregator(
+                aggregator, params=[], num_losses=2, **(aggregator_kwargs or {})
+            )
+
         # Tracking state
         self._current_value = init
         self._best_violation = float('inf')
         self._steps_without_improvement = 0
+        self._ceiling_warned = False
+        self._agg_step = 0
+
+    def _update_from_aggregator(self, total_violation: float, chi2: float):
+        """Derive the penalty from an Aggregator's view of the two loss terms.
+
+        The aggregators balance loss *terms*, whereas the augmented Lagrangian
+        needs a *coefficient*.  Feed them the objective and the raw violation, read
+        back the relative weight they assign, and convert that ratio into the
+        coefficient which realises it:  penalty = (w_c/w_chi) * chi2 / violation.
+
+        Gradient-based aggregators (grad_norm, lr_annealing) are not usable here —
+        they need the graph, and these are detached floats — so anything that
+        reports no weights falls back to the fixed-ratio rule.
+        """
+        if total_violation <= 1e-12:
+            return
+        device = self.device
+        losses = {
+            "chi2": torch.tensor(float(chi2), device=device),
+            "constraint": torch.tensor(float(total_violation), device=device),
+        }
+        try:
+            self._aggregator(losses, self._agg_step)
+            weights = self._aggregator.current_weights
+        except Exception as exc:  # never let a balancing heuristic kill a run
+            warnings.warn(
+                f"Aggregator '{self._aggregator_name}' failed ({exc}); "
+                "falling back to fixed-ratio balancing.",
+                stacklevel=2,
+            )
+            weights = None
+        self._agg_step += 1
+
+        if not weights or len(weights) < 2 or weights[0] <= 0:
+            ratio = self.target_ratio if self.target_ratio is not None else 0.05
+        else:
+            ratio = float(weights[1]) / float(weights[0])
+
+        desired = ratio * float(chi2) / float(total_violation)
+        step = (desired / max(self._current_value, 1e-30)) ** self.adapt_rate
+        self._current_value = min(
+            max(self._current_value * step, self.min_penalty), self.max_penalty
+        )
 
     def __call__(self, constraint_features=None):
         """Return the current penalty value."""
         return torch.tensor(self._current_value, device=self.device)
 
-    def update(self, total_violation: float):
+    def update(self, total_violation: float, chi2: Optional[float] = None):
         """
         Update penalty based on constraint violation.
-        
+
         Call this after each optimization step with the sum of
         squared constraint violations.
-        
+
         Parameters
         ----------
         total_violation : float
             Sum of squared constraint violations
+        chi2 : float, optional
+            Current objective value.  Required for ``target_ratio`` mode, in which
+            the penalty is driven so that ``penalty * total_violation / chi2``
+            approaches ``target_ratio``.  Ignored otherwise.
         """
+        if self._aggregator is not None and chi2 is not None:
+            self._update_from_aggregator(total_violation, chi2)
+            return
+
+        if self.target_ratio is not None and chi2 is not None:
+            if total_violation <= 1e-12:
+                # Constraints are satisfied, so there is no ratio to target and no
+                # well-defined division.  Hold the coefficient rather than falling
+                # through to the improvement rule, which would quietly decay it.
+                return
+            desired = self.target_ratio * float(chi2) / float(total_violation)
+            # Move multiplicatively toward the target so a transient spike in either
+            # quantity cannot make the penalty jump by orders of magnitude in a step.
+            ratio = desired / max(self._current_value, 1e-30)
+            step = ratio ** self.adapt_rate
+            new_value = self._current_value * step
+            clamped = min(max(new_value, self.min_penalty), self.max_penalty)
+            if clamped < new_value and not self._ceiling_warned:
+                warnings.warn(
+                    f"Constraint penalty is pinned at max_penalty={self.max_penalty:g}; "
+                    f"reaching target_ratio={self.target_ratio:g} needs ~{desired:.2e}. "
+                    "Constraints will stay effectively inactive -- raise "
+                    "penalty.max_penalty.",
+                    stacklevel=2,
+                )
+                self._ceiling_warned = True
+            self._current_value = clamped
+            return
+
         if total_violation < self._best_violation * 0.99:  # 1% improvement threshold
             # Constraints improving - decrease penalty
             self._best_violation = total_violation
@@ -311,11 +417,25 @@ class StructureFactorCMPWithConstraints(cooper.ConstrainedMinimizationProblem):
                max_penalty=penalty_config.get('max_penalty', 1000.0),
                min_penalty=penalty_config.get('min_penalty', 1.0),
                patience=penalty_config.get('patience', 10),
-               device=self.device
+               device=self.device,
+               target_ratio=penalty_config.get('target_ratio', None),
+               adapt_rate=penalty_config.get('adapt_rate', 0.15),
+               aggregator=penalty_config.get('aggregator', None),
+               aggregator_kwargs=penalty_config.get('aggregator_kwargs', None),
            )
-           print(f"  Using ScalarAdaptivePenalty: init={penalty_config.get('init', 10.0)}, "
-                 f"growth={penalty_config.get('growth_rate', 1.5)}, "
-                 f"decay={penalty_config.get('decay_rate', 0.95)}")
+           if self.penalty_coeff._aggregator is not None:
+               print(f"  Using ScalarAdaptivePenalty: aggregator="
+                     f"'{self.penalty_coeff._aggregator_name}' balancing chi2 vs "
+                     f"constraints, max={penalty_config.get('max_penalty', 1000.0):g}")
+           elif self.penalty_coeff.target_ratio is not None:
+               print(f"  Using ScalarAdaptivePenalty: target_ratio="
+                     f"{self.penalty_coeff.target_ratio:g} of chi2, "
+                     f"init={penalty_config.get('init', 10.0)}, "
+                     f"max={penalty_config.get('max_penalty', 1000.0):g}")
+           else:
+               print(f"  Using ScalarAdaptivePenalty: init={penalty_config.get('init', 10.0)}, "
+                     f"growth={penalty_config.get('growth_rate', 1.5)}, "
+                     f"decay={penalty_config.get('decay_rate', 0.95)}")
        else:
            self.penalty_coeff = ConstantPenalty(float(penalty_config), device=self.device)
            print(f"  Using ConstantPenalty: {penalty_config}")
