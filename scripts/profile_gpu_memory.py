@@ -90,9 +90,9 @@ def main():
                      rdf_data=None, device=str(dev))
     mark("model built")
 
-    pos = state.positions.clone().requires_grad_(True)
-    cell = state.cell[0] if state.cell.ndim == 3 else state.cell
-    out = model(pos, cell, atoms.get_chemical_symbols())
+    # XRDModel.forward takes the SimState itself.
+    state.positions = state.positions.clone().requires_grad_(True)
+    out = model(state)
     mark("forward pass")
 
     key = "F_Q" if "F_Q" in out else list(out)[0]
