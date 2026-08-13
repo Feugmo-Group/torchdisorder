@@ -1018,6 +1018,12 @@ if WARP_AVAILABLE:
             # Ensure cell is 3D for torchsim_nl
             cell_for_nl = cell.unsqueeze(0) if cell.ndim == 2 else cell
 
+            # torchsim_nl expects ROW-vector convention while state.cell is stored
+            # column-wise.  See PyTorchOrderParameters._build_neighbor_data -- this
+            # is the same correction; the two implementations must stay in step or
+            # the CPU and GPU backends will disagree on coordination.
+            cell_for_nl = cell_for_nl.transpose(-2, -1)
+
             # Only use mapping from torchsim_nl (ignore shifts - may not be shift vectors)
             mapping = torchsim_nl(
                 positions=positions,
@@ -1027,14 +1033,15 @@ if WARP_AVAILABLE:
                 system_idx=system_idx,
                 self_interaction=False,
             )[0]  # Only take mapping
-            
+
             M = len(atom_indices)
             K = self.max_neighbors
-            
-            # Get the 2D cell matrix for minimum image convention
+
+            # Row-vector cell for the minimum-image wrap (see note above).
             cell_2d = cell[0] if cell.ndim == 3 else cell
-            cell_inv = torch.linalg.inv(cell_2d.float())
-            
+            cell_row = cell_2d.transpose(-2, -1)
+            cell_inv_row = torch.linalg.inv(cell_row.float())
+
             neighbor_list = torch.full((M, K), 0, dtype=torch.long, device=self.device)
             cell_shifts = torch.zeros((M, K, 3), dtype=positions.dtype, device=self.device)
             valid_mask = torch.zeros((M, K), dtype=torch.bool, device=self.device)
@@ -1050,18 +1057,30 @@ if WARP_AVAILABLE:
                     )
                     neighs = neighs[elem_mask]
                 
-                n = min(len(neighs), K)
-                if n > 0:
-                    neighbor_list[i, :n] = neighs[:n]
-                    valid_mask[i, :n] = True
-                    
-                    # Compute PBC shift using minimum image convention
-                    dr = positions[neighs[:n]] - positions[atom_idx].unsqueeze(0)  # (n, 3)
-                    frac = dr.float() @ cell_inv                     # (n, 3)
+                if len(neighs) > 0:
+                    # Minimum image for every candidate, before any truncation.
+                    dr_all = positions[neighs] - positions[atom_idx].unsqueeze(0)
+                    frac = dr_all.float() @ cell_inv_row
                     frac = frac - torch.round(frac)                  # wrap
-                    dr_pbc = frac @ cell_2d.float()                  # (n, 3)
+                    dr_pbc = (frac @ cell_row.float()).to(positions.dtype)
+
+                    # Re-apply the cutoff: an edge can be inside it through one
+                    # periodic image while its minimum-image separation is far
+                    # larger.  Without this the backend reports <CN> = 4.32 on
+                    # hexagonal c-SiO2 against a true 4.000.
+                    within = dr_pbc.norm(dim=-1) <= self.cutoff
+                    neighs, dr_all, dr_pbc = neighs[within], dr_all[within], dr_pbc[within]
+
+                    # Keep the CLOSEST when more survive than fit in K slots.
+                    if len(neighs) > K:
+                        order = torch.argsort(dr_pbc.norm(dim=-1))[:K]
+                        neighs, dr_all, dr_pbc = neighs[order], dr_all[order], dr_pbc[order]
+                    n = len(neighs)
+
+                    neighbor_list[i, :n] = neighs
+                    valid_mask[i, :n] = True
                     # cell_shifts = dr_pbc - dr (correction to add to positions[neigh])
-                    cell_shifts[i, :n] = (dr_pbc - dr).to(positions.dtype)
+                    cell_shifts[i, :n] = dr_pbc - dr_all
             
             return neighbor_list, cell_shifts, valid_mask
 

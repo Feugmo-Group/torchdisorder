@@ -484,3 +484,36 @@ def test_neighbor_list_matches_ase_on_hexagonal_cell():
         # Perfect tetrahedra -> -1/3, with only the small real alpha-quartz distortion.
         assert out["fis"].mean().item() == pytest.approx(-1 / 3, abs=0.01)
         assert out["fis"].std().item() < 0.02, "a crystal cannot have a broad F_IS spread"
+
+
+def test_warp_backend_agrees_with_pytorch_on_hexagonal_cell():
+    """Both backends must report the same coordination on a non-orthogonal cell.
+
+    The warp path has its own copy of the neighbour construction, so the
+    cell-convention fix had to be applied twice.  If the copies drift, CPU and GPU
+    runs silently disagree -- and the GPU one would reintroduce <CN> = 4.32 while
+    every CPU test kept passing.  Skips cleanly when warp is unavailable.
+    """
+    ase_io = pytest.importorskip("ase.io")
+    pytest.importorskip("warp")
+    from torch_sim.io import atoms_to_state
+
+    atoms = ase_io.read(str(SIO2_CIF))
+    state = atoms_to_state(atoms, device=torch.device("cpu"), dtype=torch.float64)
+    si = torch.where(state.atomic_numbers == SI_Z)[0]
+
+    try:
+        warp_calc = TorchSimOrderParameters(cutoff=2.2, device="cpu",
+                                            max_neighbors=8, backend="warp")
+    except Exception as exc:                      # warp present but no usable device
+        pytest.skip(f"warp backend unavailable: {exc}")
+
+    torch_calc = TorchSimOrderParameters(cutoff=2.2, device="cpu",
+                                         max_neighbors=8, backend="pytorch")
+    got = warp_calc(state, si, ["cn"], element_filter=[O_Z])["cn"].mean().item()
+    ref = torch_calc(state, si, ["cn"], element_filter=[O_Z])["cn"].mean().item()
+
+    assert ref == pytest.approx(4.0, abs=1e-6), "pytorch backend must be correct first"
+    assert got == pytest.approx(ref, abs=1e-6), (
+        f"warp <CN>={got:.4f} disagrees with pytorch <CN>={ref:.4f}"
+    )
