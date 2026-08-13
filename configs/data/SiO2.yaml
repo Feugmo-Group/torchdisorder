@@ -2,6 +2,8 @@
 # ========================================
 # Neutron diffraction data for amorphous silica
 
+experiment_name: SiO2
+
 root_dir: ${oc.env:PROJECT_ROOT,./}/data
 
 # =============================================================================
@@ -75,4 +77,9 @@ cutoff: 2.0
 # =============================================================================
 # Constraints
 # =============================================================================
-json_path: ${data.root_dir}/json/sio2_glass_constraints.json
+# Constraints for the GAP glass: 1723 of 1728 Si.  The 5 omitted are genuine
+# coordination defects (3 Si5, 2 Si3) and are deliberately left unconstrained.
+# The previous file was built for the old 1125-atom structure and constrained only
+# 375 Si, leaving 78% of the tetrahedra with nothing holding them together.
+# Must stay index-consistent with structure.cif_path — see configs/structure/silica.yaml.
+json_path: ${data.root_dir}/json/sio2_glass_gap_constraints.json

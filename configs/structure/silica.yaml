@@ -11,8 +11,15 @@ init: from_cif
 # Published, validated a-SiO2 (Erhard et al., npj Comput. Mater. 8, 90 (2022);
 # Zenodo 10.5281/zenodo.6353684, CC BY 4.0).  5184 atoms, 2.194 g/cm3, <CN> = 4.000
 # over a cutoff plateau, Si-O = 1.619 A, O-Si-O = 109.4 +/- 5.4 deg.
-# See PROVENANCE_sio2_glass_gap.md.
-cif_path: ${structure.root_dir}/crystal-structures/sio2_glass_gap.cif
+# See crystal-structures/PROVENANCE_sio2_glass_gap.md.
+#
+# This points at the CONSTRAINT GENERATOR'S copy, not the pristine download in
+# crystal-structures/.  The generator reorders atoms, and constraints are keyed by
+# atom index: pairing the constraints with the original file puts 1148 of 1723 of
+# them on oxygen instead of silicon.  The two files describe the same structure —
+# both validate identically — but only this one shares the constraints' indexing.
+# If you regenerate constraints, take the structure from the generator's output too.
+cif_path: ${structure.root_dir}/json/sio2_glass_gap.cif
 
 # DO NOT USE crystal-structures/sio2_glass.cif -- it is not a glass.  It has 298 Si-O
 # contacts below 1.4 A (minimum 0.185 A) and <CN> = 3.02 with no first shell, before

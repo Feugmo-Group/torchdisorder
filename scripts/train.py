@@ -1567,6 +1567,32 @@ def main(cfg: DictConfig) -> None:
             
             print(f"  Original constraints: {orig_n_atoms} atoms, types: {orig_op_types}")
             print(f"  Cutoff: {cutoff} Å")
+
+            # Constraints are keyed by ATOM INDEX, so they are only meaningful for the
+            # exact structure they were generated from.  The generators reorder atoms,
+            # so pairing a constraints file with a differently-ordered copy of the same
+            # structure silently lands most constraints on the wrong element -- 1148 of
+            # 1723 ended up on oxygen when the SiO2 constraints were paired with the
+            # pristine download rather than the generator's output.  Nothing downstream
+            # would complain; the run would simply constrain the wrong atoms.
+            _central = cfg.data.get('central')
+            if _central is not None and orig_n_atoms:
+                from ase.data import atomic_numbers as _AZ
+                _want = _AZ[_central]
+                _znum = base_sim_state.atomic_numbers.tolist()
+                _idx = [int(k) for k in constraints_data.get('atom_constraints', {})]
+                _bad = [i for i in _idx if i >= len(_znum) or _znum[i] != _want]
+                if _bad:
+                    raise SystemExit(
+                        f"\n  Constraint/structure mismatch: {len(_bad)} of {len(_idx)} "
+                        f"constrained indices are not {_central} in the loaded structure "
+                        f"({len(_znum)} atoms).\n"
+                        f"  The constraints file and structure.cif_path must come from the "
+                        f"same generator run — the generators reorder atoms.\n"
+                        f"    constraints: {json_path}\n"
+                        f"    structure:   {OmegaConf.select(cfg, 'structure.cif_path')}"
+                    )
+                print(f"  Index check: all {len(_idx)} constrained atoms are {_central} ✓")
             
             # Filter constraints
             filtered = filter_constraints(constraints_data, constraints_use_types, constraints_enabled)
