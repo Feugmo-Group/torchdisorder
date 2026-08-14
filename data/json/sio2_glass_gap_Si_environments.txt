@@ -23,8 +23,9 @@ Si3 environments (2 atoms, priority=1.0):
 
 Si4 environments (1723 atoms, priority=2.0):
 ----------------------------------------------------------------------
-  tet: target=0.85, range=[0.70, 1.00], weight=2.0
+  tet: target=0.9192, range=[0.70, 1.00], weight=2.0
   cn: target=4.0, tolerance=0.50, weight=1.5
+  fis: target=-0.3014, tolerance=0.08, weight=1.5
 
 Si5 environments (3 atoms, priority=1.0):
 ----------------------------------------------------------------------

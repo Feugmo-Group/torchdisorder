@@ -1,0 +1,2206 @@
+======================================================================
+Ge ENVIRONMENT SUMMARY FOR GeO2
+======================================================================
+
+Total atoms: 3240
+Total Ge atoms: 1080
+Cutoff (Ge-O): 2.400 Å
+
+Environment distribution (by Ge CN):
+----------------------------------------------------------------------
+  Ge4         :  97.96%  (count=1058, priority=2.0)
+  Ge5         :   1.94%  (count=21, priority=1.2)
+  Ge6         :   0.09%  (count=1, priority=1.5)
+
+======================================================================
+ORDER PARAMETER CONSTRAINTS BY ENVIRONMENT
+======================================================================
+
+
+Ge4 environments (1058 atoms, priority=2.0):
+----------------------------------------------------------------------
+  tet: target=0.8, range=[0.65, 1.00], weight=2.0
+  cn: target=4.0, tolerance=0.50, weight=1.5
+  fis: target=-0.3333, tolerance=0.08, weight=1.5
+
+Ge5 environments (21 atoms, priority=1.2):
+----------------------------------------------------------------------
+  cn: target=5.0, tolerance=0.50, weight=1.0
+
+Ge6 environments (1 atoms, priority=1.5):
+----------------------------------------------------------------------
+  cn: target=6.0, tolerance=0.50, weight=1.5
+
+======================================================================
+DETAILED Ge SITE INFORMATION
+======================================================================
+
+
+Ge4 sites (1058 atoms):
+----------------------------------------------------------------------
+  Index      0: GeO4 (tetrahedral)       CN=4 xyz=(4.003, 2.099, 4.128)
+      O neighbors: [1080, 1081, 1082, 1085]
+  Index      1: GeO4 (tetrahedral)       CN=4 xyz=(3.856, 0.558, 6.799)
+      O neighbors: [1080, 1137, 1916, 1967]
+  Index      2: GeO4 (tetrahedral)       CN=4 xyz=(5.533, 4.086, 6.373)
+      O neighbors: [1085, 1089, 1111, 1136]
+  Index      3: GeO4 (tetrahedral)       CN=4 xyz=(8.864, 2.522, 2.765)
+      O neighbors: [1086, 1088, 1090, 1093]
+  Index      4: GeO4 (tetrahedral)       CN=4 xyz=(6.248, 0.685, 2.439)
+      O neighbors: [1082, 1086, 1087, 1918]
+  Index      5: GeO4 (tetrahedral)       CN=4 xyz=(11.787, 2.123, 3.777)
+      O neighbors: [1093, 1094, 1095, 1096]
+  Index      6: GeO4 (tetrahedral)       CN=4 xyz=(13.793, 4.094, 2.234)
+      O neighbors: [1094, 1099, 1103, 1120]
+  Index      7: GeO4 (tetrahedral)       CN=4 xyz=(10.251, 1.650, 7.403)
+      O neighbors: [1091, 1092, 1144, 1146]
+  Index      8: GeO4 (tetrahedral)       CN=4 xyz=(14.087, 3.543, 5.274)
+      O neighbors: [1095, 1097, 1101, 1103]
+  Index      9: GeO4 (tetrahedral)       CN=4 xyz=(15.650, 1.985, 0.722)
+      O neighbors: [1098, 1099, 1100, 1315]
+  Index     10: GeO4 (tetrahedral)       CN=4 xyz=(16.920, 2.795, 6.360)
+      O neighbors: [1101, 1102, 1104, 1153]
+  Index     11: GeO4 (tetrahedral)       CN=4 xyz=(18.365, 0.482, 0.522)
+      O neighbors: [1098, 1313, 1938, 2158]
+  Index     12: GeO4 (tetrahedral)       CN=4 xyz=(3.009, 4.878, 2.542)
+      O neighbors: [1081, 1105, 1107, 1108]
+  Index     13: GeO4 (tetrahedral)       CN=4 xyz=(1.971, 9.094, 2.633)
+      O neighbors: [1106, 1110, 1345, 1349]
+  Index     14: GeO4 (tetrahedral)       CN=4 xyz=(3.658, 8.451, 0.018)
+      O neighbors: [1110, 1112, 1323, 1564]
+  Index     15: GeO4 (tetrahedral)       CN=4 xyz=(5.279, 6.371, 4.261)
+      O neighbors: [1108, 1111, 1113, 1116]
+  Index     16: GeO4 (tetrahedral)       CN=4 xyz=(7.879, 5.590, 2.568)
+      O neighbors: [1088, 1113, 1114, 1115]
+  Index     17: GeO4 (tetrahedral)       CN=4 xyz=(7.743, 8.390, 4.017)
+      O neighbors: [1114, 1116, 1358, 1359]
+  Index     18: GeO4 (tetrahedral)       CN=4 xyz=(6.533, 7.201, 0.132)
+      O neighbors: [1112, 1115, 1326, 1330]
+  Index     19: GeO4 (tetrahedral)       CN=4 xyz=(12.542, 7.047, 1.447)
+      O neighbors: [1118, 1119, 1120, 1123]
+  Index     20: GeO4 (tetrahedral)       CN=4 xyz=(12.995, 8.289, 4.535)
+      O neighbors: [1119, 1121, 1122, 1128]
+  Index     21: GeO4 (tetrahedral)       CN=4 xyz=(17.595, 6.026, 6.187)
+      O neighbors: [1102, 1129, 1183, 2189]
+  Index     22: GeO4 (tetrahedral)       CN=4 xyz=(18.352, 7.906, 3.769)
+      O neighbors: [1127, 1368, 2186, 2189]
+  Index     23: GeO4 (tetrahedral)       CN=4 xyz=(14.414, 6.281, 6.769)
+      O neighbors: [1097, 1121, 1129, 1180]
+  Index     25: GeO4 (tetrahedral)       CN=4 xyz=(1.857, 0.668, 9.210)
+      O neighbors: [1130, 1134, 1967, 1972]
+  Index     26: GeO4 (tetrahedral)       CN=4 xyz=(4.244, 2.815, 8.749)
+      O neighbors: [1130, 1136, 1137, 1139]
+  Index     28: GeO4 (tetrahedral)       CN=4 xyz=(3.472, 3.379, 13.820)
+      O neighbors: [1131, 1133, 1138, 1190]
+  Index     29: GeO4 (tetrahedral)       CN=4 xyz=(5.755, 3.695, 11.696)
+      O neighbors: [1138, 1139, 1142, 1165]
+  Index     31: GeO4 (tetrahedral)       CN=4 xyz=(8.656, 4.297, 7.504)
+      O neighbors: [1089, 1091, 1117, 1140]
+  Index     32: GeO4 (tetrahedral)       CN=4 xyz=(10.363, 0.820, 12.582)
+      O neighbors: [1143, 1145, 1147, 1985]
+  Index     33: GeO4 (tetrahedral)       CN=4 xyz=(12.981, 0.800, 9.025)
+      O neighbors: [1146, 1148, 1151, 1986]
+  Index     34: GeO4 (tetrahedral)       CN=4 xyz=(13.286, 0.427, 12.181)
+      O neighbors: [1147, 1148, 1155, 1983]
+  Index     35: GeO4 (tetrahedral)       CN=4 xyz=(15.532, 2.393, 9.209)
+      O neighbors: [1151, 1152, 1153, 1154]
+  Index     36: GeO4 (tetrahedral)       CN=4 xyz=(16.328, 0.518, 11.590)
+      O neighbors: [1154, 1155, 1156, 1990]
+  Index     38: GeO4 (tetrahedral)       CN=4 xyz=(1.673, 5.956, 12.959)
+      O neighbors: [1131, 1158, 1160, 1161]
+  Index     39: GeO4 (tetrahedral)       CN=4 xyz=(4.194, 7.900, 13.236)
+      O neighbors: [1160, 1163, 1164, 1166]
+  Index     40: GeO4 (tetrahedral)       CN=4 xyz=(1.450, 8.777, 14.278)
+      O neighbors: [1161, 1163, 1402, 1458]
+  Index     41: GeO4 (tetrahedral)       CN=4 xyz=(0.392, 7.174, 7.586)
+      O neighbors: [1109, 1159, 1162, 2255]
+  Index     42: GeO4 (tetrahedral)       CN=4 xyz=(5.502, 5.450, 14.356)
+      O neighbors: [1164, 1165, 1190, 1220]
+  Index     44: GeO4 (tetrahedral)       CN=4 xyz=(8.013, 7.190, 8.147)
+      O neighbors: [1117, 1168, 1169, 1170]
+  Index     45: GeO4 (tetrahedral)       CN=4 xyz=(13.079, 9.033, 14.695)
+      O neighbors: [1181, 1231, 1410, 1473]
+  Index     46: GeO4 (tetrahedral)       CN=4 xyz=(11.622, 6.315, 10.845)
+      O neighbors: [1171, 1172, 1173, 1174]
+  Index     47: GeO4 (tetrahedral)       CN=4 xyz=(9.866, 6.135, 13.068)
+      O neighbors: [1149, 1167, 1173, 1175]
+  Index     48: GeO4 (tetrahedral)       CN=4 xyz=(10.572, 8.874, 9.114)
+      O neighbors: [1169, 1172, 1409, 1416]
+  Index     49: GeO4 (tetrahedral)       CN=4 xyz=(15.829, 7.823, 13.651)
+      O neighbors: [1177, 1179, 1181, 1240]
+  Index     50: GeO4 (tetrahedral)       CN=4 xyz=(16.933, 7.215, 10.655)
+      O neighbors: [1176, 1177, 1178, 1182]
+  Index     51: GeO4 (tetrahedral)       CN=4 xyz=(14.385, 5.356, 9.822)
+      O neighbors: [1152, 1174, 1176, 1180]
+  Index     52: GeO4 (tetrahedral)       CN=4 xyz=(3.112, 2.306, 18.159)
+      O neighbors: [1184, 1185, 1186, 1188]
+  Index     53: GeO4 (tetrahedral)       CN=4 xyz=(3.210, 0.848, 21.056)
+      O neighbors: [1186, 1246, 2026, 2027]
+  Index     54: GeO4 (tetrahedral)       CN=4 xyz=(0.563, 4.229, 21.841)
+      O neighbors: [1213, 1242, 2289, 2312]
+  Index     55: GeO4 (tetrahedral)       CN=4 xyz=(0.232, 3.855, 17.133)
+      O neighbors: [1184, 1187, 1214, 2282]
+  Index     56: GeO4 (tetrahedral)       CN=4 xyz=(7.084, 2.162, 21.638)
+      O neighbors: [1191, 1193, 1195, 1249]
+  Index     57: GeO4 (tetrahedral)       CN=4 xyz=(9.033, 1.917, 17.038)
+      O neighbors: [1192, 1194, 1196, 1197]
+  Index     58: GeO4 (tetrahedral)       CN=4 xyz=(10.715, 4.145, 15.357)
+      O neighbors: [1149, 1196, 1198, 1227]
+  Index     59: GeO4 (tetrahedral)       CN=4 xyz=(9.672, 2.958, 19.836)
+      O neighbors: [1191, 1192, 1199, 1201]
+  Index     60: GeO4 (tetrahedral)       CN=4 xyz=(13.413, 3.045, 16.429)
+      O neighbors: [1198, 1200, 1204, 1210]
+  Index     61: GeO4 (tetrahedral)       CN=4 xyz=(10.985, 1.476, 22.062)
+      O neighbors: [1199, 1203, 1257, 1261]
+  Index     62: GeO4 (tetrahedral)       CN=4 xyz=(13.979, 0.119, 21.381)
+      O neighbors: [1202, 1203, 1209, 2035]
+  Index     64: GeO4 (tetrahedral)       CN=4 xyz=(16.957, 2.839, 19.364)
+      O neighbors: [1205, 1207, 1208, 1212]
+  Index     65: GeO4 (tetrahedral)       CN=4 xyz=(18.373, 4.504, 17.189)
+      O neighbors: [1212, 1238, 2260, 2291]
+  Index     66: GeO4 (tetrahedral)       CN=4 xyz=(1.495, 5.764, 19.218)
+      O neighbors: [1213, 1214, 1216, 1217]
+  Index     67: GeO4 (tetrahedral)       CN=4 xyz=(1.286, 8.886, 19.383)
+      O neighbors: [1215, 1217, 1456, 2313]
+  Index     68: GeO4 (tetrahedral)       CN=4 xyz=(4.394, 5.168, 18.364)
+      O neighbors: [1188, 1216, 1219, 1222]
+  Index     69: GeO4 (tetrahedral)       CN=4 xyz=(6.934, 9.292, 19.213)
+      O neighbors: [1225, 1461, 1464, 1468]
+  Index     70: GeO4 (tetrahedral)       CN=4 xyz=(5.863, 5.020, 21.199)
+      O neighbors: [1195, 1219, 1221, 1278]
+  Index     71: GeO4 (tetrahedral)       CN=4 xyz=(7.101, 6.398, 16.709)
+      O neighbors: [1220, 1222, 1223, 1224]
+  Index     72: GeO4 (tetrahedral)       CN=4 xyz=(8.317, 6.299, 19.682)
+      O neighbors: [1221, 1223, 1225, 1229]
+  Index     73: GeO4 (tetrahedral)       CN=4 xyz=(8.754, 9.183, 16.700)
+      O neighbors: [1224, 1228, 1460, 1461]
+  Index     74: GeO4 (tetrahedral)       CN=4 xyz=(12.199, 4.827, 19.065)
+      O neighbors: [1200, 1201, 1226, 1230]
+  Index     75: GeO4 (tetrahedral)       CN=4 xyz=(10.953, 7.108, 15.802)
+      O neighbors: [1175, 1227, 1228, 1231]
+  Index     76: GeO4 (tetrahedral)       CN=4 xyz=(14.284, 6.943, 18.482)
+      O neighbors: [1230, 1234, 1235, 1237]
+  Index     77: GeO4 (tetrahedral)       CN=4 xyz=(15.600, 5.494, 15.762)
+      O neighbors: [1179, 1210, 1235, 1238]
+  Index     78: GeO4 (tetrahedral)       CN=4 xyz=(14.762, 4.720, 20.666)
+      O neighbors: [1207, 1226, 1237, 1239]
+  Index     79: GeO4 (tetrahedral)       CN=4 xyz=(14.430, 9.255, 20.725)
+      O neighbors: [1232, 1234, 1471, 1477]
+  Index     80: GeO4 (tetrahedral)       CN=4 xyz=(3.615, 0.971, 24.214)
+      O neighbors: [1241, 1246, 1248, 2078]
+  Index     81: GeO4 (tetrahedral)       CN=4 xyz=(0.635, 2.675, 24.534)
+      O neighbors: [1241, 1242, 2340, 2343]
+  Index     82: GeO4 (tetrahedral)       CN=4 xyz=(3.124, 3.095, 28.523)
+      O neighbors: [1243, 1244, 1247, 1302]
+  Index     83: GeO4 (tetrahedral)       CN=4 xyz=(5.933, 3.041, 25.359)
+      O neighbors: [1248, 1250, 1251, 1254]
+  Index     84: GeO4 (tetrahedral)       CN=4 xyz=(5.732, 1.473, 27.944)
+      O neighbors: [1244, 1251, 1255, 2084]
+  Index     85: GeO4 (tetrahedral)       CN=4 xyz=(8.548, 4.578, 24.424)
+      O neighbors: [1250, 1256, 1276, 1279]
+  Index     86: GeO4 (tetrahedral)       CN=4 xyz=(11.026, 2.929, 24.921)
+      O neighbors: [1256, 1257, 1258, 1260]
+  Index     87: GeO4 (tetrahedral)       CN=4 xyz=(10.522, 3.675, 29.391)
+      O neighbors: [1252, 1262, 1312, 1332]
+  Index     88: GeO4 (tetrahedral)       CN=4 xyz=(12.834, 1.214, 29.019)
+      O neighbors: [1259, 1267, 1312, 2145]
+  Index     89: GeO4 (tetrahedral)       CN=4 xyz=(12.031, 0.001, 26.190)
+      O neighbors: [1258, 1259, 2092, 2096]
+  Index     90: GeO4 (tetrahedral)       CN=4 xyz=(15.830, 2.293, 28.635)
+      O neighbors: [1264, 1265, 1267, 1318]
+  Index     91: GeO4 (tetrahedral)       CN=4 xyz=(17.637, 1.266, 26.021)
+      O neighbors: [1263, 1265, 2102, 2321]
+  Index     92: GeO4 (tetrahedral)       CN=4 xyz=(17.460, 4.301, 25.283)
+      O neighbors: [1263, 1266, 1289, 1294]
+  Index     93: GeO4 (tetrahedral)       CN=4 xyz=(1.159, 5.761, 27.408)
+      O neighbors: [1243, 1268, 1271, 2370]
+  Index     94: GeO4 (tetrahedral)       CN=4 xyz=(1.738, 7.334, 24.527)
+      O neighbors: [1268, 1269, 1270, 1273]
+  Index     95: GeO4 (tetrahedral)       CN=4 xyz=(2.491, 7.890, 29.568)
+      O neighbors: [1271, 1322, 1325, 1511]
+  Index     96: GeO4 (tetrahedral)       CN=4 xyz=(4.727, 7.387, 23.084)
+      O neighbors: [1218, 1269, 1274, 1278]
+  Index     97: GeO4 (tetrahedral)       CN=4 xyz=(4.958, 5.236, 27.281)
+      O neighbors: [1247, 1254, 1272, 1275]
+  Index     98: GeO4 (tetrahedral)       CN=4 xyz=(5.330, 8.231, 26.250)
+      O neighbors: [1272, 1274, 1277, 1513]
+  Index     99: GeO4 (tetrahedral)       CN=4 xyz=(7.830, 6.519, 26.885)
+      O neighbors: [1275, 1276, 1277, 1280]
+  Index    100: GeO4 (tetrahedral)       CN=4 xyz=(12.176, 5.094, 26.881)
+      O neighbors: [1260, 1262, 1283, 1286]
+  Index    101: GeO4 (tetrahedral)       CN=4 xyz=(10.575, 7.890, 27.295)
+      O neighbors: [1280, 1282, 1283, 1284]
+  Index    102: GeO4 (tetrahedral)       CN=4 xyz=(12.831, 7.898, 23.196)
+      O neighbors: [1232, 1285, 1287, 1526]
+  Index    103: GeO4 (tetrahedral)       CN=4 xyz=(12.513, 8.476, 29.619)
+      O neighbors: [1282, 1288, 1336, 1579]
+  Index    104: GeO4 (tetrahedral)       CN=4 xyz=(10.027, 6.559, 22.371)
+      O neighbors: [1229, 1279, 1281, 1285]
+  Index    105: GeO4 (tetrahedral)       CN=4 xyz=(15.465, 7.510, 28.943)
+      O neighbors: [1288, 1290, 1293, 1339]
+  Index    106: GeO4 (tetrahedral)       CN=4 xyz=(15.378, 5.064, 27.218)
+      O neighbors: [1264, 1266, 1286, 1293]
+  Index    107: GeO4 (tetrahedral)       CN=4 xyz=(17.145, 9.025, 22.549)
+      O neighbors: [1292, 1477, 1528, 2290]
+  Index    108: GeO4 (tetrahedral)       CN=4 xyz=(16.935, 5.981, 22.551)
+      O neighbors: [1233, 1239, 1289, 1292]
+  Index    109: GeO4 (tetrahedral)       CN=4 xyz=(0.828, 0.528, 32.982)
+      O neighbors: [1296, 1299, 1301, 2129]
+  Index    110: GeO4 (tetrahedral)       CN=4 xyz=(3.517, 1.732, 33.264)
+      O neighbors: [1295, 1296, 1298, 1303]
+  Index    111: GeO4 (tetrahedral)       CN=4 xyz=(2.264, 4.444, 34.328)
+      O neighbors: [1295, 1297, 1300, 1320]
+  Index    112: GeO4 (tetrahedral)       CN=4 xyz=(0.704, 1.601, 29.868)
+      O neighbors: [1245, 1301, 1302, 2342]
+  Index    113: GeO4 (tetrahedral)       CN=4 xyz=(6.281, 3.130, 32.562)
+      O neighbors: [1303, 1304, 1307, 1308]
+  Index    114: GeO4 (tetrahedral)       CN=4 xyz=(7.765, 2.137, 30.099)
+      O neighbors: [1252, 1255, 1304, 1305]
+  Index    115: GeO4 (tetrahedral)       CN=4 xyz=(7.446, 0.528, 36.608)
+      O neighbors: [1087, 1306, 1922, 2139]
+  Index    116: GeO4 (tetrahedral)       CN=4 xyz=(9.024, 2.171, 34.295)
+      O neighbors: [1306, 1307, 1309, 1310]
+  Index    117: GeO4 (tetrahedral)       CN=4 xyz=(18.179, 3.556, 30.281)
+      O neighbors: [1318, 1344, 2319, 2374]
+  Index    118: GeO4 (tetrahedral)       CN=4 xyz=(14.793, 1.812, 34.921)
+      O neighbors: [1311, 1314, 1315, 1316]
+  Index    119: GeO4 (tetrahedral)       CN=4 xyz=(4.171, 5.542, 36.671)
+      O neighbors: [1105, 1297, 1323, 1326]
+  Index    120: GeO4 (tetrahedral)       CN=4 xyz=(2.311, 7.129, 32.601)
+      O neighbors: [1320, 1321, 1322, 1324]
+  Index    121: GeO4 (tetrahedral)       CN=4 xyz=(5.102, 7.927, 31.293)
+      O neighbors: [1321, 1325, 1328, 1574]
+  Index    122: GeO4 (tetrahedral)       CN=4 xyz=(6.899, 6.049, 33.008)
+      O neighbors: [1308, 1327, 1328, 1329]
+  Index    124: GeO4 (tetrahedral)       CN=4 xyz=(9.956, 5.261, 33.933)
+      O neighbors: [1310, 1327, 1333, 1334]
+  Index    125: GeO4 (tetrahedral)       CN=4 xyz=(10.931, 6.331, 31.395)
+      O neighbors: [1332, 1333, 1335, 1336]
+  Index    126: GeO4 (tetrahedral)       CN=4 xyz=(10.707, 7.539, 36.143)
+      O neighbors: [1118, 1334, 1337, 1338]
+  Index    127: GeO4 (tetrahedral)       CN=4 xyz=(9.672, 9.140, 31.731)
+      O neighbors: [1331, 1335, 1576, 1582]
+  Index    128: GeO4 (tetrahedral)       CN=4 xyz=(16.652, 8.807, 31.475)
+      O neighbors: [1290, 1342, 1585, 1590]
+  Index    129: GeO4 (tetrahedral)       CN=4 xyz=(18.243, 4.703, 35.410)
+      O neighbors: [1317, 1319, 2376, 2398]
+  Index    130: GeO4 (tetrahedral)       CN=4 xyz=(14.997, 4.835, 34.432)
+      O neighbors: [1314, 1317, 1341, 1343]
+  Index    131: GeO4 (tetrahedral)       CN=4 xyz=(14.957, 7.213, 36.811)
+      O neighbors: [1123, 1125, 1340, 1341]
+  Index    132: GeO4 (tetrahedral)       CN=4 xyz=(15.985, 5.833, 31.629)
+      O neighbors: [1339, 1342, 1343, 1344]
+  Index    133: GeO4 (tetrahedral)       CN=4 xyz=(1.309, 12.049, 3.387)
+      O neighbors: [1345, 1346, 1347, 2454]
+  Index    134: GeO4 (tetrahedral)       CN=4 xyz=(3.637, 10.580, 4.739)
+      O neighbors: [1346, 1349, 1350, 1352]
+  Index    135: GeO4 (tetrahedral)       CN=4 xyz=(2.627, 13.183, 0.677)
+      O neighbors: [1347, 1348, 1377, 1567]
+  Index    136: GeO4 (tetrahedral)       CN=4 xyz=(8.860, 10.898, 2.237)
+      O neighbors: [1353, 1357, 1358, 1360]
+  Index    137: GeO4 (tetrahedral)       CN=4 xyz=(6.294, 12.010, 6.052)
+      O neighbors: [1352, 1354, 1356, 1408]
+  Index    138: GeO4 (tetrahedral)       CN=4 xyz=(9.273, 10.941, 5.219)
+      O neighbors: [1354, 1359, 1360, 1361]
+  Index    139: GeO4 (tetrahedral)       CN=4 xyz=(12.042, 10.356, 6.685)
+      O neighbors: [1122, 1361, 1362, 1409]
+  Index    140: GeO4 (tetrahedral)       CN=4 xyz=(10.825, 13.230, 7.211)
+      O neighbors: [1361, 1383, 1414, 1415]
+  Index    141: GeO4 (tetrahedral)       CN=4 xyz=(18.417, 11.345, 0.946)
+      O neighbors: [1366, 1592, 2435, 2441]
+  Index    142: GeO4 (tetrahedral)       CN=4 xyz=(15.854, 12.209, 3.026)
+      O neighbors: [1365, 1366, 1367, 1369]
+  Index    143: GeO4 (tetrahedral)       CN=4 xyz=(15.045, 10.344, 5.618)
+      O neighbors: [1128, 1362, 1364, 1367]
+  Index    144: GeO4 (tetrahedral)       CN=4 xyz=(14.420, 12.614, 0.444)
+      O neighbors: [1365, 1390, 1583, 1591]
+  Index    145: GeO4 (tetrahedral)       CN=4 xyz=(2.827, 17.146, 2.666)
+      O neighbors: [1371, 1372, 1376, 1623]
+  Index    146: GeO4 (tetrahedral)       CN=4 xyz=(2.000, 15.734, 5.433)
+      O neighbors: [1372, 1373, 1374, 1375]
+  Index    147: GeO4 (tetrahedral)       CN=4 xyz=(4.526, 14.496, 6.933)
+      O neighbors: [1351, 1356, 1373, 1431]
+  Index    148: GeO4 (tetrahedral)       CN=4 xyz=(7.353, 18.508, 2.979)
+      O neighbors: [1378, 1380, 1625, 1628]
+  Index    149: GeO4 (tetrahedral)       CN=4 xyz=(8.030, 13.959, 2.230)
+      O neighbors: [1353, 1379, 1381, 1382]
+  Index    150: GeO4 (tetrahedral)       CN=4 xyz=(5.837, 16.245, 1.333)
+      O neighbors: [1376, 1378, 1379, 1598]
+  Index    151: GeO4 (tetrahedral)       CN=4 xyz=(9.374, 16.326, 3.847)
+      O neighbors: [1380, 1381, 1386, 1387]
+  Index    152: GeO4 (tetrahedral)       CN=4 xyz=(9.973, 15.833, 0.643)
+      O neighbors: [1382, 1386, 1602, 1604]
+  Index    153: GeO4 (tetrahedral)       CN=4 xyz=(11.981, 15.687, 5.432)
+      O neighbors: [1383, 1384, 1385, 1387]
+  Index    154: GeO4 (tetrahedral)       CN=4 xyz=(13.881, 16.851, 3.250)
+      O neighbors: [1384, 1388, 1392, 1393]
+  Index    155: GeO4 (tetrahedral)       CN=4 xyz=(16.151, 15.035, 1.581)
+      O neighbors: [1369, 1390, 1391, 1392]
+  Index    156: GeO4 (tetrahedral)       CN=4 xyz=(2.540, 12.596, 8.676)
+      O neighbors: [1351, 1394, 1396, 1398]
+  Index    157: GeO4 (tetrahedral)       CN=4 xyz=(3.285, 11.398, 11.495)
+      O neighbors: [1395, 1396, 1397, 1403]
+  Index    158: GeO4 (tetrahedral)       CN=4 xyz=(0.389, 10.141, 11.548)
+      O neighbors: [1395, 1402, 2506, 2508]
+  Index    159: GeO4 (tetrahedral)       CN=4 xyz=(2.065, 13.652, 13.314)
+      O neighbors: [1397, 1399, 1401, 1427]
+  Index    160: GeO4 (tetrahedral)       CN=4 xyz=(2.798, 9.646, 7.738)
+      O neighbors: [1162, 1350, 1394, 1400]
+  Index    161: GeO4 (tetrahedral)       CN=4 xyz=(6.208, 9.877, 11.662)
+      O neighbors: [1166, 1403, 1405, 1407]
+  Index    162: GeO4 (tetrahedral)       CN=4 xyz=(8.783, 13.526, 9.762)
+      O neighbors: [1404, 1415, 1430, 1436]
+  Index    163: GeO4 (tetrahedral)       CN=4 xyz=(5.886, 9.569, 8.417)
+      O neighbors: [1170, 1400, 1407, 1408]
+  Index    164: GeO4 (tetrahedral)       CN=4 xyz=(9.193, 10.745, 11.249)
+      O neighbors: [1404, 1405, 1411, 1416]
+  Index    165: GeO4 (tetrahedral)       CN=4 xyz=(11.962, 11.166, 12.608)
+      O neighbors: [1410, 1411, 1412, 1413]
+  Index    166: GeO4 (tetrahedral)       CN=4 xyz=(13.595, 13.475, 8.811)
+      O neighbors: [1414, 1417, 1422, 1442]
+  Index    167: GeO4 (tetrahedral)       CN=4 xyz=(13.254, 13.566, 14.625)
+      O neighbors: [1413, 1444, 1452, 1472]
+  Index    168: GeO4 (tetrahedral)       CN=4 xyz=(14.474, 11.056, 10.753)
+      O neighbors: [1412, 1417, 1419, 1420]
+  Index    169: GeO4 (tetrahedral)       CN=4 xyz=(17.020, 12.680, 11.477)
+      O neighbors: [1420, 1421, 1423, 1451]
+  Index    170: GeO4 (tetrahedral)       CN=4 xyz=(18.300, 12.520, 14.418)
+      O neighbors: [1423, 1475, 1476, 2492]
+  Index    171: GeO4 (tetrahedral)       CN=4 xyz=(16.288, 9.585, 8.551)
+      O neighbors: [1182, 1364, 1418, 1419]
+  Index    172: GeO4 (tetrahedral)       CN=4 xyz=(18.514, 11.535, 8.084)
+      O neighbors: [1370, 1418, 2437, 2487]
+  Index    173: GeO4 (tetrahedral)       CN=4 xyz=(1.520, 14.971, 10.388)
+      O neighbors: [1398, 1426, 1427, 2538]
+  Index    174: GeO4 (tetrahedral)       CN=4 xyz=(1.638, 17.881, 9.234)
+      O neighbors: [1424, 1425, 1426, 1676]
+  Index    175: GeO4 (tetrahedral)       CN=4 xyz=(0.743, 18.039, 14.041)
+      O neighbors: [1428, 1673, 2534, 2590]
+  Index    176: GeO4 (tetrahedral)       CN=4 xyz=(3.701, 16.964, 14.332)
+      O neighbors: [1428, 1429, 1485, 1677]
+  Index    177: GeO4 (tetrahedral)       CN=4 xyz=(6.110, 16.600, 12.264)
+      O neighbors: [1429, 1433, 1434, 1435]
+  Index    178: GeO4 (tetrahedral)       CN=4 xyz=(8.773, 17.770, 8.286)
+      O neighbors: [1432, 1437, 1439, 1627]
+  Index    179: GeO4 (tetrahedral)       CN=4 xyz=(6.464, 15.636, 9.083)
+      O neighbors: [1430, 1431, 1432, 1433]
+  Index    180: GeO4 (tetrahedral)       CN=4 xyz=(8.595, 14.467, 12.874)
+      O neighbors: [1406, 1434, 1436, 1438]
+  Index    181: GeO4 (tetrahedral)       CN=4 xyz=(12.048, 17.407, 8.197)
+      O neighbors: [1385, 1439, 1443, 1691]
+  Index    182: GeO4 (tetrahedral)       CN=4 xyz=(11.296, 15.879, 13.666)
+      O neighbors: [1438, 1440, 1441, 1444]
+  Index    183: GeO4 (tetrahedral)       CN=4 xyz=(13.027, 16.085, 10.821)
+      O neighbors: [1441, 1442, 1443, 1450]
+  Index    185: GeO4 (tetrahedral)       CN=4 xyz=(17.593, 17.984, 12.424)
+      O neighbors: [1446, 1448, 1697, 2514]
+  Index    186: GeO4 (tetrahedral)       CN=4 xyz=(16.065, 15.521, 11.108)
+      O neighbors: [1446, 1449, 1450, 1451]
+  Index    187: GeO4 (tetrahedral)       CN=4 xyz=(3.972, 10.043, 18.357)
+      O neighbors: [1215, 1453, 1455, 1468]
+  Index    188: GeO4 (tetrahedral)       CN=4 xyz=(0.686, 11.736, 20.384)
+      O neighbors: [1454, 1456, 1457, 2558]
+  Index    189: GeO4 (tetrahedral)       CN=4 xyz=(0.941, 13.542, 17.815)
+      O neighbors: [1454, 1484, 1486, 2561]
+  Index    190: GeO4 (tetrahedral)       CN=4 xyz=(2.518, 13.925, 22.214)
+      O neighbors: [1457, 1488, 1508, 1534]
+  Index    191: GeO4 (tetrahedral)       CN=4 xyz=(4.918, 10.132, 21.316)
+      O neighbors: [1218, 1455, 1464, 1512]
+  Index    192: GeO4 (tetrahedral)       CN=4 xyz=(5.460, 12.212, 16.975)
+      O neighbors: [1453, 1462, 1463, 1467]
+  Index    193: GeO4 (tetrahedral)       CN=4 xyz=(8.194, 12.025, 15.233)
+      O neighbors: [1406, 1460, 1463, 1466]
+  Index    194: GeO4 (tetrahedral)       CN=4 xyz=(7.383, 13.140, 19.485)
+      O neighbors: [1459, 1462, 1465, 1494]
+  Index    195: GeO4 (tetrahedral)       CN=4 xyz=(5.527, 13.042, 22.258)
+      O neighbors: [1459, 1512, 1517, 1534]
+  Index    196: GeO4 (tetrahedral)       CN=4 xyz=(10.160, 12.102, 21.077)
+      O neighbors: [1465, 1469, 1470, 1520]
+  Index    197: GeO4 (tetrahedral)       CN=4 xyz=(13.224, 12.025, 19.813)
+      O neighbors: [1470, 1471, 1474, 1478]
+  Index    198: GeO4 (tetrahedral)       CN=4 xyz=(13.864, 11.356, 16.599)
+      O neighbors: [1472, 1473, 1474, 1479]
+  Index    199: GeO4 (tetrahedral)       CN=4 xyz=(16.701, 10.108, 15.813)
+      O neighbors: [1240, 1476, 1479, 1482]
+  Index    200: GeO4 (tetrahedral)       CN=4 xyz=(15.589, 13.898, 19.169)
+      O neighbors: [1478, 1480, 1481, 1503]
+  Index    201: GeO4 (tetrahedral)       CN=4 xyz=(18.337, 12.356, 19.721)
+      O neighbors: [1480, 2540, 2542, 2543]
+  Index    202: GeO4 (tetrahedral)       CN=4 xyz=(18.434, 9.441, 18.266)
+      O neighbors: [1236, 1482, 2296, 2542]
+  Index    203: GeO4 (tetrahedral)       CN=4 xyz=(0.437, 16.361, 19.187)
+      O neighbors: [1483, 1484, 1487, 2589]
+  Index    204: GeO4 (tetrahedral)       CN=4 xyz=(3.636, 14.539, 16.174)
+      O neighbors: [1401, 1467, 1485, 1486]
+  Index    205: GeO4 (tetrahedral)       CN=4 xyz=(2.918, 16.853, 20.908)
+      O neighbors: [1487, 1488, 1489, 1538]
+  Index    206: GeO4 (tetrahedral)       CN=4 xyz=(5.703, 17.789, 19.407)
+      O neighbors: [1489, 1493, 1495, 1734]
+  Index    207: GeO4 (tetrahedral)       CN=4 xyz=(9.230, 14.642, 17.268)
+      O neighbors: [1466, 1491, 1494, 1500]
+  Index    208: GeO4 (tetrahedral)       CN=4 xyz=(7.548, 17.353, 16.854)
+      O neighbors: [1490, 1491, 1492, 1493]
+  Index    209: GeO4 (tetrahedral)       CN=4 xyz=(13.137, 17.201, 20.840)
+      O neighbors: [1496, 1498, 1499, 1505]
+  Index    210: GeO4 (tetrahedral)       CN=4 xyz=(11.256, 14.848, 19.714)
+      O neighbors: [1470, 1498, 1500, 1501]
+  Index    211: GeO4 (tetrahedral)       CN=4 xyz=(13.014, 18.247, 15.301)
+      O neighbors: [1440, 1447, 1497, 1745]
+  Index    212: GeO4 (tetrahedral)       CN=4 xyz=(16.064, 17.351, 15.273)
+      O neighbors: [1447, 1448, 1504, 1746]
+  Index    213: GeO4 (tetrahedral)       CN=4 xyz=(16.054, 14.316, 15.895)
+      O neighbors: [1452, 1475, 1481, 1504]
+  Index    214: GeO4 (tetrahedral)       CN=4 xyz=(16.184, 16.379, 21.147)
+      O neighbors: [1502, 1503, 1505, 1555]
+  Index    215: GeO4 (tetrahedral)       CN=4 xyz=(0.315, 9.923, 24.939)
+      O neighbors: [1270, 1507, 1509, 2368]
+  Index    216: GeO4 (tetrahedral)       CN=4 xyz=(0.378, 12.426, 23.933)
+      O neighbors: [1507, 1508, 1509, 2611]
+  Index    217: GeO4 (tetrahedral)       CN=4 xyz=(1.879, 13.409, 29.533)
+      O neighbors: [1506, 1510, 1537, 1568]
+  Index    218: GeO4 (tetrahedral)       CN=4 xyz=(4.579, 12.874, 28.571)
+      O neighbors: [1506, 1514, 1540, 1572]
+  Index    219: GeO4 (tetrahedral)       CN=4 xyz=(6.459, 10.834, 27.234)
+      O neighbors: [1513, 1514, 1515, 1516]
+  Index    220: GeO4 (tetrahedral)       CN=4 xyz=(9.411, 10.604, 25.680)
+      O neighbors: [1284, 1515, 1521, 1522]
+  Index    221: GeO4 (tetrahedral)       CN=4 xyz=(10.297, 9.657, 22.818)
+      O neighbors: [1281, 1469, 1521, 1526]
+  Index    222: GeO4 (tetrahedral)       CN=4 xyz=(12.316, 11.844, 26.068)
+      O neighbors: [1522, 1523, 1524, 1525]
+  Index    223: GeO4 (tetrahedral)       CN=4 xyz=(17.356, 9.379, 25.712)
+      O neighbors: [1291, 1527, 1528, 1533]
+  Index    224: GeO4 (tetrahedral)       CN=4 xyz=(14.861, 12.252, 24.446)
+      O neighbors: [1525, 1529, 1531, 1532]
+  Index    225: GeO4 (tetrahedral)       CN=4 xyz=(14.702, 12.556, 27.732)
+      O neighbors: [1523, 1530, 1531, 1559]
+  Index    226: GeO4 (tetrahedral)       CN=4 xyz=(14.183, 9.384, 25.393)
+      O neighbors: [1287, 1524, 1529, 1533]
+  Index    227: GeO4 (tetrahedral)       CN=4 xyz=(0.461, 17.747, 26.961)
+      O neighbors: [1535, 1536, 2637, 2639]
+  Index    228: GeO4 (tetrahedral)       CN=4 xyz=(8.527, 18.279, 24.652)
+      O neighbors: [1544, 1545, 1551, 1790]
+  Index    229: GeO4 (tetrahedral)       CN=4 xyz=(5.747, 16.977, 25.687)
+      O neighbors: [1539, 1541, 1542, 1545]
+  Index    230: GeO4 (tetrahedral)       CN=4 xyz=(5.718, 15.896, 28.486)
+      O neighbors: [1540, 1542, 1546, 1547]
+  Index    231: GeO4 (tetrahedral)       CN=4 xyz=(7.312, 14.550, 24.379)
+      O neighbors: [1517, 1518, 1541, 1543]
+  Index    232: GeO4 (tetrahedral)       CN=4 xyz=(8.613, 14.588, 27.307)
+      O neighbors: [1518, 1519, 1546, 1550]
+  Index    233: GeO4 (tetrahedral)       CN=4 xyz=(11.717, 17.376, 23.766)
+      O neighbors: [1499, 1551, 1552, 1554]
+  Index    234: GeO4 (tetrahedral)       CN=4 xyz=(10.394, 16.880, 28.184)
+      O neighbors: [1548, 1549, 1550, 1553]
+  Index    235: GeO4 (tetrahedral)       CN=4 xyz=(10.168, 14.784, 22.756)
+      O neighbors: [1501, 1520, 1543, 1552]
+  Index    236: GeO4 (tetrahedral)       CN=4 xyz=(16.519, 14.716, 23.771)
+      O neighbors: [1532, 1555, 1561, 1562]
+  Index    237: GeO4 (tetrahedral)       CN=4 xyz=(16.500, 14.994, 28.870)
+      O neighbors: [1556, 1559, 1560, 1609]
+  Index    238: GeO4 (tetrahedral)       CN=4 xyz=(15.480, 17.853, 28.262)
+      O neighbors: [1558, 1560, 1802, 1808]
+  Index    239: GeO4 (tetrahedral)       CN=4 xyz=(14.830, 17.220, 25.195)
+      O neighbors: [1554, 1557, 1558, 1562]
+  Index    240: GeO4 (tetrahedral)       CN=4 xyz=(18.436, 15.531, 26.180)
+      O neighbors: [1556, 1561, 2618, 2619]
+  Index    241: GeO4 (tetrahedral)       CN=4 xyz=(1.241, 10.644, 30.479)
+      O neighbors: [1510, 1511, 1563, 2667]
+  Index    242: GeO4 (tetrahedral)       CN=4 xyz=(2.392, 12.784, 32.534)
+      O neighbors: [1563, 1565, 1566, 1568]
+  Index    243: GeO4 (tetrahedral)       CN=4 xyz=(0.839, 12.940, 35.278)
+      O neighbors: [1566, 1567, 1593, 2668]
+  Index    244: GeO4 (tetrahedral)       CN=4 xyz=(4.844, 11.490, 36.993)
+      O neighbors: [1348, 1355, 1564, 1569]
+  Index    245: GeO4 (tetrahedral)       CN=4 xyz=(4.929, 13.588, 34.347)
+      O neighbors: [1565, 1569, 1595, 1597]
+  Index    246: GeO4 (tetrahedral)       CN=4 xyz=(8.794, 12.037, 31.861)
+      O neighbors: [1570, 1573, 1575, 1576]
+  Index    247: GeO4 (tetrahedral)       CN=4 xyz=(6.302, 10.861, 30.403)
+      O neighbors: [1516, 1570, 1572, 1574]
+  Index    248: GeO4 (tetrahedral)       CN=4 xyz=(7.662, 10.240, 36.809)
+      O neighbors: [1330, 1355, 1357, 1571]
+  Index    249: GeO4 (tetrahedral)       CN=4 xyz=(10.912, 12.470, 34.108)
+      O neighbors: [1573, 1577, 1578, 1580]
+  Index    250: GeO4 (tetrahedral)       CN=4 xyz=(12.784, 13.390, 31.463)
+      O neighbors: [1578, 1581, 1584, 1605]
+  Index    251: GeO4 (tetrahedral)       CN=4 xyz=(11.312, 9.457, 34.388)
+      O neighbors: [1337, 1338, 1577, 1582]
+  Index    252: GeO4 (tetrahedral)       CN=4 xyz=(14.347, 10.813, 30.406)
+      O neighbors: [1530, 1579, 1584, 1585]
+  Index    253: GeO4 (tetrahedral)       CN=4 xyz=(16.158, 10.198, 36.083)
+      O neighbors: [1340, 1586, 1591, 1592]
+  Index    254: GeO4 (tetrahedral)       CN=4 xyz=(16.243, 12.590, 34.033)
+      O neighbors: [1586, 1587, 1588, 1589]
+  Index    255: GeO4 (tetrahedral)       CN=4 xyz=(17.942, 13.642, 31.554)
+      O neighbors: [1587, 1609, 1612, 2643]
+  Index    256: GeO4 (tetrahedral)       CN=4 xyz=(1.337, 17.900, 37.039)
+      O neighbors: [1371, 1594, 1624, 2691]
+  Index    257: GeO4 (tetrahedral)       CN=4 xyz=(3.682, 15.853, 36.238)
+      O neighbors: [1377, 1594, 1595, 1598]
+  Index    258: GeO4 (tetrahedral)       CN=4 xyz=(6.190, 17.705, 30.982)
+      O neighbors: [1547, 1599, 1603, 1842]
+  Index    259: GeO4 (tetrahedral)       CN=4 xyz=(8.627, 17.082, 35.098)
+      O neighbors: [1600, 1601, 1602, 1607]
+  Index    260: GeO4 (tetrahedral)       CN=4 xyz=(7.008, 15.814, 33.409)
+      O neighbors: [1597, 1599, 1600, 1601]
+  Index    261: GeO4 (tetrahedral)       CN=4 xyz=(12.443, 14.534, 36.115)
+      O neighbors: [1580, 1583, 1604, 1606]
+  Index    262: GeO4 (tetrahedral)       CN=4 xyz=(10.163, 14.143, 29.848)
+      O neighbors: [1519, 1549, 1575, 1581]
+  Index    263: GeO4 (tetrahedral)       CN=4 xyz=(17.265, 18.429, 35.335)
+      O neighbors: [1610, 1613, 1854, 1857]
+  Index    264: GeO4 (tetrahedral)       CN=4 xyz=(17.184, 16.492, 32.912)
+      O neighbors: [1608, 1610, 1611, 1612]
+  Index    265: GeO4 (tetrahedral)       CN=4 xyz=(14.271, 14.934, 33.692)
+      O neighbors: [1589, 1605, 1606, 1608]
+  Index    266: GeO4 (tetrahedral)       CN=4 xyz=(3.364, 21.830, 2.871)
+      O neighbors: [1615, 1616, 1618, 1640]
+  Index    267: GeO4 (tetrahedral)       CN=4 xyz=(1.230, 22.065, 7.118)
+      O neighbors: [1617, 1619, 1622, 1674]
+  Index    268: GeO4 (tetrahedral)       CN=4 xyz=(4.347, 19.347, 4.309)
+      O neighbors: [1618, 1621, 1623, 1628]
+  Index    269: GeO4 (tetrahedral)       CN=4 xyz=(3.353, 19.637, 7.303)
+      O neighbors: [1617, 1621, 1675, 1676]
+  Index    270: GeO4 (tetrahedral)       CN=4 xyz=(0.562, 22.993, 2.462)
+      O neighbors: [1614, 1616, 1641, 2729]
+  Index    271: GeO4 (tetrahedral)       CN=4 xyz=(1.881, 20.978, 0.379)
+      O neighbors: [1614, 1615, 1624, 1835]
+  Index    272: GeO4 (tetrahedral)       CN=4 xyz=(8.677, 20.717, 6.963)
+      O neighbors: [1626, 1627, 1631, 1679]
+  Index    273: GeO4 (tetrahedral)       CN=4 xyz=(6.484, 23.116, 7.157)
+      O neighbors: [1626, 1648, 1654, 1685]
+  Index    274: GeO4 (tetrahedral)       CN=4 xyz=(9.575, 20.258, 1.192)
+      O neighbors: [1625, 1629, 1630, 1837]
+  Index    275: GeO4 (tetrahedral)       CN=4 xyz=(11.940, 21.709, 6.479)
+      O neighbors: [1631, 1633, 1657, 1687]
+  Index    276: GeO4 (tetrahedral)       CN=4 xyz=(12.672, 19.453, 1.837)
+      O neighbors: [1388, 1630, 1632, 1635]
+  Index    277: GeO4 (tetrahedral)       CN=4 xyz=(14.045, 21.284, 4.193)
+      O neighbors: [1632, 1633, 1637, 1638]
+  Index    278: GeO4 (tetrahedral)       CN=4 xyz=(18.220, 20.269, 0.509)
+      O neighbors: [1636, 1857, 2707, 2919]
+  Index    279: GeO4 (tetrahedral)       CN=4 xyz=(16.023, 18.828, 4.553)
+      O neighbors: [1389, 1393, 1634, 1637]
+  Index    280: GeO4 (tetrahedral)       CN=4 xyz=(18.546, 18.760, 6.321)
+      O neighbors: [1634, 2466, 2701, 2704]
+  Index    281: GeO4 (tetrahedral)       CN=4 xyz=(3.419, 24.191, 6.292)
+      O neighbors: [1619, 1642, 1644, 1648]
+  Index    282: GeO4 (tetrahedral)       CN=4 xyz=(1.563, 25.625, 3.982)
+      O neighbors: [1641, 1642, 1643, 1645]
+  Index    283: GeO4 (tetrahedral)       CN=4 xyz=(5.211, 23.693, 1.214)
+      O neighbors: [1640, 1647, 1650, 1841]
+  Index    284: GeO4 (tetrahedral)       CN=4 xyz=(7.748, 25.318, 2.092)
+      O neighbors: [1650, 1651, 1652, 1656]
+  Index    285: GeO4 (tetrahedral)       CN=4 xyz=(4.697, 26.879, 7.259)
+      O neighbors: [1644, 1649, 1705, 1943]
+  Index    286: GeO4 (tetrahedral)       CN=4 xyz=(9.449, 26.529, 4.373)
+      O neighbors: [1652, 1653, 1658, 1660]
+  Index    287: GeO4 (tetrahedral)       CN=4 xyz=(10.164, 23.456, 1.083)
+      O neighbors: [1629, 1655, 1656, 1870]
+  Index    288: GeO4 (tetrahedral)       CN=4 xyz=(11.155, 24.740, 6.386)
+      O neighbors: [1657, 1659, 1660, 1713]
+  Index    289: GeO4 (tetrahedral)       CN=4 xyz=(13.162, 24.150, 0.476)
+      O neighbors: [1639, 1655, 1661, 1875]
+  Index    290: GeO4 (tetrahedral)       CN=4 xyz=(15.057, 27.361, 4.191)
+      O neighbors: [1662, 1663, 1669, 1909]
+  Index    291: GeO4 (tetrahedral)       CN=4 xyz=(17.761, 26.996, 0.495)
+      O neighbors: [1665, 1668, 1882, 1908]
+  Index    292: GeO4 (tetrahedral)       CN=4 xyz=(15.644, 24.192, 4.800)
+      O neighbors: [1638, 1663, 1666, 1667]
+  Index    293: GeO4 (tetrahedral)       CN=4 xyz=(18.476, 24.717, 3.028)
+      O neighbors: [1666, 1668, 2706, 2736]
+  Index    294: GeO4 (tetrahedral)       CN=4 xyz=(3.080, 22.297, 11.827)
+      O neighbors: [1670, 1671, 1672, 1699]
+  Index    295: GeO4 (tetrahedral)       CN=4 xyz=(3.202, 20.068, 13.913)
+      O neighbors: [1672, 1673, 1677, 1731]
+  Index    296: GeO4 (tetrahedral)       CN=4 xyz=(0.562, 22.781, 13.830)
+      O neighbors: [1671, 1700, 1733, 2785]
+  Index    297: GeO4 (tetrahedral)       CN=4 xyz=(7.135, 19.016, 14.018)
+      O neighbors: [1435, 1492, 1681, 1683]
+  Index    298: GeO4 (tetrahedral)       CN=4 xyz=(4.930, 21.525, 9.394)
+      O neighbors: [1670, 1675, 1678, 1685]
+  Index    299: GeO4 (tetrahedral)       CN=4 xyz=(7.927, 20.293, 10.006)
+      O neighbors: [1437, 1678, 1679, 1682]
+  Index    300: GeO4 (tetrahedral)       CN=4 xyz=(6.883, 22.254, 13.749)
+      O neighbors: [1680, 1683, 1684, 1739]
+  Index    301: GeO4 (tetrahedral)       CN=4 xyz=(9.586, 20.983, 14.652)
+      O neighbors: [1680, 1681, 1688, 1741]
+  Index    302: GeO4 (tetrahedral)       CN=4 xyz=(10.567, 20.933, 11.678)
+      O neighbors: [1682, 1686, 1688, 1689]
+  Index    303: GeO4 (tetrahedral)       CN=4 xyz=(12.449, 20.249, 9.137)
+      O neighbors: [1686, 1687, 1691, 1692]
+  Index    304: GeO4 (tetrahedral)       CN=4 xyz=(12.333, 23.169, 12.366)
+      O neighbors: [1689, 1690, 1712, 1716]
+  Index    305: GeO4 (tetrahedral)       CN=4 xyz=(13.956, 21.225, 14.198)
+      O neighbors: [1690, 1696, 1745, 1747]
+  Index    306: GeO4 (tetrahedral)       CN=4 xyz=(15.557, 21.132, 9.496)
+      O neighbors: [1692, 1693, 1694, 1695]
+  Index    307: GeO4 (tetrahedral)       CN=4 xyz=(16.504, 20.852, 12.361)
+      O neighbors: [1695, 1696, 1697, 1698]
+  Index    308: GeO4 (tetrahedral)       CN=4 xyz=(18.569, 20.858, 8.703)
+      O neighbors: [1693, 2701, 2761, 2765]
+  Index    309: GeO4 (tetrahedral)       CN=4 xyz=(1.194, 27.685, 12.620)
+      O neighbors: [1701, 1941, 1947, 2811]
+  Index    310: GeO4 (tetrahedral)       CN=4 xyz=(2.951, 24.976, 13.513)
+      O neighbors: [1699, 1700, 1701, 1703]
+  Index    311: GeO4 (tetrahedral)       CN=4 xyz=(8.571, 27.856, 10.156)
+      O neighbors: [1709, 1710, 1952, 1955]
+  Index    312: GeO4 (tetrahedral)       CN=4 xyz=(5.729, 26.837, 10.313)
+      O neighbors: [1702, 1705, 1707, 1952]
+  Index    313: GeO4 (tetrahedral)       CN=4 xyz=(8.798, 24.869, 8.546)
+      O neighbors: [1654, 1706, 1709, 1713]
+  Index    314: GeO4 (tetrahedral)       CN=4 xyz=(7.632, 24.294, 11.480)
+      O neighbors: [1684, 1706, 1707, 1708]
+  Index    315: GeO4 (tetrahedral)       CN=4 xyz=(9.666, 26.408, 12.824)
+      O neighbors: [1708, 1710, 1711, 1715]
+  Index    316: GeO4 (tetrahedral)       CN=4 xyz=(13.057, 26.225, 8.282)
+      O neighbors: [1659, 1714, 1721, 1722]
+  Index    317: GeO4 (tetrahedral)       CN=4 xyz=(12.629, 26.071, 11.409)
+      O neighbors: [1714, 1715, 1716, 1717]
+  Index    318: GeO4 (tetrahedral)       CN=4 xyz=(17.914, 25.980, 9.761)
+      O neighbors: [1719, 1720, 1724, 2789]
+  Index    319: GeO4 (tetrahedral)       CN=4 xyz=(15.617, 24.140, 8.131)
+      O neighbors: [1667, 1694, 1721, 1724]
+  Index    320: GeO4 (tetrahedral)       CN=4 xyz=(1.541, 21.241, 16.404)
+      O neighbors: [1725, 1726, 1731, 1733]
+  Index    321: GeO4 (tetrahedral)       CN=4 xyz=(3.536, 22.935, 17.882)
+      O neighbors: [1725, 1729, 1732, 1755]
+  Index    322: GeO4 (tetrahedral)       CN=4 xyz=(2.568, 22.037, 20.872)
+      O neighbors: [1727, 1728, 1729, 1754]
+  Index    323: GeO4 (tetrahedral)       CN=4 xyz=(8.018, 19.073, 21.728)
+      O neighbors: [1495, 1544, 1740, 1794]
+  Index    324: GeO4 (tetrahedral)       CN=4 xyz=(5.620, 20.673, 18.199)
+      O neighbors: [1732, 1734, 1735, 1736]
+  Index    325: GeO4 (tetrahedral)       CN=4 xyz=(8.693, 20.240, 17.498)
+      O neighbors: [1490, 1735, 1738, 1741]
+  Index    326: GeO4 (tetrahedral)       CN=4 xyz=(6.599, 22.961, 20.306)
+      O neighbors: [1736, 1737, 1760, 1761]
+  Index    327: GeO4 (tetrahedral)       CN=4 xyz=(10.399, 20.135, 20.052)
+      O neighbors: [1738, 1740, 1742, 1743]
+  Index    328: GeO4 (tetrahedral)       CN=4 xyz=(12.997, 19.117, 18.408)
+      O neighbors: [1496, 1497, 1743, 1744]
+  Index    329: GeO4 (tetrahedral)       CN=4 xyz=(11.762, 21.909, 22.290)
+      O neighbors: [1742, 1767, 1795, 1798]
+  Index    330: GeO4 (tetrahedral)       CN=4 xyz=(17.319, 19.789, 16.896)
+      O neighbors: [1746, 1748, 1749, 1753]
+  Index    331: GeO4 (tetrahedral)       CN=4 xyz=(16.583, 19.728, 21.274)
+      O neighbors: [1502, 1751, 1752, 1806]
+  Index    332: GeO4 (tetrahedral)       CN=4 xyz=(15.257, 21.319, 18.867)
+      O neighbors: [1744, 1749, 1750, 1751]
+  Index    333: GeO4 (tetrahedral)       CN=4 xyz=(1.424, 27.019, 18.776)
+      O neighbors: [1756, 1757, 1758, 1997]
+  Index    334: GeO4 (tetrahedral)       CN=4 xyz=(4.561, 27.289, 19.671)
+      O neighbors: [1757, 1759, 1762, 1999]
+  Index    335: GeO4 (tetrahedral)       CN=4 xyz=(5.311, 24.580, 15.743)
+      O neighbors: [1703, 1739, 1755, 1763]
+  Index    336: GeO4 (tetrahedral)       CN=4 xyz=(6.765, 25.446, 18.368)
+      O neighbors: [1761, 1762, 1763, 1764]
+  Index    337: GeO4 (tetrahedral)       CN=4 xyz=(5.508, 25.297, 22.147)
+      O neighbors: [1759, 1760, 1765, 1817]
+  Index    338: GeO4 (tetrahedral)       CN=4 xyz=(9.316, 24.638, 20.218)
+      O neighbors: [1737, 1764, 1770, 1772]
+  Index    339: GeO4 (tetrahedral)       CN=4 xyz=(12.897, 23.892, 15.279)
+      O neighbors: [1712, 1718, 1747, 1769]
+  Index    340: GeO4 (tetrahedral)       CN=4 xyz=(11.760, 24.743, 18.319)
+      O neighbors: [1769, 1770, 1771, 1774]
+  Index    341: GeO4 (tetrahedral)       CN=4 xyz=(10.642, 26.739, 22.243)
+      O neighbors: [1766, 1768, 1772, 1824]
+  Index    342: GeO4 (tetrahedral)       CN=4 xyz=(12.054, 27.627, 17.403)
+      O neighbors: [1771, 1773, 2006, 2008]
+  Index    343: GeO4 (tetrahedral)       CN=4 xyz=(15.991, 27.305, 19.541)
+      O neighbors: [1775, 1776, 1781, 2013]
+  Index    344: GeO4 (tetrahedral)       CN=4 xyz=(14.803, 24.462, 19.492)
+      O neighbors: [1750, 1774, 1778, 1781]
+  Index    345: GeO4 (tetrahedral)       CN=4 xyz=(14.600, 26.513, 15.660)
+      O neighbors: [1718, 1773, 1779, 2012]
+  Index    346: GeO4 (tetrahedral)       CN=4 xyz=(17.338, 25.019, 15.668)
+      O neighbors: [1723, 1777, 1779, 1780]
+  Index    347: GeO4 (tetrahedral)       CN=4 xyz=(3.213, 19.158, 25.546)
+      O neighbors: [1536, 1539, 1783, 1784]
+  Index    348: GeO4 (tetrahedral)       CN=4 xyz=(1.292, 19.749, 29.405)
+      O neighbors: [1535, 1785, 1786, 1834]
+  Index    349: GeO4 (tetrahedral)       CN=4 xyz=(1.233, 22.969, 28.614)
+      O neighbors: [1785, 1810, 1812, 1864]
+  Index    350: GeO4 (tetrahedral)       CN=4 xyz=(2.356, 19.490, 22.570)
+      O neighbors: [1538, 1728, 1730, 1783]
+  Index    351: GeO4 (tetrahedral)       CN=4 xyz=(4.660, 21.902, 25.873)
+      O neighbors: [1784, 1788, 1789, 1809]
+  Index    352: GeO4 (tetrahedral)       CN=4 xyz=(7.240, 21.141, 24.097)
+      O neighbors: [1788, 1790, 1791, 1794]
+  Index    353: GeO4 (tetrahedral)       CN=4 xyz=(8.353, 19.264, 29.142)
+      O neighbors: [1548, 1793, 1842, 1845]
+  Index    354: GeO4 (tetrahedral)       CN=4 xyz=(6.352, 21.690, 28.488)
+      O neighbors: [1787, 1789, 1792, 1793]
+  Index    355: GeO4 (tetrahedral)       CN=4 xyz=(9.775, 22.706, 24.680)
+      O neighbors: [1791, 1795, 1797, 1823]
+  Index    356: GeO4 (tetrahedral)       CN=4 xyz=(12.098, 22.990, 29.507)
+      O neighbors: [1800, 1801, 1847, 1869]
+  Index    357: GeO4 (tetrahedral)       CN=4 xyz=(11.885, 21.828, 26.768)
+      O neighbors: [1796, 1797, 1799, 1800]
+  Index    358: GeO4 (tetrahedral)       CN=4 xyz=(12.524, 18.947, 28.386)
+      O neighbors: [1553, 1796, 1802, 1843]
+  Index    359: GeO4 (tetrahedral)       CN=4 xyz=(14.061, 21.605, 24.315)
+      O neighbors: [1798, 1799, 1804, 1805]
+  Index    360: GeO4 (tetrahedral)       CN=4 xyz=(16.577, 19.830, 24.511)
+      O neighbors: [1557, 1803, 1804, 1806]
+  Index    361: GeO4 (tetrahedral)       CN=4 xyz=(17.391, 20.214, 28.840)
+      O neighbors: [1807, 1808, 1851, 2872]
+  Index    362: GeO4 (tetrahedral)       CN=4 xyz=(18.326, 21.988, 26.243)
+      O neighbors: [1803, 1807, 1829, 2868]
+  Index    363: GeO4 (tetrahedral)       CN=4 xyz=(1.609, 24.080, 23.144)
+      O neighbors: [1754, 1782, 1813, 1815]
+  Index    364: GeO4 (tetrahedral)       CN=4 xyz=(3.845, 25.009, 24.869)
+      O neighbors: [1809, 1813, 1814, 1817]
+  Index    365: GeO4 (tetrahedral)       CN=4 xyz=(3.719, 24.652, 29.676)
+      O neighbors: [1812, 1816, 1858, 1861]
+  Index    366: GeO4 (tetrahedral)       CN=4 xyz=(7.508, 27.772, 25.891)
+      O neighbors: [1818, 1819, 2058, 2060]
+  Index    367: GeO4 (tetrahedral)       CN=4 xyz=(5.096, 26.461, 27.473)
+      O neighbors: [1814, 1816, 1819, 2057]
+  Index    368: GeO4 (tetrahedral)       CN=4 xyz=(7.755, 27.464, 22.704)
+      O neighbors: [1765, 1766, 1818, 2062]
+  Index    369: GeO4 (tetrahedral)       CN=4 xyz=(10.864, 25.742, 25.197)
+      O neighbors: [1822, 1823, 1824, 1825]
+  Index    371: GeO4 (tetrahedral)       CN=4 xyz=(13.896, 25.741, 25.437)
+      O neighbors: [1821, 1825, 1827, 1830]
+  Index    372: GeO4 (tetrahedral)       CN=4 xyz=(16.460, 24.533, 26.874)
+      O neighbors: [1829, 1830, 1831, 1832]
+  Index    373: GeO4 (tetrahedral)       CN=4 xyz=(18.159, 27.168, 26.209)
+      O neighbors: [1828, 1832, 2900, 3138]
+  Index    374: GeO4 (tetrahedral)       CN=4 xyz=(14.131, 24.099, 22.603)
+      O neighbors: [1767, 1778, 1805, 1821]
+  Index    375: GeO4 (tetrahedral)       CN=4 xyz=(3.359, 19.326, 31.441)
+      O neighbors: [1596, 1603, 1786, 1833]
+  Index    376: GeO4 (tetrahedral)       CN=4 xyz=(4.015, 22.338, 35.768)
+      O neighbors: [1835, 1838, 1841, 1859]
+  Index    377: GeO4 (tetrahedral)       CN=4 xyz=(0.618, 18.907, 32.394)
+      O neighbors: [1596, 1834, 1836, 2688]
+  Index    378: GeO4 (tetrahedral)       CN=4 xyz=(9.018, 22.525, 29.907)
+      O neighbors: [1792, 1801, 1844, 1845]
+  Index    379: GeO4 (tetrahedral)       CN=4 xyz=(4.766, 22.065, 31.138)
+      O neighbors: [1787, 1833, 1839, 1861]
+  Index    380: GeO4 (tetrahedral)       CN=4 xyz=(8.937, 20.217, 35.175)
+      O neighbors: [1607, 1837, 1840, 1848]
+  Index    381: GeO4 (tetrahedral)       CN=4 xyz=(6.487, 21.895, 33.783)
+      O neighbors: [1838, 1839, 1840, 1865]
+  Index    382: GeO4 (tetrahedral)       CN=4 xyz=(11.125, 20.227, 30.856)
+      O neighbors: [1843, 1845, 1846, 1847]
+  Index    383: GeO4 (tetrahedral)       CN=4 xyz=(11.742, 20.474, 33.943)
+      O neighbors: [1846, 1848, 1849, 1850]
+  Index    384: GeO4 (tetrahedral)       CN=4 xyz=(14.252, 19.539, 36.030)
+      O neighbors: [1613, 1635, 1850, 1855]
+  Index    385: GeO4 (tetrahedral)       CN=4 xyz=(16.144, 21.799, 31.180)
+      O neighbors: [1851, 1852, 1853, 1877]
+  Index    386: GeO4 (tetrahedral)       CN=4 xyz=(14.542, 21.929, 33.876)
+      O neighbors: [1849, 1853, 1855, 1883]
+  Index    387: GeO4 (tetrahedral)       CN=4 xyz=(15.852, 22.419, 36.980)
+      O neighbors: [1636, 1639, 1855, 1885]
+  Index    388: GeO4 (tetrahedral)       CN=4 xyz=(0.586, 26.865, 37.086)
+      O neighbors: [1646, 1862, 2109, 2967]
+  Index    389: GeO4 (tetrahedral)       CN=4 xyz=(2.891, 27.269, 31.248)
+      O neighbors: [1858, 1860, 2106, 2107]
+  Index    390: GeO4 (tetrahedral)       CN=4 xyz=(3.500, 25.432, 36.464)
+      O neighbors: [1647, 1859, 1862, 1863]
+  Index    391: GeO4 (tetrahedral)       CN=4 xyz=(4.502, 26.990, 33.934)
+      O neighbors: [1860, 1863, 1866, 2111]
+  Index    392: GeO4 (tetrahedral)       CN=4 xyz=(7.116, 25.023, 34.071)
+      O neighbors: [1865, 1866, 1867, 1868]
+  Index    393: GeO4 (tetrahedral)       CN=4 xyz=(9.277, 26.890, 35.298)
+      O neighbors: [1868, 1874, 1876, 2117]
+  Index    394: GeO4 (tetrahedral)       CN=4 xyz=(11.544, 25.946, 30.127)
+      O neighbors: [1826, 1869, 1871, 1873]
+  Index    395: GeO4 (tetrahedral)       CN=4 xyz=(9.950, 24.506, 32.455)
+      O neighbors: [1844, 1867, 1872, 1873]
+  Index    396: GeO4 (tetrahedral)       CN=4 xyz=(10.938, 24.217, 35.396)
+      O neighbors: [1870, 1872, 1874, 1875]
+  Index    397: GeO4 (tetrahedral)       CN=4 xyz=(16.212, 24.671, 29.977)
+      O neighbors: [1831, 1877, 1879, 1880]
+  Index    398: GeO4 (tetrahedral)       CN=4 xyz=(14.555, 26.783, 36.895)
+      O neighbors: [1661, 1665, 1881, 1905]
+  Index    399: GeO4 (tetrahedral)       CN=4 xyz=(15.458, 26.958, 33.893)
+      O neighbors: [1878, 1881, 1884, 2125]
+  Index    400: GeO4 (tetrahedral)       CN=4 xyz=(16.504, 24.134, 34.486)
+      O neighbors: [1856, 1878, 1883, 1885]
+  Index    401: GeO4 (tetrahedral)       CN=4 xyz=(14.411, 27.295, 30.795)
+      O neighbors: [1871, 1880, 1884, 2123]
+  Index    402: GeO4 (tetrahedral)       CN=4 xyz=(3.552, 30.920, 2.762)
+      O neighbors: [1886, 1888, 1889, 1892]
+  Index    403: GeO4 (tetrahedral)       CN=4 xyz=(2.363, 28.118, 2.072)
+      O neighbors: [1643, 1646, 1886, 1890]
+  Index    404: GeO4 (tetrahedral)       CN=4 xyz=(7.911, 28.114, 0.599)
+      O neighbors: [1651, 1891, 1893, 2117]
+  Index    405: GeO4 (tetrahedral)       CN=4 xyz=(6.445, 30.713, 4.060)
+      O neighbors: [1892, 1894, 1895, 1896]
+  Index    406: GeO4 (tetrahedral)       CN=4 xyz=(7.697, 32.124, 1.082)
+      O neighbors: [1895, 1897, 1919, 2115]
+  Index    407: GeO4 (tetrahedral)       CN=4 xyz=(4.819, 29.430, 0.302)
+      O neighbors: [1888, 1890, 1891, 2110]
+  Index    408: GeO4 (tetrahedral)       CN=4 xyz=(7.141, 27.944, 5.627)
+      O neighbors: [1649, 1653, 1894, 1898]
+  Index    409: GeO4 (tetrahedral)       CN=4 xyz=(7.137, 30.685, 7.224)
+      O neighbors: [1896, 1898, 1949, 1950]
+  Index    410: GeO4 (tetrahedral)       CN=4 xyz=(10.382, 28.959, 2.557)
+      O neighbors: [1658, 1893, 1899, 1900]
+  Index    411: GeO4 (tetrahedral)       CN=4 xyz=(11.240, 31.809, 4.177)
+      O neighbors: [1900, 1901, 1923, 1926]
+  Index    412: GeO4 (tetrahedral)       CN=4 xyz=(13.363, 28.848, 1.596)
+      O neighbors: [1662, 1899, 1902, 1905]
+  Index    413: GeO4 (tetrahedral)       CN=4 xyz=(12.442, 31.139, 6.840)
+      O neighbors: [1901, 1903, 1904, 1931]
+  Index    414: GeO4 (tetrahedral)       CN=4 xyz=(17.273, 29.158, 2.960)
+      O neighbors: [1669, 1906, 1908, 2971]
+  Index    415: GeO4 (tetrahedral)       CN=4 xyz=(14.680, 28.694, 7.069)
+      O neighbors: [1722, 1904, 1909, 1910]
+  Index    416: GeO4 (tetrahedral)       CN=4 xyz=(15.133, 31.417, 2.102)
+      O neighbors: [1902, 1906, 1907, 1937]
+  Index    417: GeO4 (tetrahedral)       CN=4 xyz=(3.015, 34.118, 3.187)
+      O neighbors: [1889, 1912, 1913, 1915]
+  Index    418: GeO4 (tetrahedral)       CN=4 xyz=(3.181, 35.029, 0.305)
+      O neighbors: [1912, 1914, 2132, 2134]
+  Index    419: GeO4 (tetrahedral)       CN=4 xyz=(4.457, 34.628, 6.230)
+      O neighbors: [1911, 1915, 1916, 1917]
+  Index    420: GeO4 (tetrahedral)       CN=4 xyz=(0.088, 33.690, 4.169)
+      O neighbors: [1887, 1913, 3018, 3020]
+  Index    421: GeO4 (tetrahedral)       CN=4 xyz=(7.812, 35.069, 2.626)
+      O neighbors: [1918, 1919, 1921, 1925]
+  Index    422: GeO4 (tetrahedral)       CN=4 xyz=(9.381, 34.300, 5.254)
+      O neighbors: [1920, 1921, 1923, 1927]
+  Index    423: GeO4 (tetrahedral)       CN=4 xyz=(11.449, 36.754, 5.320)
+      O neighbors: [1092, 1096, 1927, 1929]
+  Index    424: GeO4 (tetrahedral)       CN=4 xyz=(13.477, 33.955, 3.228)
+      O neighbors: [1926, 1928, 1930, 1937]
+  Index    425: GeO4 (tetrahedral)       CN=4 xyz=(9.817, 36.957, 1.245)
+      O neighbors: [1090, 1922, 1924, 1925]
+  Index    426: GeO4 (tetrahedral)       CN=4 xyz=(14.260, 35.627, 5.992)
+      O neighbors: [1929, 1930, 1936, 1992]
+  Index    427: GeO4 (tetrahedral)       CN=4 xyz=(14.750, 36.286, 1.741)
+      O neighbors: [1100, 1928, 1932, 1939]
+  Index    428: GeO4 (tetrahedral)       CN=4 xyz=(16.939, 35.978, 4.216)
+      O neighbors: [1933, 1934, 1936, 1939]
+  Index    429: GeO4 (tetrahedral)       CN=4 xyz=(4.267, 30.079, 8.359)
+      O neighbors: [1940, 1943, 1944, 1949]
+  Index    430: GeO4 (tetrahedral)       CN=4 xyz=(3.814, 28.937, 11.544)
+      O neighbors: [1702, 1940, 1941, 1946]
+  Index    431: GeO4 (tetrahedral)       CN=4 xyz=(4.715, 30.958, 13.734)
+      O neighbors: [1942, 1946, 1951, 1998]
+  Index    432: GeO4 (tetrahedral)       CN=4 xyz=(9.903, 30.649, 8.722)
+      O neighbors: [1903, 1950, 1955, 1956]
+  Index    433: GeO4 (tetrahedral)       CN=4 xyz=(10.044, 31.007, 13.915)
+      O neighbors: [1953, 1954, 1957, 2011]
+  Index    434: GeO4 (tetrahedral)       CN=4 xyz=(11.706, 30.958, 11.140)
+      O neighbors: [1956, 1957, 1958, 1959]
+  Index    435: GeO4 (tetrahedral)       CN=4 xyz=(14.099, 28.859, 11.437)
+      O neighbors: [1717, 1958, 1960, 1961]
+  Index    436: GeO4 (tetrahedral)       CN=4 xyz=(16.763, 30.408, 10.704)
+      O neighbors: [1960, 1962, 1963, 1964]
+  Index    437: GeO4 (tetrahedral)       CN=4 xyz=(14.402, 31.519, 12.647)
+      O neighbors: [1959, 1961, 1964, 1966]
+  Index    438: GeO4 (tetrahedral)       CN=4 xyz=(17.823, 28.379, 7.481)
+      O neighbors: [1664, 1720, 1910, 2974]
+  Index    439: GeO4 (tetrahedral)       CN=4 xyz=(1.349, 37.043, 12.307)
+      O neighbors: [1132, 1969, 1972, 1973]
+  Index    440: GeO4 (tetrahedral)       CN=4 xyz=(2.694, 32.680, 8.194)
+      O neighbors: [1911, 1944, 1948, 1968]
+  Index    441: GeO4 (tetrahedral)       CN=4 xyz=(3.387, 35.023, 13.401)
+      O neighbors: [1969, 1970, 1971, 1976]
+  Index    442: GeO4 (tetrahedral)       CN=4 xyz=(3.897, 32.900, 11.346)
+      O neighbors: [1942, 1948, 1970, 1974]
+  Index    443: GeO4 (tetrahedral)       CN=4 xyz=(7.198, 36.634, 9.696)
+      O neighbors: [1141, 1975, 1977, 1979]
+  Index    444: GeO4 (tetrahedral)       CN=4 xyz=(6.825, 33.905, 10.829)
+      O neighbors: [1974, 1975, 1978, 1980]
+  Index    445: GeO4 (tetrahedral)       CN=4 xyz=(7.245, 34.524, 7.700)
+      O neighbors: [1917, 1920, 1978, 1979]
+  Index    446: GeO4 (tetrahedral)       CN=4 xyz=(6.219, 35.159, 14.839)
+      O neighbors: [1976, 1981, 2031, 2033]
+  Index    447: GeO4 (tetrahedral)       CN=4 xyz=(9.560, 35.101, 11.243)
+      O neighbors: [1977, 1980, 1984, 1985]
+  Index    448: GeO4 (tetrahedral)       CN=4 xyz=(12.520, 35.140, 10.277)
+      O neighbors: [1982, 1983, 1984, 1986]
+  Index    450: GeO4 (tetrahedral)       CN=4 xyz=(17.025, 32.712, 8.619)
+      O neighbors: [1935, 1963, 1965, 1991]
+  Index    451: GeO4 (tetrahedral)       CN=4 xyz=(14.076, 33.421, 8.144)
+      O neighbors: [1931, 1965, 1982, 1992]
+  Index    452: GeO4 (tetrahedral)       CN=4 xyz=(16.592, 35.224, 14.735)
+      O neighbors: [1987, 1988, 2042, 2049]
+  Index    453: GeO4 (tetrahedral)       CN=4 xyz=(4.013, 30.105, 16.675)
+      O neighbors: [1993, 1994, 1998, 2000]
+  Index    454: GeO4 (tetrahedral)       CN=4 xyz=(1.086, 29.299, 15.483)
+      O neighbors: [1945, 1947, 1993, 3095]
+  Index    455: GeO4 (tetrahedral)       CN=4 xyz=(4.385, 30.549, 19.858)
+      O neighbors: [1994, 1995, 1999, 2001]
+  Index    456: GeO4 (tetrahedral)       CN=4 xyz=(1.858, 32.311, 20.248)
+      O neighbors: [1995, 1996, 2020, 2024]
+  Index    457: GeO4 (tetrahedral)       CN=4 xyz=(7.173, 29.592, 17.003)
+      O neighbors: [2000, 2002, 2004, 2005]
+  Index    458: GeO4 (tetrahedral)       CN=4 xyz=(7.475, 31.372, 19.573)
+      O neighbors: [2001, 2002, 2003, 2030]
+  Index    459: GeO4 (tetrahedral)       CN=4 xyz=(7.372, 32.087, 14.921)
+      O neighbors: [1951, 1953, 2004, 2033]
+  Index    460: GeO4 (tetrahedral)       CN=4 xyz=(9.539, 28.275, 15.477)
+      O neighbors: [1711, 1954, 2005, 2006]
+  Index    461: GeO4 (tetrahedral)       CN=4 xyz=(12.931, 28.228, 20.430)
+      O neighbors: [1768, 1775, 2007, 2008]
+  Index    462: GeO4 (tetrahedral)       CN=4 xyz=(11.571, 32.267, 16.265)
+      O neighbors: [2009, 2011, 2034, 2040]
+  Index    463: GeO4 (tetrahedral)       CN=4 xyz=(16.100, 29.009, 16.434)
+      O neighbors: [2012, 2013, 2014, 2015]
+  Index    464: GeO4 (tetrahedral)       CN=4 xyz=(17.625, 29.525, 21.114)
+      O neighbors: [1776, 2016, 2017, 3137]
+  Index    465: GeO4 (tetrahedral)       CN=4 xyz=(14.349, 31.648, 17.347)
+      O neighbors: [2009, 2015, 2018, 2048]
+  Index    467: GeO4 (tetrahedral)       CN=4 xyz=(0.097, 34.193, 22.184)
+      O neighbors: [2020, 2077, 3131, 3179]
+  Index    468: GeO4 (tetrahedral)       CN=4 xyz=(2.364, 34.595, 18.157)
+      O neighbors: [2022, 2023, 2024, 2025]
+  Index    469: GeO4 (tetrahedral)       CN=4 xyz=(0.966, 34.180, 15.434)
+      O neighbors: [1971, 2021, 2022, 3077]
+  Index    470: GeO4 (tetrahedral)       CN=4 xyz=(0.580, 36.530, 20.036)
+      O neighbors: [2025, 2027, 2285, 3131]
+  Index    471: GeO4 (tetrahedral)       CN=4 xyz=(4.583, 36.780, 17.019)
+      O neighbors: [1185, 2023, 2028, 2031]
+  Index    472: GeO4 (tetrahedral)       CN=4 xyz=(6.060, 37.016, 19.681)
+      O neighbors: [1193, 2026, 2028, 2032]
+  Index    473: GeO4 (tetrahedral)       CN=4 xyz=(8.782, 36.975, 14.883)
+      O neighbors: [1143, 1194, 1981, 2037]
+  Index    474: GeO4 (tetrahedral)       CN=4 xyz=(6.735, 34.966, 21.856)
+      O neighbors: [2029, 2032, 2087, 2089]
+  Index    475: GeO4 (tetrahedral)       CN=4 xyz=(10.734, 36.438, 17.220)
+      O neighbors: [1197, 2036, 2037, 2038]
+  Index    476: GeO4 (tetrahedral)       CN=4 xyz=(9.641, 33.698, 18.522)
+      O neighbors: [2030, 2034, 2036, 2039]
+  Index    477: GeO4 (tetrahedral)       CN=4 xyz=(10.764, 33.500, 21.755)
+      O neighbors: [2010, 2039, 2090, 2091]
+  Index    478: GeO4 (tetrahedral)       CN=4 xyz=(13.906, 36.273, 18.297)
+      O neighbors: [1202, 2038, 2044, 2047]
+  Index    479: GeO4 (tetrahedral)       CN=4 xyz=(16.855, 36.710, 22.134)
+      O neighbors: [1209, 1211, 2043, 2099]
+  Index    480: GeO4 (tetrahedral)       CN=4 xyz=(14.027, 33.752, 15.072)
+      O neighbors: [1966, 1988, 2040, 2048]
+  Index    481: GeO4 (tetrahedral)       CN=4 xyz=(17.648, 33.897, 17.570)
+      O neighbors: [2019, 2041, 2046, 2049]
+  Index    482: GeO4 (tetrahedral)       CN=4 xyz=(15.577, 34.413, 20.259)
+      O neighbors: [2043, 2045, 2046, 2047]
+  Index    484: GeO4 (tetrahedral)       CN=4 xyz=(3.152, 30.485, 24.700)
+      O neighbors: [2050, 2051, 2052, 2055]
+  Index    485: GeO4 (tetrahedral)       CN=4 xyz=(2.911, 31.247, 29.499)
+      O neighbors: [2053, 2056, 2076, 2104]
+  Index    486: GeO4 (tetrahedral)       CN=4 xyz=(0.694, 28.784, 29.486)
+      O neighbors: [1811, 2053, 2106, 3158]
+  Index    487: GeO4 (tetrahedral)       CN=4 xyz=(4.832, 29.031, 29.328)
+      O neighbors: [2056, 2057, 2061, 2107]
+  Index    488: GeO4 (tetrahedral)       CN=4 xyz=(6.169, 29.948, 23.846)
+      O neighbors: [2055, 2058, 2059, 2062]
+  Index    489: GeO4 (tetrahedral)       CN=4 xyz=(7.927, 32.114, 22.436)
+      O neighbors: [2003, 2029, 2059, 2091]
+  Index    490: GeO4 (tetrahedral)       CN=4 xyz=(11.829, 29.685, 27.915)
+      O neighbors: [2066, 2067, 2068, 2069]
+  Index    491: GeO4 (tetrahedral)       CN=4 xyz=(10.723, 31.923, 26.007)
+      O neighbors: [2064, 2065, 2066, 2094]
+  Index    492: GeO4 (tetrahedral)       CN=4 xyz=(12.793, 32.229, 23.551)
+      O neighbors: [2010, 2065, 2070, 2095]
+  Index    493: GeO4 (tetrahedral)       CN=4 xyz=(15.543, 28.355, 25.107)
+      O neighbors: [1827, 1828, 2071, 2072]
+  Index    494: GeO4 (tetrahedral)       CN=4 xyz=(14.695, 30.891, 26.963)
+      O neighbors: [2067, 2072, 2073, 2074]
+  Index    495: GeO4 (tetrahedral)       CN=4 xyz=(14.408, 29.896, 22.480)
+      O neighbors: [2007, 2016, 2070, 2071]
+  Index    496: GeO4 (tetrahedral)       CN=4 xyz=(0.614, 34.739, 25.219)
+      O neighbors: [2077, 2080, 2083, 3182]
+  Index    497: GeO4 (tetrahedral)       CN=4 xyz=(2.590, 34.013, 27.762)
+      O neighbors: [2076, 2079, 2080, 2081]
+  Index    498: GeO4 (tetrahedral)       CN=4 xyz=(0.548, 35.701, 29.163)
+      O neighbors: [1245, 2079, 3181, 3231]
+  Index    499: GeO4 (tetrahedral)       CN=4 xyz=(8.460, 37.137, 23.500)
+      O neighbors: [1249, 1253, 1261, 2087]
+  Index    500: GeO4 (tetrahedral)       CN=4 xyz=(4.715, 32.857, 25.987)
+      O neighbors: [2052, 2063, 2081, 2082]
+  Index    501: GeO4 (tetrahedral)       CN=4 xyz=(4.689, 35.346, 24.122)
+      O neighbors: [2078, 2082, 2086, 2089]
+  Index    502: GeO4 (tetrahedral)       CN=4 xyz=(7.276, 36.280, 26.261)
+      O neighbors: [1253, 2084, 2086, 2088]
+  Index    503: GeO4 (tetrahedral)       CN=4 xyz=(7.898, 33.144, 26.696)
+      O neighbors: [2063, 2064, 2085, 2088]
+  Index    504: GeO4 (tetrahedral)       CN=4 xyz=(8.773, 33.854, 29.558)
+      O neighbors: [2085, 2093, 2140, 2141]
+  Index    505: GeO4 (tetrahedral)       CN=4 xyz=(11.527, 34.594, 27.797)
+      O neighbors: [2092, 2093, 2094, 2097]
+  Index    506: GeO4 (tetrahedral)       CN=4 xyz=(12.698, 35.282, 23.462)
+      O neighbors: [2035, 2090, 2095, 2096]
+  Index    507: GeO4 (tetrahedral)       CN=4 xyz=(14.765, 34.150, 27.284)
+      O neighbors: [2074, 2097, 2098, 2101]
+  Index    508: GeO4 (tetrahedral)       CN=4 xyz=(16.741, 35.367, 25.000)
+      O neighbors: [2099, 2100, 2101, 2102]
+  Index    509: GeO4 (tetrahedral)       CN=4 xyz=(17.331, 33.357, 29.263)
+      O neighbors: [2098, 2103, 2127, 2155]
+  Index    510: GeO4 (tetrahedral)       CN=4 xyz=(5.677, 29.838, 34.431)
+      O neighbors: [2110, 2111, 2112, 2113]
+  Index    511: GeO4 (tetrahedral)       CN=4 xyz=(8.469, 29.080, 33.268)
+      O neighbors: [1876, 2113, 2114, 2116]
+  Index    512: GeO4 (tetrahedral)       CN=4 xyz=(8.137, 28.836, 30.063)
+      O neighbors: [1820, 2061, 2114, 2118]
+  Index    513: GeO4 (tetrahedral)       CN=4 xyz=(9.790, 31.273, 31.285)
+      O neighbors: [2116, 2118, 2119, 2141]
+  Index    514: GeO4 (tetrahedral)       CN=4 xyz=(12.955, 31.873, 35.020)
+      O neighbors: [2120, 2121, 2128, 2144]
+  Index    515: GeO4 (tetrahedral)       CN=4 xyz=(10.013, 32.356, 36.293)
+      O neighbors: [1897, 2120, 2135, 2142]
+  Index    516: GeO4 (tetrahedral)       CN=4 xyz=(15.382, 30.232, 34.165)
+      O neighbors: [2121, 2124, 2125, 2126]
+  Index    517: GeO4 (tetrahedral)       CN=4 xyz=(17.090, 31.880, 32.072)
+      O neighbors: [2124, 2127, 2153, 3188]
+  Index    518: GeO4 (tetrahedral)       CN=4 xyz=(14.110, 30.336, 30.029)
+      O neighbors: [2068, 2073, 2122, 2123]
+  Index    519: GeO4 (tetrahedral)       CN=4 xyz=(15.876, 32.458, 36.334)
+      O neighbors: [1907, 2126, 2128, 2152]
+  Index    520: GeO4 (tetrahedral)       CN=4 xyz=(2.436, 32.946, 35.331)
+      O neighbors: [2105, 2108, 2131, 2132]
+  Index    521: GeO4 (tetrahedral)       CN=4 xyz=(3.368, 33.029, 32.270)
+      O neighbors: [2104, 2108, 2130, 2136]
+  Index    522: GeO4 (tetrahedral)       CN=4 xyz=(0.724, 34.701, 32.264)
+      O neighbors: [2129, 2130, 3231, 3238]
+  Index    524: GeO4 (tetrahedral)       CN=4 xyz=(4.584, 36.960, 35.390)
+      O neighbors: [1298, 2133, 2134, 2139]
+  Index    525: GeO4 (tetrahedral)       CN=4 xyz=(6.975, 32.678, 35.167)
+      O neighbors: [2112, 2115, 2135, 2138]
+  Index    526: GeO4 (tetrahedral)       CN=4 xyz=(5.576, 34.972, 33.175)
+      O neighbors: [2133, 2136, 2137, 2138]
+  Index    527: GeO4 (tetrahedral)       CN=4 xyz=(7.867, 36.257, 31.280)
+      O neighbors: [1305, 2137, 2140, 2143]
+  Index    528: GeO4 (tetrahedral)       CN=4 xyz=(12.721, 32.635, 31.823)
+      O neighbors: [2119, 2122, 2144, 2148]
+  Index    529: GeO4 (tetrahedral)       CN=4 xyz=(10.394, 36.590, 33.155)
+      O neighbors: [1309, 2143, 2146, 2147]
+  Index    530: GeO4 (tetrahedral)       CN=4 xyz=(11.056, 35.368, 36.120)
+      O neighbors: [1924, 2142, 2147, 2149]
+  Index    531: GeO4 (tetrahedral)       CN=4 xyz=(12.978, 35.870, 31.229)
+      O neighbors: [2145, 2146, 2148, 2150]
+  Index    532: GeO4 (tetrahedral)       CN=4 xyz=(17.926, 34.850, 32.284)
+      O neighbors: [2153, 2154, 2155, 3212]
+  Index    533: GeO4 (tetrahedral)       CN=4 xyz=(15.480, 36.646, 32.947)
+      O neighbors: [1316, 2150, 2151, 2154]
+  Index    534: GeO4 (tetrahedral)       CN=4 xyz=(18.317, 34.650, 36.636)
+      O neighbors: [1938, 2152, 3003, 3214]
+  Index    535: GeO4 (tetrahedral)       CN=4 xyz=(14.055, 36.113, 35.754)
+      O neighbors: [1311, 1932, 2149, 2151]
+  Index    536: GeO4 (tetrahedral)       CN=4 xyz=(19.720, 3.924, 2.539)
+      O neighbors: [1124, 2156, 2159, 2185]
+  Index    537: GeO4 (tetrahedral)       CN=4 xyz=(21.204, 1.774, 0.637)
+      O neighbors: [2156, 2157, 2158, 2377]
+  Index    538: GeO4 (tetrahedral)       CN=4 xyz=(19.124, 1.262, 4.636)
+      O neighbors: [1104, 1933, 2159, 2161]
+  Index    539: GeO4 (tetrahedral)       CN=4 xyz=(24.002, 2.587, 4.814)
+      O neighbors: [2160, 2162, 2163, 2164]
+  Index    540: GeO4 (tetrahedral)       CN=4 xyz=(26.582, 2.325, 2.935)
+      O neighbors: [2164, 2165, 2166, 2168]
+  Index    541: GeO4 (tetrahedral)       CN=4 xyz=(26.046, 3.350, 7.142)
+      O neighbors: [2163, 2167, 2169, 2218]
+  Index    542: GeO4 (tetrahedral)       CN=4 xyz=(26.928, 4.292, 0.410)
+      O neighbors: [2166, 2196, 2384, 2415]
+  Index    543: GeO4 (tetrahedral)       CN=4 xyz=(28.504, 0.077, 1.996)
+      O neighbors: [2165, 2170, 3013, 3014]
+  Index    544: GeO4 (tetrahedral)       CN=4 xyz=(28.974, 1.609, 5.390)
+      O neighbors: [2168, 2171, 2172, 2174]
+  Index    545: GeO4 (tetrahedral)       CN=4 xyz=(30.855, 1.869, 2.809)
+      O neighbors: [2170, 2172, 2173, 2175]
+  Index    546: GeO4 (tetrahedral)       CN=4 xyz=(28.893, 4.525, 6.390)
+      O neighbors: [2167, 2171, 2197, 2202]
+  Index    547: GeO4 (tetrahedral)       CN=4 xyz=(33.848, 1.414, 1.836)
+      O neighbors: [2175, 2176, 2177, 2181]
+  Index    548: GeO4 (tetrahedral)       CN=4 xyz=(36.507, 3.100, 5.661)
+      O neighbors: [1083, 1084, 2178, 2179]
+  Index    549: GeO4 (tetrahedral)       CN=4 xyz=(35.167, 0.622, 4.439)
+      O neighbors: [2176, 2178, 2182, 3019]
+  Index    550: GeO4 (tetrahedral)       CN=4 xyz=(33.511, 4.501, 6.385)
+      O neighbors: [2179, 2183, 2195, 2205]
+  Index    551: GeO4 (tetrahedral)       CN=4 xyz=(34.418, 4.395, 1.306)
+      O neighbors: [2177, 2180, 2206, 2208]
+  Index    552: GeO4 (tetrahedral)       CN=4 xyz=(21.691, 4.855, 4.905)
+      O neighbors: [2160, 2184, 2185, 2188]
+  Index    553: GeO4 (tetrahedral)       CN=4 xyz=(23.521, 7.296, 6.081)
+      O neighbors: [2187, 2188, 2193, 2239]
+  Index    554: GeO4 (tetrahedral)       CN=4 xyz=(26.644, 8.238, 6.576)
+      O neighbors: [2193, 2194, 2246, 2444]
+  Index    555: GeO4 (tetrahedral)       CN=4 xyz=(26.099, 9.301, 2.254)
+      O neighbors: [2190, 2192, 2443, 2446]
+  Index    556: GeO4 (tetrahedral)       CN=4 xyz=(32.104, 4.761, 3.463)
+      O neighbors: [2173, 2195, 2200, 2206]
+  Index    557: GeO4 (tetrahedral)       CN=4 xyz=(31.636, 7.891, 3.558)
+      O neighbors: [2199, 2200, 2201, 2204]
+  Index    558: GeO4 (tetrahedral)       CN=4 xyz=(29.063, 8.618, 1.830)
+      O neighbors: [2198, 2201, 2424, 2446]
+  Index    559: GeO4 (tetrahedral)       CN=4 xyz=(28.982, 7.097, 4.578)
+      O neighbors: [2194, 2197, 2198, 2199]
+  Index    560: GeO4 (tetrahedral)       CN=4 xyz=(37.033, 4.786, 2.948)
+      O neighbors: [1083, 1107, 2180, 2203]
+  Index    561: GeO4 (tetrahedral)       CN=4 xyz=(36.902, 7.502, 4.410)
+      O neighbors: [1106, 1109, 2203, 2207]
+  Index    562: GeO4 (tetrahedral)       CN=4 xyz=(19.651, 1.670, 9.447)
+      O neighbors: [1157, 2210, 2211, 2212]
+  Index    563: GeO4 (tetrahedral)       CN=4 xyz=(20.971, 4.071, 7.928)
+      O neighbors: [2184, 2209, 2210, 2234]
+  Index    564: GeO4 (tetrahedral)       CN=4 xyz=(19.837, 2.729, 12.481)
+      O neighbors: [1150, 2212, 2213, 2215]
+  Index    565: GeO4 (tetrahedral)       CN=4 xyz=(22.155, 0.990, 11.281)
+      O neighbors: [2211, 2213, 2216, 3057]
+  Index    566: GeO4 (tetrahedral)       CN=4 xyz=(23.516, 2.433, 9.197)
+      O neighbors: [2209, 2216, 2217, 2218]
+  Index    567: GeO4 (tetrahedral)       CN=4 xyz=(25.510, 2.056, 14.747)
+      O neighbors: [2219, 2221, 2268, 2270]
+  Index    568: GeO4 (tetrahedral)       CN=4 xyz=(24.691, 4.635, 13.085)
+      O neighbors: [2214, 2219, 2240, 2242]
+  Index    569: GeO4 (tetrahedral)       CN=4 xyz=(27.573, 0.118, 10.092)
+      O neighbors: [2220, 2228, 3062, 3063]
+  Index    570: GeO4 (tetrahedral)       CN=4 xyz=(28.359, 3.082, 10.715)
+      O neighbors: [2220, 2222, 2223, 2225]
+  Index    571: GeO4 (tetrahedral)       CN=4 xyz=(29.891, 2.585, 13.442)
+      O neighbors: [2224, 2225, 2227, 2272]
+  Index    572: GeO4 (tetrahedral)       CN=4 xyz=(32.331, 1.356, 11.552)
+      O neighbors: [2226, 2227, 2230, 3067]
+  Index    573: GeO4 (tetrahedral)       CN=4 xyz=(37.003, 4.242, 8.607)
+      O neighbors: [1084, 1135, 1159, 2254]
+  Index    574: GeO4 (tetrahedral)       CN=4 xyz=(32.953, 1.925, 8.587)
+      O neighbors: [2183, 2226, 2229, 2233]
+  Index    575: GeO4 (tetrahedral)       CN=4 xyz=(35.676, 0.486, 9.206)
+      O neighbors: [1134, 2229, 3075, 3076]
+  Index    576: GeO4 (tetrahedral)       CN=4 xyz=(34.596, 3.457, 12.805)
+      O neighbors: [2230, 2231, 2232, 2257]
+  Index    577: GeO4 (tetrahedral)       CN=4 xyz=(36.752, 4.358, 11.563)
+      O neighbors: [1135, 1158, 2231, 2232]
+  Index    578: GeO4 (tetrahedral)       CN=4 xyz=(21.573, 5.412, 13.261)
+      O neighbors: [2214, 2215, 2236, 2238]
+  Index    579: GeO4 (tetrahedral)       CN=4 xyz=(21.832, 8.259, 8.460)
+      O neighbors: [2235, 2237, 2239, 2490]
+  Index    580: GeO4 (tetrahedral)       CN=4 xyz=(19.352, 6.397, 9.037)
+      O neighbors: [1178, 1183, 2234, 2235]
+  Index    581: GeO4 (tetrahedral)       CN=4 xyz=(22.769, 8.077, 11.617)
+      O neighbors: [2236, 2237, 2241, 2491]
+  Index    582: GeO4 (tetrahedral)       CN=4 xyz=(25.764, 4.902, 10.038)
+      O neighbors: [2218, 2222, 2240, 2244]
+  Index    583: GeO4 (tetrahedral)       CN=4 xyz=(27.575, 7.441, 9.398)
+      O neighbors: [2243, 2244, 2246, 2251]
+  Index    584: GeO4 (tetrahedral)       CN=4 xyz=(25.385, 7.744, 13.420)
+      O neighbors: [2241, 2242, 2245, 2247]
+  Index    585: GeO4 (tetrahedral)       CN=4 xyz=(28.190, 8.748, 12.243)
+      O neighbors: [2243, 2245, 2248, 2498]
+  Index    586: GeO4 (tetrahedral)       CN=4 xyz=(32.348, 6.891, 10.604)
+      O neighbors: [2249, 2250, 2253, 2256]
+  Index    587: GeO4 (tetrahedral)       CN=4 xyz=(30.009, 5.280, 9.203)
+      O neighbors: [2202, 2223, 2251, 2253]
+  Index    588: GeO4 (tetrahedral)       CN=4 xyz=(31.049, 7.635, 13.382)
+      O neighbors: [2248, 2249, 2252, 2309]
+  Index    589: GeO4 (tetrahedral)       CN=4 xyz=(34.710, 6.431, 8.614)
+      O neighbors: [2205, 2254, 2255, 2256]
+  Index    590: GeO4 (tetrahedral)       CN=4 xyz=(20.307, 2.208, 16.350)
+      O neighbors: [2258, 2259, 2260, 2264]
+  Index    591: GeO4 (tetrahedral)       CN=4 xyz=(19.222, 1.434, 20.938)
+      O neighbors: [1208, 1211, 2262, 2263]
+  Index    592: GeO4 (tetrahedral)       CN=4 xyz=(22.313, 2.762, 21.150)
+      O neighbors: [2261, 2262, 2265, 2324]
+  Index    593: GeO4 (tetrahedral)       CN=4 xyz=(23.259, 4.642, 18.612)
+      O neighbors: [2261, 2267, 2292, 2298]
+  Index    594: GeO4 (tetrahedral)       CN=4 xyz=(23.284, 1.641, 17.009)
+      O neighbors: [2258, 2266, 2267, 2270]
+  Index    595: GeO4 (tetrahedral)       CN=4 xyz=(24.914, 1.199, 19.487)
+      O neighbors: [2265, 2266, 2269, 3115]
+  Index    596: GeO4 (tetrahedral)       CN=4 xyz=(27.982, 2.156, 19.082)
+      O neighbors: [2269, 2273, 2274, 2280]
+  Index    597: GeO4 (tetrahedral)       CN=4 xyz=(28.186, 3.135, 16.085)
+      O neighbors: [2268, 2272, 2273, 2304]
+  Index    598: GeO4 (tetrahedral)       CN=4 xyz=(30.233, 4.136, 20.345)
+      O neighbors: [2274, 2275, 2277, 2305]
+  Index    599: GeO4 (tetrahedral)       CN=4 xyz=(32.627, 0.263, 18.444)
+      O neighbors: [2276, 2283, 3129, 3130]
+  Index    600: GeO4 (tetrahedral)       CN=4 xyz=(34.720, 1.970, 16.964)
+      O neighbors: [2281, 2282, 2283, 2287]
+  Index    601: GeO4 (tetrahedral)       CN=4 xyz=(33.550, 4.245, 15.520)
+      O neighbors: [2257, 2279, 2281, 2316]
+  Index    602: GeO4 (tetrahedral)       CN=4 xyz=(33.135, 3.418, 20.848)
+      O neighbors: [2275, 2278, 2284, 2288]
+  Index    603: GeO4 (tetrahedral)       CN=4 xyz=(35.897, 1.750, 20.753)
+      O neighbors: [2284, 2285, 2286, 2289]
+  Index    604: GeO4 (tetrahedral)       CN=4 xyz=(33.335, 0.399, 21.445)
+      O neighbors: [2278, 2286, 3124, 3129]
+  Index    605: GeO4 (tetrahedral)       CN=4 xyz=(21.155, 5.451, 16.291)
+      O neighbors: [2238, 2259, 2291, 2292]
+  Index    606: GeO4 (tetrahedral)       CN=4 xyz=(22.054, 7.633, 21.348)
+      O neighbors: [2293, 2294, 2297, 2349]
+  Index    607: GeO4 (tetrahedral)       CN=4 xyz=(18.863, 7.335, 20.563)
+      O neighbors: [1233, 1236, 2290, 2293]
+  Index    608: GeO4 (tetrahedral)       CN=4 xyz=(25.772, 6.660, 19.095)
+      O neighbors: [2298, 2299, 2300, 2301]
+  Index    609: GeO4 (tetrahedral)       CN=4 xyz=(24.863, 6.472, 22.026)
+      O neighbors: [2297, 2301, 2302, 2356]
+  Index    610: GeO4 (tetrahedral)       CN=4 xyz=(23.743, 9.216, 18.967)
+      O neighbors: [2294, 2295, 2300, 2546]
+  Index    611: GeO4 (tetrahedral)       CN=4 xyz=(29.029, 6.872, 18.950)
+      O neighbors: [2299, 2305, 2306, 2307]
+  Index    612: GeO4 (tetrahedral)       CN=4 xyz=(31.268, 7.940, 17.296)
+      O neighbors: [2303, 2306, 2308, 2310]
+  Index    613: GeO4 (tetrahedral)       CN=4 xyz=(30.531, 4.973, 15.153)
+      O neighbors: [2224, 2279, 2304, 2309]
+  Index    614: GeO4 (tetrahedral)       CN=4 xyz=(36.607, 9.198, 16.781)
+      O neighbors: [1458, 2313, 2314, 2556]
+  Index    615: GeO4 (tetrahedral)       CN=4 xyz=(34.318, 7.003, 17.223)
+      O neighbors: [2310, 2314, 2316, 2317]
+  Index    616: GeO4 (tetrahedral)       CN=4 xyz=(34.413, 8.146, 20.371)
+      O neighbors: [2311, 2315, 2317, 2557]
+  Index    617: GeO4 (tetrahedral)       CN=4 xyz=(20.941, 4.409, 29.006)
+      O neighbors: [2319, 2323, 2348, 2401]
+  Index    618: GeO4 (tetrahedral)       CN=4 xyz=(23.365, 2.572, 24.261)
+      O neighbors: [2318, 2322, 2324, 2325]
+  Index    619: GeO4 (tetrahedral)       CN=4 xyz=(26.190, 3.882, 23.436)
+      O neighbors: [2302, 2325, 2327, 2355]
+  Index    620: GeO4 (tetrahedral)       CN=4 xyz=(28.255, 1.359, 23.064)
+      O neighbors: [2271, 2327, 2332, 2339]
+  Index    621: GeO4 (tetrahedral)       CN=4 xyz=(28.391, 1.633, 26.245)
+      O neighbors: [2326, 2328, 2332, 2334]
+  Index    622: GeO4 (tetrahedral)       CN=4 xyz=(31.586, 1.902, 27.430)
+      O neighbors: [2334, 2337, 2338, 2341]
+  Index    623: GeO4 (tetrahedral)       CN=4 xyz=(31.058, 0.082, 23.243)
+      O neighbors: [2336, 2339, 3124, 3174]
+  Index    624: GeO4 (tetrahedral)       CN=4 xyz=(36.072, 0.152, 25.366)
+      O neighbors: [2083, 2343, 2345, 3180]
+  Index    625: GeO4 (tetrahedral)       CN=4 xyz=(36.200, 2.630, 27.346)
+      O neighbors: [2340, 2342, 2345, 2346]
+  Index    626: GeO4 (tetrahedral)       CN=4 xyz=(33.649, 4.263, 26.686)
+      O neighbors: [2337, 2344, 2346, 2372]
+  Index    627: GeO4 (tetrahedral)       CN=4 xyz=(22.841, 4.913, 26.328)
+      O neighbors: [2322, 2348, 2353, 2354]
+  Index    628: GeO4 (tetrahedral)       CN=4 xyz=(21.841, 7.492, 24.778)
+      O neighbors: [2347, 2349, 2350, 2353]
+  Index    629: GeO4 (tetrahedral)       CN=4 xyz=(20.699, 8.509, 28.863)
+      O neighbors: [2351, 2352, 2406, 2592]
+  Index    630: GeO4 (tetrahedral)       CN=4 xyz=(19.141, 6.762, 26.509)
+      O neighbors: [1291, 1294, 2350, 2352]
+  Index    631: GeO4 (tetrahedral)       CN=4 xyz=(25.189, 5.664, 28.612)
+      O neighbors: [2329, 2354, 2359, 2408]
+  Index    632: GeO4 (tetrahedral)       CN=4 xyz=(26.129, 8.315, 24.151)
+      O neighbors: [2356, 2357, 2358, 2597]
+  Index    633: GeO4 (tetrahedral)       CN=4 xyz=(26.597, 8.350, 27.283)
+      O neighbors: [2358, 2359, 2360, 2598]
+  Index    635: GeO4 (tetrahedral)       CN=4 xyz=(30.923, 6.771, 29.536)
+      O neighbors: [2364, 2416, 2422, 2429]
+  Index    636: GeO4 (tetrahedral)       CN=4 xyz=(30.481, 4.712, 23.589)
+      O neighbors: [2277, 2333, 2361, 2365]
+  Index    638: GeO4 (tetrahedral)       CN=4 xyz=(29.565, 7.347, 26.806)
+      O neighbors: [2360, 2362, 2363, 2364]
+  Index    639: GeO4 (tetrahedral)       CN=4 xyz=(31.860, 8.627, 22.343)
+      O neighbors: [2311, 2366, 2369, 2553]
+  Index    640: GeO4 (tetrahedral)       CN=4 xyz=(36.168, 6.882, 22.663)
+      O neighbors: [1273, 2312, 2315, 2371]
+  Index    641: GeO4 (tetrahedral)       CN=4 xyz=(35.343, 6.178, 28.375)
+      O neighbors: [2367, 2370, 2372, 2434]
+  Index    642: GeO4 (tetrahedral)       CN=4 xyz=(33.556, 5.284, 23.595)
+      O neighbors: [2288, 2344, 2365, 2371]
+  Index    643: GeO4 (tetrahedral)       CN=4 xyz=(22.707, 1.869, 30.427)
+      O neighbors: [2323, 2331, 2375, 2382]
+  Index    644: GeO4 (tetrahedral)       CN=4 xyz=(19.866, 1.171, 31.890)
+      O neighbors: [2374, 2375, 2378, 2379]
+  Index    645: GeO4 (tetrahedral)       CN=4 xyz=(19.798, 1.860, 35.063)
+      O neighbors: [1313, 2376, 2377, 2378]
+  Index    646: GeO4 (tetrahedral)       CN=4 xyz=(24.176, 2.153, 33.300)
+      O neighbors: [2380, 2381, 2382, 2385]
+  Index    647: GeO4 (tetrahedral)       CN=4 xyz=(27.083, 3.457, 33.406)
+      O neighbors: [2383, 2385, 2390, 2410]
+  Index    648: GeO4 (tetrahedral)       CN=4 xyz=(27.164, 3.345, 30.119)
+      O neighbors: [2329, 2335, 2383, 2386]
+  Index    649: GeO4 (tetrahedral)       CN=4 xyz=(26.772, 0.056, 30.274)
+      O neighbors: [2386, 3169, 3217, 3225]
+  Index    650: GeO4 (tetrahedral)       CN=4 xyz=(30.203, 3.387, 29.936)
+      O neighbors: [2335, 2338, 2387, 2416]
+  Index    651: GeO4 (tetrahedral)       CN=4 xyz=(30.764, 1.836, 32.848)
+      O neighbors: [2387, 2391, 2392, 2393]
+  Index    652: GeO4 (tetrahedral)       CN=4 xyz=(28.773, 2.507, 35.856)
+      O neighbors: [2384, 2388, 2389, 2390]
+  Index    653: GeO4 (tetrahedral)       CN=4 xyz=(35.509, 1.748, 34.506)
+      O neighbors: [1299, 2395, 2396, 2397]
+  Index    654: GeO4 (tetrahedral)       CN=4 xyz=(33.434, 0.094, 32.471)
+      O neighbors: [2393, 2395, 3232, 3236]
+  Index    655: GeO4 (tetrahedral)       CN=4 xyz=(22.801, 4.831, 34.253)
+      O neighbors: [2380, 2400, 2402, 2411]
+  Index    656: GeO4 (tetrahedral)       CN=4 xyz=(21.094, 6.124, 31.872)
+      O neighbors: [2400, 2401, 2403, 2404]
+  Index    657: GeO4 (tetrahedral)       CN=4 xyz=(22.445, 7.399, 36.087)
+      O neighbors: [2191, 2399, 2402, 2405]
+  Index    658: GeO4 (tetrahedral)       CN=4 xyz=(19.349, 7.665, 36.123)
+      O neighbors: [1126, 2398, 2399, 2407]
+  Index    659: GeO4 (tetrahedral)       CN=4 xyz=(19.673, 8.972, 31.941)
+      O neighbors: [1590, 2403, 2406, 2640]
+  Index    660: GeO4 (tetrahedral)       CN=4 xyz=(23.332, 7.411, 30.316)
+      O neighbors: [2351, 2404, 2408, 2412]
+  Index    661: GeO4 (tetrahedral)       CN=4 xyz=(25.929, 8.543, 31.724)
+      O neighbors: [2409, 2412, 2413, 2647]
+  Index    662: GeO4 (tetrahedral)       CN=4 xyz=(25.738, 6.365, 34.037)
+      O neighbors: [2410, 2411, 2413, 2414]
+  Index    663: GeO4 (tetrahedral)       CN=4 xyz=(25.440, 7.003, 37.083)
+      O neighbors: [2191, 2192, 2414, 2415]
+  Index    664: GeO4 (tetrahedral)       CN=4 xyz=(32.353, 4.717, 33.505)
+      O neighbors: [2391, 2394, 2420, 2426]
+  Index    665: GeO4 (tetrahedral)       CN=4 xyz=(29.949, 9.193, 36.074)
+      O neighbors: [2419, 2424, 2655, 2660]
+  Index    666: GeO4 (tetrahedral)       CN=4 xyz=(29.725, 5.271, 36.533)
+      O neighbors: [2196, 2388, 2417, 2423]
+  Index    667: GeO4 (tetrahedral)       CN=4 xyz=(29.000, 8.756, 31.383)
+      O neighbors: [2409, 2418, 2422, 2654]
+  Index    668: GeO4 (tetrahedral)       CN=4 xyz=(30.062, 6.924, 33.763)
+      O neighbors: [2417, 2418, 2419, 2420]
+  Index    669: GeO4 (tetrahedral)       CN=4 xyz=(36.356, 4.834, 34.500)
+      O neighbors: [1300, 2397, 2425, 2432]
+  Index    670: GeO4 (tetrahedral)       CN=4 xyz=(34.785, 5.361, 31.742)
+      O neighbors: [2394, 2425, 2431, 2434]
+  Index    671: GeO4 (tetrahedral)       CN=4 xyz=(36.973, 8.040, 34.414)
+      O neighbors: [1324, 2428, 2430, 2432]
+  Index    672: GeO4 (tetrahedral)       CN=4 xyz=(32.751, 6.228, 36.399)
+      O neighbors: [2208, 2423, 2426, 2427]
+  Index    673: GeO4 (tetrahedral)       CN=4 xyz=(33.249, 8.050, 31.313)
+      O neighbors: [2421, 2429, 2431, 2433]
+  Index    674: GeO4 (tetrahedral)       CN=4 xyz=(20.653, 9.693, 2.623)
+      O neighbors: [2186, 2435, 2436, 2440]
+  Index    675: GeO4 (tetrahedral)       CN=4 xyz=(22.655, 12.707, 5.249)
+      O neighbors: [2438, 2439, 2442, 2468]
+  Index    676: GeO4 (tetrahedral)       CN=4 xyz=(19.043, 10.713, 5.051)
+      O neighbors: [1363, 1368, 2436, 2437]
+  Index    677: GeO4 (tetrahedral)       CN=4 xyz=(19.565, 13.870, 4.501)
+      O neighbors: [1363, 2438, 2462, 2464]
+  Index    678: GeO4 (tetrahedral)       CN=4 xyz=(23.514, 9.804, 4.042)
+      O neighbors: [2187, 2190, 2440, 2442]
+  Index    679: GeO4 (tetrahedral)       CN=4 xyz=(26.761, 11.388, 7.159)
+      O neighbors: [2444, 2445, 2452, 2493]
+  Index    680: GeO4 (tetrahedral)       CN=4 xyz=(30.157, 11.669, 6.646)
+      O neighbors: [2449, 2451, 2452, 2453]
+  Index    681: GeO4 (tetrahedral)       CN=4 xyz=(30.061, 13.043, 0.733)
+      O neighbors: [2448, 2450, 2480, 2658]
+  Index    682: GeO4 (tetrahedral)       CN=4 xyz=(30.363, 13.339, 3.904)
+      O neighbors: [2448, 2449, 2476, 2479]
+  Index    683: GeO4 (tetrahedral)       CN=4 xyz=(34.326, 9.642, 4.187)
+      O neighbors: [2204, 2207, 2456, 2457]
+  Index    684: GeO4 (tetrahedral)       CN=4 xyz=(34.708, 11.187, 1.403)
+      O neighbors: [2455, 2456, 2458, 2460]
+  Index    685: GeO4 (tetrahedral)       CN=4 xyz=(36.838, 13.425, 5.617)
+      O neighbors: [1375, 2454, 2459, 2483]
+  Index    686: GeO4 (tetrahedral)       CN=4 xyz=(33.166, 10.640, 7.276)
+      O neighbors: [2453, 2457, 2461, 2502]
+  Index    687: GeO4 (tetrahedral)       CN=4 xyz=(19.307, 15.665, 1.840)
+      O neighbors: [1391, 2462, 2463, 2465]
+  Index    688: GeO4 (tetrahedral)       CN=4 xyz=(18.981, 15.747, 7.094)
+      O neighbors: [1445, 2464, 2466, 2511]
+  Index    689: GeO4 (tetrahedral)       CN=4 xyz=(18.740, 18.559, 3.097)
+      O neighbors: [1389, 2463, 2704, 2707]
+  Index    690: GeO4 (tetrahedral)       CN=4 xyz=(23.841, 18.560, 4.296)
+      O neighbors: [2470, 2699, 2705, 2716]
+  Index    691: GeO4 (tetrahedral)       CN=4 xyz=(24.060, 16.725, 1.820)
+      O neighbors: [2467, 2469, 2470, 2471]
+  Index    692: GeO4 (tetrahedral)       CN=4 xyz=(25.309, 14.126, 6.155)
+      O neighbors: [2445, 2468, 2472, 2516]
+  Index    693: GeO4 (tetrahedral)       CN=4 xyz=(27.973, 15.048, 5.378)
+      O neighbors: [2472, 2475, 2476, 2477]
+  Index    694: GeO4 (tetrahedral)       CN=4 xyz=(32.342, 15.684, 3.077)
+      O neighbors: [2478, 2479, 2481, 2485]
+  Index    695: GeO4 (tetrahedral)       CN=4 xyz=(28.509, 17.590, 6.960)
+      O neighbors: [2477, 2520, 2528, 2715]
+  Index    696: GeO4 (tetrahedral)       CN=4 xyz=(30.859, 17.913, 1.485)
+      O neighbors: [2474, 2478, 2721, 2724]
+  Index    697: GeO4 (tetrahedral)       CN=4 xyz=(34.364, 14.458, 1.073)
+      O neighbors: [2458, 2482, 2485, 2697]
+  Index    698: GeO4 (tetrahedral)       CN=4 xyz=(37.106, 18.017, 4.877)
+      O neighbors: [1374, 1620, 2484, 2486]
+  Index    699: GeO4 (tetrahedral)       CN=4 xyz=(35.477, 15.623, 3.846)
+      O neighbors: [2481, 2482, 2483, 2484]
+  Index    700: GeO4 (tetrahedral)       CN=4 xyz=(21.684, 11.488, 8.213)
+      O neighbors: [2439, 2487, 2488, 2490]
+  Index    701: GeO4 (tetrahedral)       CN=4 xyz=(23.012, 13.081, 10.727)
+      O neighbors: [2488, 2489, 2497, 2509]
+  Index    702: GeO4 (tetrahedral)       CN=4 xyz=(23.019, 9.744, 14.223)
+      O neighbors: [2247, 2491, 2495, 2545]
+  Index    703: GeO4 (tetrahedral)       CN=4 xyz=(23.692, 12.905, 13.907)
+      O neighbors: [2489, 2495, 2515, 2544]
+  Index    704: GeO4 (tetrahedral)       CN=4 xyz=(26.113, 12.968, 10.136)
+      O neighbors: [2493, 2494, 2497, 2517]
+  Index    705: GeO4 (tetrahedral)       CN=4 xyz=(28.402, 11.818, 12.116)
+      O neighbors: [2494, 2496, 2498, 2499]
+  Index    706: GeO4 (tetrahedral)       CN=4 xyz=(31.328, 12.928, 11.401)
+      O neighbors: [2499, 2500, 2501, 2522]
+  Index    707: GeO4 (tetrahedral)       CN=4 xyz=(32.482, 9.742, 11.790)
+      O neighbors: [2250, 2252, 2500, 2505]
+  Index    708: GeO4 (tetrahedral)       CN=4 xyz=(35.094, 10.279, 9.950)
+      O neighbors: [2502, 2503, 2505, 2508]
+  Index    709: GeO4 (tetrahedral)       CN=4 xyz=(35.048, 12.924, 8.079)
+      O neighbors: [2459, 2461, 2503, 2533]
+  Index    710: GeO4 (tetrahedral)       CN=4 xyz=(36.180, 12.871, 12.969)
+      O neighbors: [1399, 2504, 2506, 2507]
+  Index    711: GeO4 (tetrahedral)       CN=4 xyz=(21.278, 15.557, 9.372)
+      O neighbors: [2509, 2510, 2511, 2512]
+  Index    712: GeO4 (tetrahedral)       CN=4 xyz=(20.869, 17.741, 11.835)
+      O neighbors: [2512, 2513, 2514, 2764]
+  Index    713: GeO4 (tetrahedral)       CN=4 xyz=(24.183, 16.317, 8.216)
+      O neighbors: [2473, 2510, 2516, 2518]
+  Index    714: GeO4 (tetrahedral)       CN=4 xyz=(25.643, 18.004, 10.709)
+      O neighbors: [2518, 2519, 2768, 2770]
+  Index    715: GeO4 (tetrahedral)       CN=4 xyz=(31.142, 14.278, 8.448)
+      O neighbors: [2451, 2501, 2524, 2527]
+  Index    716: GeO4 (tetrahedral)       CN=4 xyz=(28.156, 15.058, 8.618)
+      O neighbors: [2475, 2517, 2520, 2524]
+  Index    717: GeO4 (tetrahedral)       CN=4 xyz=(28.437, 17.434, 12.162)
+      O neighbors: [2519, 2523, 2525, 2526]
+  Index    718: GeO4 (tetrahedral)       CN=4 xyz=(30.005, 15.782, 14.379)
+      O neighbors: [2525, 2529, 2530, 2578]
+  Index    719: GeO4 (tetrahedral)       CN=4 xyz=(35.631, 18.487, 8.763)
+      O neighbors: [1424, 2531, 2535, 2781]
+  Index    720: GeO4 (tetrahedral)       CN=4 xyz=(33.246, 16.741, 14.796)
+      O neighbors: [2529, 2532, 2537, 2585]
+  Index    721: GeO4 (tetrahedral)       CN=4 xyz=(36.807, 17.474, 11.314)
+      O neighbors: [1425, 2531, 2534, 2538]
+  Index    722: GeO4 (tetrahedral)       CN=4 xyz=(33.814, 15.831, 8.963)
+      O neighbors: [2527, 2533, 2535, 2536]
+  Index    723: GeO4 (tetrahedral)       CN=4 xyz=(33.659, 14.969, 12.163)
+      O neighbors: [2507, 2522, 2536, 2537]
+  Index    724: GeO4 (tetrahedral)       CN=4 xyz=(21.351, 10.046, 16.894)
+      O neighbors: [2295, 2296, 2539, 2545]
+  Index    725: GeO4 (tetrahedral)       CN=4 xyz=(21.247, 12.964, 15.862)
+      O neighbors: [2492, 2539, 2544, 2565]
+  Index    726: GeO4 (tetrahedral)       CN=4 xyz=(20.875, 13.465, 21.005)
+      O neighbors: [2540, 2541, 2562, 2563]
+  Index    727: GeO4 (tetrahedral)       CN=4 xyz=(25.274, 11.768, 20.042)
+      O neighbors: [2546, 2547, 2548, 2549]
+  Index    728: GeO4 (tetrahedral)       CN=4 xyz=(27.886, 12.503, 21.318)
+      O neighbors: [2547, 2552, 2572, 2601]
+  Index    729: GeO4 (tetrahedral)       CN=4 xyz=(30.290, 10.963, 17.175)
+      O neighbors: [2303, 2550, 2551, 2554]
+  Index    730: GeO4 (tetrahedral)       CN=4 xyz=(28.641, 13.099, 15.151)
+      O neighbors: [2496, 2530, 2550, 2571]
+  Index    731: GeO4 (tetrahedral)       CN=4 xyz=(30.352, 9.630, 19.848)
+      O neighbors: [2307, 2308, 2551, 2553]
+  Index    732: GeO4 (tetrahedral)       CN=4 xyz=(35.653, 12.263, 16.071)
+      O neighbors: [2504, 2556, 2560, 2561]
+  Index    733: GeO4 (tetrahedral)       CN=4 xyz=(34.633, 11.450, 20.381)
+      O neighbors: [2555, 2557, 2558, 2559]
+  Index    734: GeO4 (tetrahedral)       CN=4 xyz=(32.914, 12.649, 17.718)
+      O neighbors: [2554, 2559, 2560, 2582]
+  Index    735: GeO4 (tetrahedral)       CN=4 xyz=(19.853, 17.707, 17.543)
+      O neighbors: [1753, 2566, 2567, 2570]
+  Index    736: GeO4 (tetrahedral)       CN=4 xyz=(20.064, 14.579, 18.198)
+      O neighbors: [2543, 2563, 2565, 2567]
+  Index    737: GeO4 (tetrahedral)       CN=4 xyz=(22.440, 17.642, 19.354)
+      O neighbors: [2568, 2569, 2570, 2826]
+  Index    738: GeO4 (tetrahedral)       CN=4 xyz=(21.778, 17.725, 14.904)
+      O neighbors: [2513, 2564, 2566, 2821]
+  Index    739: GeO4 (tetrahedral)       CN=4 xyz=(21.601, 16.307, 22.277)
+      O neighbors: [2562, 2568, 2615, 2620]
+  Index    740: GeO4 (tetrahedral)       CN=4 xyz=(23.707, 16.210, 16.965)
+      O neighbors: [2564, 2569, 2573, 2574]
+  Index    741: GeO4 (tetrahedral)       CN=4 xyz=(26.017, 14.720, 19.849)
+      O neighbors: [2549, 2572, 2575, 2576]
+  Index    742: GeO4 (tetrahedral)       CN=4 xyz=(26.196, 17.042, 21.697)
+      O neighbors: [2576, 2577, 2622, 2827]
+  Index    743: GeO4 (tetrahedral)       CN=4 xyz=(25.823, 14.871, 15.195)
+      O neighbors: [2515, 2521, 2571, 2574]
+  Index    744: GeO4 (tetrahedral)       CN=4 xyz=(27.636, 17.546, 15.025)
+      O neighbors: [2521, 2523, 2578, 2825]
+  Index    745: GeO4 (tetrahedral)       CN=4 xyz=(28.392, 16.513, 19.304)
+      O neighbors: [2575, 2577, 2579, 2581]
+  Index    746: GeO4 (tetrahedral)       CN=4 xyz=(30.174, 14.448, 20.854)
+      O neighbors: [2552, 2581, 2584, 2629]
+  Index    747: GeO4 (tetrahedral)       CN=4 xyz=(31.855, 18.202, 19.835)
+      O neighbors: [2580, 2583, 2588, 2831]
+  Index    748: GeO4 (tetrahedral)       CN=4 xyz=(34.648, 16.611, 20.284)
+      O neighbors: [2586, 2587, 2588, 2589]
+  Index    749: GeO4 (tetrahedral)       CN=4 xyz=(32.782, 15.810, 17.852)
+      O neighbors: [2582, 2583, 2585, 2586]
+  Index    750: GeO4 (tetrahedral)       CN=4 xyz=(22.428, 10.720, 25.490)
+      O neighbors: [2347, 2591, 2594, 2595]
+  Index    751: GeO4 (tetrahedral)       CN=4 xyz=(19.780, 11.152, 27.167)
+      O neighbors: [1527, 2591, 2592, 2593]
+  Index    752: GeO4 (tetrahedral)       CN=4 xyz=(20.337, 12.886, 29.747)
+      O neighbors: [2593, 2643, 2644, 2675]
+  Index    753: GeO4 (tetrahedral)       CN=4 xyz=(24.982, 11.421, 27.519)
+      O neighbors: [2595, 2598, 2599, 2600]
+  Index    754: GeO4 (tetrahedral)       CN=4 xyz=(26.924, 13.793, 28.525)
+      O neighbors: [2599, 2626, 2630, 2650]
+  Index    755: GeO4 (tetrahedral)       CN=4 xyz=(23.362, 12.049, 22.579)
+      O neighbors: [2541, 2548, 2594, 2596]
+  Index    756: GeO4 (tetrahedral)       CN=4 xyz=(27.821, 10.808, 24.086)
+      O neighbors: [2597, 2601, 2603, 2607]
+  Index    757: GeO4 (tetrahedral)       CN=4 xyz=(30.011, 11.689, 25.950)
+      O neighbors: [2603, 2604, 2605, 2606]
+  Index    758: GeO4 (tetrahedral)       CN=4 xyz=(31.544, 12.008, 28.657)
+      O neighbors: [2602, 2604, 2610, 2662]
+  Index    759: GeO4 (tetrahedral)       CN=4 xyz=(32.868, 10.180, 25.091)
+      O neighbors: [2369, 2373, 2606, 2608]
+  Index    760: GeO4 (tetrahedral)       CN=4 xyz=(34.394, 12.437, 23.499)
+      O neighbors: [2555, 2608, 2611, 2613]
+  Index    761: GeO4 (tetrahedral)       CN=4 xyz=(34.713, 12.351, 28.399)
+      O neighbors: [2609, 2610, 2612, 2666]
+  Index    762: GeO4 (tetrahedral)       CN=4 xyz=(35.261, 9.361, 27.222)
+      O neighbors: [2367, 2368, 2373, 2609]
+  Index    763: GeO4 (tetrahedral)       CN=4 xyz=(20.437, 17.822, 24.940)
+      O neighbors: [2615, 2616, 2619, 2867]
+  Index    764: GeO4 (tetrahedral)       CN=4 xyz=(21.590, 15.303, 26.564)
+      O neighbors: [2614, 2616, 2617, 2618]
+  Index    765: GeO4 (tetrahedral)       CN=4 xyz=(22.607, 15.103, 29.541)
+      O neighbors: [2617, 2651, 2674, 2675]
+  Index    766: GeO4 (tetrahedral)       CN=4 xyz=(23.482, 14.849, 24.195)
+      O neighbors: [2596, 2614, 2620, 2624]
+  Index    767: GeO4 (tetrahedral)       CN=4 xyz=(26.293, 15.863, 24.730)
+      O neighbors: [2622, 2623, 2624, 2628]
+  Index    768: GeO4 (tetrahedral)       CN=4 xyz=(26.240, 17.051, 28.809)
+      O neighbors: [2621, 2626, 2627, 2676]
+  Index    769: GeO4 (tetrahedral)       CN=4 xyz=(31.704, 15.226, 29.624)
+      O neighbors: [2602, 2632, 2683, 2690]
+  Index    770: GeO4 (tetrahedral)       CN=4 xyz=(30.528, 16.874, 22.458)
+      O neighbors: [2580, 2629, 2633, 2635]
+  Index    771: GeO4 (tetrahedral)       CN=4 xyz=(32.253, 17.374, 27.442)
+      O neighbors: [2631, 2632, 2638, 2885]
+  Index    772: GeO4 (tetrahedral)       CN=4 xyz=(28.868, 17.618, 25.244)
+      O neighbors: [2623, 2633, 2634, 2886]
+  Index    773: GeO4 (tetrahedral)       CN=4 xyz=(28.921, 14.630, 26.071)
+      O neighbors: [2605, 2628, 2630, 2634]
+  Index    774: GeO4 (tetrahedral)       CN=4 xyz=(34.598, 16.846, 29.292)
+      O neighbors: [2636, 2638, 2690, 2692]
+  Index    775: GeO4 (tetrahedral)       CN=4 xyz=(33.000, 15.114, 22.386)
+      O neighbors: [2584, 2587, 2613, 2635]
+  Index    776: GeO4 (tetrahedral)       CN=4 xyz=(36.695, 14.921, 28.208)
+      O neighbors: [1537, 2612, 2636, 2639]
+  Index    777: GeO4 (tetrahedral)       CN=4 xyz=(22.969, 10.260, 35.266)
+      O neighbors: [2405, 2641, 2646, 2652]
+  Index    778: GeO4 (tetrahedral)       CN=4 xyz=(19.965, 10.406, 34.518)
+      O neighbors: [2407, 2640, 2641, 2642]
+  Index    779: GeO4 (tetrahedral)       CN=4 xyz=(18.796, 13.243, 35.599)
+      O neighbors: [1588, 2441, 2642, 2672]
+  Index    780: GeO4 (tetrahedral)       CN=4 xyz=(23.450, 12.330, 30.208)
+      O neighbors: [2600, 2644, 2645, 2651]
+  Index    781: GeO4 (tetrahedral)       CN=4 xyz=(24.948, 11.357, 32.975)
+      O neighbors: [2645, 2646, 2647, 2648]
+  Index    782: GeO4 (tetrahedral)       CN=4 xyz=(27.182, 13.564, 31.848)
+      O neighbors: [2648, 2650, 2661, 2677]
+  Index    783: GeO4 (tetrahedral)       CN=4 xyz=(25.144, 11.268, 37.205)
+      O neighbors: [2443, 2447, 2649, 2652]
+  Index    784: GeO4 (tetrahedral)       CN=4 xyz=(27.940, 11.575, 35.982)
+      O neighbors: [2450, 2649, 2653, 2655]
+  Index    785: GeO4 (tetrahedral)       CN=4 xyz=(31.498, 10.625, 31.463)
+      O neighbors: [2421, 2654, 2659, 2662]
+  Index    786: GeO4 (tetrahedral)       CN=4 xyz=(31.979, 12.498, 35.347)
+      O neighbors: [2656, 2657, 2658, 2665]
+  Index    787: GeO4 (tetrahedral)       CN=4 xyz=(29.270, 13.950, 34.292)
+      O neighbors: [2653, 2656, 2661, 2685]
+  Index    789: GeO4 (tetrahedral)       CN=4 xyz=(35.703, 9.856, 31.989)
+      O neighbors: [2430, 2433, 2663, 2667]
+  Index    790: GeO4 (tetrahedral)       CN=4 xyz=(36.177, 10.441, 36.156)
+      O neighbors: [2428, 2455, 2664, 2668]
+  Index    791: GeO4 (tetrahedral)       CN=4 xyz=(34.142, 12.594, 31.745)
+      O neighbors: [2659, 2663, 2666, 2696]
+  Index    792: GeO4 (tetrahedral)       CN=4 xyz=(21.895, 17.671, 31.166)
+      O neighbors: [2670, 2671, 2674, 2922]
+  Index    793: GeO4 (tetrahedral)       CN=4 xyz=(21.277, 15.399, 36.210)
+      O neighbors: [2465, 2669, 2672, 2673]
+  Index    794: GeO4 (tetrahedral)       CN=4 xyz=(22.035, 18.234, 34.432)
+      O neighbors: [2670, 2673, 2920, 2924]
+  Index    795: GeO4 (tetrahedral)       CN=4 xyz=(18.964, 18.585, 31.198)
+      O neighbors: [1611, 2671, 2872, 2921]
+  Index    796: GeO4 (tetrahedral)       CN=4 xyz=(24.154, 14.421, 36.968)
+      O neighbors: [2447, 2469, 2669, 2679]
+  Index    797: GeO4 (tetrahedral)       CN=4 xyz=(26.218, 16.813, 36.830)
+      O neighbors: [2471, 2679, 2680, 2681]
+  Index    798: GeO4 (tetrahedral)       CN=4 xyz=(26.598, 16.593, 31.998)
+      O neighbors: [2676, 2677, 2678, 2682]
+  Index    799: GeO4 (tetrahedral)       CN=4 xyz=(29.990, 17.043, 31.690)
+      O neighbors: [2682, 2683, 2684, 2686]
+  Index    800: GeO4 (tetrahedral)       CN=4 xyz=(29.411, 16.018, 36.764)
+      O neighbors: [2474, 2480, 2681, 2685]
+  Index    801: GeO4 (tetrahedral)       CN=4 xyz=(32.444, 17.431, 33.956)
+      O neighbors: [2684, 2689, 2693, 2694]
+  Index    802: GeO4 (tetrahedral)       CN=4 xyz=(34.970, 18.419, 31.980)
+      O neighbors: [2688, 2692, 2694, 2935]
+  Index    803: GeO4 (tetrahedral)       CN=4 xyz=(36.356, 15.696, 35.889)
+      O neighbors: [1593, 2691, 2695, 2697]
+  Index    804: GeO4 (tetrahedral)       CN=4 xyz=(33.959, 14.734, 34.099)
+      O neighbors: [2665, 2689, 2695, 2696]
+  Index    805: GeO4 (tetrahedral)       CN=4 xyz=(22.199, 20.715, 5.441)
+      O neighbors: [2699, 2700, 2708, 2709]
+  Index    806: GeO4 (tetrahedral)       CN=4 xyz=(21.069, 22.806, 3.641)
+      O neighbors: [2700, 2702, 2706, 2732]
+  Index    807: GeO4 (tetrahedral)       CN=4 xyz=(23.184, 19.666, 1.260)
+      O neighbors: [2467, 2698, 2705, 2710]
+  Index    808: GeO4 (tetrahedral)       CN=4 xyz=(25.843, 21.245, 1.389)
+      O neighbors: [2710, 2711, 2712, 2713]
+  Index    809: GeO4 (tetrahedral)       CN=4 xyz=(25.271, 21.143, 4.662)
+      O neighbors: [2709, 2712, 2714, 2716]
+  Index    811: GeO4 (tetrahedral)       CN=4 xyz=(28.712, 20.096, 1.021)
+      O neighbors: [2711, 2718, 2724, 2934]
+  Index    812: GeO4 (tetrahedral)       CN=4 xyz=(29.794, 21.628, 3.575)
+      O neighbors: [2718, 2719, 2720, 2723]
+  Index    813: GeO4 (tetrahedral)       CN=4 xyz=(31.765, 20.507, 5.731)
+      O neighbors: [2720, 2722, 2726, 2727]
+  Index    814: GeO4 (tetrahedral)       CN=4 xyz=(32.241, 23.096, 2.712)
+      O neighbors: [2723, 2725, 2751, 2759]
+  Index    815: GeO4 (tetrahedral)       CN=4 xyz=(33.326, 20.064, 1.871)
+      O neighbors: [2721, 2725, 2728, 2730]
+  Index    816: GeO4 (tetrahedral)       CN=4 xyz=(36.741, 21.221, 4.591)
+      O neighbors: [1620, 1622, 2729, 2731]
+  Index    817: GeO4 (tetrahedral)       CN=4 xyz=(34.405, 19.326, 4.993)
+      O neighbors: [2486, 2727, 2728, 2731]
+  Index    818: GeO4 (tetrahedral)       CN=4 xyz=(21.816, 24.105, 1.001)
+      O neighbors: [2702, 2703, 2734, 2947]
+  Index    819: GeO4 (tetrahedral)       CN=4 xyz=(22.098, 26.953, 2.282)
+      O neighbors: [2734, 2737, 2739, 2970]
+  Index    820: GeO4 (tetrahedral)       CN=4 xyz=(19.438, 26.061, 5.819)
+      O neighbors: [1664, 2733, 2735, 2736]
+  Index    821: GeO4 (tetrahedral)       CN=4 xyz=(23.008, 25.021, 4.896)
+      O neighbors: [2732, 2737, 2740, 2741]
+  Index    822: GeO4 (tetrahedral)       CN=4 xyz=(26.718, 24.392, 0.554)
+      O neighbors: [2713, 2743, 2745, 2954]
+  Index    823: GeO4 (tetrahedral)       CN=4 xyz=(26.579, 27.389, 5.750)
+      O neighbors: [2738, 2744, 2749, 2979]
+  Index    824: GeO4 (tetrahedral)       CN=4 xyz=(25.909, 25.014, 3.594)
+      O neighbors: [2741, 2742, 2743, 2744]
+  Index    825: GeO4 (tetrahedral)       CN=4 xyz=(29.426, 27.229, 4.500)
+      O neighbors: [2747, 2749, 2752, 2985]
+  Index    826: GeO4 (tetrahedral)       CN=4 xyz=(31.415, 26.109, 2.234)
+      O neighbors: [2747, 2748, 2751, 2758]
+  Index    827: GeO4 (tetrahedral)       CN=4 xyz=(30.194, 24.443, 7.220)
+      O neighbors: [2746, 2750, 2779, 2803]
+  Index    828: GeO4 (tetrahedral)       CN=4 xyz=(29.023, 26.526, 0.174)
+      O neighbors: [2745, 2748, 2753, 2958]
+  Index    829: GeO4 (tetrahedral)       CN=4 xyz=(34.481, 27.076, 2.422)
+      O neighbors: [2755, 2757, 2758, 2992]
+  Index    830: GeO4 (tetrahedral)       CN=4 xyz=(36.462, 27.498, 4.967)
+      O neighbors: [1645, 2754, 2757, 2997]
+  Index    831: GeO4 (tetrahedral)       CN=4 xyz=(32.881, 23.605, 5.656)
+      O neighbors: [2726, 2750, 2756, 2759]
+  Index    832: GeO4 (tetrahedral)       CN=4 xyz=(21.251, 20.568, 10.553)
+      O neighbors: [2760, 2761, 2762, 2764]
+  Index    833: GeO4 (tetrahedral)       CN=4 xyz=(22.405, 22.279, 8.160)
+      O neighbors: [2708, 2760, 2773, 2787]
+  Index    834: GeO4 (tetrahedral)       CN=4 xyz=(19.395, 22.429, 12.476)
+      O neighbors: [1698, 2762, 2763, 2792]
+  Index    836: GeO4 (tetrahedral)       CN=4 xyz=(25.074, 20.816, 12.705)
+      O neighbors: [2766, 2769, 2770, 2771]
+  Index    837: GeO4 (tetrahedral)       CN=4 xyz=(26.905, 22.753, 10.987)
+      O neighbors: [2767, 2769, 2775, 2796]
+  Index    838: GeO4 (tetrahedral)       CN=4 xyz=(25.853, 18.994, 7.736)
+      O neighbors: [2473, 2715, 2717, 2768]
+  Index    839: GeO4 (tetrahedral)       CN=4 xyz=(28.889, 22.025, 8.784)
+      O neighbors: [2772, 2774, 2775, 2779]
+  Index    840: GeO4 (tetrahedral)       CN=4 xyz=(30.392, 19.487, 8.433)
+      O neighbors: [2528, 2722, 2774, 2777]
+  Index    841: GeO4 (tetrahedral)       CN=4 xyz=(30.598, 21.487, 13.700)
+      O neighbors: [2776, 2778, 2801, 2833]
+  Index    842: GeO4 (tetrahedral)       CN=4 xyz=(30.923, 19.413, 11.328)
+      O neighbors: [2526, 2776, 2777, 2780]
+  Index    843: GeO4 (tetrahedral)       CN=4 xyz=(35.821, 21.678, 9.062)
+      O neighbors: [1674, 2781, 2782, 2784]
+  Index    844: GeO4 (tetrahedral)       CN=4 xyz=(33.186, 19.609, 13.594)
+      O neighbors: [2532, 2778, 2780, 2783]
+  Index    845: GeO4 (tetrahedral)       CN=4 xyz=(35.082, 21.979, 12.201)
+      O neighbors: [2782, 2783, 2785, 2786]
+  Index    846: GeO4 (tetrahedral)       CN=4 xyz=(18.710, 25.473, 12.767)
+      O neighbors: [1719, 1723, 2791, 2792]
+  Index    847: GeO4 (tetrahedral)       CN=4 xyz=(19.661, 23.815, 8.074)
+      O neighbors: [2733, 2765, 2787, 2789]
+  Index    848: GeO4 (tetrahedral)       CN=4 xyz=(21.495, 25.067, 14.543)
+      O neighbors: [2788, 2791, 2839, 2844]
+  Index    849: GeO4 (tetrahedral)       CN=4 xyz=(23.152, 25.753, 10.418)
+      O neighbors: [2790, 2793, 2794, 2795]
+  Index    850: GeO4 (tetrahedral)       CN=4 xyz=(23.594, 23.596, 12.661)
+      O neighbors: [2766, 2788, 2793, 2797]
+  Index    851: GeO4 (tetrahedral)       CN=4 xyz=(26.468, 25.042, 13.071)
+      O neighbors: [2796, 2797, 2798, 2799]
+  Index    852: GeO4 (tetrahedral)       CN=4 xyz=(24.897, 25.363, 7.698)
+      O neighbors: [2738, 2740, 2795, 2800]
+  Index    853: GeO4 (tetrahedral)       CN=4 xyz=(29.418, 24.254, 14.730)
+      O neighbors: [2799, 2801, 2852, 2859]
+  Index    854: GeO4 (tetrahedral)       CN=4 xyz=(28.316, 27.622, 12.763)
+      O neighbors: [2798, 2804, 3041, 3043]
+  Index    855: GeO4 (tetrahedral)       CN=4 xyz=(31.990, 26.687, 8.677)
+      O neighbors: [2803, 2805, 2810, 2815]
+  Index    856: GeO4 (tetrahedral)       CN=4 xyz=(31.256, 26.841, 11.786)
+      O neighbors: [2802, 2804, 2805, 2806]
+  Index    858: GeO4 (tetrahedral)       CN=4 xyz=(36.033, 27.065, 7.960)
+      O neighbors: [1704, 2754, 2807, 2813]
+  Index    859: GeO4 (tetrahedral)       CN=4 xyz=(33.177, 24.594, 12.490)
+      O neighbors: [2786, 2806, 2808, 2814]
+  Index    860: GeO4 (tetrahedral)       CN=4 xyz=(34.542, 24.488, 8.110)
+      O neighbors: [2756, 2784, 2810, 2813]
+  Index    861: GeO4 (tetrahedral)       CN=4 xyz=(21.679, 22.834, 16.899)
+      O neighbors: [2816, 2819, 2820, 2839]
+  Index    862: GeO4 (tetrahedral)       CN=4 xyz=(19.532, 21.245, 21.299)
+      O neighbors: [1752, 2817, 2818, 2870]
+  Index    863: GeO4 (tetrahedral)       CN=4 xyz=(18.871, 22.221, 15.773)
+      O neighbors: [1748, 1780, 2763, 2816]
+  Index    864: GeO4 (tetrahedral)       CN=4 xyz=(23.590, 20.542, 15.614)
+      O neighbors: [2771, 2819, 2821, 2822]
+  Index    865: GeO4 (tetrahedral)       CN=4 xyz=(24.787, 19.087, 18.203)
+      O neighbors: [2573, 2822, 2823, 2826]
+  Index    866: GeO4 (tetrahedral)       CN=4 xyz=(27.874, 19.256, 17.770)
+      O neighbors: [2579, 2823, 2825, 2828]
+  Index    867: GeO4 (tetrahedral)       CN=4 xyz=(29.498, 21.740, 16.477)
+      O neighbors: [2828, 2830, 2833, 2852]
+  Index    868: GeO4 (tetrahedral)       CN=4 xyz=(31.935, 21.317, 18.542)
+      O neighbors: [2830, 2831, 2832, 2836]
+  Index    869: GeO4 (tetrahedral)       CN=4 xyz=(30.689, 23.132, 20.926)
+      O neighbors: [2829, 2832, 2853, 2854]
+  Index    870: GeO4 (tetrahedral)       CN=4 xyz=(36.811, 20.676, 21.338)
+      O neighbors: [1727, 1730, 2837, 2893]
+  Index    871: GeO4 (tetrahedral)       CN=4 xyz=(35.167, 20.442, 18.617)
+      O neighbors: [2834, 2835, 2836, 2837]
+  Index    872: GeO4 (tetrahedral)       CN=4 xyz=(37.101, 18.636, 17.094)
+      O neighbors: [1483, 1726, 2590, 2834]
+  Index    873: GeO4 (tetrahedral)       CN=4 xyz=(20.946, 23.768, 19.781)
+      O neighbors: [2817, 2820, 2840, 2842]
+  Index    874: GeO4 (tetrahedral)       CN=4 xyz=(20.853, 26.763, 18.764)
+      O neighbors: [2838, 2841, 2842, 3081]
+  Index    875: GeO4 (tetrahedral)       CN=4 xyz=(23.528, 26.284, 16.706)
+      O neighbors: [2841, 2844, 2846, 2848]
+  Index    876: GeO4 (tetrahedral)       CN=4 xyz=(26.058, 23.354, 21.320)
+      O neighbors: [2824, 2845, 2847, 2851]
+  Index    877: GeO4 (tetrahedral)       CN=4 xyz=(23.423, 24.940, 21.406)
+      O neighbors: [2840, 2843, 2845, 2849]
+  Index    878: GeO4 (tetrahedral)       CN=4 xyz=(25.538, 24.903, 18.759)
+      O neighbors: [2847, 2848, 2849, 2850]
+  Index    879: GeO4 (tetrahedral)       CN=4 xyz=(28.229, 25.211, 20.266)
+      O neighbors: [2850, 2851, 2854, 2856]
+  Index    880: GeO4 (tetrahedral)       CN=4 xyz=(30.703, 26.557, 16.498)
+      O neighbors: [2855, 2857, 2859, 3093]
+  Index    881: GeO4 (tetrahedral)       CN=4 xyz=(37.038, 25.338, 20.873)
+      O neighbors: [1758, 1815, 2861, 2863]
+  Index    882: GeO4 (tetrahedral)       CN=4 xyz=(32.802, 27.490, 20.147)
+      O neighbors: [2858, 2865, 3092, 3100]
+  Index    883: GeO4 (tetrahedral)       CN=4 xyz=(36.511, 25.903, 16.403)
+      O neighbors: [1756, 2812, 2860, 2864]
+  Index    884: GeO4 (tetrahedral)       CN=4 xyz=(35.966, 23.583, 18.307)
+      O neighbors: [2835, 2860, 2862, 2863]
+  Index    885: GeO4 (tetrahedral)       CN=4 xyz=(33.578, 25.397, 17.709)
+      O neighbors: [2857, 2862, 2864, 2865]
+  Index    886: GeO4 (tetrahedral)       CN=4 xyz=(20.337, 22.888, 23.985)
+      O neighbors: [2866, 2868, 2870, 2897]
+  Index    887: GeO4 (tetrahedral)       CN=4 xyz=(21.610, 20.294, 23.285)
+      O neighbors: [2818, 2866, 2867, 2871]
+  Index    888: GeO4 (tetrahedral)       CN=4 xyz=(21.680, 22.983, 29.168)
+      O neighbors: [2869, 2895, 2901, 2916]
+  Index    889: GeO4 (tetrahedral)       CN=4 xyz=(23.766, 21.607, 27.626)
+      O neighbors: [2869, 2873, 2874, 2877]
+  Index    890: GeO4 (tetrahedral)       CN=4 xyz=(26.997, 21.461, 23.503)
+      O neighbors: [2824, 2875, 2878, 2880]
+  Index    891: GeO4 (tetrahedral)       CN=4 xyz=(24.747, 19.373, 23.531)
+      O neighbors: [2625, 2827, 2871, 2875]
+  Index    892: GeO4 (tetrahedral)       CN=4 xyz=(24.942, 19.040, 26.592)
+      O neighbors: [2621, 2625, 2874, 2876]
+  Index    893: GeO4 (tetrahedral)       CN=4 xyz=(27.933, 19.352, 27.432)
+      O neighbors: [2627, 2876, 2882, 2886]
+  Index    894: GeO4 (tetrahedral)       CN=4 xyz=(30.094, 21.167, 23.306)
+      O neighbors: [2829, 2880, 2883, 2884]
+  Index    895: GeO4 (tetrahedral)       CN=4 xyz=(28.849, 22.386, 28.396)
+      O neighbors: [2879, 2881, 2882, 2888]
+  Index    896: GeO4 (tetrahedral)       CN=4 xyz=(32.453, 19.587, 25.013)
+      O neighbors: [2631, 2883, 2887, 2890]
+  Index    897: GeO4 (tetrahedral)       CN=4 xyz=(35.430, 19.737, 25.814)
+      O neighbors: [2637, 2889, 2890, 2891]
+  Index    898: GeO4 (tetrahedral)       CN=4 xyz=(36.571, 22.242, 24.101)
+      O neighbors: [1782, 2889, 2893, 2914]
+  Index    899: GeO4 (tetrahedral)       CN=4 xyz=(33.015, 20.331, 27.778)
+      O neighbors: [2885, 2887, 2891, 2892]
+  Index    900: GeO4 (tetrahedral)       CN=4 xyz=(33.867, 23.158, 28.796)
+      O neighbors: [2892, 2894, 2911, 2965]
+  Index    901: GeO4 (tetrahedral)       CN=4 xyz=(20.461, 25.976, 24.415)
+      O neighbors: [2897, 2898, 2899, 2900]
+  Index    902: GeO4 (tetrahedral)       CN=4 xyz=(22.764, 26.882, 26.419)
+      O neighbors: [2896, 2899, 2902, 3134]
+  Index    903: GeO4 (tetrahedral)       CN=4 xyz=(25.949, 23.854, 28.154)
+      O neighbors: [2877, 2879, 2904, 2905]
+  Index    904: GeO4 (tetrahedral)       CN=4 xyz=(25.872, 26.677, 26.927)
+      O neighbors: [2902, 2903, 2904, 3143]
+  Index    905: GeO4 (tetrahedral)       CN=4 xyz=(29.020, 23.351, 25.256)
+      O neighbors: [2878, 2881, 2884, 2907]
+  Index    906: GeO4 (tetrahedral)       CN=4 xyz=(29.631, 26.665, 25.000)
+      O neighbors: [2907, 2908, 2910, 3144]
+  Index    907: GeO4 (tetrahedral)       CN=4 xyz=(30.535, 27.282, 27.970)
+      O neighbors: [2906, 2909, 2910, 3149]
+  Index    908: GeO4 (tetrahedral)       CN=4 xyz=(31.477, 25.759, 22.480)
+      O neighbors: [2853, 2858, 2908, 2913]
+  Index    909: GeO4 (tetrahedral)       CN=4 xyz=(30.983, 24.597, 29.445)
+      O neighbors: [2888, 2909, 2911, 2959]
+  Index    910: GeO4 (tetrahedral)       CN=4 xyz=(35.958, 23.985, 26.485)
+      O neighbors: [1810, 2894, 2912, 2914]
+  Index    911: GeO4 (tetrahedral)       CN=4 xyz=(36.161, 26.732, 27.879)
+      O neighbors: [1811, 2912, 2915, 3157]
+  Index    912: GeO4 (tetrahedral)       CN=4 xyz=(19.361, 20.101, 34.029)
+      O neighbors: [1854, 2918, 2920, 2921]
+  Index    913: GeO4 (tetrahedral)       CN=4 xyz=(20.900, 21.555, 36.823)
+      O neighbors: [2698, 2703, 2917, 2919]
+  Index    914: GeO4 (tetrahedral)       CN=4 xyz=(23.244, 20.621, 30.516)
+      O neighbors: [2873, 2916, 2922, 2925]
+  Index    915: GeO4 (tetrahedral)       CN=4 xyz=(23.404, 21.294, 34.661)
+      O neighbors: [2917, 2923, 2924, 2926]
+  Index    916: GeO4 (tetrahedral)       CN=4 xyz=(26.170, 20.565, 32.012)
+      O neighbors: [2925, 2927, 2928, 2929]
+  Index    917: GeO4 (tetrahedral)       CN=4 xyz=(26.484, 18.727, 34.387)
+      O neighbors: [2678, 2680, 2687, 2929]
+  Index    918: GeO4 (tetrahedral)       CN=4 xyz=(28.962, 19.862, 30.547)
+      O neighbors: [2686, 2882, 2927, 2930]
+  Index    920: GeO4 (tetrahedral)       CN=4 xyz=(29.265, 20.066, 34.993)
+      O neighbors: [2687, 2931, 2932, 2934]
+  Index    921: GeO4 (tetrahedral)       CN=4 xyz=(34.495, 22.624, 35.461)
+      O neighbors: [2936, 2937, 2962, 2966]
+  Index    922: GeO4 (tetrahedral)       CN=4 xyz=(33.846, 19.528, 36.020)
+      O neighbors: [2693, 2730, 2937, 2938]
+  Index    923: GeO4 (tetrahedral)       CN=4 xyz=(36.004, 20.373, 34.055)
+      O neighbors: [1836, 2935, 2936, 2938]
+  Index    924: GeO4 (tetrahedral)       CN=4 xyz=(19.282, 23.366, 33.767)
+      O neighbors: [1856, 2918, 2941, 2945]
+  Index    925: GeO4 (tetrahedral)       CN=4 xyz=(18.993, 23.567, 30.768)
+      O neighbors: [1852, 1879, 2895, 2941]
+  Index    926: GeO4 (tetrahedral)       CN=4 xyz=(19.470, 26.325, 34.982)
+      O neighbors: [1882, 2942, 2943, 2945]
+  Index    927: GeO4 (tetrahedral)       CN=4 xyz=(22.429, 25.598, 35.567)
+      O neighbors: [2943, 2944, 2947, 2948]
+  Index    928: GeO4 (tetrahedral)       CN=4 xyz=(23.218, 23.993, 33.054)
+      O neighbors: [2923, 2944, 2946, 2952]
+  Index    929: GeO4 (tetrahedral)       CN=4 xyz=(21.129, 27.704, 32.458)
+      O neighbors: [2939, 2940, 2942, 3184]
+  Index    930: GeO4 (tetrahedral)       CN=4 xyz=(27.497, 23.412, 32.701)
+      O neighbors: [2928, 2950, 2953, 2956]
+  Index    931: GeO4 (tetrahedral)       CN=4 xyz=(23.645, 25.333, 29.962)
+      O neighbors: [2901, 2905, 2946, 2949]
+  Index    932: GeO4 (tetrahedral)       CN=4 xyz=(25.539, 23.674, 35.077)
+      O neighbors: [2926, 2950, 2952, 2954]
+  Index    933: GeO4 (tetrahedral)       CN=4 xyz=(27.030, 26.536, 31.961)
+      O neighbors: [2951, 2953, 2955, 2957]
+  Index    934: GeO4 (tetrahedral)       CN=4 xyz=(28.863, 27.584, 34.386)
+      O neighbors: [2957, 2958, 3196, 3200]
+  Index    935: GeO4 (tetrahedral)       CN=4 xyz=(31.019, 24.191, 32.611)
+      O neighbors: [2933, 2956, 2959, 2960]
+  Index    936: GeO4 (tetrahedral)       CN=4 xyz=(33.200, 25.450, 34.410)
+      O neighbors: [2960, 2962, 2963, 2964]
+  Index    937: GeO4 (tetrahedral)       CN=4 xyz=(35.487, 26.946, 32.518)
+      O neighbors: [2961, 2963, 3209, 3210]
+  Index    938: GeO4 (tetrahedral)       CN=4 xyz=(36.094, 24.632, 30.366)
+      O neighbors: [1864, 2915, 2961, 2965]
+  Index    939: GeO4 (tetrahedral)       CN=4 xyz=(34.845, 25.320, 36.890)
+      O neighbors: [2755, 2964, 2966, 2967]
+  Index    940: GeO4 (tetrahedral)       CN=4 xyz=(20.498, 29.456, 3.244)
+      O neighbors: [2968, 2969, 2970, 2971]
+  Index    941: GeO4 (tetrahedral)       CN=4 xyz=(22.013, 28.172, 5.789)
+      O neighbors: [2735, 2969, 2975, 2976]
+  Index    942: GeO4 (tetrahedral)       CN=4 xyz=(21.652, 32.368, 3.428)
+      O neighbors: [2968, 2972, 2999, 3005]
+  Index    943: GeO4 (tetrahedral)       CN=4 xyz=(24.789, 29.792, 5.223)
+      O neighbors: [2976, 2977, 2978, 2979]
+  Index    944: GeO4 (tetrahedral)       CN=4 xyz=(26.154, 31.228, 2.738)
+      O neighbors: [2978, 2980, 2981, 2982]
+  Index    945: GeO4 (tetrahedral)       CN=4 xyz=(24.502, 32.486, 7.116)
+      O neighbors: [2977, 2998, 3008, 3039]
+  Index    946: GeO4 (tetrahedral)       CN=4 xyz=(28.573, 28.945, 1.916)
+      O neighbors: [2752, 2753, 2980, 2984]
+  Index    947: GeO4 (tetrahedral)       CN=4 xyz=(30.091, 30.170, 5.597)
+      O neighbors: [2985, 2986, 2987, 2988]
+  Index    948: GeO4 (tetrahedral)       CN=4 xyz=(31.112, 30.617, 2.923)
+      O neighbors: [2984, 2987, 2989, 2990]
+  Index    949: GeO4 (tetrahedral)       CN=4 xyz=(32.229, 31.636, 0.283)
+      O neighbors: [2989, 2991, 3204, 3239]
+  Index    950: GeO4 (tetrahedral)       CN=4 xyz=(34.876, 29.559, 0.566)
+      O neighbors: [2991, 2992, 2995, 3208]
+  Index    951: GeO4 (tetrahedral)       CN=4 xyz=(36.655, 30.708, 4.773)
+      O neighbors: [1887, 2994, 2996, 2997]
+  Index    952: GeO4 (tetrahedral)       CN=4 xyz=(33.458, 31.174, 5.090)
+      O neighbors: [2990, 2993, 2994, 3023]
+  Index    953: GeO4 (tetrahedral)       CN=4 xyz=(18.627, 34.466, 6.564)
+      O neighbors: [1934, 1935, 1989, 3000]
+  Index    954: GeO4 (tetrahedral)       CN=4 xyz=(22.282, 37.058, 5.150)
+      O neighbors: [2161, 2162, 3001, 3002]
+  Index    955: GeO4 (tetrahedral)       CN=4 xyz=(20.938, 33.495, 0.578)
+      O neighbors: [2973, 2999, 3003, 3004]
+  Index    956: GeO4 (tetrahedral)       CN=4 xyz=(21.300, 32.803, 6.525)
+      O neighbors: [2972, 2998, 3000, 3028]
+  Index    957: GeO4 (tetrahedral)       CN=4 xyz=(22.884, 36.242, 0.382)
+      O neighbors: [2157, 3004, 3006, 3219]
+  Index    958: GeO4 (tetrahedral)       CN=4 xyz=(23.742, 34.858, 3.235)
+      O neighbors: [3001, 3005, 3006, 3009]
+  Index    959: GeO4 (tetrahedral)       CN=4 xyz=(26.477, 33.725, 4.736)
+      O neighbors: [2981, 3008, 3009, 3011]
+  Index    960: GeO4 (tetrahedral)       CN=4 xyz=(26.963, 37.160, 7.074)
+      O neighbors: [2169, 2174, 3007, 3063]
+  Index    961: GeO4 (tetrahedral)       CN=4 xyz=(29.611, 34.567, 1.179)
+      O neighbors: [3012, 3013, 3016, 3017]
+  Index    962: GeO4 (tetrahedral)       CN=4 xyz=(29.330, 35.087, 4.221)
+      O neighbors: [3011, 3012, 3014, 3015]
+  Index    963: GeO4 (tetrahedral)       CN=4 xyz=(32.025, 34.049, 5.915)
+      O neighbors: [3010, 3015, 3022, 3023]
+  Index    964: GeO4 (tetrahedral)       CN=4 xyz=(36.851, 32.564, 7.144)
+      O neighbors: [1968, 2996, 3018, 3071]
+  Index    966: GeO4 (tetrahedral)       CN=4 xyz=(32.783, 34.717, 0.621)
+      O neighbors: [3016, 3024, 3234, 3239]
+  Index    967: GeO4 (tetrahedral)       CN=4 xyz=(33.727, 36.605, 6.962)
+      O neighbors: [2182, 2233, 3022, 3076]
+  Index    968: GeO4 (tetrahedral)       CN=4 xyz=(21.357, 28.209, 10.483)
+      O neighbors: [2790, 3025, 3026, 3030]
+  Index    969: GeO4 (tetrahedral)       CN=4 xyz=(20.724, 30.036, 7.952)
+      O neighbors: [2974, 2975, 3025, 3028]
+  Index    970: GeO4 (tetrahedral)       CN=4 xyz=(19.557, 30.154, 12.114)
+      O neighbors: [1962, 3026, 3027, 3029]
+  Index    971: GeO4 (tetrahedral)       CN=4 xyz=(21.646, 32.537, 11.755)
+      O neighbors: [3029, 3031, 3054, 3056]
+  Index    972: GeO4 (tetrahedral)       CN=4 xyz=(20.835, 29.827, 14.878)
+      O neighbors: [3027, 3032, 3078, 3079]
+  Index    973: GeO4 (tetrahedral)       CN=4 xyz=(24.284, 28.178, 11.684)
+      O neighbors: [2794, 3030, 3033, 3038]
+  Index    974: GeO4 (tetrahedral)       CN=4 xyz=(23.574, 30.778, 13.302)
+      O neighbors: [3031, 3032, 3033, 3034]
+  Index    975: GeO4 (tetrahedral)       CN=4 xyz=(26.854, 29.347, 10.489)
+      O neighbors: [3035, 3036, 3038, 3041]
+  Index    976: GeO4 (tetrahedral)       CN=4 xyz=(26.482, 32.449, 9.875)
+      O neighbors: [3036, 3039, 3040, 3060]
+  Index    977: GeO4 (tetrahedral)       CN=4 xyz=(28.480, 30.508, 8.328)
+      O neighbors: [2986, 3035, 3040, 3042]
+  Index    978: GeO4 (tetrahedral)       CN=4 xyz=(31.253, 30.803, 10.029)
+      O neighbors: [3042, 3045, 3046, 3047]
+  Index    979: GeO4 (tetrahedral)       CN=4 xyz=(31.509, 31.187, 13.342)
+      O neighbors: [3044, 3045, 3048, 3064]
+  Index    980: GeO4 (tetrahedral)       CN=4 xyz=(28.678, 30.128, 14.876)
+      O neighbors: [3037, 3043, 3044, 3089]
+  Index    981: GeO4 (tetrahedral)       CN=4 xyz=(33.587, 28.824, 13.324)
+      O neighbors: [2802, 2809, 3048, 3049]
+  Index    982: GeO4 (tetrahedral)       CN=4 xyz=(35.370, 30.846, 11.466)
+      O neighbors: [3049, 3050, 3051, 3052]
+  Index    983: GeO4 (tetrahedral)       CN=4 xyz=(36.662, 31.751, 14.252)
+      O neighbors: [1945, 3051, 3077, 3101]
+  Index    984: GeO4 (tetrahedral)       CN=4 xyz=(36.563, 28.396, 10.141)
+      O neighbors: [1704, 2807, 2811, 3052]
+  Index    985: GeO4 (tetrahedral)       CN=4 xyz=(32.609, 29.631, 7.577)
+      O neighbors: [2815, 2988, 2993, 3047]
+  Index    986: GeO4 (tetrahedral)       CN=4 xyz=(18.683, 35.685, 12.594)
+      O neighbors: [1156, 1987, 3053, 3055]
+  Index    987: GeO4 (tetrahedral)       CN=4 xyz=(20.911, 34.240, 14.500)
+      O neighbors: [3055, 3056, 3104, 3108]
+  Index    988: GeO4 (tetrahedral)       CN=4 xyz=(23.002, 35.129, 10.593)
+      O neighbors: [3054, 3057, 3058, 3059]
+  Index    989: GeO4 (tetrahedral)       CN=4 xyz=(25.962, 35.035, 11.717)
+      O neighbors: [3059, 3060, 3061, 3062]
+  Index    990: GeO4 (tetrahedral)       CN=4 xyz=(26.670, 36.186, 14.634)
+      O neighbors: [2221, 3061, 3112, 3125]
+  Index    991: GeO4 (tetrahedral)       CN=4 xyz=(23.930, 36.583, 7.754)
+      O neighbors: [2217, 3002, 3007, 3058]
+  Index    992: GeO4 (tetrahedral)       CN=4 xyz=(30.552, 36.117, 10.814)
+      O neighbors: [2228, 3065, 3066, 3067]
+  Index    993: GeO4 (tetrahedral)       CN=4 xyz=(31.683, 33.848, 9.021)
+      O neighbors: [3010, 3046, 3065, 3073]
+  Index    994: GeO4 (tetrahedral)       CN=4 xyz=(31.178, 34.425, 13.464)
+      O neighbors: [3064, 3066, 3068, 3069]
+  Index    995: GeO4 (tetrahedral)       CN=4 xyz=(34.203, 35.258, 14.126)
+      O neighbors: [3068, 3070, 3072, 3128]
+  Index    996: GeO4 (tetrahedral)       CN=4 xyz=(34.781, 33.332, 9.499)
+      O neighbors: [3050, 3071, 3073, 3074]
+  Index    997: GeO4 (tetrahedral)       CN=4 xyz=(36.017, 35.364, 11.475)
+      O neighbors: [1973, 3070, 3074, 3075]
+  Index    998: GeO4 (tetrahedral)       CN=4 xyz=(19.955, 32.238, 16.833)
+      O neighbors: [2019, 3078, 3103, 3108]
+  Index    999: GeO4 (tetrahedral)       CN=4 xyz=(22.371, 27.950, 21.361)
+      O neighbors: [2838, 2843, 3082, 3136]
+  Index   1000: GeO4 (tetrahedral)       CN=4 xyz=(19.077, 27.926, 16.360)
+      O neighbors: [1777, 2014, 3079, 3081]
+  Index   1001: GeO4 (tetrahedral)       CN=4 xyz=(24.148, 29.999, 19.686)
+      O neighbors: [3080, 3082, 3083, 3085]
+  Index   1002: GeO4 (tetrahedral)       CN=4 xyz=(25.423, 28.988, 16.850)
+      O neighbors: [2846, 3083, 3084, 3087]
+  Index   1003: GeO4 (tetrahedral)       CN=4 xyz=(26.001, 31.645, 14.974)
+      O neighbors: [3034, 3037, 3084, 3110]
+  Index   1004: GeO4 (tetrahedral)       CN=4 xyz=(28.522, 28.678, 17.745)
+      O neighbors: [2855, 3087, 3088, 3089]
+  Index   1005: GeO4 (tetrahedral)       CN=4 xyz=(28.785, 28.482, 20.945)
+      O neighbors: [2856, 3086, 3088, 3090]
+  Index   1006: GeO4 (tetrahedral)       CN=4 xyz=(31.661, 32.237, 17.845)
+      O neighbors: [3091, 3096, 3118, 3123]
+  Index   1007: GeO4 (tetrahedral)       CN=4 xyz=(32.405, 29.210, 17.403)
+      O neighbors: [3091, 3092, 3093, 3097]
+  Index   1008: GeO4 (tetrahedral)       CN=4 xyz=(35.429, 30.083, 16.611)
+      O neighbors: [3095, 3097, 3099, 3101]
+  Index   1009: GeO4 (tetrahedral)       CN=4 xyz=(36.283, 31.151, 19.541)
+      O neighbors: [1996, 3098, 3099, 3102]
+  Index   1010: GeO4 (tetrahedral)       CN=4 xyz=(37.115, 28.545, 21.180)
+      O neighbors: [1997, 2054, 2861, 3098]
+  Index   1011: GeO4 (tetrahedral)       CN=4 xyz=(21.993, 34.431, 17.471)
+      O neighbors: [3103, 3104, 3105, 3111]
+  Index   1012: GeO4 (tetrahedral)       CN=4 xyz=(19.909, 36.003, 19.222)
+      O neighbors: [2041, 2263, 3105, 3106]
+  Index   1013: GeO4 (tetrahedral)       CN=4 xyz=(21.508, 34.841, 21.780)
+      O neighbors: [3106, 3107, 3109, 3160]
+  Index   1014: GeO4 (tetrahedral)       CN=4 xyz=(23.337, 32.937, 19.779)
+      O neighbors: [3080, 3107, 3111, 3116]
+  Index   1015: GeO4 (tetrahedral)       CN=4 xyz=(26.294, 34.037, 16.971)
+      O neighbors: [3110, 3112, 3113, 3119]
+  Index   1016: GeO4 (tetrahedral)       CN=4 xyz=(26.293, 33.838, 20.278)
+      O neighbors: [3113, 3114, 3116, 3117]
+  Index   1017: GeO4 (tetrahedral)       CN=4 xyz=(26.176, 36.423, 21.878)
+      O neighbors: [2271, 3114, 3115, 3167]
+  Index   1018: GeO4 (tetrahedral)       CN=4 xyz=(29.134, 35.204, 15.949)
+      O neighbors: [3069, 3119, 3121, 3125]
+  Index   1019: GeO4 (tetrahedral)       CN=4 xyz=(29.494, 36.517, 18.895)
+      O neighbors: [2276, 2280, 3121, 3122]
+  Index   1020: GeO4 (tetrahedral)       CN=4 xyz=(29.476, 33.476, 19.961)
+      O neighbors: [3117, 3118, 3120, 3122]
+  Index   1021: GeO4 (tetrahedral)       CN=4 xyz=(31.799, 32.953, 22.141)
+      O neighbors: [3094, 3120, 3126, 3175]
+  Index   1022: GeO4 (tetrahedral)       CN=4 xyz=(36.322, 37.013, 15.532)
+      O neighbors: [1189, 2021, 2287, 3072]
+  Index   1023: GeO4 (tetrahedral)       CN=4 xyz=(33.429, 34.695, 17.025)
+      O neighbors: [3123, 3127, 3128, 3130]
+  Index   1024: GeO4 (tetrahedral)       CN=4 xyz=(33.875, 33.276, 19.886)
+      O neighbors: [3096, 3102, 3126, 3127]
+  Index   1025: GeO4 (tetrahedral)       CN=4 xyz=(20.197, 29.027, 23.319)
+      O neighbors: [2898, 3132, 3136, 3137]
+  Index   1026: GeO4 (tetrahedral)       CN=4 xyz=(19.589, 30.086, 26.358)
+      O neighbors: [2075, 3132, 3133, 3138]
+  Index   1027: GeO4 (tetrahedral)       CN=4 xyz=(21.383, 30.956, 28.969)
+      O neighbors: [3133, 3135, 3159, 3185]
+  Index   1028: GeO4 (tetrahedral)       CN=4 xyz=(22.287, 27.996, 29.314)
+      O neighbors: [2896, 2939, 2949, 3135]
+  Index   1029: GeO4 (tetrahedral)       CN=4 xyz=(24.692, 28.593, 24.780)
+      O neighbors: [2903, 3134, 3139, 3140]
+  Index   1030: GeO4 (tetrahedral)       CN=4 xyz=(27.493, 28.320, 29.119)
+      O neighbors: [2955, 3143, 3149, 3198]
+  Index   1031: GeO4 (tetrahedral)       CN=4 xyz=(26.228, 31.313, 24.970)
+      O neighbors: [3139, 3141, 3142, 3166]
+  Index   1032: GeO4 (tetrahedral)       CN=4 xyz=(26.125, 29.692, 22.341)
+      O neighbors: [3085, 3086, 3140, 3141]
+  Index   1033: GeO4 (tetrahedral)       CN=4 xyz=(29.189, 29.917, 25.461)
+      O neighbors: [3142, 3144, 3145, 3146]
+  Index   1034: GeO4 (tetrahedral)       CN=4 xyz=(30.980, 29.975, 22.903)
+      O neighbors: [3090, 3094, 3145, 3148]
+  Index   1035: GeO4 (tetrahedral)       CN=4 xyz=(31.035, 31.459, 27.783)
+      O neighbors: [3146, 3147, 3150, 3172]
+  Index   1036: GeO4 (tetrahedral)       CN=4 xyz=(33.412, 27.961, 23.320)
+      O neighbors: [2913, 3100, 3148, 3151]
+  Index   1037: GeO4 (tetrahedral)       CN=4 xyz=(35.189, 28.895, 25.899)
+      O neighbors: [3151, 3152, 3154, 3157]
+  Index   1038: GeO4 (tetrahedral)       CN=4 xyz=(33.884, 31.813, 26.578)
+      O neighbors: [3150, 3154, 3155, 3156]
+  Index   1039: GeO4 (tetrahedral)       CN=4 xyz=(23.216, 37.139, 28.036)
+      O neighbors: [2320, 2330, 2331, 3163]
+  Index   1040: GeO4 (tetrahedral)       CN=4 xyz=(18.922, 33.139, 26.286)
+      O neighbors: [2075, 2100, 2103, 3165]
+  Index   1041: GeO4 (tetrahedral)       CN=4 xyz=(21.116, 34.830, 24.879)
+      O neighbors: [3160, 3161, 3162, 3165]
+  Index   1042: GeO4 (tetrahedral)       CN=4 xyz=(22.264, 34.319, 29.377)
+      O neighbors: [3159, 3163, 3213, 3218]
+  Index   1043: GeO4 (tetrahedral)       CN=4 xyz=(20.218, 37.161, 27.001)
+      O neighbors: [2320, 2321, 3162, 3164]
+  Index   1044: GeO4 (tetrahedral)       CN=4 xyz=(23.557, 36.503, 23.687)
+      O neighbors: [2318, 3109, 3161, 3167]
+  Index   1045: GeO4 (tetrahedral)       CN=4 xyz=(25.203, 33.359, 29.634)
+      O neighbors: [3170, 3194, 3218, 3223]
+  Index   1046: GeO4 (tetrahedral)       CN=4 xyz=(25.824, 33.843, 26.690)
+      O neighbors: [3166, 3168, 3170, 3171]
+  Index   1047: GeO4 (tetrahedral)       CN=4 xyz=(26.151, 36.879, 27.283)
+      O neighbors: [2326, 2330, 3168, 3169]
+  Index   1048: GeO4 (tetrahedral)       CN=4 xyz=(30.948, 34.662, 24.802)
+      O neighbors: [3173, 3174, 3175, 3176]
+  Index   1049: GeO4 (tetrahedral)       CN=4 xyz=(28.948, 33.798, 27.324)
+      O neighbors: [3171, 3172, 3176, 3177]
+  Index   1050: GeO4 (tetrahedral)       CN=4 xyz=(29.689, 35.926, 29.753)
+      O neighbors: [3177, 3178, 3225, 3226]
+  Index   1051: GeO4 (tetrahedral)       CN=4 xyz=(35.774, 32.587, 24.199)
+      O neighbors: [3153, 3156, 3179, 3182]
+  Index   1052: GeO4 (tetrahedral)       CN=4 xyz=(35.103, 33.897, 28.873)
+      O neighbors: [3155, 3181, 3183, 3237]
+  Index   1053: GeO4 (tetrahedral)       CN=4 xyz=(32.978, 36.902, 25.629)
+      O neighbors: [2336, 2341, 3173, 3180]
+  Index   1054: GeO4 (tetrahedral)       CN=4 xyz=(20.236, 30.763, 31.816)
+      O neighbors: [3184, 3185, 3187, 3188]
+  Index   1055: GeO4 (tetrahedral)       CN=4 xyz=(22.567, 31.054, 36.484)
+      O neighbors: [2973, 3186, 3189, 3197]
+  Index   1056: GeO4 (tetrahedral)       CN=4 xyz=(22.319, 32.182, 33.660)
+      O neighbors: [3186, 3187, 3195, 3215]
+  Index   1057: GeO4 (tetrahedral)       CN=4 xyz=(24.291, 28.350, 33.101)
+      O neighbors: [2940, 2951, 3190, 3191]
+  Index   1058: GeO4 (tetrahedral)       CN=4 xyz=(26.225, 29.239, 35.690)
+      O neighbors: [2983, 3191, 3193, 3196]
+  Index   1059: GeO4 (tetrahedral)       CN=4 xyz=(24.828, 31.187, 32.085)
+      O neighbors: [3190, 3192, 3194, 3195]
+  Index   1060: GeO4 (tetrahedral)       CN=4 xyz=(25.665, 32.150, 36.822)
+      O neighbors: [2982, 3193, 3197, 3222]
+  Index   1061: GeO4 (tetrahedral)       CN=4 xyz=(27.892, 30.505, 31.487)
+      O neighbors: [3192, 3198, 3199, 3201]
+  Index   1062: GeO4 (tetrahedral)       CN=4 xyz=(23.830, 28.066, 37.085)
+      O neighbors: [2739, 2948, 2983, 3189]
+  Index   1063: GeO4 (tetrahedral)       CN=4 xyz=(32.137, 29.254, 29.952)
+      O neighbors: [2906, 3147, 3202, 3211]
+  Index   1064: GeO4 (tetrahedral)       CN=4 xyz=(30.596, 29.474, 32.906)
+      O neighbors: [3199, 3200, 3202, 3203]
+  Index   1065: GeO4 (tetrahedral)       CN=4 xyz=(30.815, 32.105, 34.662)
+      O neighbors: [3203, 3204, 3205, 3228]
+  Index   1066: GeO4 (tetrahedral)       CN=4 xyz=(35.184, 29.689, 30.785)
+      O neighbors: [3158, 3207, 3210, 3211]
+  Index   1067: GeO4 (tetrahedral)       CN=4 xyz=(36.565, 28.818, 35.184)
+      O neighbors: [2109, 3206, 3208, 3209]
+  Index   1068: GeO4 (tetrahedral)       CN=4 xyz=(37.057, 31.565, 36.456)
+      O neighbors: [2105, 2995, 3206, 3230]
+  Index   1069: GeO4 (tetrahedral)       CN=4 xyz=(20.517, 34.827, 34.243)
+      O neighbors: [3212, 3214, 3215, 3216]
+  Index   1070: GeO4 (tetrahedral)       CN=4 xyz=(19.562, 35.866, 29.788)
+      O neighbors: [2155, 2379, 3164, 3213]
+  Index   1071: GeO4 (tetrahedral)       CN=4 xyz=(23.480, 36.185, 34.403)
+      O neighbors: [2381, 3216, 3219, 3220]
+  Index   1072: GeO4 (tetrahedral)       CN=4 xyz=(26.413, 35.868, 33.177)
+      O neighbors: [3217, 3220, 3221, 3224]
+  Index   1073: GeO4 (tetrahedral)       CN=4 xyz=(27.986, 33.709, 31.341)
+      O neighbors: [3201, 3221, 3223, 3226]
+  Index   1074: GeO4 (tetrahedral)       CN=4 xyz=(28.829, 36.919, 34.673)
+      O neighbors: [2389, 2392, 3224, 3227]
+  Index   1075: GeO4 (tetrahedral)       CN=4 xyz=(28.303, 33.662, 35.662)
+      O neighbors: [3017, 3205, 3222, 3227]
+  Index   1076: GeO4 (tetrahedral)       CN=4 xyz=(32.733, 35.429, 30.160)
+      O neighbors: [3178, 3183, 3229, 3236]
+  Index   1077: GeO4 (tetrahedral)       CN=4 xyz=(35.458, 32.595, 32.123)
+      O neighbors: [3207, 3235, 3237, 3238]
+  Index   1078: GeO4 (tetrahedral)       CN=4 xyz=(32.803, 34.238, 33.126)
+      O neighbors: [3228, 3229, 3232, 3235]
+
+Ge5 sites (21 atoms):
+----------------------------------------------------------------------
+  Index     24: GeO5 (five-coordinate)   CN=5 xyz=(17.629, 6.088, 1.135)
+      O neighbors: [1124, 1125, 1126, 1127, 1319]
+  Index     27: GeO5 (five-coordinate)   CN=5 xyz=(0.706, 2.398, 14.350)
+      O neighbors: [1132, 1133, 1187, 1189, 2231]
+  Index     30: GeO5 (five-coordinate)   CN=5 xyz=(8.466, 2.099, 10.177)
+      O neighbors: [1140, 1141, 1142, 1144, 1145]
+  Index     37: GeO5 (five-coordinate)   CN=5 xyz=(17.924, 1.183, 14.602)
+      O neighbors: [1150, 1156, 1206, 2042, 2264]
+  Index     43: GeO5 (five-coordinate)   CN=5 xyz=(8.530, 5.054, 10.694)
+      O neighbors: [1140, 1142, 1167, 1168, 1171]
+  Index     63: GeO5 (five-coordinate)   CN=5 xyz=(15.843, 0.894, 16.704)
+      O neighbors: [1204, 1205, 1206, 2042, 2044]
+  Index    123: GeO5 (five-coordinate)   CN=5 xyz=(7.996, 8.714, 34.536)
+      O neighbors: [1329, 1330, 1331, 1337, 1571]
+  Index    184: GeO5 (five-coordinate)   CN=5 xyz=(16.636, 13.977, 8.379)
+      O neighbors: [1370, 1421, 1422, 1445, 1449]
+  Index    370: GeO5 (five-coordinate)   CN=5 xyz=(9.811, 27.196, 27.869)
+      O neighbors: [1820, 1822, 1826, 2060, 2069]
+  Index    449: GeO5 (five-coordinate)   CN=5 xyz=(17.869, 35.847, 9.565)
+      O neighbors: [1157, 1989, 1990, 1991, 3053]
+  Index    466: GeO5 (five-coordinate)   CN=5 xyz=(16.202, 31.785, 20.034)
+      O neighbors: [2016, 2017, 2018, 2045, 2046]
+  Index    483: GeO5 (five-coordinate)   CN=5 xyz=(0.445, 29.942, 24.262)
+      O neighbors: [2050, 2051, 2054, 3152, 3153]
+  Index    523: GeO5 (five-coordinate)   CN=5 xyz=(0.092, 34.720, 36.592)
+      O neighbors: [1914, 2131, 3021, 3230, 3233]
+  Index    634: GeO5 (five-coordinate)   CN=5 xyz=(28.254, 4.669, 25.417)
+      O neighbors: [2328, 2333, 2355, 2361, 2362]
+  Index    637: GeO5 (five-coordinate)   CN=5 xyz=(29.180, 7.783, 23.584)
+      O neighbors: [2357, 2361, 2363, 2366, 2607]
+  Index    788: GeO5 (five-coordinate)   CN=5 xyz=(33.039, 9.565, 36.469)
+      O neighbors: [2427, 2460, 2657, 2660, 2664]
+  Index    810: GeO5 (five-coordinate)   CN=5 xyz=(27.736, 23.067, 5.673)
+      O neighbors: [2714, 2719, 2742, 2746, 2772]
+  Index    857: GeO5 (five-coordinate)   CN=5 xyz=(34.695, 26.068, 14.107)
+      O neighbors: [2808, 2809, 2812, 2814, 2864]
+  Index    919: GeO5 (five-coordinate)   CN=5 xyz=(30.177, 21.618, 32.951)
+      O neighbors: [2930, 2931, 2932, 2933, 2956]
+  Index    965: GeO5 (five-coordinate)   CN=5 xyz=(35.312, 35.388, 2.355)
+      O neighbors: [2181, 3019, 3020, 3021, 3024]
+  Index   1079: GeO5 (five-coordinate)   CN=5 xyz=(34.942, 36.599, 36.640)
+      O neighbors: [2181, 2396, 3021, 3233, 3234]
+
+Ge6 sites (1 atoms):
+----------------------------------------------------------------------
+  Index    835: GeO6 (octahedral)        CN=6 xyz=(25.636, 22.287, 7.965)
+      O neighbors: [2714, 2717, 2767, 2772, 2773, 2800]

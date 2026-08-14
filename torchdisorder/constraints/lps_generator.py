@@ -165,7 +165,14 @@ class GlassStructureGenerator:
                 'tet': {'target': 0.85, 'min': 0.7, 'max': 1.0, 'weight': 2.0,
                         'description': 'Tetrahedral PS4^3-'},
                 'q4': {'target': 0.6, 'min': 0.4, 'max': 0.8, 'weight': 0.5,
-                       'description': 'Tetrahedral bond order'}
+                       'description': 'Tetrahedral bond order'},
+                # F_IS detects deformation of the PS4 unit itself, which cn/tet/q4
+                # can all miss: on refined SiO2 it shifted by up to 12x the reference
+                # spread while q4 stayed within its own noise.  -1/3 is exact for an
+                # ideal tetrahedron.
+                'fis': {'target': -0.3333, 'tolerance': 0.08, 'weight': 1.5,
+                        'description': 'Local inversion symmetry of PS4^3- '
+                                       '(Milkus & Zaccone, PRB 93, 094204 (2016))'}
             },
             'element_filter': [15, 16],  # P and S only
             'cutoff': 3.5

@@ -201,7 +201,12 @@ class SiO2ConstraintWriter:
         - Compatible with EnvironmentConstrainedOptimizer
     """
 
-    # Order parameters for each Si environment
+    # Order parameters for each Si environment.
+    #
+    # These are defaults.  Prefer --measure-targets, which replaces them with values
+    # taken from the input structure: the hard-coded tet target of 0.85 is already off
+    # for a real glass (the published GAP model measures 0.918), and a target the
+    # reference does not itself satisfy pulls the refinement away from physical.
     ENVIRONMENT_ORDER_PARAMETERS = {
         "Si4": {  # Tetrahedral - ideal glass structure
             "order_parameters": {
@@ -218,8 +223,21 @@ class SiO2ConstraintWriter:
                     "weight": 1.5,
                     "description": "Si-O coordination number",
                 },
+                # F_IS is the parameter most sensitive to deformation of the
+                # tetrahedron itself.  On refined structures it moved by up to 12x the
+                # reference spread while q4 and q6 stayed inside their own noise, so
+                # constraining cn and tet alone lets the polyhedra distort unnoticed.
+                # -1/3 is exact for an ideal tetrahedron (Td has no inversion centre);
+                # a real glass sits a little above it (GAP a-SiO2: -0.300).
+                "fis": {
+                    "target": -0.3333,
+                    "tolerance": 0.08,
+                    "weight": 1.5,
+                    "description": "Local inversion symmetry of the SiO4 unit "
+                                   "(Milkus & Zaccone, PRB 93, 094204 (2016))",
+                },
             },
-            "element_filter": [8, 14],  # O=8, Si=14
+            "element_filter": [8],  # O only: Si-Si is 3.08 A, far outside the cutoff
             "cutoff": 2.2,
         },
         "Si3": {  # Undercoordinated - defect
@@ -254,8 +272,18 @@ class SiO2ConstraintWriter:
                     "weight": 1.0,
                     "description": "Si-O coordination (octahedral)",
                 },
+                # An octahedron HAS an inversion centre, so F_IS = +1 exactly -- the
+                # opposite end of the range from the tetrahedral -1/3.  This is the
+                # case that the old mean-of-ratios combination reported as +1/3.
+                "fis": {
+                    "target": 1.0,
+                    "tolerance": 0.10,
+                    "weight": 1.5,
+                    "description": "Local inversion symmetry of the SiO6 unit "
+                                   "(+1 for a centrosymmetric octahedron)",
+                },
             },
-            "element_filter": [8, 14],
+            "element_filter": [8],
             "cutoff": 2.2,
         },
     }
@@ -273,6 +301,7 @@ class SiO2ConstraintWriter:
         structure: Structure, 
         classifier: SiEnvironmentClassifier,
         include_environments: List[str] = None,
+        env_params: Dict = None,
     ):
         """
         Args:
@@ -284,6 +313,9 @@ class SiO2ConstraintWriter:
         """
         self.structure = structure
         self.classifier = classifier
+        # Instance-level copy so --measure-targets can override the class defaults
+        # without mutating them for every other writer in the process.
+        self.env_params = env_params or self.ENVIRONMENT_ORDER_PARAMETERS
         
         # Filter which environments to constrain
         if include_environments is None:
@@ -343,7 +375,7 @@ class SiO2ConstraintWriter:
                 continue
 
             present_envs.add(env_type)
-            env_params = self.ENVIRONMENT_ORDER_PARAMETERS[env_type]
+            env_params = self.env_params[env_type]
 
             # v6 FORMAT: Use "environment" key (not "environment_type")
             atom_constraint = {
@@ -380,7 +412,7 @@ class SiO2ConstraintWriter:
             "order_parameter_types": list(set(
                 op for env_type in self.include_environments
                 if env_type in self.ENVIRONMENT_ORDER_PARAMETERS
-                for op in self.ENVIRONMENT_ORDER_PARAMETERS[env_type]["order_parameters"].keys()
+                for op in self.env_params[env_type]["order_parameters"].keys()
             )),
             "notes": "v6 constraints for EnvironmentConstrainedOptimizer with adaptive penalties",
             "environment_types": {
@@ -455,7 +487,7 @@ class SiO2ConstraintWriter:
                     priority = self.ENVIRONMENT_PRIORITIES.get(env_type, 1.0)
                     f.write(f"\n{env_type} environments ({count} atoms, priority={priority}):\n")
                     f.write("-" * 70 + "\n")
-                    for op_name, op_params in self.ENVIRONMENT_ORDER_PARAMETERS[env_type]["order_parameters"].items():
+                    for op_name, op_params in self.env_params[env_type]["order_parameters"].items():
                         f.write(f"  {op_name}: target={op_params.get('target', 'N/A')}, ")
                         if "min" in op_params:
                             f.write(f"range=[{op_params['min']:.2f}, {op_params['max']:.2f}], ")
@@ -487,6 +519,59 @@ class SiO2ConstraintWriter:
                         f.write(f"      O neighbors: {data['neighbors']['O']}\n")
 
         print(f"Wrote summary to: {summary_file}")
+
+
+def measure_targets_from_structure(structure, classifications, env_params,
+                                   cutoff, central_z=14):
+    """Replace hard-coded OP targets with values measured on this structure.
+
+    A target the reference structure does not itself satisfy pulls the refinement
+    away from physical: the shipped tet target of 0.85 sits 0.07 below what a
+    published a-SiO2 model actually measures, so the optimizer is rewarded for
+    flattening tetrahedra that were already correct.  Measuring instead ties every
+    target to a structure you have independently validated.
+
+    Returns the env_params dict with 'target' fields overwritten, plus a report.
+    """
+    import copy
+
+    import torch
+    from ase import Atoms
+    from torch_sim.io import atoms_to_state
+
+    from torchdisorder.engine.order_params import PyTorchOrderParameters
+
+    atoms = Atoms(
+        numbers=[site.specie.Z for site in structure],
+        positions=structure.cart_coords,
+        cell=structure.lattice.matrix,
+        pbc=True,
+    )
+    state = atoms_to_state(atoms, device=torch.device("cpu"), dtype=torch.float64)
+
+    out = copy.deepcopy(env_params)
+    report = {}
+    by_env = {}
+    for idx, data in classifications.items():
+        by_env.setdefault(data["type"], []).append(int(idx))
+
+    for env_type, indices in by_env.items():
+        if env_type not in out:
+            continue
+        ops = sorted(out[env_type]["order_parameters"])
+        efilter = out[env_type].get("element_filter")
+        calc = PyTorchOrderParameters(
+            cutoff=out[env_type].get("cutoff", cutoff), device="cpu", max_neighbors=8
+        )
+        vals = calc(state, torch.tensor(indices), ops, element_filter=efilter)
+        report[env_type] = {}
+        for op in ops:
+            v = vals[op].detach().cpu().numpy()
+            mean, std = float(v.mean()), float(v.std())
+            out[env_type]["order_parameters"][op]["target"] = round(mean, 4)
+            out[env_type]["order_parameters"][op]["measured_std"] = round(std, 4)
+            report[env_type][op] = (mean, std)
+    return out, report
 
 
 def main():
@@ -551,6 +636,13 @@ Output files:
         choices=["Si4", "Si3", "Si5", "Si6"],
         help="Environment types to include (default: all). Use 'Si4' for normal glass."
     )
+    parser.add_argument(
+        "--measure-targets",
+        action="store_true",
+        help="Measure order-parameter targets from the input structure instead of "
+             "using the built-in defaults. Recommended when the input is a structure "
+             "you have independently validated.",
+    )
     args = parser.parse_args()
 
     print(f"\n{'=' * 70}")
@@ -597,7 +689,18 @@ Output files:
 
     # Write outputs
     print(f"\nWriting output files...")
-    writer = SiO2ConstraintWriter(structure, classifier, include_environments=include_envs)
+    env_params = SiO2ConstraintWriter.ENVIRONMENT_ORDER_PARAMETERS
+    if args.measure_targets:
+        print("\nMeasuring order-parameter targets from the input structure...")
+        env_params, report = measure_targets_from_structure(
+            structure, classifications, env_params, args.cutoff)
+        for env, ops in sorted(report.items()):
+            for op, (mean, std) in sorted(ops.items()):
+                print(f"    {env:6s} {op:4s} target = {mean:+.4f}  (spread {std:.4f})")
+
+    writer = SiO2ConstraintWriter(structure, classifier,
+                                  include_environments=include_envs,
+                                  env_params=env_params)
     writer.write_outputs(args.output, classifications, stats)
 
     print(f"\n{'=' * 70}")
