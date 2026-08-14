@@ -58,6 +58,15 @@ def main() -> None:
     p.add_argument("--cutoff", type=float, default=2.2)
     p.add_argument("--expected-cn", type=float, default=4.0)
     p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--supercell", default=None,
+                   help="repeat the cell before scaling, e.g. 4,2,2")
+    p.add_argument("--remove", default=None,
+                   help="delete atoms to hit a target composition, e.g. 'Li:32,S:16'. "
+                        "Deletion leaves voids rather than overlaps, and a subsequent "
+                        "melt erases the resulting defective arrangement -- so this is "
+                        "a safe way to reach a composition with no source crystal "
+                        "(e.g. 67Li2S = Li4P2S7 from Li7P3S11). Coordination is "
+                        "deliberately changed, so the CN check is skipped when used.")
     args = p.parse_args()
 
     from ase.io import read, write
@@ -69,12 +78,39 @@ def main() -> None:
     print(f"input: {args.input}  {len(atoms)} atoms, rho = {rho0:.4f} g/cm3")
 
     check = validate_structure(atoms, check_plateau=True, central=args.central,
-                               neighbour=args.neighbour, expected_cn=args.expected_cn)
+                               neighbour=args.neighbour, bond_cutoff=args.cutoff,
+                               expected_cn=args.expected_cn)
     if not check:
         raise SystemExit(f"input is not a clean crystal:\n{check.summary()}")
 
+    if args.supercell:
+        reps = [int(x) for x in args.supercell.split(",")]
+        atoms = atoms.repeat(reps)
+        print(f"supercell {reps}: {len(atoms)} atoms, "
+              f"cell = {atoms.cell.lengths().round(2)}")
+
+    if args.remove:
+        rng_del = np.random.default_rng(args.seed)
+        symbols = np.array(atoms.get_chemical_symbols())
+        drop: list[int] = []
+        for spec in args.remove.split(","):
+            element, count = spec.split(":")
+            pool = np.flatnonzero(symbols == element)
+            n = int(count)
+            if n > len(pool):
+                raise SystemExit(
+                    f"cannot remove {n} {element}: only {len(pool)} present")
+            drop.extend(rng_del.choice(pool, size=n, replace=False).tolist())
+        del atoms[sorted(drop, reverse=True)]
+        print(f"removed {len(drop)} atoms -> {atoms.get_chemical_formula()} "
+              f"({len(atoms)} atoms)")
+
+    # Re-measure: --remove changes the mass but not the volume, so scaling by the
+    # pristine crystal's density would overshoot and leave the seed too light.
+    rho_now = atoms.get_masses().sum() / atoms.get_volume() * 1.66054
+
     # Expand isotropically to the experimental glass density.
-    atoms.set_cell(atoms.get_cell() * (rho0 / args.density) ** (1 / 3), scale_atoms=True)
+    atoms.set_cell(atoms.get_cell() * (rho_now / args.density) ** (1 / 3), scale_atoms=True)
     print(f"expanded to rho = "
           f"{atoms.get_masses().sum()/atoms.get_volume()*1.66054:.4f} g/cm3")
 
@@ -84,13 +120,25 @@ def main() -> None:
                             + rng.normal(0.0, args.rattle, (len(atoms), 3)))
         print(f"applied {args.rattle} A symmetry-breaking rattle (seed {args.seed})")
 
-    report = validate_structure(atoms, check_plateau=True, central=args.central,
-                                neighbour=args.neighbour, expected_cn=args.expected_cn)
+    # Deleting atoms to reach a composition necessarily changes coordination, so
+    # a CN plateau is not a meaningful test of such a seed. Overlap still is: it
+    # is the check that no amount of downstream melting excuses.
+    composition_adjusted = bool(args.remove)
+    report = validate_structure(
+        atoms,
+        check_plateau=not composition_adjusted,
+        central=args.central,
+        neighbour=args.neighbour, bond_cutoff=args.cutoff,
+        expected_cn=None if composition_adjusted else args.expected_cn,
+    )
     print("\n" + report.summary())
     if not report:
         raise SystemExit(
             "\nSeed is already unphysical before any refinement. Reduce --rattle: "
             "the point is to break symmetry, not to create disorder.")
+    if composition_adjusted:
+        print("  (CN check skipped: composition was adjusted by deletion; the melt "
+              "reorganises the resulting under-coordinated sites.)")
 
     write(args.output, atoms, format="cif")
     print(f"\nwrote {args.output}")

@@ -41,13 +41,29 @@ __all__ = [
     "ValidationReport",
     "validate_structure",
     "coordination_profile",
+    "plateau_window",
 ]
 
 # Below this fraction of the summed covalent radii, a contact is not a bond.
 DEFAULT_OVERLAP_TOL = 0.6
 
 # Cutoffs (A) over which a genuine first shell should hold <CN> roughly constant.
+# These bracket a Si-O bond; see plateau_window for other chemistries.
 DEFAULT_PLATEAU_CUTOFFS = (1.8, 2.0, 2.2, 2.4, 2.6)
+
+
+def plateau_window(bond_cutoff: float, n: int = 5, step: float = 0.2) -> tuple:
+    """Plateau cutoffs bracketing ``bond_cutoff``.
+
+    The default window is tuned to Si-O and is simply wrong elsewhere: a P-S
+    bond sits at ~2.05 A, so <CN> is exactly zero at 1.8 and 2.0 A and pristine
+    crystalline Li7P3S11 fails the flatness test for want of a first shell it
+    plainly has. Deriving the window from the bond cutoff makes the check mean
+    the same thing in every chemistry -- and reproduces the historical default
+    exactly for the Si-O cutoff of 2.2 A.
+    """
+    half = (n - 1) // 2
+    return tuple(round(bond_cutoff + (k - half) * step, 3) for k in range(n))
 
 
 @dataclass
@@ -158,7 +174,8 @@ def validate_structure(
     neighbour=None,
     expected_cn: float | None = None,
     cn_tol: float = 0.15,
-    plateau_cutoffs=DEFAULT_PLATEAU_CUTOFFS,
+    plateau_cutoffs=None,
+    bond_cutoff: float | None = None,
     plateau_spread: float = 0.25,
 ) -> ValidationReport:
     """Check a structure for atom overlap and, optionally, a first-shell plateau.
@@ -177,6 +194,13 @@ def validate_structure(
     expected_cn
         If given, the plateau must additionally sit within ``cn_tol`` of it
         (e.g. 4.0 for SiO4 tetrahedra).
+    plateau_cutoffs
+        Explicit cutoff window for the plateau test.  When omitted it is derived
+        from ``bond_cutoff``, falling back to the Si-O default.
+    bond_cutoff
+        First-shell bond cutoff for this chemistry (e.g. 2.2 for Si-O, 2.5 for
+        P-S).  Used to place the plateau window; pass it for anything but an
+        oxide, or the window will not contain the first shell at all.
     plateau_spread
         Maximum allowed max-min spread of <CN> across the cutoff window.
 
@@ -187,6 +211,12 @@ def validate_structure(
     """
     from ase.data import covalent_radii
     from ase.neighborlist import neighbor_list
+
+    if plateau_cutoffs is None:
+        plateau_cutoffs = (
+            plateau_window(bond_cutoff) if bond_cutoff is not None
+            else DEFAULT_PLATEAU_CUTOFFS
+        )
 
     atoms = _atoms_from(structure)
     z = atoms.get_atomic_numbers()
