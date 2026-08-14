@@ -115,6 +115,7 @@ class BondSwitchMC:
         seed: int = 0,
         max_bond_length: Optional[float] = None,
         neighbour_radius: Optional[float] = None,
+        strain_tolerance: float = 1.6,
     ):
         self.atoms = atoms.copy()
         self.central_z = central_z
@@ -129,6 +130,11 @@ class BondSwitchMC:
         # the second-neighbour separation: far enough to reach a different ring,
         # close enough that the rewired bonds land inside a first shell.
         self.neighbour_radius = neighbour_radius or 3.0 * cutoff
+        # How much a freshly transposed bond may exceed the first-shell cutoff
+        # before the proposal is discarded. WWW moves are strained by design and
+        # relaxation is what resolves them, so this is a sanity bound, not a
+        # physical bond limit.
+        self.strain_tolerance = strain_tolerance
 
         self.n_proposed = 0
         self.n_accepted = 0
@@ -144,39 +150,56 @@ class BondSwitchMC:
         keys = np.array(list(bridges))
         pos = self.atoms.get_positions()
 
-        for _ in range(50):  # a few tries before giving up on this sweep
+        by_centre: Dict[int, List[int]] = {}
+        for b, cs in bridges.items():
+            for c in cs:
+                by_centre.setdefault(int(c), []).append(int(b))
+
+        def other(bridge, centre):
+            c1, c2 = bridges[bridge]
+            return int(c2) if int(c1) == centre else int(c1)
+
+        for _ in range(200):
+            # The canonical WWW move works on a CONNECTED PATH of centres,
+            # a - b - c - d, and rewires to a-c and b-d.  Choosing the two bridges
+            # independently does not work: selecting si_c near si_a leaves si_d
+            # wherever si_c's other bridge happens to point, and the second new
+            # bond then spans a median 12.6 A.  Instrumented on c-SiO2, 217 of 300
+            # independent draws failed on exactly that second bond and none
+            # succeeded.  Along a path every pair is within two bonds, so both new
+            # bridges are reachable.
             o1 = int(self.rng.choice(keys))
-            # Pick the PARTNER from among spatially nearby bridges, not uniformly.
-            # A swap between two arbitrary bridges puts the new bridging atom
-            # roughly 2.7 A from its partners -- well outside a first shell -- so
-            # uniform sampling proposes mostly unphysical moves and wastes the
-            # expensive relax+score on them.  WWW transposes neighbouring bonds.
-            others = keys[keys != o1]
-            d = np.array([self._dist(pos[o1], pos[int(o)]) for o in others])
-            near = others[d < self.neighbour_radius]
-            if near.size == 0:
+            si_a, si_b = (int(x) for x in bridges[o1])
+            if self.rng.random() < 0.5:
+                si_a, si_b = si_b, si_a
+
+            mid = [b for b in by_centre[si_b] if b != o1]
+            if not mid:
                 continue
-            o2 = int(self.rng.choice(near))
+            o_mid = int(self.rng.choice(mid))
+            si_c = other(o_mid, si_b)
+            if si_c in (si_a, si_b):
+                continue
 
-            si_a, si_b = bridges[int(o1)]
-            si_c, si_d = bridges[int(o2)]
-
-            # Reject degenerate rewirings: the four centres must be distinct, or
-            # the "switch" either does nothing or creates a self-bridge.
+            tail = [b for b in by_centre[si_c] if b not in (o1, o_mid)]
+            if not tail:
+                continue
+            o2 = int(self.rng.choice(tail))
+            si_d = other(o2, si_c)
             if len({si_a, si_b, si_c, si_d}) != 4:
                 continue
 
-            # Place each bridging atom at the midpoint of its new pair, under the
-            # minimum image so the move is well defined across the cell boundary.
             new1 = self._midpoint(pos[si_a], pos[si_c])
             new2 = self._midpoint(pos[si_b], pos[si_d])
 
-            # Skip proposals that would stretch a bond beyond the first shell:
-            # relaxation cannot recover those and they only waste a score call.
-            if (self._dist(new1, pos[si_a]) > self.max_bond_length
-                    or self._dist(new1, pos[si_c]) > self.max_bond_length
-                    or self._dist(new2, pos[si_b]) > self.max_bond_length
-                    or self._dist(new2, pos[si_d]) > self.max_bond_length):
+            # A WWW proposal is expected to be strained; relaxation is what makes
+            # it viable, which is why relax_fn is not optional in practice.  The
+            # bound here only rejects the wildly impossible.
+            limit = self.strain_tolerance * self.max_bond_length
+            if (self._dist(new1, pos[si_a]) > limit
+                    or self._dist(new1, pos[si_c]) > limit
+                    or self._dist(new2, pos[si_b]) > limit
+                    or self._dist(new2, pos[si_d]) > limit):
                 continue
 
             return SwitchProposal(int(o1), int(o2), int(si_a), int(si_b),
