@@ -47,7 +47,9 @@ read C N CUT CN RHO SRC <<< "$SPEC"
 
 echo "=== $LABEL  route=$ROUTE  $C-$N cutoff=$CUT rho=$RHO  $(date) ==="
 source "$(conda info --base)/etc/profile.d/conda.sh"; conda activate torchdisorder
-PY="/home/conrard/.conda/envs/torchdisorder/bin/python"
+# -u: batch stdout is a file, so Python block-buffers it and a long run looks
+# hung until it exits. Unbuffered here rather than relying on every print site.
+PY="/home/conrard/.conda/envs/torchdisorder/bin/python -u"
 $PY -c "import torch; print('CUDA:', torch.cuda.is_available())"
 export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-6}"
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True

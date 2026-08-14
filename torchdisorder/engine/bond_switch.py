@@ -270,8 +270,11 @@ class BondSwitchMC:
             if log_every and (k + 1) % log_every == 0:
                 rate = self.n_accepted / max(self.n_proposed, 1)
                 last = self.history[-1]["current"] if self.history else float("nan")
+                # flush: a 3000-switch run emits ~30 short lines, far under the 8 KB
+                # block-buffer Python uses when stdout is a file, so an unflushed
+                # print leaves a multi-hour batch job looking hung until it exits.
                 print(f"  switch {k+1:5d}/{n_steps}  accepted {self.n_accepted:5d} "
-                      f"({100*rate:5.1f}%)  score {last:.6g}")
+                      f"({100*rate:5.1f}%)  score {last:.6g}", flush=True)
                 if callback is not None:
                     callback(self)
         return self.atoms

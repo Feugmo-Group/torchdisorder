@@ -13,7 +13,14 @@
 # judge afterwards against the published model.
 root_dir: ${oc.env:PROJECT_ROOT,./}/data
 init: from_cif
-cif_path: ${structure.root_dir}/crystal-structures/sio2_from_crystal.cif
+# Must be the generator's OWN copy in data/json, not the one in crystal-structures.
+# The constraint generator indexes atoms with pymatgen, which expands CIF symmetry
+# and groups sites by element (Si at 0-374); ASE, which the trainer uses, keeps the
+# literal atom_site order. On the crystal-structures copy the two orderings disagree
+# on 510 of 1125 sites, so 255 of the 375 Si constraints land on oxygen. The json
+# copy is the same cell and composition, written out in the order the constraints
+# were built against, and pairs with zero mismatches.
+cif_path: ${structure.root_dir}/json/sio2_from_crystal.cif
 target_density: 2.20
 species: [Si, O]
 stoichiometry: [1, 2]
