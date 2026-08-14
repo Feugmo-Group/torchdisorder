@@ -34,18 +34,36 @@ def chi_squared(
     target: torch.Tensor,
     uncertainty: Union[torch.Tensor, float],
     normalize: bool = False,
+    sigma_mode: str = "data",
+    sigma_floor_frac: float = 0.0,
 ) -> torch.Tensor:
     """
     Compute chi-squared statistic.
-    
+
     χ² = Σ (estimate - target)² / σ²
-    
+
     Args:
         estimate: Predicted values
         target: Target values
         uncertainty: Per-point or constant uncertainty
         normalize: If True, return χ²/N (reduced chi-squared)
-    
+        sigma_mode: How to treat the uncertainties.
+            ``"data"``       — use them as given (default, historical behaviour).
+            ``"fractional"`` — use ``max(sigma, sigma_floor_frac * max|target|)``.
+        sigma_floor_frac: Fraction of the target's peak amplitude used as an error
+            floor in ``"fractional"`` mode.
+
+    Why ``sigma_mode`` exists
+    ------------------------
+    The SiO2 target carries a median σ of 6e-4, and ``source.txt`` records that
+    zero-valued uncertainties were hand-patched to 1e-7.  Forwarding the published
+    GAP glass — a structure independently validated as correct — gives an RMS
+    residual of ~0.04, so χ²/point is ~4800 even for a structure we believe.  χ² can
+    then never approach 1, and minimising it drives the optimizer to chase
+    differences far below the real accuracy of either the data or the model.  A
+    fractional floor makes χ² interpretable again; it is a modelling choice and
+    should be stated as one in any write-up.
+
     Returns:
         Scalar chi-squared value
     """
@@ -73,7 +91,14 @@ def chi_squared(
     
     # Clamp to avoid division by zero
     sigma = torch.clamp(sigma, min=1e-6)
-    
+
+    # Optional error floor tied to the signal's own amplitude.  Without it, points
+    # whose published sigma is near zero dominate chi^2 entirely: two such points
+    # in the SiO2 target can contribute ~1e12 on their own.
+    if sigma_mode == "fractional" and sigma_floor_frac > 0.0:
+        floor = sigma_floor_frac * target.abs().max()
+        sigma = torch.clamp(sigma, min=float(floor))
+
     chi2 = torch.sum((estimate - target) ** 2 / sigma ** 2)
     
     if torch.isnan(chi2):
@@ -185,6 +210,9 @@ class CooperLoss(nn.Module):
         target_type: str = 'S_Q',
         device: str = 'cuda',
         uncertainty_floor: float = 0.01,
+        sigma_mode: str = 'data',
+        sigma_floor_frac: float = 0.02,
+        normalize_for_weighting: bool = False,
         # F_IS regularization
         fis_target: Optional[float] = None,
         fis_weight: float = 1.0,
@@ -205,6 +233,16 @@ class CooperLoss(nn.Module):
         self.target_type = target_type
         self.device = torch.device(device)
         self.uncertainty_floor = uncertainty_floor
+        self.sigma_mode = sigma_mode
+        self.sigma_floor_frac = sigma_floor_frac
+        # Divide chi^2 by a running scale before combining it with the other
+        # terms, so the aggregator and the constraint penalty see an O(1)
+        # objective.  Rescaling the penalty to chase an chi^2 of ~1e8 was tried
+        # and measured worse than leaving the penalty alone; normalising the
+        # objective instead fixes the mismatch at its source and leaves the
+        # aggregators operating on the magnitudes they were designed for.
+        self.normalize_for_weighting = normalize_for_weighting
+        self._chi2_scale = None
 
         # F_IS regularization
         self.fis_target = fis_target
@@ -258,7 +296,12 @@ class CooperLoss(nn.Module):
             uncert = self.target_data.S_Q_uncert
             if uncert is None or uncert.numel() == 0:
                 uncert = self.uncertainty_floor
-            losses['S_Q_loss'] = chi_squared(pred, target, uncert)
+            losses['S_Q_loss'] = chi_squared(
+                pred, target, uncert,
+                sigma_mode=self.sigma_mode,
+                sigma_floor_frac=self.sigma_floor_frac,
+            )
+            losses['S_Q_rms'] = rmse(pred, target).detach()
         
         # T(r) loss
         if 'T_r' in results and self.target_data.has_T_r():
@@ -267,7 +310,12 @@ class CooperLoss(nn.Module):
             uncert = self.target_data.T_r_uncert
             if uncert is None or uncert.numel() == 0:
                 uncert = self.uncertainty_floor
-            losses['T_r_loss'] = chi_squared(pred, target, uncert)
+            losses['T_r_loss'] = chi_squared(
+                pred, target, uncert,
+                sigma_mode=self.sigma_mode,
+                sigma_floor_frac=self.sigma_floor_frac,
+            )
+            losses['T_r_rms'] = rmse(pred, target).detach()
         
         # g(r) loss
         if 'g_r' in results and self.target_data.has_g_r():
@@ -276,7 +324,12 @@ class CooperLoss(nn.Module):
             uncert = self.target_data.g_r_uncert
             if uncert is None or uncert.numel() == 0:
                 uncert = self.uncertainty_floor
-            losses['g_r_loss'] = chi_squared(pred, target, uncert)
+            losses['g_r_loss'] = chi_squared(
+                pred, target, uncert,
+                sigma_mode=self.sigma_mode,
+                sigma_floor_frac=self.sigma_floor_frac,
+            )
+            losses['g_r_rms'] = rmse(pred, target).detach()
         
         # G(r) loss (reduced PDF)
         if 'G_r' in results and self.target_data.has_G_r():
@@ -285,7 +338,12 @@ class CooperLoss(nn.Module):
             uncert = self.target_data.G_r_uncert
             if uncert is None or uncert.numel() == 0:
                 uncert = self.uncertainty_floor
-            losses['G_r_loss'] = chi_squared(pred, target, uncert)
+            losses['G_r_loss'] = chi_squared(
+                pred, target, uncert,
+                sigma_mode=self.sigma_mode,
+                sigma_floor_frac=self.sigma_floor_frac,
+            )
+            losses['G_r_rms'] = rmse(pred, target).detach()
         
         # F(Q) loss
         if 'F_Q' in results and self.target_data.has_F_Q():
@@ -294,7 +352,12 @@ class CooperLoss(nn.Module):
             uncert = self.target_data.F_q_uncert
             if uncert is None or uncert.numel() == 0:
                 uncert = self.uncertainty_floor
-            losses['F_Q_loss'] = chi_squared(pred, target, uncert)
+            losses['F_Q_loss'] = chi_squared(
+                pred, target, uncert,
+                sigma_mode=self.sigma_mode,
+                sigma_floor_frac=self.sigma_floor_frac,
+            )
+            losses['F_Q_rms'] = rmse(pred, target).detach()
         
         # Select primary loss
         primary_key = f'{self.target_type}_loss'
@@ -321,6 +384,23 @@ class CooperLoss(nn.Module):
             fis_loss = self.fis_weight * (fis_mean - self.fis_target) ** 2
             losses['fis_loss'] = fis_loss
             losses['fis_mean'] = fis_mean.detach()
+
+        # Normalise the objective before it is weighted against anything else.
+        #
+        # chi^2 for an unnormalised F(Q) fit is O(1e8) while the constraint and F_IS
+        # terms are O(1).  Every scheme that tried to scale the OTHER terms up to
+        # meet it measured worse than leaving them alone.  Dividing chi^2 by a fixed
+        # reference -- its value at the first step -- makes the objective O(1), so
+        # relative weights mean what they say and the aggregators receive the
+        # comparable magnitudes they assume.  The scale is captured once and held
+        # constant, so the gradient direction is unchanged and the loss stays
+        # comparable across steps.
+        if self.normalize_for_weighting and primary_key in losses:
+            if self._chi2_scale is None:
+                v = float(losses[primary_key].detach())
+                self._chi2_scale = max(abs(v), 1e-30)
+            losses[primary_key] = losses[primary_key] / self._chi2_scale
+            total_loss = losses[primary_key]
 
         # Combine scattering + F_IS via aggregator or fixed sum
         agg_inputs = {k: v for k, v in losses.items()

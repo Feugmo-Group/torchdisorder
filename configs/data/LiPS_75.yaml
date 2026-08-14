@@ -1,6 +1,8 @@
 # 75Li2S-25P2S5 Glass Data Configuration
 # X-ray PDF data — Li3PS4 is exactly 75Li2S-25P2S5 stoichiometry
 
+experiment_name: LiPS_75
+
 root_dir: ${oc.env:PROJECT_ROOT,./}/data
 
 scattering_type: xray

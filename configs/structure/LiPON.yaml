@@ -1,0 +1,20 @@
+# LiPON (Lithium Phosphorus Oxynitride) Structure Configuration
+# ==============================================================
+
+root_dir: ${oc.env:PROJECT_ROOT,./}/data
+
+# Initialization method: from_cif, random_icp, pymatgen
+init: from_cif
+
+# CIF file path
+cif_path: ${structure.root_dir}/crystal-structures/LiPON_defected.cif
+
+# Target density for scaling (g/cm³)
+target_density: 2.50
+
+# Structure properties
+species: [Li, P, O, N]
+stoichiometry: [3, 1, 4, 0.5]
+
+# Random initialization settings (if init=random_icp)
+box_length: 30.0

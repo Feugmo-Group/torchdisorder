@@ -1,6 +1,8 @@
 # 67Li2S-33P2S5 Glass Data Configuration
 # X-ray PDF data — same experimental dataset as LiPS.yaml baseline
 
+experiment_name: LiPS_67
+
 root_dir: ${oc.env:PROJECT_ROOT,./}/data
 
 scattering_type: xray

@@ -1,44 +1,44 @@
-# GeO2 (Germanium Dioxide Glass) Data Configuration
-# ==================================================
-# Neutron diffraction data for amorphous germania
+# Ferrihydrite (2-line, 5Fe2O3·10H2O) Data Configuration
+# =========================================================
+# X-ray total scattering data from Michel et al., Chem. Mater. 19, 1489 (2007)
+# DOI: 10.1021/cm062585n
+# Measurement: APS beamlines 11-ID-B + 1-ID-C, Q_max ≈ 30 Å⁻¹
+# Sample Fhyd2 (most disordered, 2-line ferrihydrite)
+# Data digitized from Figure 5 of the paper.
 
-experiment_name: GeO2
+experiment_name: ferrihydrite
 
 root_dir: ${oc.env:PROJECT_ROOT,./}/data
 
 # =============================================================================
-# Scattering Type: 'neutron' or 'xray'
+# Scattering Type: X-ray (APS synchrotron)
 # =============================================================================
-scattering_type: neutron
+scattering_type: xray
 
 # =============================================================================
 # Data Paths
 # =============================================================================
 data:
-  s_of_q_path: ${data.root_dir}/xrd_measurements/GeO2/F_of_Q.csv
-  t_of_r_path: ${data.root_dir}/xrd_measurements/GeO2/T_of_r.csv
+  s_of_q_path: ${data.root_dir}/FeO2/ferrihydrite_FQ_smoothed.csv
+  t_of_r_path: null
   g_of_r_path: null
-  
-  # Input format: null=auto-detect, true=F(Q), false=S(Q)
-  # F_of_Q.csv contains F(Q)=Q[S(Q)-1] directly — do NOT recompute
+
+  # F(Q) = Q[S(Q)-1] directly
   input_is_F_Q: true
-  
-  # Data subsampling (1 = no subsampling)
+
   stride_q: 1
   stride_r: 1
 
 # =============================================================================
 # Q-space Range (Å⁻¹)
 # =============================================================================
-# Filter experimental S(Q)/F(Q) data to this range
-# Set to null to use full data range
-q_min: 0.5
+# Ferrihydrite data runs to Q≈28; use up to 25 for reliable signal
+q_min: 0.8
 q_max: 25.0
 
 # =============================================================================
 # R-space Range (Å)
 # =============================================================================
-# Used for auto-generating r_bins or filtering loaded data
 r_min: 0.01
 r_max: 10.0
 n_r_bins: 500
@@ -47,23 +47,22 @@ n_r_bins: 500
 # Spectrum Calculation
 # =============================================================================
 kernel_width: 0.035
-number_density: 0.0698  # atoms/Å³ from geo2_glass.cif (3.63 g/cm³ → 0.0627 bulk)
 
 # =============================================================================
-# Neutron Scattering Lengths (fm)
+# Neutron Scattering Lengths (fm) — not used (xray mode)
 # =============================================================================
 neutron_scattering_lengths:
-  Ge: 8.185
+  Fe: 9.45
   O: 5.803
 
 # =============================================================================
 # X-ray Form Factor Parameters (Cromer-Mann)
 # =============================================================================
 xray_form_factor_params:
-  Ge:
-    a: [16.0816, 6.3747, 3.7068, 3.683]
-    b: [2.8509, 0.2516, 11.4468, 54.7625]
-    c: [2.1313]
+  Fe:
+    a: [11.7695, 7.3573, 3.5222, 2.3045]
+    b: [4.7611, 0.3072, 15.3535, 76.8805]
+    c: [1.0369]
   O:
     a: [3.0485, 2.2868, 1.5463, 0.867]
     b: [13.2771, 5.7011, 0.3239, 32.9089]
@@ -72,11 +71,41 @@ xray_form_factor_params:
 # =============================================================================
 # Order Parameters
 # =============================================================================
-central: 'Ge'
+central: 'Fe'
 neighbour: 'O'
-cutoff: 2.4
+cutoff: 2.2
 
 # =============================================================================
-# Constraints
+# Constraints (reuse Fe2O3 octahedral constraints)
 # =============================================================================
-json_path: ${data.root_dir}/json/geo2_glass_constraints.json
+json_path: ${data.root_dir}/json/fe2o3_sc800_constraints.json
+
+# =============================================================================
+# F_IS order parameter
+# =============================================================================
+fis:
+  target: 0.50
+  weight: 0.5
+  cutoff: 2.2
+  central_z: 26
+  neighbor_z: 8
+  mode: variable_R
+
+# =============================================================================
+# Loss aggregation
+# =============================================================================
+loss_aggregator:
+  name: relobralo
+  beta: 0.999
+  num_losses: 2
+
+# =============================================================================
+# F_IS feedback
+# =============================================================================
+fis_feedback:
+  enabled: false
+  update_interval: 200
+  feedback_strength: 2.0
+  min_scale: 0.5
+  max_scale: 5.0
+  warmup_steps: 500

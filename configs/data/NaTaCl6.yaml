@@ -1,27 +1,28 @@
-# SiO2 (Silica Glass) Data Configuration
-# ========================================
-# Neutron diffraction data for amorphous silica
+# NaTaCl6 Data Configuration
+# ===========================
+# X-ray diffraction data for NaTaCl6 glass
 
-experiment_name: SiO2
+experiment_name: NaTaCl6
 
 root_dir: ${oc.env:PROJECT_ROOT,./}/data
 
 # =============================================================================
 # Scattering Type: 'neutron' or 'xray'
 # =============================================================================
-scattering_type: neutron
+scattering_type: xray
 
 # =============================================================================
 # Data Paths
 # =============================================================================
 data:
-  s_of_q_path: ${data.root_dir}/xrd_measurements/SiO2/F_of_Q.csv
-  t_of_r_path: ${data.root_dir}/xrd_measurements/SiO2/T_of_r.csv
+  s_of_q_path: ${data.root_dir}/xrd_measurements/NaTaCl6/F_of_Q_actual.csv
+  t_of_r_path: ${data.root_dir}/xrd_measurements/NaTaCl6/T_of_r.csv
   g_of_r_path: null
-  
+
   # Input format: null=auto-detect, true=F(Q), false=S(Q)
-  input_is_F_Q: null
-  
+  # F_of_Q.csv contains F(Q)=Q[S(Q)-1] directly
+  input_is_F_Q: true
+
   # Data subsampling (1 = no subsampling)
   stride_q: 1
   stride_r: 1
@@ -32,7 +33,7 @@ data:
 # Filter experimental S(Q)/F(Q) data to this range
 # Set to null to use full data range
 q_min: 0.5
-q_max: 25.0
+q_max: 20.0
 
 # =============================================================================
 # R-space Range (Å)
@@ -45,51 +46,72 @@ n_r_bins: 500
 # =============================================================================
 # Spectrum Calculation
 # =============================================================================
-# Calibrated against the published GAP glass with
-# scripts/calibrate_kernel_width.py: shape correlation peaks at 0.18 (r = 0.818,
-# up from 0.734 at the old 0.035).  This is the real-space broadening that turns a
-# static snapshot into something comparable with a time-averaged measurement.
-#
-# UNRESOLVED: at this optimum the best amplitude scale is still 0.35, i.e. the
-# calculated F(Q) remains ~2.8x too large.  Broadening alone does not reconcile the
-# two, so a normalisation or convention difference remains between the forward
-# model and this data file.  Until that is settled, chi^2 against this target is a
-# relative progress measure only -- judge fits with scripts/compare_to_literature.py.
-kernel_width: 0.18
+kernel_width: 0.035
 
 # =============================================================================
 # Neutron Scattering Lengths (fm)
 # =============================================================================
 neutron_scattering_lengths:
-  Si: 4.1491
-  O: 5.803
+  Na: 3.63
+  Ta: 6.91
+  Cl: 9.577
 
 # =============================================================================
 # X-ray Form Factor Parameters (Cromer-Mann)
 # =============================================================================
 xray_form_factor_params:
-  Si:
-    a: [6.2915, 3.0353, 1.9891, 1.541]
-    b: [2.4386, 32.3337, 0.6785, 81.6937]
-    c: [1.1407]
-  O:
-    a: [3.0485, 2.2868, 1.5463, 0.867]
-    b: [13.2771, 5.7011, 0.3239, 32.9089]
-    c: [0.2508]
+  Na:
+    a: [4.7626, 3.1736, 1.2674, 1.1128]
+    b: [3.2850, 8.8422, 0.3136, 129.424]
+    c: [0.6760]
+  Ta:
+    a: [29.2024, 15.2293, 14.5135, 4.7647]
+    b: [1.7733, 9.3704, 0.3130, 132.280]
+    c: [8.5819]
+  Cl:
+    a: [11.4604, 7.1964, 6.2556, 1.6455]
+    b: [0.0104, 1.1662, 18.5194, 47.7784]
+    c: [-9.5574]
 
 # =============================================================================
 # Order Parameters
 # =============================================================================
-central: 'Si'
-neighbour: 'O'
-cutoff: 2.0
+central: 'Ta'
+neighbour: 'Cl'
+cutoff: 2.6
 
 # =============================================================================
 # Constraints
 # =============================================================================
-# Constraints for the GAP glass: 1723 of 1728 Si.  The 5 omitted are genuine
-# coordination defects (3 Si5, 2 Si3) and are deliberately left unconstrained.
-# The previous file was built for the old 1125-atom structure and constrained only
-# 375 Si, leaving 78% of the tetrahedra with nothing holding them together.
-# Must stay index-consistent with structure.cif_path — see configs/structure/silica.yaml.
-json_path: ${data.root_dir}/json/sio2_glass_gap_constraints.json
+json_path: ${data.root_dir}/json/natacl6_glass_constraints.json
+
+# =============================================================================
+# F_IS order parameter (local inversion symmetry)
+# =============================================================================
+# NaTaCl6: octahedral Ta-Cl6; perfect inversion → F_IS ≈ 1.0
+fis:
+  target: 0.90      # slightly below 1.0 to allow amorphous disorder
+  weight: 0.5
+  cutoff: 2.6
+  central_z: 73     # Ta
+  neighbor_z: 17    # Cl
+  mode: variable_R
+
+# =============================================================================
+# Loss aggregation
+# =============================================================================
+loss_aggregator:
+  name: relobralo
+  beta: 0.999
+  num_losses: 2
+
+# =============================================================================
+# F_IS feedback: dynamic environment priority adjustment
+# =============================================================================
+fis_feedback:
+  enabled: false
+  update_interval: 200
+  feedback_strength: 2.0
+  min_scale: 0.5
+  max_scale: 5.0
+  warmup_steps: 500

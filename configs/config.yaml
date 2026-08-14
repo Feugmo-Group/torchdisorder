@@ -72,11 +72,18 @@ lr:
 # Override on the CLI, e.g.
 #   python scripts/train.py penalty.aggregator=relobralo
 #   python scripts/train.py penalty.target_ratio=0.2 penalty.aggregator=null
+# MEASURED: on SiO2 at 500 steps, scoring against the published GAP glass on
+# quantities the refinement does not fit, the legacy rule (both switches null) beat
+# every adaptive scheme -- 4 metrics off-target versus 8 for target_ratio 0.01/0.05/
+# 0.20, relobralo and soft_adapt alike.  Rescaling the penalty to meet an chi^2 of
+# ~1e8 is self-defeating: rho* = eta*chi^2/sum(g^2) FALLS as violations grow, so it
+# weakens the constraints exactly when they are needed.  Prefer normalising the
+# objective (loss.normalize_for_weighting) over inflating the penalty.
 penalty:
   init: 10.0
   aggregator: null        # null | relobralo | soft_adapt | ema | brdr | res_norm | ...
   aggregator_kwargs: {}
-  target_ratio: 0.05      # constraint term ≈ 5% of chi^2
+  target_ratio: null      # null = legacy growth/decay (measured best); see note above
   adapt_rate: 0.15        # multiplicative step toward the target, per update
   growth_rate: 1.5        # only used when both above are null
   decay_rate: 0.95        # only used when both above are null
@@ -152,6 +159,28 @@ order_params:
 # =============================================================================
 # Scattering / KDE
 # =============================================================================
+# =============================================================================
+# Objective conditioning
+# =============================================================================
+# normalize_for_weighting divides chi^2 by its value at the first step, so the
+# objective is O(1) when weighted against F_IS and the constraint terms.  Without
+# it chi^2 is O(1e8) and every relative weight is meaningless.
+#
+# sigma_mode controls the error model:
+#   data       - use the published uncertainties as-is (historical behaviour)
+#   fractional - floor them at sigma_floor_frac * max|target|
+# The SiO2 file has a median sigma of 6e-4 and source.txt records that zeros were
+# hand-patched to 1e-7.  The published GAP glass -- a structure we independently
+# believe -- leaves an RMS residual of ~0.04, so chi^2/point is ~4800 even for a
+# correct structure and chi^2 can never approach 1.  Under sigma_mode: data, treat
+# chi^2 as a relative progress measure only and judge fits by the *_rms entries and
+# scripts/compare_to_literature.py.  Under fractional, chi^2 regains a roughly
+# statistical meaning, at the cost of a modelling assumption you must declare.
+loss:
+  normalize_for_weighting: true
+  sigma_mode: data          # data | fractional
+  sigma_floor_frac: 0.02    # only used when sigma_mode: fractional
+
 scattering:
   # Distances processed per KDE chunk in get_partial_rdf.
   # null = auto-sized from free GPU memory (recommended for most cases).

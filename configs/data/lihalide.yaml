@@ -1,6 +1,8 @@
 # Li-halide (Li₃MCl₆, M = Y/In/Sc) Data Configuration
 # Neutron diffraction — update data paths to match your experimental file
 
+experiment_name: lihalide
+
 root_dir: ${oc.env:PROJECT_ROOT,./}/data
 
 scattering_type: neutron

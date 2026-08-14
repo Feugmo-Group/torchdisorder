@@ -1,6 +1,8 @@
 # 70Li2S-30P2S5 Glass Data Configuration
 # X-ray PDF data — uses Li3PS4 dataset (closest available experimental data)
 
+experiment_name: LiPS_70
+
 root_dir: ${oc.env:PROJECT_ROOT,./}/data
 
 scattering_type: xray

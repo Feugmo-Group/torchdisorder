@@ -1558,8 +1558,20 @@ def main(cfg: DictConfig) -> None:
         fis_neighbor_z=fis_neighbor,
         fis_mode=fis_mode,
         aggregator=aggregator,
+        sigma_mode=OmegaConf.select(cfg, 'loss.sigma_mode', default='data'),
+        sigma_floor_frac=float(OmegaConf.select(cfg, 'loss.sigma_floor_frac', default=0.02)),
+        normalize_for_weighting=bool(
+            OmegaConf.select(cfg, 'loss.normalize_for_weighting', default=False)),
     )
     print(f"CooperLoss initialized with target: {target_type}")
+    print(f"  sigma_mode={cooper_loss.sigma_mode}"
+          + (f" (floor {cooper_loss.sigma_floor_frac:g} x max|target|)"
+             if cooper_loss.sigma_mode == 'fractional' else "")
+          + f"  normalize_for_weighting={cooper_loss.normalize_for_weighting}")
+    if cooper_loss.sigma_mode == 'data':
+        print("    note: chi^2 is NOT statistically interpretable with the published "
+              "sigmas;\n          judge fits by the *_rms values and "
+              "scripts/compare_to_literature.py.")
     if fis_target is not None:
         print(f"  F_IS regularization: target={fis_target:.4f}  weight={fis_weight}  "
               f"cutoff={fis_cutoff} Å  central_Z={fis_central}  neighbor_Z={fis_neighbor}")
