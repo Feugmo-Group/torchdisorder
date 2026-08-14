@@ -7,7 +7,14 @@ root_dir: ${oc.env:PROJECT_ROOT,./}/data
 init: from_cif
 
 # CIF file path (corrected: c-GeO2.cif, not GeO2.cif)
-cif_path: ${structure.root_dir}/crystal-structures/geo2_glass.cif
+# The constraint generator's copy of the published NNP glass (Kasamatsu et al.,
+# J. Chem. Phys. 161, 204103 (2024)).  Points at data/json/ rather than the
+# pristine download because constraints are keyed by atom index and the generator
+# reorders atoms.  See crystal-structures/PROVENANCE_geo2_glass_nnp.md.
+#
+# DO NOT USE crystal-structures/geo2_glass.cif -- it is byte-identical to
+# c-GeO2.cif, i.e. the crystal under a glass filename.
+cif_path: ${structure.root_dir}/json/geo2_glass_nnp.cif
 
 # Target density for scaling (g/cm³)
 target_density: 3.65

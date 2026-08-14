@@ -79,4 +79,6 @@ cutoff: 2.4
 # =============================================================================
 # Constraints
 # =============================================================================
-json_path: ${data.root_dir}/json/geo2_glass_constraints.json
+# Regenerated against the validated NNP seed (Kasamatsu 2024): 1058 of 1080 Ge.
+# Must stay index-consistent with structure.cif_path -- the generator reorders atoms.
+json_path: ${data.root_dir}/json/geo2_glass_nnp_constraints.json
