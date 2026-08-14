@@ -1,0 +1,20 @@
+# a-SiO2 seed built FROM THE CRYSTAL, for the crystal -> amorphous experiment.
+#
+# This is a crystal by construction: c-SiO2 expanded to 2.20 g/cm3 with a 0.02 A
+# symmetry-breaking rattle, which keeps every Si-O bond at 1.626 A (outside the
+# covalent floor) with <CN> = 4.000 intact. The rattle exists only so the gradients
+# are not degenerate on an exactly symmetric configuration -- it is NOT an attempt
+# to create disorder that way. Rattling degrades coordination faster than it makes
+# glass-like disorder and never alters ring topology; the published GAP glass
+# reaches 5.4 deg of angular spread at 99.7% four-fold coordination, which no
+# displacement amplitude can reproduce.
+#
+# Whether this becomes a glass is the RESULT of the refinement, and is the thing to
+# judge afterwards against the published model.
+root_dir: ${oc.env:PROJECT_ROOT,./}/data
+init: from_cif
+cif_path: ${structure.root_dir}/crystal-structures/sio2_from_crystal.cif
+target_density: 2.20
+species: [Si, O]
+stoichiometry: [1, 2]
+box_length: 25.0
