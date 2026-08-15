@@ -19,6 +19,15 @@
 # P-S bonds intact; 4000 K would dissociate the sulfide and destroy the very P
 # environment distribution these structures exist to represent.
 #
+# gamma is 1.0 ps^-1, not the 0.1 default. At 0.1 the thermostat relaxes over
+# 10 ps against a 20 ps melt: the first attempt (job 1207) initialised at 1420 K,
+# collapsed to ~850 K by 2 ps as equipartition took half the kinetic energy, and
+# had only recovered to ~1300 K by the end -- so it sat at or BELOW its own
+# melting point throughout and never became a liquid. That, not MACE's P-S
+# accuracy, is why the network failed to finish connecting: <CN> came out 3.615
+# for Li4P2S7 and 3.802 for Li7P3S11, worst where the composition needs the most
+# bridging sulfur.
+#
 #   sbatch scripts/slurm_lips_glass.sh
 # =============================================================================
 #SBATCH --job-name=lipsglass
@@ -67,8 +76,9 @@ $PY scripts/build_glass_melt_quench.py \
     --input "$SEED" --output "$OUT" \
     --central P --neighbour S --cutoff 2.5 --expected-cn 4 \
     --density 1.85 --device cuda \
+    --gamma "${GAMMA:-1.0}" \
     --melt-temp "${MELT_T:-1500}" --quench-temp 300 \
-    --melt-steps "${MELT:-20000}" --quench-steps "${QUENCH:-30000}" \
+    --melt-steps "${MELT:-30000}" --quench-steps "${QUENCH:-40000}" \
     --anneal-steps "${ANNEAL:-5000}" --log-every 2000
 
 # The check that matters: zero pairs inside the covalent floor. The structures
