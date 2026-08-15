@@ -116,8 +116,17 @@ def test_uphill_moves_are_rejected_at_zero_temperature():
     assert mc.n_proposed >= 1, "an uphill move must still count as proposed"
 
 
-def test_relax_fn_runs_before_scoring():
-    """The raw transposition is strained; scoring it unrelaxed rejects everything."""
+def test_both_states_get_the_same_relaxation_before_scoring():
+    """Current and trial must be relaxed equally before they are compared.
+
+    The raw transposition is strained, so the trial has to be relaxed or every
+    move is rejected. But relaxing ONLY the trial is worse than not relaxing at
+    all: the structural score falls monotonically under further relaxation, so
+    delta then measures "extra relaxation steps" rather than "did this switch
+    help", and every move is accepted. Observed on SiO2 as 3000/3000 accepted
+    while rewiring 0 of 750 links -- a chain that had degenerated into plain
+    relaxation while reporting perfect success.
+    """
     atoms = _corner_sharing_network()
     order = []
 
@@ -132,8 +141,8 @@ def test_relax_fn_runs_before_scoring():
     mc = BondSwitchMC(atoms, central_z=14, bridge_z=8, cutoff=2.0,
                       relax_fn=relax, score_fn=score, seed=6)
     mc.step()
-    # first score is the current state, then relax, then score the trial
-    assert order[:3] == ["score", "relax", "score"]
+    # relax current, score it, relax trial, score it -- symmetric budgets
+    assert order[:4] == ["relax", "score", "relax", "score"]
 
 
 def test_step_without_score_fn_is_an_error():

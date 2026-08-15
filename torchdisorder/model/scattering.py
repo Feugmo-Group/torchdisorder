@@ -54,7 +54,8 @@ class OutputType(Enum):
     """Type of output function."""
     # Q-space
     S_Q = "S_Q"      # Structure factor
-    F_Q = "F_Q"      # Reduced structure factor
+    F_Q = "F_Q"      # Reduced structure factor, Q[S(Q)-1]  (PDFgetX convention)
+    F_Q_ISIS = "F_Q_ISIS"  # <b>^2 [S(Q)-1] in barn (ISIS/Salmon convention)
     # r-space  
     g_r = "g_r"      # Pair distribution function
     G_r = "G_r"      # Reduced PDF
@@ -380,10 +381,49 @@ def compute_neutron_F_Q(
 ) -> torch.Tensor:
     """
     Compute reduced structure factor F(Q) = Q[S(Q) - 1].
-    
+
     F(Q) → 0 as Q → ∞
+
+    NOTE: this is the PDFgetX/Faber-Ziman *reduced* form.  It is NOT what ISIS
+    publishes under the name "F(Q)" -- see :func:`compute_neutron_F_Q_isis`.
+    Comparing this against an ISIS file is a units error, not a fit.
     """
     return q_bins * (S_Q - 1)
+
+
+def compute_neutron_F_Q_isis(
+    S_Q: torch.Tensor,
+    chemical_symbols: List[str],
+    scattering_lengths: Dict[str, float],
+) -> torch.Tensor:
+    """Total interference function F(Q) = <b>^2 [S(Q) - 1], in barn.
+
+    This is the ISIS / Salmon convention used by the Oxide Glass Data archive
+    (https://www.isis.stfc.ac.uk/Pages/Oxide-Glass-Data.aspx), which is where
+    ``data/xrd_measurements/*/F_of_Q.csv`` comes from.  There is **no factor of
+    Q**: F(Q) decays because S(Q) - 1 decays, not because it is multiplied by Q.
+
+    Why this exists
+    ---------------
+    The refinement previously compared ``Q[S(Q) - 1]`` against these files.  That
+    is dimensionally wrong twice over -- a spurious factor of Q, and a missing
+    <b>^2 barn normalisation -- and it made a *validated* structure look
+    catastrophically bad: the published GAP a-SiO2 model scored reduced chi^2
+    ~1.1e9 against a target it actually reproduces.  The error grows with Q
+    (calc/obs ran 0.6x at low Q to 15x at high Q), which is why it was
+    mistaken for a missing Debye-Waller damping term.
+
+    Measured on that GAP model: comparing S(Q) - 1 instead gives a ratio to the
+    data that is *constant* in Q (corr(ratio, Q) = -0.012) at 3.64-3.80, against
+    1 / <b>^2 = 1 / 0.2758 barn = 3.63 predicted.  Nothing was wrong with the
+    physics or the structure; the objective was measuring a unit mismatch.
+    """
+    n = len(chemical_symbols)
+    elems = set(chemical_symbols)
+    frac = {e: chemical_symbols.count(e) / n for e in elems}
+    # fm^2 -> barn (0.01), matching the b_mean_sq used to normalise S(Q).
+    b_mean_sq = (sum(frac[e] * scattering_lengths[e] for e in elems) ** 2) * 0.01
+    return b_mean_sq * (S_Q - 1)
 
 
 def compute_neutron_S_Q_direct(

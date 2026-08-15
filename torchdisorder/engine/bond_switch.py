@@ -238,6 +238,15 @@ class BondSwitchMC:
             return False
 
         self.n_proposed += 1
+
+        # Both states must carry the SAME relaxation budget. Scoring an unrelaxed
+        # current against a relaxed trial makes delta measure "30 more FIRE steps",
+        # not "did this switch help": the structural score always falls under
+        # further relaxation, so every move is accepted and the chain degenerates
+        # into plain relaxation. That is precisely what SiO2 did -- 3000/3000
+        # accepted while rewiring 0 of 750 links.
+        if self.relax_fn is not None:
+            self.atoms = self.relax_fn(self.atoms)
         current = self.score_fn(self.atoms)
 
         trial = self.apply(self.atoms, prop)
