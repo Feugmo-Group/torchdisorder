@@ -1398,7 +1398,36 @@ def main(cfg: DictConfig) -> None:
         print(f"    The cell is NOT cubic. Ensure your model handles this correctly.")
     
     print(f"{'=' * 70}\n")
-    
+
+    # Refuse to refine a structure that is already unphysical. An audit found
+    # every glass_*Li2S*.cif in the repo carrying atom overlaps -- 1657 pairs
+    # inside the covalent floor in glass_75Li2S, closest 0.069 A between Li and
+    # S where the bond is 2.4 A -- while 13 configs still point at them. No
+    # chi-squared reveals that, and refining from such a seed produces a result
+    # that looks converged and means nothing. Overlap only: coordination is a
+    # judgement about the chemistry and belongs to the seed's own generator,
+    # but nothing excuses two atoms occupying the same place.
+    from torchdisorder.common.validation import validate_structure
+
+    _allow_bad_seed = OmegaConf.select(
+        cfg, 'structure.allow_unphysical_seed', default=False)
+    _seed_check = validate_structure(atoms_list[0], check_plateau=False)
+    if not _seed_check and _allow_bad_seed:
+        print("  ⚠ Seed overlap check FAILED but structure.allow_unphysical_seed"
+              " is set — continuing.")
+        print(f"{_seed_check.summary()}\n")
+    elif not _seed_check:
+        raise SystemExit(
+            f"\n  Seed structure is unphysical before refinement begins:\n"
+            f"{_seed_check.summary()}\n\n"
+            f"    structure: {OmegaConf.select(cfg, 'structure.cif_path')}\n\n"
+            f"  Regenerate it (scripts/build_glass_melt_quench.py cannot produce an\n"
+            f"  overlap) or set structure.allow_unphysical_seed=true to override."
+        )
+    else:
+        print(f"  Seed overlap check: PASS "
+              f"(min d = {_seed_check.min_distance:.3f} Å)\n")
+
     state = atoms_to_state(atoms_list, device=accelerator, dtype=dtype)
     state.positions.requires_grad_(True)
     state.cell.requires_grad_(True)
