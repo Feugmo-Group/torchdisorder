@@ -60,11 +60,22 @@ TASKS=(
 ENTRY="${TASKS[$SLURM_ARRAY_TASK_ID]}"
 LABEL="${ENTRY%%|*}"; DESC="${ENTRY#*|}"
 
-echo "=== $LABEL  ($DESC)  $(date) ==="
-source "$(conda info --base)/etc/profile.d/conda.sh"; conda activate torchdisorder
+# Each potential needs its own env: mace-torch pins e3nn==0.4.4 while MatterSim
+# and SevenNet need e3nn>=0.5, and MACE genuinely breaks on the newer one --
+# it loads but dies computing forces on the changed Irreps API.
+POTENTIAL="${POTENTIAL:-mace}"
+case "$POTENTIAL" in
+  mace)      CONDA_ENV=torchdisorder; DEF_MODEL=medium-mpa-0 ;;
+  mattersim) CONDA_ENV=mlip;          DEF_MODEL=MatterSim-v1.0.0-5M.pth ;;
+  sevennet)  CONDA_ENV=mlip;          DEF_MODEL=7net-mf-ompa ;;
+  *) echo "unknown POTENTIAL=$POTENTIAL" >&2; exit 1 ;;
+esac
+
+echo "=== $LABEL  ($DESC)  potential=$POTENTIAL env=$CONDA_ENV  $(date) ==="
+source "$(conda info --base)/etc/profile.d/conda.sh"; conda activate "$CONDA_ENV"
 # -u: batch stdout is a file, so Python block-buffers it and a long run looks
 # hung until it exits.
-PY="/home/conrard/.conda/envs/torchdisorder/bin/python -u"
+PY="/home/conrard/.conda/envs/$CONDA_ENV/bin/python -u"
 $PY -c "import torch; print('CUDA:', torch.cuda.is_available())"
 export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-6}"
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
@@ -78,7 +89,7 @@ $PY scripts/build_glass_melt_quench.py \
     --input "$SEED" --output "$OUT" \
     --central P --neighbour S --cutoff 2.5 --expected-cn 4 \
     --density 1.85 --device cuda \
-    --gamma "${GAMMA:-1.0}" --model "${MODEL:-medium-mpa-0}" \
+    --gamma "${GAMMA:-1.0}" --potential "$POTENTIAL" --model "${MODEL:-$DEF_MODEL}" \
     --melt-temp "${MELT_T:-1500}" --quench-temp 300 \
     --melt-steps "${MELT:-30000}" --quench-steps "${QUENCH:-40000}" \
     --anneal-steps "${ANNEAL:-5000}" --log-every 2000

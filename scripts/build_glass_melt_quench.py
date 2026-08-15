@@ -107,6 +107,56 @@ def angles(atoms, centre_z, nb_z, cutoff):
     return np.array(out) if out else np.array([np.nan])
 
 
+def _load_potential(args, device, dtype, dtype_name):
+    """Build a torch_sim model for the chosen foundation potential.
+
+    Imports live inside each branch on purpose. Only one potential can occupy an
+    environment at a time: mace-torch pins e3nn==0.4.4 while SevenNet and
+    MatterSim both require e3nn>=0.6, so installing either alongside MACE breaks
+    it. The backends therefore live in separate conda envs, and a top-level
+    import of all of them would fail in every one of them.
+    """
+    if args.potential == "mace":
+        from mace.calculators.foundations_models import mace_mp
+        from torch_sim.models.mace import MaceModel
+
+        # Load on CPU first: the checkpoint holds float64 tensors, which MPS
+        # cannot materialise, so torch.load(map_location='mps') fails outright.
+        ase_calc = mace_mp(model=args.model, device="cpu", default_dtype=dtype_name)
+        return MaceModel(model=ase_calc.models[0], device=device, dtype=dtype,
+                         compute_forces=True, compute_stress=False)
+
+    if args.potential == "mattersim":
+        from mattersim.forcefield import Potential
+        from torch_sim.models.mattersim import MatterSimModel
+
+        # MatterSim is the one foundation model trained across the temperature
+        # range this script actually samples (to ~5000 K); MPtrj and Alexandria,
+        # behind MACE-MP/MPA, are near-equilibrium sets.
+        # load_training_state=False: the checkpoint carries optimiser state we
+        # have no use for at inference, and loading it is both slower and a
+        # needless failure mode.
+        pot = Potential.from_checkpoint(load_path=args.model, device=str(device),
+                                        load_training_state=False)
+        return MatterSimModel(model=pot, device=device, dtype=dtype)
+
+    if args.potential == "orb":
+        from orb_models.forcefield import pretrained
+        from torch_sim.models.orb import OrbModel
+
+        orb = getattr(pretrained, args.model)(device=str(device))
+        return OrbModel(model=orb, device=device, dtype=dtype)
+
+    if args.potential == "sevennet":
+        from sevenn.calculator import SevenNetCalculator
+        from torch_sim.models.sevennet import SevenNetModel
+
+        calc = SevenNetCalculator(args.model, device=str(device))
+        return SevenNetModel(model=calc.model, device=device, dtype=dtype)
+
+    raise SystemExit(f"unknown potential: {args.potential}")
+
+
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -125,7 +175,12 @@ def main() -> None:
     # models (small/medium-omat-0), which are usually strongest but carry the
     # Academic Software License -- loading one is accepting its terms.
     p.add_argument("--model", default="medium-mpa-0",
-                   help="MACE foundation model (default: medium-mpa-0)")
+                   help="foundation model name/checkpoint for the chosen --potential "
+                        "(default: medium-mpa-0, a MACE model)")
+    p.add_argument("--potential", default="mace",
+                   choices=["mace", "mattersim", "orb", "sevennet"],
+                   help="which foundation potential to drive the dynamics. Each "
+                        "needs its own conda env -- they have conflicting e3nn pins.")
     p.add_argument("--melt-temp", type=float, default=4000.0)
     p.add_argument("--quench-temp", type=float, default=300.0)
     p.add_argument("--melt-steps", type=int, default=20000)
@@ -142,8 +197,6 @@ def main() -> None:
     import torch_sim as ts
     from ase.data import atomic_numbers
     from ase.io import read, write
-    from mace.calculators.foundations_models import mace_mp
-    from torch_sim.models.mace import MaceModel
     from torch_sim.units import MetalUnits
 
     cz, nz = atomic_numbers[args.central], atomic_numbers[args.neighbour]
@@ -176,12 +229,8 @@ def main() -> None:
     report("expanded to glass rho", atoms, cz, nz, args.cutoff, args.expected_cn)
 
     dtype_name = str(dtype).rsplit(".", 1)[-1]
-    print(f"\nloading MACE-MP ({args.model}) on {args.device}/{dtype_name}")
-    # Load on CPU first: the checkpoint holds float64 tensors, which MPS cannot
-    # materialise, so torch.load(map_location='mps') fails outright.
-    ase_calc = mace_mp(model=args.model, device="cpu", default_dtype=dtype_name)
-    model = MaceModel(model=ase_calc.models[0], device=device, dtype=dtype,
-                      compute_forces=True, compute_stress=False)
+    print(f"\nloading {args.potential} ({args.model}) on {args.device}/{dtype_name}")
+    model = _load_potential(args, device, dtype, dtype_name)
     state = ts.io.atoms_to_state(atoms, device=device, dtype=dtype)
 
     def temperature(st):

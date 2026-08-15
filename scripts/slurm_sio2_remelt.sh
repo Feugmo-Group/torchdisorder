@@ -44,9 +44,20 @@ export PROJECT_ROOT PYTHONPATH="$PROJECT_ROOT"
 unset TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD
 cd "$PROJECT_ROOT"; mkdir -p logs
 
-echo "=== SiO2 re-melt (gamma=${GAMMA:-1.0}, melt=${MELT:-30000}) $(date) ==="
-source "$(conda info --base)/etc/profile.d/conda.sh"; conda activate torchdisorder
-PY="/home/conrard/.conda/envs/torchdisorder/bin/python -u"
+# Each potential needs its own env: mace-torch pins e3nn==0.4.4 while MatterSim
+# and SevenNet need e3nn>=0.5, and MACE genuinely breaks on the newer one --
+# it loads but dies computing forces on the changed Irreps API.
+POTENTIAL="${POTENTIAL:-mace}"
+case "$POTENTIAL" in
+  mace)      CONDA_ENV=torchdisorder; DEF_MODEL=medium-mpa-0 ;;
+  mattersim) CONDA_ENV=mlip;          DEF_MODEL=MatterSim-v1.0.0-5M.pth ;;
+  sevennet)  CONDA_ENV=mlip;          DEF_MODEL=7net-mf-ompa ;;
+  *) echo "unknown POTENTIAL=$POTENTIAL" >&2; exit 1 ;;
+esac
+
+echo "=== SiO2 re-melt (potential=$POTENTIAL gamma=${GAMMA:-1.0} melt=${MELT:-30000}) $(date) ==="
+source "$(conda info --base)/etc/profile.d/conda.sh"; conda activate "$CONDA_ENV"
+PY="/home/conrard/.conda/envs/$CONDA_ENV/bin/python -u"
 $PY -c "import torch; print('CUDA:', torch.cuda.is_available())"
 export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-6}"
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
@@ -59,7 +70,7 @@ $PY scripts/build_glass_melt_quench.py \
     --input data/crystal-structures/c-SiO2.cif --output "$OUT" \
     --central Si --neighbour O --cutoff 2.2 --expected-cn 4 \
     --density 2.20 --device cuda \
-    --gamma "${GAMMA:-1.0}" --model "${MODEL:-medium-mpa-0}" \
+    --gamma "${GAMMA:-1.0}" --potential "$POTENTIAL" --model "${MODEL:-$DEF_MODEL}" \
     --melt-temp 4000 --melt-steps "${MELT:-30000}" \
     --quench-steps "${QUENCH:-30000}" --anneal-steps "${ANNEAL:-5000}" \
     --log-every 2000
