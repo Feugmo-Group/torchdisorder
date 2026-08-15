@@ -44,14 +44,17 @@ export PROJECT_ROOT PYTHONPATH="$PROJECT_ROOT"
 unset TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD
 cd "$PROJECT_ROOT"; mkdir -p logs
 
-# Each potential needs its own env: mace-torch pins e3nn==0.4.4 while MatterSim
-# and SevenNet need e3nn>=0.5, and MACE genuinely breaks on the newer one --
-# it loads but dies computing forces on the changed Irreps API.
+# One env per potential. mace-torch pins e3nn==0.4.4 while MatterSim and
+# SevenNet need e3nn>=0.5, and the pin is real -- forcing MACE onto e3nn 0.6.0
+# loads the model and then dies computing forces on the changed Irreps API.
+# MatterSim and SevenNet *could* share, but sharing already cost us once:
+# installing SevenNet downgraded nvidia-nccl-cu13 to 2.29.7 and left MatterSim's
+# torch unimportable with "undefined symbol: ncclCommResume". One env each.
 POTENTIAL="${POTENTIAL:-mace}"
 case "$POTENTIAL" in
   mace)      CONDA_ENV=torchdisorder; DEF_MODEL=medium-mpa-0 ;;
   mattersim) CONDA_ENV=mlip;          DEF_MODEL=MatterSim-v1.0.0-5M.pth ;;
-  sevennet)  CONDA_ENV=mlip;          DEF_MODEL=7net-mf-ompa ;;
+  sevennet)  CONDA_ENV=sevennet;      DEF_MODEL=7net-mf-ompa ;;
   *) echo "unknown POTENTIAL=$POTENTIAL" >&2; exit 1 ;;
 esac
 
