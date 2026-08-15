@@ -51,13 +51,15 @@ $PY -c "import torch; print('CUDA:', torch.cuda.is_available())"
 export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-6}"
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
-OUT="data/crystal-structures/SiO2_mq_hot.cif"
+# TAG keeps a second arm (e.g. a different foundation model) from overwriting
+# the first, so the two can be compared rather than one silently replacing.
+OUT="data/crystal-structures/SiO2_mq_hot${TAG:-}.cif"
 
 $PY scripts/build_glass_melt_quench.py \
     --input data/crystal-structures/c-SiO2.cif --output "$OUT" \
     --central Si --neighbour O --cutoff 2.2 --expected-cn 4 \
     --density 2.20 --device cuda \
-    --gamma "${GAMMA:-1.0}" \
+    --gamma "${GAMMA:-1.0}" --model "${MODEL:-medium-mpa-0}" \
     --melt-temp 4000 --melt-steps "${MELT:-30000}" \
     --quench-steps "${QUENCH:-30000}" --anneal-steps "${ANNEAL:-5000}" \
     --log-every 2000
@@ -66,10 +68,10 @@ REF="data/json/sio2_glass_gap.cif"
 if [ -f "$OUT" ]; then
   echo; echo "===== scored against the published model ====="
   $PY scripts/compare_to_literature.py --test "$OUT" --reference "$REF" \
-      --system SiO2 --label SiO2_mq_hot 2>/dev/null || true
+      --system SiO2 --label "SiO2_mq_hot${TAG:-}" 2>/dev/null || true
   # q4 is the discriminator: it is what caught the first attempt, while F_IS
   # moved only -0.015 and would have let it through.
   $PY scripts/compare_order_params.py --reference "$REF" --test "$OUT" \
-      --labels SiO2_mq_hot --central Si --neighbour O --cutoff 2.2 2>/dev/null || true
+      --labels "SiO2_mq_hot${TAG:-}" --central Si --neighbour O --cutoff 2.2 2>/dev/null || true
 fi
 echo "=== done $(date) ==="

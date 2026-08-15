@@ -118,7 +118,14 @@ def main() -> None:
     p.add_argument("--expected-cn", type=int, default=4)
     p.add_argument("--density", type=float, required=True, help="g/cm3")
     p.add_argument("--device", default="cpu", choices=["cpu", "cuda", "mps"])
-    p.add_argument("--model", default="small", help="MACE-MP size")
+    # "small" is MACE-MP-0 L0 from December 2023 -- the oldest and weakest
+    # foundation model, and the one this script used to default to. mace-torch's
+    # own default since 3.10 is medium-mpa-0 (MPtrj + Alexandria), and it warns
+    # when you pick anything else. Other options: medium-0b3, and the OMat24
+    # models (small/medium-omat-0), which are usually strongest but carry the
+    # Academic Software License -- loading one is accepting its terms.
+    p.add_argument("--model", default="medium-mpa-0",
+                   help="MACE foundation model (default: medium-mpa-0)")
     p.add_argument("--melt-temp", type=float, default=4000.0)
     p.add_argument("--quench-temp", type=float, default=300.0)
     p.add_argument("--melt-steps", type=int, default=20000)

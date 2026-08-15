@@ -70,13 +70,15 @@ export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-6}"
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 SEED="data/crystal-structures/${LABEL}_from_crystal.cif"
-OUT="data/crystal-structures/${LABEL}_glass.cif"
+# TAG keeps a second arm (e.g. a different foundation model) from overwriting
+# the first, so the two can be compared rather than one silently replacing.
+OUT="data/crystal-structures/${LABEL}_glass${TAG:-}.cif"
 
 $PY scripts/build_glass_melt_quench.py \
     --input "$SEED" --output "$OUT" \
     --central P --neighbour S --cutoff 2.5 --expected-cn 4 \
     --density 1.85 --device cuda \
-    --gamma "${GAMMA:-1.0}" \
+    --gamma "${GAMMA:-1.0}" --model "${MODEL:-medium-mpa-0}" \
     --melt-temp "${MELT_T:-1500}" --quench-temp 300 \
     --melt-steps "${MELT:-30000}" --quench-steps "${QUENCH:-40000}" \
     --anneal-steps "${ANNEAL:-5000}" --log-every 2000
