@@ -36,32 +36,58 @@ __version__ = '0.6.0'
 __author__ = 'Tetsassi Feugmo Research Group'
 
 # =====================================================================
-# v6 Core Imports
+# Lazy exports (PEP 562)
 # =====================================================================
-from torchdisorder.model.xrd import XRDModel
-from torchdisorder.model.loss import CooperLoss, chi_squared, ChiSquaredObjective
-from torchdisorder.model.scattering import (
-    UnifiedSpectrumCalculator,
-    SpectrumCalculator,
-    ScatteringConfig,
-)
-from torchdisorder.engine.constrained_optimizer import (
-    EnvironmentConstrainedOptimizer,
-    AdaptivePenalty,
-)
-from torchdisorder.engine.order_params import TorchSimOrderParameters
+# These used to be eager `from ... import ...` lines, which meant that importing
+# ANY submodule pulled in the entire training stack -- omegaconf, cooper,
+# pymatgen, pandas, plotly -- because Python runs this file first.
+#
+# That is not a tidiness point, it destroyed real work. The MLIP backends each
+# need their own conda env (mace-torch pins e3nn==0.4.4 while MatterSim and
+# SevenNet need >=0.6), and those envs carry only what the dynamics needs. A
+# 1.5-hour LiPS-25 melt-quench on 2026-08-17 therefore finished its physics,
+# reached `from torchdisorder.common.validation import validate_structure`, and
+# died on ModuleNotFoundError: omegaconf -- discarding the run at the last step.
+#
+# Resolving names on demand keeps `from torchdisorder import XRDModel` working
+# while letting the analysis helpers, which need only numpy and ASE, be imported
+# in an env that has just numpy and ASE.
+_LAZY_EXPORTS = {
+    'XRDModel': 'torchdisorder.model.xrd',
+    'CooperLoss': 'torchdisorder.model.loss',
+    'chi_squared': 'torchdisorder.model.loss',
+    'ChiSquaredObjective': 'torchdisorder.model.loss',
+    'UnifiedSpectrumCalculator': 'torchdisorder.model.scattering',
+    'SpectrumCalculator': 'torchdisorder.model.scattering',
+    'ScatteringConfig': 'torchdisorder.model.scattering',
+    'EnvironmentConstrainedOptimizer': 'torchdisorder.engine.constrained_optimizer',
+    'AdaptivePenalty': 'torchdisorder.engine.constrained_optimizer',
+    'TorchSimOrderParameters': 'torchdisorder.engine.order_params',
+    'StructureFactorCMPWithConstraints': 'torchdisorder.engine.optimizer',
+    'perform_melt_quench': 'torchdisorder.engine.optimizer',
+    'perform_fire_relaxation': 'torchdisorder.engine.optimizer',
+    'ConstantPenalty': 'torchdisorder.engine.optimizer',
+    'TargetRDFData': 'torchdisorder.common.target_rdf',
+    'generate_atoms_from_config': 'torchdisorder.model.generator',
+}
 
-# =====================================================================
-# v5 Backward Compatibility Imports
-# =====================================================================
-from torchdisorder.engine.optimizer import (
-    StructureFactorCMPWithConstraints,
-    perform_melt_quench,
-    perform_fire_relaxation,
-    ConstantPenalty,
-)
-from torchdisorder.common.target_rdf import TargetRDFData
-from torchdisorder.model.generator import generate_atoms_from_config
+
+def __getattr__(name):
+    """Import the module owning `name` on first access, then cache the result."""
+    try:
+        module_path = _LAZY_EXPORTS[name]
+    except KeyError:
+        raise AttributeError(
+            f"module {__name__!r} has no attribute {name!r}") from None
+    import importlib
+
+    value = getattr(importlib.import_module(module_path), name)
+    globals()[name] = value  # subsequent lookups skip __getattr__ entirely
+    return value
+
+
+def __dir__():
+    return sorted(__all__)
 
 __all__ = [
     # Version

@@ -262,6 +262,13 @@ def main() -> None:
     from ase.io import read, write
     from torch_sim.units import MetalUnits
 
+    # Imported here, before hours of dynamics, rather than at the point of use.
+    # These used to be imported after the quench: a 1.5-hour LiPS-25 run completed
+    # its physics and then died on ModuleNotFoundError reaching for them, losing
+    # the lot. Anything that can fail on a missing dependency must fail in the
+    # first second of the job.
+    from torchdisorder.common.validation import validate_structure
+
     cz, nz = atomic_numbers[args.central], atomic_numbers[args.neighbour]
 
     # torch_sim's internal time unit is sqrt(amu*A^2/eV) ~ 10.18 fs, and
@@ -311,7 +318,7 @@ def main() -> None:
     monitor = None
     if args.system:
         from torchdisorder.common.glass_quality import (
-            GLASS_SYSTEMS, forbidden_contacts, sublattice_disorder)
+            GLASS_SYSTEMS, assess_glass, forbidden_contacts, sublattice_disorder)
 
         if args.system not in GLASS_SYSTEMS:
             raise SystemExit(f"--system {args.system!r} not in "
@@ -412,9 +419,17 @@ def main() -> None:
         glass = ts.io.state_to_atoms(fst)[0]
         report("relaxed", glass, cz, nz, args.cutoff, args.expected_cn)
 
-    # ---- verdict -----------------------------------------------------------
-    from torchdisorder.common.validation import validate_structure
+    # ---- save first, judge second ------------------------------------------
+    # The dynamics is the expensive, irreproducible part; the verdict is cheap and
+    # repeatable. Getting the structure onto disk before any analysis touches it
+    # means a bug or a missing dependency in the checks below costs a rerun of the
+    # checks, not a rerun of the melt.
+    out = Path(args.output)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    write(str(out), glass, format="cif")
+    print(f"\nwrote {out}")
 
+    # ---- verdict -----------------------------------------------------------
     # bond_cutoff is not optional in practice: without it the plateau window
     # defaults to the Si-O bracket of 1.8-2.6 A, so a P-S first shell at 2.05 A
     # is judged against cutoffs that do not contain it and pristine crystalline
@@ -436,8 +451,6 @@ def main() -> None:
     # the test that separates them, so run it whenever --system names a ruleset.
     glass_rep = None
     if args.system:
-        from torchdisorder.common.glass_quality import assess_glass
-
         glass_rep = assess_glass(glass, args.system, tolerated=tolerated)
         print("\n" + glass_rep.summary())
 
@@ -467,19 +480,15 @@ def main() -> None:
         print("Confirm against a published model with scripts/compare_to_literature.py.")
     print("=" * 74)
 
-    # A rejected structure is still written, because it is the only evidence of
-    # what went wrong -- but under a name that cannot be mistaken for a usable
-    # model, and with a non-zero exit so sacct does not show the job as COMPLETED.
-    # Every invalid structure that got used downstream looked like a clean success
-    # in the queue history.
+    # A rejected structure is kept, because it is the only evidence of what went
+    # wrong -- but renamed so it cannot be mistaken for a usable model, and with a
+    # non-zero exit so sacct does not record the job as COMPLETED. Every invalid
+    # structure that got used downstream looked like a clean success in the queue.
     ok = bool(rep) and (glass_rep is None or bool(glass_rep))
-    out = Path(args.output)
     if not ok:
-        out = out.with_name(f"{out.stem}_REJECTED{out.suffix}")
-    out.parent.mkdir(parents=True, exist_ok=True)
-    write(str(out), glass, format="cif")
-    print(f"\nwrote {out}")
-    if not ok:
+        rejected = out.with_name(f"{out.stem}_REJECTED{out.suffix}")
+        out.replace(rejected)
+        print(f"\nrejected: {out.name} -> {rejected.name}")
         raise SystemExit(1)
 
 
