@@ -105,6 +105,12 @@ SEED="data/crystal-structures/${LABEL}_from_crystal.cif"
 # the first, so the two can be compared rather than one silently replacing.
 OUT="data/crystal-structures/${LABEL}_glass${TAG:-}.cif"
 
+# set -e is on, and the builder now exits non-zero when it rejects a structure.
+# Capture the status rather than letting the shell abort here, so the log still
+# says what happened -- then propagate it, because a rejected run must not show up
+# as COMPLETED in sacct. Every bad structure that got used downstream looked like
+# a clean success in the queue history.
+STATUS=0
 $PY scripts/build_glass_melt_quench.py \
     --input "$SEED" --output "$OUT" \
     --central P --neighbour S --cutoff 2.5 --expected-cn 4 \
@@ -112,19 +118,24 @@ $PY scripts/build_glass_melt_quench.py \
     --gamma "${GAMMA:-1.0}" --potential "$POTENTIAL" --model "${MODEL:-$DEF_MODEL}" \
     --melt-temp "${MELT_T:-1500}" --quench-temp 300 \
     --melt-steps "${MELT:-30000}" --quench-steps "${QUENCH:-40000}" \
-    --anneal-steps "${ANNEAL:-5000}" --log-every 2000
+    --anneal-steps "${ANNEAL:-5000}" --log-every 2000 \
+    --system LiPS --tolerate "P-P pairs=${ALLOW_PP:-0}" \
+    ${SUPERHEAT_T:+--superheat-temp "$SUPERHEAT_T" --superheat-steps "${SUPERHEAT:-5000}"} \
+    || STATUS=$?
 
-# The check that matters: zero pairs inside the covalent floor. The structures
-# this replaces would all have failed it.
-if [ -f "$OUT" ]; then
-  echo; echo "===== overlap check ====="
-  $PY -c "
-from ase.io import read
-from torchdisorder.common.validation import validate_structure
-rep = validate_structure(read('$OUT'), check_plateau=True, central='P',
-                         neighbour='S', bond_cutoff=2.5, expected_cn=4)
-print(rep.summary())
-raise SystemExit(0 if rep else 1)
-"
+# --system LiPS makes the builder reject an unmelted crystal, or a melt that
+# reduced P(V) to P(IV), and write to *_REJECTED.cif. The overlap-only check that
+# used to live here passed all three of the runs later found to be invalid.
+#
+# ALLOW_PP: amorphous Li3PS4 genuinely contains P2S6(4-) units, each with one P-P
+# bond, so a real glass is not required to have zero. Leave it at 0 for a first
+# look -- the count is the diagnostic -- and raise it only once you know how many
+# P2S6 units the composition should have.
+#
+# SUPERHEAT_T: set it to run a brief hot stage before the melt, for the case where
+# 1500 K does not melt the crystal but a hotter melt degrades the chemistry.
+if [ "$STATUS" -ne 0 ]; then
+  echo "!!! REJECTED -- see the VERDICT above; structure kept as *_REJECTED.cif"
 fi
 echo "=== done $LABEL $(date) ==="
+exit "$STATUS"

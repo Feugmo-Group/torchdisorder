@@ -69,6 +69,10 @@ export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 # the first, so the two can be compared rather than one silently replacing.
 OUT="data/crystal-structures/SiO2_mq_hot${TAG:-}.cif"
 
+# set -e is on and the builder exits non-zero on rejection; capture the status so
+# the log still says what happened, then propagate it so sacct does not record a
+# rejected run as COMPLETED.
+STATUS=0
 $PY scripts/build_glass_melt_quench.py \
     --input data/crystal-structures/c-SiO2.cif --output "$OUT" \
     --central Si --neighbour O --cutoff 2.2 --expected-cn 4 \
@@ -76,7 +80,8 @@ $PY scripts/build_glass_melt_quench.py \
     --gamma "${GAMMA:-1.0}" --potential "$POTENTIAL" --model "${MODEL:-$DEF_MODEL}" \
     --melt-temp 4000 --melt-steps "${MELT:-30000}" \
     --quench-steps "${QUENCH:-30000}" --anneal-steps "${ANNEAL:-5000}" \
-    --log-every 2000
+    --log-every 2000 --system SiO2 \
+    || STATUS=$?
 
 REF="data/json/sio2_glass_gap.cif"
 if [ -f "$OUT" ]; then
@@ -88,4 +93,8 @@ if [ -f "$OUT" ]; then
   $PY scripts/compare_order_params.py --reference "$REF" --test "$OUT" \
       --labels "SiO2_mq_hot${TAG:-}" --central Si --neighbour O --cutoff 2.2 2>/dev/null || true
 fi
+if [ "$STATUS" -ne 0 ]; then
+  echo "!!! REJECTED -- see the VERDICT above; structure kept as *_REJECTED.cif"
+fi
 echo "=== done $(date) ==="
+exit "$STATUS"

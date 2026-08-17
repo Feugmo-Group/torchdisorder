@@ -87,6 +87,10 @@ OUT="data/crystal-structures/GeO2_mq_hot${TAG:-}.cif"
 
 # rho = 3.65 g/cm3 and cutoff 2.4 A carried over from slurm_glass_routes.sh,
 # where they were correct -- the melt temperature was the only wrong parameter.
+# set -e is on and the builder exits non-zero on rejection; capture the status so
+# the log still says what happened, then propagate it so sacct does not record a
+# rejected run as COMPLETED.
+STATUS=0
 $PY scripts/build_glass_melt_quench.py \
     --input data/crystal-structures/c-GeO2.cif --output "$OUT" \
     --central Ge --neighbour O --cutoff 2.4 --expected-cn 4 \
@@ -94,29 +98,26 @@ $PY scripts/build_glass_melt_quench.py \
     --gamma "${GAMMA:-1.0}" --potential "$POTENTIAL" --model "${MODEL:-$DEF_MODEL}" \
     --melt-temp "$MELT_T" --melt-steps "${MELT:-30000}" \
     --quench-steps "${QUENCH:-30000}" --anneal-steps "${ANNEAL:-5000}" \
-    --log-every 2000
+    --log-every 2000 --system GeO2 \
+    ${SUPERHEAT_T:+--superheat-temp "$SUPERHEAT_T" --superheat-steps "${SUPERHEAT:-5000}"} \
+    || STATUS=$?
 
+# The inline O2 count that used to sit here is now --system GeO2, which also
+# applies the sublattice-disorder test the O2 count could not: the 2400, 2200 and
+# 2000 K runs were all CLEAN on oxygen and all still unmelted crystal.
+#
+# SUPERHEAT_T exists for exactly that trap. GeO2 needs ~2800 K to melt but sheds
+# O2 there, so a brief hot stage followed by a cooler hold is the way to get both.
 REF="data/json/geo2_glass_nnp.cif"
 if [ -f "$OUT" ]; then
-  # The check the built-in verdict does not make. O2 is invisible to a mean-CN
-  # test and to a min-distance floor set for Ge-O, so count it explicitly.
-  echo; echo "===== molecular O2 check ====="
-  $PY -c "
-from ase.io import read
-a = read('$OUT'); sym = a.get_chemical_symbols(); d = a.get_all_distances(mic=True)
-O = [i for i, s in enumerate(sym) if s == 'O']
-o2 = [(i, j) for k, i in enumerate(O) for j in O[k+1:] if d[i, j] < 1.35]
-print(f'O2 molecules (O-O < 1.35 A): {len(o2)}')
-for i, j in o2[:10]:
-    print(f'    O{i}-O{j}  {d[i, j]:.3f} A')
-print('CLEAN' if not o2 else 'CONTAMINATED -- melt is still too hot')
-raise SystemExit(0 if not o2 else 1)
-" || true
-
   echo; echo "===== scored against the published model ====="
   $PY scripts/compare_to_literature.py --test "$OUT" --reference "$REF" \
       --system GeO2 --label "GeO2_mq_hot${TAG:-}" 2>/dev/null || true
   $PY scripts/compare_order_params.py --reference "$REF" --test "$OUT" \
       --labels "GeO2_mq_hot${TAG:-}" --central Ge --neighbour O --cutoff 2.4 2>/dev/null || true
 fi
+if [ "$STATUS" -ne 0 ]; then
+  echo "!!! REJECTED -- see the VERDICT above; structure kept as *_REJECTED.cif"
+fi
 echo "=== done $(date) ==="
+exit "$STATUS"
