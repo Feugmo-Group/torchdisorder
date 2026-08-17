@@ -237,7 +237,14 @@ def main() -> None:
     gamma = args.gamma / MetalUnits.time
 
     device = torch.device(args.device)
-    dtype = torch.float32 if args.device == "mps" else torch.float64
+    # graph-pes checkpoints are TorchScript, serialised at the precision they were
+    # trained in, and LiPS-25's are float32. Handing one a float64 state fails
+    # inside the interpreter with "both inputs should have same dtype" -- after
+    # the melt has already started, so the job burns a GPU slot before dying.
+    if args.potential == "graphpes":
+        dtype = torch.float32
+    else:
+        dtype = torch.float32 if args.device == "mps" else torch.float64
     torch.manual_seed(args.seed)
 
     print("=" * 74)
