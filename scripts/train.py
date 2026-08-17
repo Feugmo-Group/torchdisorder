@@ -398,16 +398,6 @@ TARGET_CONFIG = {
 class SpectraPlotter:
     """Plotter for diffraction spectra with focus on selected target."""
     
-    ELEMENT_COLORS = {
-        'Si': '#F0E68C', 'O': '#FF6347', 'Ge': '#9370DB', 'P': '#FFA500',
-        'S': '#FFFF00', 'Li': '#00FF00', 'Na': '#0000FF', 'Fe': '#8B4513',
-        'N': '#00CED1', 'Cl': '#32CD32', 'Ta': '#708090',
-    }
-    ELEMENT_SIZES = {
-        'Si': 100, 'O': 60, 'Ge': 120, 'P': 90, 'S': 80,
-        'Li': 50, 'Na': 70, 'Fe': 100, 'N': 55, 'Cl': 75, 'Ta': 130
-    }
-
     # Wong (2011) colourblind-safe palette
     C_BLUE   = "#0072B2"
     C_ORANGE = "#E69F00"
@@ -768,7 +758,14 @@ class SpectraPlotter:
         
         import matplotlib.ticker as _ticker
         with plt.rc_context(self._ACS_RC):
-            fig, ax = plt.subplots(figsize=(3.5, 2.6))
+            # Two panels sharing Q/r: the fit on top, the residual underneath.  A
+            # single overlay hides *where* a fit fails -- a model that is excellent
+            # at low Q and wrong in the high-Q tail looks the same as one that is
+            # uniformly mediocre, and the two mean very different things about the
+            # structure.  The residual panel is what separates them.
+            fig, (ax, axr) = plt.subplots(
+                2, 1, figsize=(3.5, 3.3), sharex=True,
+                gridspec_kw={'height_ratios': [3, 1], 'hspace': 0.06})
 
             if y_uncert is not None:
                 ax.fill_between(x, y_target - y_uncert, y_target + y_uncert,
@@ -780,28 +777,53 @@ class SpectraPlotter:
             ax.plot(x, y_pred, color=self.C_RED, linewidth=1.0,
                     linestyle='--', label='TorchDisorder')
 
+            resid = y_pred - y_target
             mask = ~np.isnan(y_target) & ~np.isnan(y_pred)
             if mask.sum() > 0:
                 ss_res = np.sum((y_target[mask] - y_pred[mask])**2)
                 ss_tot = np.sum((y_target[mask] - y_target[mask].mean())**2)
                 r2 = 1 - ss_res / (ss_tot + 1e-10)
                 rmse = np.sqrt(np.mean((y_target[mask] - y_pred[mask])**2))
-                ax.text(0.97, 0.96,
-                        f'$R^2$ = {r2:.4f}\nRMSE = {rmse:.4f}',
+                stats = f'$R^2$ = {r2:.4f}\nRMSE = {rmse:.4f}'
+                # chi^2 per point only means anything with real uncertainties.
+                if y_uncert is not None:
+                    ok = mask & (y_uncert > 0)
+                    if ok.sum() > 0:
+                        chi2n = np.mean(((y_target[ok] - y_pred[ok]) / y_uncert[ok])**2)
+                        stats += f'\n$\\chi^2/N$ = {chi2n:.3g}'
+                ax.text(0.97, 0.96, stats,
                         transform=ax.transAxes, fontsize=6,
                         va='top', ha='right',
                         bbox=dict(boxstyle='round,pad=0.3',
                                   facecolor='white', edgecolor='#cccccc',
                                   linewidth=0.5, alpha=0.85))
 
-            ax.set_xlabel(cfg['xlabel'])
             ax.set_ylabel(cfg['ylabel'])
             ax.set_title(f"{cfg['name']} {cfg['symbol']}")
             ax.legend(frameon=False, loc='best')
             ax.grid(True, linewidth=0.3, color='#dddddd')
-            ax.xaxis.set_minor_locator(_ticker.AutoMinorLocator(5))
             ax.yaxis.set_minor_locator(_ticker.AutoMinorLocator(4))
-            ax.tick_params(which='both', top=True, right=True)
+            ax.tick_params(which='both', top=True, right=True,
+                           labelbottom=False)
+
+            # Residual panel, symmetric about zero so over- and under-shoot read alike.
+            if y_uncert is not None:
+                axr.fill_between(x, -y_uncert, y_uncert, alpha=0.25,
+                                 color=self.C_BLUE, linewidth=0)
+            axr.axhline(0.0, color='#555555', linewidth=0.6)
+            axr.plot(x, resid, color=self.C_RED, linewidth=0.8)
+            if mask.sum() > 0:
+                span = np.nanmax(np.abs(resid[mask]))
+                if np.isfinite(span) and span > 0:
+                    axr.set_ylim(-1.15 * span, 1.15 * span)
+            axr.set_xlabel(cfg['xlabel'])
+            axr.set_ylabel('model $-$ exp.')
+            axr.grid(True, linewidth=0.3, color='#dddddd')
+            axr.xaxis.set_minor_locator(_ticker.AutoMinorLocator(5))
+            axr.yaxis.set_major_locator(_ticker.MaxNLocator(3))
+            axr.tick_params(which='both', top=True, right=True)
+
+            fig.align_ylabels((ax, axr))
             fig.tight_layout(pad=0.3)
 
             base = f"{prefix}{self.target_type}"
@@ -873,58 +895,6 @@ class SpectraPlotter:
         
         return {'png': png_path, 'pdf': pdf_path}
     
-    def plot_structure_3d(self, atoms, title: str = "Structure", prefix: str = "") -> Dict[str, Path]:
-        """Plot 3D structure."""
-        
-        with plt.rc_context({**self._ACS_RC, "font.size": 7,
-                              "axes.labelsize": 7, "xtick.labelsize": 6,
-                              "ytick.labelsize": 6, "legend.fontsize": 6}):
-            fig = plt.figure(figsize=(3.5, 3.5))
-            ax = fig.add_subplot(111, projection='3d')
-
-            positions = atoms.get_positions()
-            symbols = atoms.get_chemical_symbols()
-            for symbol in sorted(set(symbols)):
-                mask = np.array([s == symbol for s in symbols])
-                pos = positions[mask]
-                color = self.ELEMENT_COLORS.get(symbol, '#808080')
-                size = self.ELEMENT_SIZES.get(symbol, 80)
-                ax.scatter(pos[:, 0], pos[:, 1], pos[:, 2],
-                          c=color, s=size * 0.5, label=symbol,
-                          alpha=0.85, edgecolors='black', linewidths=0.3)
-
-            # Unit cell edges
-            cell = atoms.get_cell()
-            origin = np.zeros(3)
-            a, b, c = cell[0], cell[1], cell[2]
-            edges = [
-                (origin, origin+a), (origin, origin+b), (origin, origin+c),
-                (origin+a, origin+a+b), (origin+a, origin+a+c),
-                (origin+b, origin+b+a), (origin+b, origin+b+c),
-                (origin+c, origin+c+a), (origin+c, origin+c+b),
-                (origin+a+b, origin+a+b+c),
-                (origin+a+c, origin+a+b+c),
-                (origin+b+c, origin+a+b+c),
-            ]
-            for start, end in edges:
-                ax.plot3D([start[0], end[0]], [start[1], end[1]], [start[2], end[2]],
-                         color='#555555', alpha=0.5, linewidth=0.6)
-
-            ax.set_xlabel('x (Å)')
-            ax.set_ylabel('y (Å)')
-            ax.set_zlabel('z (Å)')
-            ax.set_title(title)
-            ax.legend(loc='upper left', markerscale=0.7)
-            fig.tight_layout(pad=0.3)
-
-            png_path = self.output_dir / f'{prefix}structure_3d.png'
-            pdf_path = self.output_dir / f'{prefix}structure_3d.pdf'
-            fig.savefig(png_path)
-            fig.savefig(pdf_path)
-            plt.close(fig)
-        
-        return {'png': png_path, 'pdf': pdf_path}
-
 
 # =============================================================================
 # CONSTRAINT REGENERATION
@@ -2011,12 +1981,19 @@ def main(cfg: DictConfig) -> None:
             output_dir = Path(trajectory_path).parent / "final_results"
             output_dir.mkdir(parents=True, exist_ok=True)
 
-            # Save structure
+            # Save structure.  extxyz rather than plain xyz: the plain format carries
+            # no lattice, which makes the file useless for a periodic glass.  CIF is
+            # kept because every analysis script here reads CIF; the LAMMPS data file
+            # is for handing the structure to an external MD run.
             final_atoms = state_to_atoms(base_sim_state)
             for atoms_obj in final_atoms:
-                write(str(output_dir / "final_structure.xyz"), atoms_obj, format="xyz")
+                write(str(output_dir / "final_structure.xyz"), atoms_obj, format="extxyz")
                 write(str(output_dir / "final_structure.cif"), atoms_obj, format="cif")
-                plotter.plot_structure_3d(atoms_obj, title="Final Structure", prefix="final_")
+                try:
+                    write(str(output_dir / "final_structure.lmp"), atoms_obj,
+                          format="lammps-data", masses=True)
+                except Exception as e:  # non-orthogonal cells ASE cannot tilt-convert
+                    print(f"  (no LAMMPS data file: {e})")
 
             # Physical-plausibility gate.  A good chi^2 says nothing about whether the
             # atoms overlap, so record the verdict next to the structure and make a
