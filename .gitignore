@@ -53,3 +53,6 @@ outputs/*
 !outputs/retired/
 outputs/retired/*
 !outputs/retired/README.md
+
+# Outreach drafts: contain third-party email addresses, and this repo is public.
+COLLABORATION_EMAILS.md
