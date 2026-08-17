@@ -30,12 +30,22 @@ experiment, so expect an excess of coordination defects, and the result should
 then be refined against the measured data. The health gate below and
 scripts/compare_to_literature.py are the checks that decide whether it worked.
 
+The melt must actually reach its setpoint
+-----------------------------------------
+Velocities initialise at the target temperature and equipartition immediately
+halves it, so the thermostat has to make up the rest. At gamma = 0.1 ps^-1 that
+takes ~10 ps, and a 20 ps melt therefore spends most of its life cold: the SiO2
+run that produced q4 = 0.297 against the published 0.142 had only reached 3730 K
+of its 4000 K setpoint. Nothing was wrong with the potential. Check the printed
+temperature trace before drawing any conclusion from the output -- if T is not at
+setpoint within the first ~10% of the melt, the run is invalid.
+
 Usage
 -----
     poetry run python scripts/build_glass_melt_quench.py \\
         --input data/crystal-structures/c-SiO2.cif \\
         --central Si --neighbour O --cutoff 2.2 --expected-cn 4 \\
-        --density 2.20 --melt-steps 20000 --quench-steps 30000 \\
+        --density 2.20 --melt-steps 30000 --quench-steps 30000 \\
         --output data/crystal-structures/sio2_meltquench.cif
 
     # time ten steps and stop
@@ -183,11 +193,14 @@ def main() -> None:
                         "needs its own conda env -- they have conflicting e3nn pins.")
     p.add_argument("--melt-temp", type=float, default=4000.0)
     p.add_argument("--quench-temp", type=float, default=300.0)
-    p.add_argument("--melt-steps", type=int, default=20000)
+    p.add_argument("--melt-steps", type=int, default=30000)
     p.add_argument("--quench-steps", type=int, default=30000)
     p.add_argument("--anneal-steps", type=int, default=5000)
     p.add_argument("--timestep", type=float, default=1.0, help="fs")
-    p.add_argument("--gamma", type=float, default=0.1, help="Langevin damping, ps^-1")
+    # 1.0 ps^-1 reaches the setpoint in 2-3 ps.  Do not lower this without checking
+    # the temperature trace: 0.1 leaves a 20 ps melt cold and it silently reads as
+    # a crystalline result rather than as a failed run.
+    p.add_argument("--gamma", type=float, default=1.0, help="Langevin damping, ps^-1")
     p.add_argument("--relax-steps", type=int, default=300)
     p.add_argument("--log-every", type=int, default=1000)
     p.add_argument("--seed", type=int, default=42)
