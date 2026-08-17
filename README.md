@@ -10,18 +10,19 @@ Differentiable structure optimization from scattering data with environment-base
 2. [Overview](#overview)
 3. [Workflow: from Crystal to Optimized Glass](#workflow-from-crystal-to-optimized-glass)
 4. [Step 1 — Generate CIF and JSON Constraints](#step-1--generate-cif-and-json-constraints)
-5. [Step 2 — Configure the Structure](#step-2--configure-the-structure)
-6. [Step 3 — Configure the Experimental Data](#step-3--configure-the-experimental-data)
-7. [Step 4 — Run Training](#step-4--run-training)
-8. [All Training Config Options](#all-training-config-options)
-9. [Structure Initialization Modes](#structure-initialization-modes)
-10. [Constraint JSON Format](#constraint-json-format)
-11. [Available Structures and Run Scripts](#available-structures-and-run-scripts)
-12. [Scattering Functions](#scattering-functions)
-13. [Environment Types](#environment-types)
-14. [Local Inversion Symmetry — F_IS](#local-inversion-symmetry--f_is)
-15. [MLIP Energy Regularizer (MACE)](#mlip-energy-regularizer-mace)
-16. [Module Structure](#module-structure)
+5. [Building a Glass Seed by Melt-Quench](#building-a-glass-seed-by-melt-quench)
+6. [Step 2 — Configure the Structure](#step-2--configure-the-structure)
+7. [Step 3 — Configure the Experimental Data](#step-3--configure-the-experimental-data)
+8. [Step 4 — Run Training](#step-4--run-training)
+9. [All Training Config Options](#all-training-config-options)
+10. [Structure Initialization Modes](#structure-initialization-modes)
+11. [Constraint JSON Format](#constraint-json-format)
+12. [Available Structures and Run Scripts](#available-structures-and-run-scripts)
+13. [Scattering Functions](#scattering-functions)
+14. [Environment Types](#environment-types)
+15. [Local Inversion Symmetry — F_IS](#local-inversion-symmetry--f_is)
+16. [MLIP Energy Regularizer (MACE)](#mlip-energy-regularizer-mace)
+17. [Module Structure](#module-structure)
 
 ---
 
@@ -132,6 +133,80 @@ python -m torchdisorder.constraints.sio2_generator \
 python -m torchdisorder.constraints.geo2_generator \
     --input c-GeO2.cif --cutoff 2.4 --output data/json/geo2_glass
 ```
+
+---
+
+## Building a Glass Seed by Melt-Quench
+
+Refinement cannot repair a broken seed — it inherits whatever you give it, and the
+trainer now refuses to start from a structure with overlapping atoms. The supported
+route from a crystal to a physically plausible glass is an MLIP melt-quench, which
+has been validated against published models for both SiO₂ and GeO₂.
+
+### Reproducing the validated SiO₂ and GeO₂ glasses
+
+```bash
+# SiO2: 1125 atoms, 30 ps melt at 4000 K, 30 ps quench, 5 ps anneal
+poetry run python scripts/build_glass_melt_quench.py \
+    --input data/crystal-structures/c-SiO2.cif \
+    --central Si --neighbour O --cutoff 2.2 --expected-cn 4 \
+    --density 2.20 --melt-temp 4000 --gamma 1.0 \
+    --melt-steps 30000 --quench-steps 30000 --anneal-steps 5000 \
+    --device cuda --output data/crystal-structures/SiO2_mq_hot.cif
+
+# GeO2: same route, Ge-O cutoff 2.4
+poetry run python scripts/build_glass_melt_quench.py \
+    --input data/crystal-structures/c-GeO2.cif \
+    --central Ge --neighbour O --cutoff 2.4 --expected-cn 4 \
+    --density 3.65 --melt-temp 4000 --gamma 1.0 \
+    --melt-steps 30000 --quench-steps 30000 --anneal-steps 5000 \
+    --device cuda --output data/crystal-structures/GeO2_mq.cif
+```
+
+**`--gamma 1.0` is what makes this work, and it is worth understanding why.**
+Velocities initialise at the melt temperature and equipartition immediately halves
+it, so the thermostat supplies the rest. A Langevin damping of 0.1 ps⁻¹ has a 10 ps
+relaxation time, so a 20 ps melt never arrives: the original SiO₂ run reached only
+3730 K of its 4000 K setpoint and came out partly crystalline (q₄ = 0.297 against
+the published 0.142). That was read as a failure of the potential for months. It was
+not. **Check the printed temperature trace before interpreting any melt output** — if
+T has not reached setpoint within the first ~10 % of the melt, the run is invalid
+regardless of what the health gate says.
+
+Melt temperature is chemistry-specific. 4000 K suits the oxides; Li₂S–P₂S₅ melts near
+900–1100 K and is run at 1500 K, because 4000 K would dissociate the sulfide.
+
+### Verifying the result
+
+The health gate built into the build script only proves the structure is not broken —
+a hot crystal passes it too. To show you have a *glass*, score it against a published
+model on quantities the route never fitted:
+
+```bash
+# numbers
+poetry run python scripts/compare_order_params.py \
+    --reference data/crystal-structures/sio2_glass_gap.cif \
+    --test data/crystal-structures/SiO2_mq_hot.cif \
+    --labels melt-quench --central Si --neighbour O --cutoff 2.2
+
+# the distributions behind those numbers, both oxides in one figure
+poetry run python scripts/plot_order_param_distributions.py
+```
+
+The second command writes `outputs/melt_quench_validation.png`. Every order-parameter
+shift should sit inside the reference's own standard deviation:
+
+| | cn | tet | q₄ | q₆ | F_IS |
+|---|---|---|---|---|---|
+| SiO₂ Δ | −0.0006 | +0.0046 | +0.0034 | +0.0005 | +0.0011 |
+| GeO₂ Δ | −0.0480 | −0.0015 | +0.0084 | +0.0054 | +0.0053 |
+
+**Judge by q₄, not by the PASS verdict.** q₄ is the sensitive discriminator between a
+glass and a hot crystal; F_IS barely moves across the transition, because both phases
+are built from near-ideal tetrahedra and F_IS is dominated by that local geometry.
+The default figure draws the failed γ = 0.1 run alongside for exactly this reason —
+its q₄ forms a distinct second population near 0.38 that has no counterpart in the
+published model.
 
 ---
 
@@ -254,6 +329,12 @@ json_path: ${data.root_dir}/json/glass_67Li2S_small_noLi_constraints.json
 ## Step 4 — Run Training
 
 Pre-built run scripts handle all config wiring. Just execute the one matching your system:
+
+> **The `run_lips_*` scripts below have been retired to `scripts/retired/`.** Every
+> LiPS glass they seed from contains overlapping atoms (down to 0.066 Å), so the runs
+> they produce are invalid — see `data/crystal-structures/retired/README.md`. Use
+> `scripts/slurm_lips_glass.sh`, which regenerates the glass by melt-quench first.
+> The commands here are kept as a record of what those runs were.
 
 ```bash
 # Small systems (fast, for testing and development)
@@ -501,6 +582,12 @@ This regenerates the CIF and JSON before loading them, then continues with train
 
 ## Available Structures and Run Scripts
 
+> **Historical.** Everything in the two Li-P-S tables below now lives in
+> `scripts/retired/`, and the structures they refer to in
+> `data/crystal-structures/retired/`. They are listed for provenance — so a past
+> `run_lips_*` result can be traced — not as things to run. There is currently **no
+> validated LiPS glass seed**; the melt-quench regeneration is still in flight.
+
 ### Li-P-S glass — small supercells (development / fast iteration)
 
 | Script | Structure config | Atoms | Box (Å) | MIC cut |
@@ -708,7 +795,7 @@ ideal tetrahedron. The +0.0025 offset is the genuine α-quartz distortion.
 >
 > **Root cause — the seed, not the refinement.** MLIP regularization *was*
 > enabled in that run. The problem is that the seed structure
-> `data/crystal-structures/sio2_glass.cif` is itself broken before any
+> `sio2_glass.cif` (now `data/crystal-structures/retired/`) is itself broken before any
 > optimization (⟨CN⟩ = 3.02, min Si–O 0.185 Å, 298 contacts < 1.4 Å), and the
 > refinement never repairs it — checkpoints sit at ⟨CN⟩ ≈ 3.0 from step 200 to
 > step 2000. A `force_weight` of 1e-5 applied every 50 steps cannot undo a
