@@ -1,0 +1,86 @@
+======================================================================
+Fe ENVIRONMENT SUMMARY FOR Fe2O3
+======================================================================
+
+Total atoms : 800
+Total Fe    : 320
+Cutoff Fe-O : 2.200 Å
+
+Environment distribution:
+----------------------------------------------------------------------
+  Fe5         :  50.00%  (count=160, priority=1.0)
+  Fe4         :  25.00%  (count=80, priority=3.0)
+  Fe6         :  25.00%  (count=80, priority=2.0)
+
+
+Fe4 sites (80 atoms):
+----------------------------------------------------------------------
+  Index      4: FeO4 (tetrahedral, ε-Fe₂O₃ Fe1 site)       CN=4 xyz=(0.942, 1.339, 0.000)
+  Index      5: FeO4 (tetrahedral, ε-Fe₂O₃ Fe1 site)       CN=4 xyz=(4.143, 7.435, 4.734)
+  Index      6: FeO4 (tetrahedral, ε-Fe₂O₃ Fe1 site)       CN=4 xyz=(1.601, 5.726, 4.734)
+  Index      7: FeO4 (tetrahedral, ε-Fe₂O₃ Fe1 site)       CN=4 xyz=(3.484, 3.048, 0.000)
+  Index     20: FeO4 (tetrahedral, ε-Fe₂O₃ Fe1 site)       CN=4 xyz=(0.942, 1.339, 9.468)
+  Index     21: FeO4 (tetrahedral, ε-Fe₂O₃ Fe1 site)       CN=4 xyz=(4.143, 7.435, 14.202)
+  Index     22: FeO4 (tetrahedral, ε-Fe₂O₃ Fe1 site)       CN=4 xyz=(1.601, 5.726, 14.202)
+  Index     23: FeO4 (tetrahedral, ε-Fe₂O₃ Fe1 site)       CN=4 xyz=(3.484, 3.048, 9.468)
+  Index     36: FeO4 (tetrahedral, ε-Fe₂O₃ Fe1 site)       CN=4 xyz=(0.942, 1.339, 18.936)
+  Index     37: FeO4 (tetrahedral, ε-Fe₂O₃ Fe1 site)       CN=4 xyz=(4.143, 7.435, 23.670)
+  Index     38: FeO4 (tetrahedral, ε-Fe₂O₃ Fe1 site)       CN=4 xyz=(1.601, 5.726, 23.670)
+  Index     39: FeO4 (tetrahedral, ε-Fe₂O₃ Fe1 site)       CN=4 xyz=(3.484, 3.048, 18.936)
+  Index     52: FeO4 (tetrahedral, ε-Fe₂O₃ Fe1 site)       CN=4 xyz=(0.942, 1.339, 28.404)
+  Index     53: FeO4 (tetrahedral, ε-Fe₂O₃ Fe1 site)       CN=4 xyz=(4.143, 7.435, 33.138)
+  Index     54: FeO4 (tetrahedral, ε-Fe₂O₃ Fe1 site)       CN=4 xyz=(1.601, 5.726, 33.138)
+  Index     55: FeO4 (tetrahedral, ε-Fe₂O₃ Fe1 site)       CN=4 xyz=(3.484, 3.048, 28.404)
+  Index     68: FeO4 (tetrahedral, ε-Fe₂O₃ Fe1 site)       CN=4 xyz=(0.942, 1.339, 37.872)
+  Index     69: FeO4 (tetrahedral, ε-Fe₂O₃ Fe1 site)       CN=4 xyz=(4.143, 7.435, 42.606)
+  Index     70: FeO4 (tetrahedral, ε-Fe₂O₃ Fe1 site)       CN=4 xyz=(1.601, 5.726, 42.606)
+  Index     71: FeO4 (tetrahedral, ε-Fe₂O₃ Fe1 site)       CN=4 xyz=(3.484, 3.048, 37.872)
+  ... (60 more)
+
+Fe5 sites (160 atoms):
+----------------------------------------------------------------------
+  Index      0: FeO5 (five-coordinate, defect)             CN=5 xyz=(3.492, 0.248, 7.516)
+  Index      1: FeO5 (five-coordinate, defect)             CN=5 xyz=(1.593, 8.526, 2.782)
+  Index      2: FeO5 (five-coordinate, defect)             CN=5 xyz=(4.136, 4.635, 2.782)
+  Index      3: FeO5 (five-coordinate, defect)             CN=5 xyz=(0.949, 4.139, 7.516)
+  Index     12: FeO5 (five-coordinate, defect)             CN=5 xyz=(0.982, 1.328, 5.510)
+  Index     13: FeO5 (five-coordinate, defect)             CN=5 xyz=(4.103, 7.446, 0.776)
+  Index     14: FeO5 (five-coordinate, defect)             CN=5 xyz=(1.561, 5.715, 0.776)
+  Index     15: FeO5 (five-coordinate, defect)             CN=5 xyz=(3.524, 3.059, 5.510)
+  Index     16: FeO5 (five-coordinate, defect)             CN=5 xyz=(3.492, 0.248, 16.984)
+  Index     17: FeO5 (five-coordinate, defect)             CN=5 xyz=(1.593, 8.526, 12.250)
+  Index     18: FeO5 (five-coordinate, defect)             CN=5 xyz=(4.136, 4.635, 12.250)
+  Index     19: FeO5 (five-coordinate, defect)             CN=5 xyz=(0.949, 4.139, 16.984)
+  Index     28: FeO5 (five-coordinate, defect)             CN=5 xyz=(0.982, 1.328, 14.978)
+  Index     29: FeO5 (five-coordinate, defect)             CN=5 xyz=(4.103, 7.446, 10.244)
+  Index     30: FeO5 (five-coordinate, defect)             CN=5 xyz=(1.561, 5.715, 10.244)
+  Index     31: FeO5 (five-coordinate, defect)             CN=5 xyz=(3.524, 3.059, 14.978)
+  Index     32: FeO5 (five-coordinate, defect)             CN=5 xyz=(3.492, 0.248, 26.452)
+  Index     33: FeO5 (five-coordinate, defect)             CN=5 xyz=(1.593, 8.526, 21.718)
+  Index     34: FeO5 (five-coordinate, defect)             CN=5 xyz=(4.136, 4.635, 21.718)
+  Index     35: FeO5 (five-coordinate, defect)             CN=5 xyz=(0.949, 4.139, 26.452)
+  ... (140 more)
+
+Fe6 sites (80 atoms):
+----------------------------------------------------------------------
+  Index      8: FeO6 (octahedral)                          CN=6 xyz=(4.118, 1.397, 2.915)
+  Index      9: FeO6 (octahedral)                          CN=6 xyz=(0.967, 7.377, 7.649)
+  Index     10: FeO6 (octahedral)                          CN=6 xyz=(3.510, 5.784, 7.649)
+  Index     11: FeO6 (octahedral)                          CN=6 xyz=(1.575, 2.990, 2.915)
+  Index     24: FeO6 (octahedral)                          CN=6 xyz=(4.118, 1.397, 12.383)
+  Index     25: FeO6 (octahedral)                          CN=6 xyz=(0.967, 7.377, 17.117)
+  Index     26: FeO6 (octahedral)                          CN=6 xyz=(3.510, 5.784, 17.117)
+  Index     27: FeO6 (octahedral)                          CN=6 xyz=(1.575, 2.990, 12.383)
+  Index     40: FeO6 (octahedral)                          CN=6 xyz=(4.118, 1.397, 21.851)
+  Index     41: FeO6 (octahedral)                          CN=6 xyz=(0.967, 7.377, 26.585)
+  Index     42: FeO6 (octahedral)                          CN=6 xyz=(3.510, 5.784, 26.585)
+  Index     43: FeO6 (octahedral)                          CN=6 xyz=(1.575, 2.990, 21.851)
+  Index     56: FeO6 (octahedral)                          CN=6 xyz=(4.118, 1.397, 31.319)
+  Index     57: FeO6 (octahedral)                          CN=6 xyz=(0.967, 7.377, 36.053)
+  Index     58: FeO6 (octahedral)                          CN=6 xyz=(3.510, 5.784, 36.053)
+  Index     59: FeO6 (octahedral)                          CN=6 xyz=(1.575, 2.990, 31.319)
+  Index     72: FeO6 (octahedral)                          CN=6 xyz=(4.118, 1.397, 40.787)
+  Index     73: FeO6 (octahedral)                          CN=6 xyz=(0.967, 7.377, 45.521)
+  Index     74: FeO6 (octahedral)                          CN=6 xyz=(3.510, 5.784, 45.521)
+  Index     75: FeO6 (octahedral)                          CN=6 xyz=(1.575, 2.990, 40.787)
+  ... (60 more)

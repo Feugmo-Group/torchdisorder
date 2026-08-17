@@ -1,0 +1,743 @@
+Chem. Mater. 2007, 19, 1489-1496
+
+1489
+
+Similarities in 2- and 6-Line Ferrihydrite Based on Pair Distribution
+Function Analysis of X-ray Total Scattering
+F. M. Michel,*,†,‡ L. Ehm,†,‡ G. Liu,†,§ W. Q. Han,X S. M. Antao,†,‡,3 P. J. Chupas,|
+P. L. Lee,| K. Knorr,⊥ H. Eulert,⊥ J. Kim,†,# C. P. Grey,†,# A. J. Celestian,†,‡,O J. Gillow,†,∞
+M. A. A. Schoonen,†,‡ D. R. Strongin,†,§ and J. B. Parise†,‡,#
+Center for EnVironmental Molecular Science (CEMS), Department of Geosciences, and Department of
+Chemistry, Stony Brook UniVersity, Stony Brook, New York 11794, Department of Chemistry, Temple
+UniVersity, Philadelphia, PennsylVania 19122, AdVanced Photon Source, Argonne National Laboratory,
+Argonne, Illinois 60439, Christian-Albrechts-UniVersitaet zu Kiel, Institut fuer Geowissenschaften, Kiel,
+Germany, 24098, and Center for Functional Nanomaterials and EnVironmental Sciences Department,
+BrookhaVen National Laboratory, Upton, New York 11973
+
+Downloaded via UNIV OF WATERLOO on July 16, 2026 at 17:53:48 (UTC).
+See https://pubs.acs.org/sharingguidelines for options on how to legitimately share published articles.
+
+ReceiVed October 30, 2006. ReVised Manuscript ReceiVed December 14, 2006
+
+Iron(III) hydroxides are abundant in near-surface natural environments and play an important role in
+geochemical processes and the fate of contaminants. The issue of the structure of the common nanophase
+material ferrihydrite (ferric hydroxide) is controversial and has been debated in the literature for many
+years without definitive resolution. At least two types of ferrihydrite, the 2-line and 6-line forms, are
+conventionally recognized. It has been suggested that these forms possess different structures built up by
+different mixtures of distinct nanophase components. However, traditional crystallographic methods provide
+depictions of structure that are most sensitive either to short-range order (X-ray absorption) or longrange periodicity (X-ray diffraction or electron diffraction). We used high-energy X-ray total scattering
+for pair distribution function analysis to observe both the short- and intermediate-range ordering (exceeding
+∼15 Å) of synthetic ferrihydrite with three distinct average domain sizes of 2, 3, and 6 nm. We show
+that there are no significant differences in the underlying structures of these materials and that the
+differences in the diffraction patterns can be entirely interpreted by variations in the average size of the
+coherent scattering domains. The average crystallite sizes inferred from the PDF analysis are in good
+agreement with direct observation by high-resolution transmission electron microscopy.
+
+Introduction
+Ferric hydroxides are important mineral components and
+the subject of much scientific research in environmental and
+soil sciences because of their ubiquity in soils, groundwater,
+and aquatic sediments.1-3 The oxidation and dissolution
+through weathering of Fe-bearing sulfide minerals associated
+with ore deposits and mining activities consequently results
+in the formation of secondary iron oxides, including ferrihydrite. Its large surface area and high reactivity results in
+a large adsorptive capacity for toxic contaminants such as
+U, As, Cd, and Pb.4 Accordingly, ferrihydrite has been
+important in metallurgical processing and used as an
+* Corresponding author. E-mail: fmichel@ic.sunysb.edu.
+† Center for Environmental Molecular Science.
+‡ Department of Geosciences, Stony Brook University.
+§ Temple University.
+|| Argonne National Laboratory.
+⊥ Christian-Albrechts-Universitaet zu Kiel.
+# Department of Chemistry, Stony Brook University.
+X Center for Functional Nanomaterials, Brookhaven National Laboratory.
+∞ Environmental Sciences Department, Brookhaven National Laboratory.
+3 Current address: Advanced Photon Source, Argonne National Laboratory,
+Argonne, IL 60439.
+O Current address: School of Earth and Environmental Sciences, City
+University of New York Queens College, Flushing, NY 11367.
+
+(1) Rancourt, D. G.; Fortin, D.; Pichler, T.; Thibault, P. J.; Lamarche,
+G.; Morris, R. V.; Mercier, P. H. J. Am. Mineral. 2001, 86 (7-8),
+834-851.
+(2) Schwertmann, U.; Carlson, L.; Murad, E. Clays Clay Miner. 1987,
+35 (4), 297-304.
+(3) Shaked, Y.; Erel, Y.; Sukenik, A. Geochim. Cosmochim. Acta 2004,
+68 (7), 1439-1451.
+
+absorbent to remove contaminants from wastewaters.5 Ferrihydrite has also been observed in meteorites, and its
+presence on Mars may have important implications for
+understanding the magnetic properties of that planet’s soils.6,7
+Ferrihydrite, otherwise commonly referred to as amorphous iron hydroxide, protoferrihydrite, and colloidal or
+hydrous ferric hydroxide, has long been described as poorly
+crystalline, disordered, and X-ray amorphous.8-10 Evidence
+from direct imaging using electron microscopy,11 atomic
+force microscopy (AFM), and scanning tunneling microscopy
+(STM)12 indicates that ferrihydrite is a nanosized material.
+The number of broadened maxima in individual powder
+X-ray diffraction (XRD) patterns obtained with conventional
+X-ray sources is customarily used to designate the material
+as “2-line” or “6-line” ferrihydrite. The most widely reported
+(4) Jambor, J. L.; Dutrizac, J. E. Chem. ReV. 1998, 98 (7), 2549-2585.
+(5) Dyer, J. A.; Trivedi, P.; Sanders, S. J.; Scrivner, N. C.; Sparks, D. L.
+J. Colloid Interface Sci. 2004, 270 (1), 66-76.
+(6) Bishop, J. L.; Pieters, C. M.; Burns, R. G. Geochim. Cosmochim. Acta
+1993, 57 (19), 4583-4595.
+(7) Morris, R. V.; Golden, D. C.; Bell, J. F.; Lauer, H. V.; Adams, J. B.
+Geochim. Cosmochim. Acta 1993, 57 (19), 4597-4609.
+(8) Ivarson, K. C.; Sojak, M. Can. J. Soil Sc. 1978, 58 (1), 1.
+(9) Schwertmann, U.; Fischer, W. R. Geoderma 1973, 10 (3), 237-247.
+(10) Towe, K. M.; Bradley, W. F. J. Colloid Interface Sci. 1967, 24 (3),
+384.
+(11) Janney, D. E.; Cowley, J. M.; Buseck, P. R. Clays Clay Miner. 2000,
+48 (1), 111-119.
+(12) Liu, G.; Debnath, S.; Paul, K. W.; Han, W.; Hausner, D. B.; Hosein,
+H. A.; Michel, F. M.; Parise, J. B.; Sparks, D. L.; Strongin, D. R.
+Langmuir 2006, 22, 9313-9321.
+
+10.1021/cm062585n CCC: $37.00 © 2007 American Chemical Society
+Published on Web 02/03/2007
+
+1490 Chem. Mater., Vol. 19, No. 6, 2007
+
+nominal formula for ferrihydrite is 5Fe2O3‚9H2O,13 although
+a number of other similar formulas (e.g., Fe5HO8‚4H2O, Fe(OH)3, Fe2O3‚2FeOOH‚26H2O) have also been proposed.10,14,15
+Despite the numerous studies of this material using a
+variety of techniques, the structure of ferrihydrite has not
+yet been solved.4 The poorly delineated diffraction features
+have inhibited the use of traditional techniques of structural
+analysis, resulting in ongoing debate regarding its atomic
+structure.11,16-18 There is presently disagreement on whether
+2- and 6-line ferrihydrite is best described by a single
+(defective) phase or by mixtures of phases. Moreover, no
+consensus has been reached on whether these two materials
+differ only in domain size or if they also exhibit distinct
+structural differences. Contemporary models are determined
+on the basis of a variety of studies conducted using extended
+X-ray absorption fine structure (EXAFS), wide-angle and
+anomalous X-ray scattering, neutron diffraction,17 and electron nanodiffraction.16,19 Two recent electron diffraction
+studies by Janney et al. have proposed different multiphase
+structures models for 2- and 6-line ferrihydrite.16,19 However,
+several studies20-22 support the notion that the primary
+difference between the least and most crystalline forms of
+ferrihydrite (i.e., 2- and 6-line, respectively) is the size of
+the coherent scattering domains. In one such study, Guyodo
+et al.21 concluded, using EXAFS analysis of samples with
+average particle sizes ranging from 3 to 5.4 nm, that the local
+environment of Fe in these samples is identical. Here, we
+present results from synchrotron-based X-ray total scattering
+experiments, which indicate that both the short- and intermediate-range ordering in nanocrystalline ferrihydrite are
+essentially the same and independent of changes in particle
+size. We believe that our results represent an important step
+in quantifying the terms of the so-called 2- and 6-line forms
+and significantly advance our understanding of the atomic
+arrangements in nanocrystalline ferrihydrite; this will lead
+to a better understanding its structure, reactivity, and other
+interesting properties.
+Experimental Section
+Ferrihydrite nanoparticles with three different average domain
+sizes (2, 3, and 6 nm) were prepared using different nonbiological
+routes that are briefly described. The samples included in the present
+(13) Schwertmann, U.; Cornell, R. M. Iron Oxides in the Laboratory:
+Preparation and Characterization, 1st ed.; Wiley-VCH: Weinheim,
+Germany, 2000; pp 89-94.
+(14) Chukhrov, F. V.; Zvyagin, B. B.; Gorshkov, A. I.; Yermilova, L. P.;
+Balashove, V. V. Int. Geol. ReV. 1973, 16, 1131.
+(15) Eggleton, R. A.; Fitzpatrick, R. W. Clays Clay Miner. 1988, 36 (2),
+111-124.
+(16) Janney, D. E.; Cowley, J. M.; Buseck, P. R. Am. Mineral. 2000, 85
+(9), 1180-1187.
+(17) Jansen, E.; Kyek, A.; Schafer, W.; Schwertmann, U. Appl. Phys. A:
+Mater. Sci. Process. 2002, 74, S1004-S1006.
+(18) Manceau, A.; Drits, V. A. Clay Miner. 1993, 28 (2), 165-184.
+(19) Janney, D. E.; Cowley, J. M.; Buseck, P. R. Am. Mineral. 2001, 86
+(3), 327-335.
+(20) Drits, V. A.; Sakharov, B. A.; Salyn, A. L.; Manceau, A. Clay Miner.
+1993, 28 (2), 185-207.
+(21) Guyodo, Y.; Banerjee, S. K.; Penn, R. L.; Burleson, D.; Berauo, T.
+S.; Seda, T.; Solheid, P. Phys. Earth Planet. Inter. 2006, 154 (3-4),
+222-233.
+(22) Kukkadapu, R. K.; Zachara, J. M.; Fredrickson, J. K.; Smith, S. C.;
+Dohnalkova, A. C.; Russell, C. K. Am. Mineral. 2003, 88 (11-12),
+1903-1914.
+
+Michel et al.
+study will not be referred to by the nomenclature traditionally used
+to describe the number of diffraction maxima (e.g., 2-, 3-, 6-line,
+etc.). The term “ferrihydrite” (or abbreviated “Fhyd”) will hereinafter be followed by the estimated average coherent scattering
+domain size (e.g., Fhyd2, Fhyd3, or Fhyd6) when describing the
+least and most crystalline forms of ferrihydrite, respectively. To
+evaluate the potential for sample variation resulting from differences
+in synthesis conditions, our study also included analysis of three
+samples of 2 nm ferrihydrite made by independent groups at BNL,
+Temple, and Stony Brook University, with all using the same
+general preparation method discussed below.
+Fhyd2 and Fhyd6 were synthesized using a method developed
+by Schwertmann and Cornell.13 For sample Fhyd2, a 1 M solution
+of NaOH (Sigma-Aldrich) was added at a rate of 2 mL/min to a
+0.2 M solution of Fe(NO3)3‚9H2O (Sigma-Aldrich) with constant
+stirring until the pH reached 7.5. The solution was repeatedly
+washed with deionized water (DI) (18 MΩ cm in resistivity) and
+centrifuged to remove remaining electrolytes. Here, we use
+centrifuging and drying naturally in a hood because previous studies
+show that processing ferrihydrite nanoparticles by freeze-drying
+leads to the formation of more crystalline 3-line ferrihydrite
+nanoparticles and goethite.23 Sample Fhyd3 was synthesized using
+a method adapted from Anschutz and Penn24 in which 1.0 L of
+0.48 M NaHCO3 (Fischer, ACS grade) was added dropwise at a
+rate of 4.58 mL/min to a continuously stirred 1.0 L solution of
+0.40 M Fe(NO3)3‚9H2O to form a homogeneous dark brownish
+suspension. The resulting suspension was placed into 200 mL
+Nalgene bottles and microwaved until boiling occurred. During
+heating, the bottles were agitated by shaking every 40 s to achieve
+homogeneous heating of the suspension. Immediately after heating,
+the suspension was rapidly cooled in an ice bath to room
+temperature. The suspension was subsequently dialyzed in DI for
+3 days, with the water being changed several times daily. Finally,
+dry samples were prepared by drying them in air. The 6 nm
+ferrihydrite nanoparticles were synthesized by dissolving 20 g of
+Fe(NO3)3‚9H2O into 2 L of DI at a temperature of 75 °C, with
+rapid stirring for 10-12 min to form a homogeneous dark reddish
+suspension. The suspension was rapidly cooled inside an ice bath
+to room temperature and dialyzed in DI for at least 7 days, with
+the water being changed several times daily. Finally, the suspension
+was freeze-dried. All chemicals were used as received and without
+additional purification.
+Characterization of ferrihydrite was carried out in part by the
+collection of high-energy X-ray total scattering data coupled with
+pair distribution function analysis (PDF). Finely powdered dry
+samples were loaded into 1 mm polyimide (Kapton) capillaries. A
+portion of each powdered sample was also redispersed in DI and
+subsequently loaded into 3 mm polyimide capillaries for analysis
+in an aqueous medium. Scattering data were collected at the 11ID-B25 (∼90.3 keV, λ ) 0.1372(2) Å) and 1-ID-C26 (∼100.1 keV,
+λ ) 0.1238(6) Å) beamlines of the Advanced Photon Source (APS).
+The diffraction data were collected at ambient temperature on either
+a MAR345 image plate detector system or an Angio detector, an
+amorphous Si detector manufactured by General Electric. To obtain
+properly normalized experimental PDFs, we collected diffraction
+data on both the samples and blanks over a wide Q-range (maximum
+of ∼30 Å-1). The independent measurement of the true background
+intensity by the collection of a blank allows for the direct subtraction
+(23) Greffie, C.; Amouric, M.; Parron, C. Clay Miner. 2001, 36 (3), 381387.
+(24) Anschutz, A. J.; Penn, R. L. Geochem.Trans. 2005, 6 (3), 60-66.
+(25) Rutt, U.; Beno, M. A.; Strempfer, J.; Jennings, G.; Kurtz, C.; Montano,
+P. A. Nucl. Instr. Methods Phys. Res., Sect. A 2001, 467, 1026-1029.
+(26) Shastri, S. D.; Fezzaa, K.; Mashayekhi, A.; Lee, W.-K.; Fernandez,
+P. B.; Lee, P. L. J. Synchrotron Radiat. 2002, (9), 317-322.
+
+Similarities in 2- and 6-Line Ferrihydrite
+
+Chem. Mater., Vol. 19, No. 6, 2007 1491
+Table 1. Experimental Detailsa
+
+sample ID
+
+beamline
+
+λ (Å)
+
+sample-detector distance (mm)
+
+detector type
+
+maximum Q-range (Å-1)
+
+Fhyd2, 3, and 6
+
+1-ID-C
+11-ID-B
+11-ID-B
+
+0.1238(6)
+0.1370(2)
+0.1372(2)
+
+259.8
+207.9
+745.5
+
+a-Si
+a-Si
+Mar345
+
+23.0-25.0
+∼29.5
+10.1
+
+a The reported Q-range corresponds to the range of data incorporated in the transformation of S(Q) to the resulting PDF. The data collected at 11-ID-B
+using a larger sample-detector distance were not collected for PDF analysis.
+
+of the parasitic scatter (e.g., capillary, aqueous medium (if present)).
+Equal exposure times were used for each sample and blank. Two
+blanks were necessary for properly removing background associated
+with the container (capillary) and water (for the samples redispersed
+in aqueous solution only). A CeO2 standard (NIST diffraction
+intensity standard set 674a) was used to calibrate the sample-todetector distance and the tilt of the detector relative to the incident
+beam. The conversion of data from 2D to 1D was performed using
+the program Fit2D,27,28 and a polarization correction was applied
+during integration of the data. The sample-to-detector distance was
+increased to improve resolution in the low-Q region for certain data
+collected at 11-ID-B. Details regarding the experimental setup at
+each beamline and for each sample are included in Table 1.
+The total scattering structure function, S(Q), and PDF (G(r)) were
+obtained using PDFgetX2,29 where standard corrections were
+applied as well as those unique to the image-plate geometry.30 The
+Fourier transform of the normalized and weighted S(Q), or Q[S(Q)1], results in the PDF, or G(r), which corresponds to real space
+interatomic distances. The positions of the first three correlations
+in each PDF were determined from profile fitting with a linear
+combination of Gaussian and Lorentzian profiles using the program
+WinPLOTR.31 The PDF method differs from traditional techniques
+of X-ray diffraction (e.g., Rietveld) in that it directly yields
+information on the local, intermediate, and long-range (if present)
+structure. The PDF method also provides a useful tool for understanding the average scattering domain size of nanocrystalline
+materials through an evaluation of PDF attenuation.32-37 In brief,
+the exponential decay of the PDF can be attributed to a limited
+range of structural coherence if within the resolution of the instrument, as usually determined by a crystalline standard (e.g., CeO2).
+In the case of highly crystalline samples, the exponential decay is
+primarily an indication of the resolution of the instrument37 or instrument envelope. The resolution for these two beamlines was deter(27) Hammersley, A. P. Fit2D V9.129 Reference Manual V. 3.1; ESRF
+Internal Report, ESRF98HA01T; European Synchrotron Radiation
+Facility: Grenoble, France, 1998.
+(28) Hammersley, A. P.; Svenson, S. O.; Hanfland, M.; Hauserman, D.
+High Pressure Res. 1996, 14, 235-248.
+(29) Qiu, X.; Thompson, J. W.; Billinge, S. J. L. J. Appl. Crystallogr. 2004,
+37, 110-116.
+(30) Chupas, P. J.; Qui, X.; Hanson, J. C.; Lee, P. L.; Grey, C. P.; Billinge,
+S. J. L. J. Appl. Crystallogr. 2003, 36, 1342-1347.
+(31) Roisnel, T.; Rodriguez-Carvajal, J. WinPLOTR: A Windows Tool
+for Powder Diffraction Powder Analysis. In Proceedings of the SeVenth
+European Powder Diffraction Conference (EPDIC 7), Barcelona,
+Spain, May 20-23, 2000; Delhez, R., Mittenmeijer, E. J., Eds.; Mater.
+Sci. Forum 2000, 118-123.
+(32) Billinge, S. J. L.; Petkov, V.; Proffen, T. Commission on Powder
+Diffraction of the International Union of Crystallography Newsletter
+2000, 21-22.
+(33) Hall, B. D.; Zanchet, D.; Ugarte, D. J. Appl. Crystallogr. 2000, 33,
+1335-1341.
+(34) Michel, F. M.; Antao, S. M.; Chupas, P. J.; Lee, P. L.; Parise, J. B.;
+Schoonen, M. A. A. Chem. Mater. 2005, 17 (25), 6246-6255.
+(35) Michel, F. M.; Schoonen, M. A. A.; Zhang, X. V.; Martin, S. T.; Parise,
+J. B. Chem. Mater. 2006, 18 (7), 1726-1736.
+(36) Neder, R. B.; Korsunskiy, V. I. J. Phys.: Condens. Matter 2005, 17
+(5), S125-S134.
+(37) Page, K.; Proffen, T.; Terrones, H.; Terrones, M.; Lee, L.; Yang, Y.;
+Stemmer, S.; Seshadri, R.; Cheetham, A. K. Chem. Phys. Lett. 2004,
+393, 385-388.
+
+mined previously using CeO2 and was included in earlier communications.34,35 The presence of structural disorder (e.g., static disorder
+and/or strain) at the surface or the interior of a nanocrystalline material can also effect the attenuation of the PDF and thereby result in
+an underestimate of the average crystallite size through the range
+of structural coherence. Therefore, the extrapolation of average
+crystallite size on the basis of the range of structural coherence in
+the PDF should be considered as being a minimum value. This
+aspect of the PDF has been reviewed elsewhere36 and was demonstrated in the case of nanocrystalline ZnS.38 Therefore, the use of
+a separate technique, such as direct imaging by electron microscopy,
+is often necessary to corroborate the size estimates from PDF.
+High-resolution transmission electron microscopy (HRTEM) was
+performed using a 300 kV JEOL-3000FEG microscope equipped
+with an energy-dispersive X-ray spectrometer at Brookhaven
+National Laboratory (BNL). Fast Fourier transform (FFT) diffraction
+patterns were taken from the whole areas of selected images. To
+prepare the TEM samples, first, we redispersed ferrihydrite as a
+dry powder into DI water and sonicated it in an ice bath to form a
+homogeneous suspension and prevent any phase transformation to
+a more stable phase such as goethite or hematite. Second, a drop
+of the ferrihydrite suspension was placed onto an amorphous holeycarbon film supported by a standard TEM Cu grid (Ted Pella, Inc.).
+The excess suspension on the TEM grid was removed by absorbing
+the fluid with filter paper and the samples were allowed to dry at
+ambient conditions.
+Thermogravimetric analysis (TGA) was performed using a
+Shimadzu DTG-60H apparatus. Weight loss was determined on <30
+mg of each sample loaded in an open Pt pan. Heating was carried
+out at a rate of 10 K/min from ambient to 1073/1273 K under
+flowing dry N2.
+
+Results
+The initial identification of synthetic ferrihydrite was
+performed using the low 2θ region of XRD patterns (Figure
+1). The resolution was improved in these patterns by
+increasing the sample-to-detector distance to ∼50 cm at the
+11-ID-B beamline. The patterns included in Figure 1 for
+Fhyd2 and Fhyd6 illustrate how the number of peaks in
+individual diffraction patterns is customarily used to designate the material as “2-line” or “6-line” ferrihydrite, respectively. The broadened features corresponding to d-spacing
+values of 0.26, ∼0.20, and 0.15 nm are indicative of those
+reported in prior studies of ferrihydrite.4 Because of peak
+broadening caused by nanocrystalline particle sizes and
+resulting in diminished intensity and increased overlap, the
+features in the pattern for Fhyd2 are less pronounced, and
+some peaks are nearly unrecognizable compared to those of
+Fhyd6. However, comparison of the diffraction patterns for
+all three samples reveals the presence of essentially all the
+same diffraction maxima.
+(38) Gilbert, B.; Huang, F.; Zhang, H. Z.; Waychunas, G. A.; Banfield, J.
+F. Science 2004, 305 (5684), 651-654.
+
+1492 Chem. Mater., Vol. 19, No. 6, 2007
+
+Figure 1. Background-subtracted diffraction data with intensity plotted in
+arbitrary units on the ordinate versus 2θ in degrees on the abscissa. The
+patterns from top to bottom are for 6, 3, and 2 nm ferrihydrite, respectively.
+The features in the pattern for Fhyd2 are relatively broadened and
+overlapping, although all of the diffraction maxima are the same, as indicated
+by the vertical dotted lines. The d-spacings for several of the commonly
+referenced maxima are indicated in nanometers.
+
+Figure 2. High-resolution transmission electron micrograph of Fhyd2.
+Individual particles appear to be on the order of 2-3 nm in diameter. Lattice
+fringes are present but difficult to discern because of a lack of contrast
+relative to support film on the TEM grid. The fast Fourier transform
+diffraction pattern taken from the whole area of the image is included as
+an inset. The calculated d-spacings for the most prominent diffraction rings
+are indicated.
+
+High-Resolution Transmission Electron Microscopy
+(HRTEM). The results of HRTEM imaging for the three
+samples indicate that the average crystallite size ranges from
+2 to 3 nm (Fhyd2) up to 5-7 nm (Fhyd6). The representative
+images (Figures 2-4) show that each sample consists of a
+relatively monodisperse population of nanocrystalline particles. Lattice fringes are subtle and not easily resolved
+
+Michel et al.
+
+Figure 3. High-resolution transmission electron micrograph of Fhyd3. The
+particles appear to be on the order of 3-4 nm in diameter and show a
+higher degree of crystallinity than sample Fhyd2. The particles appear to
+be in preferred orientation on the TEM grid, suggesting a platelike
+morphology.
+
+Figure 4. High-resolution transmission electron micrograph of Fhyd6. The
+particles show a higher degree of crystallinity than both Fhyd2 and Fhyd3,
+with average particle diameters of 5-7 nm. The particles also appear to be
+in preferred orientation on the TEM grid, suggesting a platelike morphology.
+The fast Fourier transform diffraction pattern taken from the whole area of
+the image is included as an inset. The calculated d-spacings for the most
+prominent diffraction spots are indicated.
+
+(Figure 2) in part because these particles are extremely small
+and show similar contrast to the amorphous holey-carbon
+support film. The FFT diffraction pattern (Figure 2, inset)
+of the entire image shows distinct diffraction rings at 0.26,
+0.21, and 0.15 nm. Figure 3 shows the representative image
+of sample Fhyd3, which was formed using the synthesis
+method for ∼4 nm nanoparticles. In contrast to Fhyd2, lattice
+fringes are more clearly visible, indicating a higher degree
+of crystallinity with most particles on the order of 3-4 nm
+
+Similarities in 2- and 6-Line Ferrihydrite
+
+Figure 5. The weighted total scattering structure function Q[S(Q)-1]
+properly normalized for ferrihydrite samples Fhyd2, Fhyd3, and Fhyd6
+analyzed as dry powders. The three patterns show striking similarity in
+terms of the occurrences of diffraction maxima.
+
+in diameter. Sample Fhyd6 (Figure 4) shows the highest
+degree of crystallinity, as evidenced by the particle sizes on
+the order of 5-7 nm and resolvable lattice fringes. The FFT
+diffraction pattern (Figure 4, inset) of the entire image shows
+strong diffraction features at 0.48, 0.30, 0.255, 0.21, and
+0.155 nm. The measured d-spacings in the FFT patterns for
+Fhyd2 and Fhyd6 show good agreement with those observed
+in X-ray total scattering diffraction data (Figure 1). The full
+morphology of the nanoparticles is not easily discernible from
+HRTEM imaging alone but it appears that the particles are
+in preferred orientation on the TEM grids, suggesting they
+are platelike.
+High-energy X-ray Total Scattering and Pair Distribution Function Analysis. The nominal formula for ferrihydrite
+(5Fe2O3‚nH2O) was used during the normalization of the data
+to obtain S(Q) and the resulting PDFs. To emphasize the
+diffuse components at high Q-values, we represented the data
+as F(Q) or Q[S(Q)-1] (Figure 5). The composition necessary
+for properly normalizing the data collected on powdered
+ferrihydrite precipitates was possible by adding small
+amounts of stoichiometric water (Figure 5, inset table) to the
+formula 5Fe2O3‚1H2O. Without this addition, the normalization of S(Q) was only possible by subtracting additional
+background relative to the amount warranted on the basis
+of the equal exposure times used for both the sample and
+blank. The properly normalized patterns in Figure 5 again
+show obvious similarities in diffraction features even out in
+the region dominated by diffuse scattering between 15 and
+30 Å-1. The Fourier transform of S(Q) (∼30 Å-1 for the
+dry samples in the present study) yields the PDF or G(r),
+which is a real space representation of the atomic ordering
+of the material.39 The resulting PDFs (Figure 6) confirm that
+(39) Klug, H. P.; Alexander, L. E. X-ray Diffraction Procedures for
+Polycrystalline and Amorphous Materials, 2nd ed.; Wiley-Interscience: New York, 1974.
+
+Chem. Mater., Vol. 19, No. 6, 2007 1493
+
+Figure 6. The PDF G(r) vs distance r is plotted for Fhyd2, Fhyd3, and
+Fhyd6 analyzed as dry powders. The PDFs are nearly identical over 20 Å,
+indicating that these samples share the same structural arrangement. Beyond
+approximately 7 Å, the correlations for the 2 and 3 nm samples occur at
+the same distances but diminish more rapidly compared to those of the 6
+nm sample. The bottom plot shows the overlay of the PDFs for the three
+samples.
+
+Figure 7. The PDF G(r) plotted out to 65 Å to illustrate the degree of
+attenuation due to the range of structural coherence for Fhyd2 (top), Fhyd3,
+and Fhyd6 (bottom).
+
+the short- and intermediate-range atomic ordering are nearly
+identical for the dry ferrihydrite precipitates examined. The
+PDFs for the same three precipitates analyzed in aqueous
+media (data not shown) are indistinguishable from those
+presented in Figure 6. As will be discussed, the PDF is not
+limited to the local ordering; it also provides atom pair
+correlations for all three samples beyond 15 Å and, in certain
+cases, can extend beyond 50 Å (Figure 7).
+Thermogravimetric Analysis. TGA curves for Fhyd2,
+Fhyd3, and Fhyd6 show a relatively smooth weight loss,
+
+1494 Chem. Mater., Vol. 19, No. 6, 2007
+
+Michel et al.
+Table 2. Peak-Fitting of the PDF G(r)a
+sample ID
+
+first correlation
+r (Å)
+
+second correlation
+r (Å)
+
+third correlation
+r (Å)
+
+Fhyd2
+Fhyd3
+Fhyd6
+
+1.98(0)
+1.97(9)
+1.98(3)
+
+3.03(7)
+3.03(4)
+3.03(1)
+
+3.44(3)
+3.44(2)
+3.44(1)
+
+a The positions from profile-fitting of the first three correlations in each
+PDF for the dry ferrihydrite precipitates.
+
+Figure 8. TGA results for samples Fhyd2, Fhyd3, and Fhyd6 showing
+percent weight loss as a function of temperature. The initial weight loss
+occurring between 298 and 393 K (see inset table) is primarily attributable
+to removal of surface-adsorbed water.
+
+totaling 27.48, 21.96, and 15.57%, respectively (Figure 8).
+At temperatures e393 K, Fhyd2 lost ∼17% by weight, or
+approximately 60% of its total weight loss. Fhyd3 and Fhyd6
+lost ∼11 and ∼8% by weight, respectively, or approximately
+50% of their total weight loss. The weight loss at lower
+temperatures (i.e., e393 K) is normally attributed to removal
+of surface-adsorbed water. On the basis of the TGA
+measurements, the stoichiometry for Fhyd2, Fhyd3, and
+Fhyd6 is 5Fe2O3‚nH2O, with n equal to 10, 6, and 5,
+respectively. The TGA results presented here are generally
+consistent with previous studies.15,40
+Discussion
+The primary difference between the ferrihydrite precipitates formed by three different methods in this study is the
+size of the coherent scattering domains imposed by differences in average crystallite sizes. Until now, this idea has
+not been entirely appreciated since the time it was initially
+suggested by Drits et al. (1993).20 The crystallinity of all
+the ferrihydrite precipitates examined in this study is
+relatively poor, in general, i.e., having broadened and weak
+XRD reflections (Figure 1). Also contributing to the broadening of maxima may be the effects of defects and disorder
+in the structure, which are manifested as a diffuse scattering
+component. These characteristics may have hindered prior
+structural studies of nanocrystalline ferrihydrite using crystallographic techniques, which rely on clearly defined Bragg
+peaks.
+The PDFs for the precipitates show a significant degree
+of attenuation (Figure 7) due to limited coherent scattering
+domain sizes. The radial distance plotted along the abscissa
+is extended to 65 Å in Figure 7 to emphasize the difference
+in attenuation between the three samples. It is apparent that
+Fhyd2 exhibits the shortest range of structural coherence and
+therefore consists of the smallest average coherent scattering
+domain. The correlations in the PDF for Fhyd2 attenuate at
+a distance of approximately 20 Å and the remainder of the
+(40) Saleh, A. M.; Jones, A. A. Clay Miner. 1984, 19 (5), 745-755.
+
+pattern (>20 Å) reduces to statistical noise. The correlations
+in the PDF for Fhyd3 attenuate slightly further out at
+approximately 3.0-3.2 nm and those of Fhyd6 show the
+greatest range of structural coherence extending out beyond
+50 Å. These results clearly are consistent with the increased
+broadening of diffraction features illustrated in Figure 1 that
+occur with decreasing domain size. Direct imaging using
+HRTEM also indicates that Fhyd2, Fhyd3, and Fhyd6 differ
+in terms of average particle size and degree of crystallization
+(Figures 2 - 4). In the present study, as well as in other
+studies where ferrihydrite precipitates are imaged using
+HRTEM, the estimated average particle sizes reported are
+consistently slightly larger than what would be estimated on
+the basis of PDF analysis alone. The discrepancy may be in
+part attributable to variability in samples formed in different
+laboratories. However, in the present study, it is attributable
+to differences in what is fundamentally being measured by
+these techniques. In the case of HRTEM, the overall size of
+the visible particles are measured compared to PDF where
+the attenuation provides an indication of the average size of
+the coherent scattering domain. The PDF may not reflect
+atom pairs affected by surface relaxation and types of internal
+disorder that do not result in coherent scattering. In such
+cases, the estimated average size using PDF attenuation is
+always likely to underestimate the true size of a particle.
+These results are consistent with prior estimates in studies
+by other researchers using HRTEM11,21 and those obtained
+in recent work on the same precipitates using STM and
+AFM.12
+An evaluation of the pair correlations between 1 and 20
+Å in the PDFs for Fhyd2, Fhyd3, and Fhyd6 reveals that all
+share the same atomic arrangement (Figure 6). The positions
+from profile fitting of the first three correlations are included
+in Table 2. The first correlation at ∼2.0 Å suggests that Fe
+and O are predominantly in an octahedral coordination.41 It
+has been suggested that tetrahedrally coordinated Fe-O may
+also be present in 2-line ferrihydrite16 or possibly occur as
+the result of surface distortion resulting from the nanocrystalline particle sizes.15,42 Evidence for this conjecture is not
+yet directly supported by PDF, but it should be noted that
+the difference in bond lengths in FeO4 and FeO6 polyhedra
+is only ∼0.15 Å, for example, as is found in the structure of
+maghemite (γ-Fe2O3).43 Additionally, distortions in the FeO6
+polyhedra would result in Fe-O bond lengths deviating from
+an ideal geometry and result in a broader correlation in the
+PDF at ∼2.0 Å. Such a distortion would also have the
+(41) Shannon, R. D. Acta Crystallogr., Sect. A 1976, 32 (SEP1), 751767.
+(42) Zhao, J.; Huggins, F. E.; Feng, Z.; Lu, F. L.; Shah, N.; Huffman, G.
+P. J. Catal. 1993, 143 (2), 499-509.
+(43) Greaves, C. J. Solid State Chem. 1983, 49 (3), 325-333.
+
+Similarities in 2- and 6-Line Ferrihydrite
+
+Figure 9. The experimental PDF G(r) vs distance r is plotted for sample
+Fhyd6. Calculated PDFs for akaganéite and goethite are also plotted to show
+the similarities in the atom-atom distances over the first ∼5 Å, typical of
+the range of distances reported by EXAFS. The PDF provides additional
+data that are essential for differentiating between competing structural
+models.
+
+potential for obscuring the correlation corresponding to FeO4
+polyhedra, especially if the tetrahedrally coordinated Fe were
+in relatively minor abundance (i.e., <25%). In this circumstance, the contribution of FeO4 to this region of the PDF
+would likely be manifested as a subtle asymmetry of the
+left side of the FeO6 correlation. Such asymmetry is not
+obvious in the PDFs presented here but cannot be ruled out
+for the reasons described above. The second and third
+correlations at 3.03 and 3.44 Å are characteristic of Fe-Fe
+distances for FeO6 polyhedra linked in edge-sharing and
+corner-sharing configurations, respectively. These distances
+and configurations are consistent with prior EXAFS work
+on ferrihydrite44 and do not suggest the presence of polyhedra
+in the face-sharing configuration that has been suggested in
+prior work.16,17,19
+The main advantage to using high-energy X-ray scattering
+and PDF analysis over spectroscopic techniques such as
+EXAFS for comparing ferrihydrite with different particle
+sizes, and ultimately comparing its structure, is that the PDF
+is not limited to information associated with the first three
+shells. As one recent study of nanocrystalline MnS demonstrated, multiple structural models may provide a satisfactory
+fit when considering only the short-range atomic order
+(approximately <5 Å).35 In the Fe-O-H system, there are
+a number of potential structural models that have edge- and
+corner-sharing octahedra and thereby result in a very similar
+radial distribution function to ferrihydrite (e.g., goethite,
+akaganéite) out to ∼5 Å (Figure 9). The PDF provides the
+invaluable additional information on the intermediate-range
+atomic order that we predict, in the case of ferrihydrite, will
+eventually allow for the differentiation between competing
+models.
+(44) Combes, J. M.; Manceau, A.; Calas, G. Geochim. Cosmochim. Acta
+1990, 54 (4), 1083-1091.
+
+Chem. Mater., Vol. 19, No. 6, 2007 1495
+
+Variability in the quality of samples formed in separate
+laboratories using different starting materials and with subtle
+variations in synthesis conditions has been identified as a
+possible source of complexity and reason for disagreement
+between previous studies of structure and composition.4 Our
+study also included PDF analysis of three samples made by
+independent groups at BNL, Temple, and Stony Brook
+University, with all using the same general preparation
+method.13 The PDFs for the three samples (not shown) were
+virtually identical, suggesting no significant differences in
+structure or domain size. The potential structural changes in
+ferrihydrite caused by the interaction of the nanocrystalline
+solid phase with aqueous solution were evaluated by also
+analyzing the precipitates (Fhyd2, Fhyd3, and Fhyd6) redispersed in aqueous solution. Again, no discernible changes
+for ferrihydrite nanoparticles in either state were observed
+in the resulting PDFs (also not shown). Although stoichiometric water was added as part of the normalization in both
+wet and dry samples, the abundance of structural water is
+still uncertain. Prior work has suggested that the presence
+of hydroxyl is essential for maintaining the ferrihydrite
+structure,45 although this idea has also been disputed.9,10,14
+On the basis of the formula used to normalize the data in
+the present study, it is necessary to have only 1 water (2
+protons) in the structure to charge-balance the Fe and O.
+TGA curves show a significant weight loss for each sample
+at temperatures e393 K (Figure 8), indicating the removal
+of weakly bound surface-adsorbed water. This evidence for
+the presence of variable amounts of surficial water provides
+support for the additional H2O necessary during the PDF
+normalization procedure and is in good agreement with the
+stoichiometry estimated from TGA. Subsequent weight loss
+at temperatures >393 K may indicate the loss of more
+strongly bound structural water and is not yet fully understood. We currently have experiments in progress using
+neutron scattering and PDF analysis on samples of ferrihydrite synthesized carefully with deuterium to minimize the
+incoherent scattering interference resulting from hydrogen
+contamination. This study will be essential for understanding
+the role of protons in the structure of ferrihydrite and will
+be a part of future communications.
+Conclusions
+With the development and application of advanced analytical and experimental techniques at synchrotron facilities
+and in the laboratory, we now have the tools to rigorously
+characterize fundamental atomic properties of traditionally
+challenging materials, such as nanocrystalline ferrihydrite.
+On the basis of PDF analysis of high-energy X-ray total
+scattering data, the primary difference between so-called 2and 6-line ferrihydrite is the limited size of the coherent
+scattering domains imposed by differences in average
+primary crystallite size, rather than a fundamental difference
+in atomic arrangement. A comparison of the PDFs for the
+samples with three distinct average particle sizes in this study
+indicates that all share the same atomic arrangement on the
+basis of the atom pair correlations extending beyond 15 Å.
+(45) Childs, C. W.; Kanasaki, N.; Yoshinaga, N. Clay Sci. 1993, 9 (2), 65.
+
+1496 Chem. Mater., Vol. 19, No. 6, 2007
+
+The average domain sizes of the precipitates examined in
+this study are estimated using the PDF method to be in the
+range of 2-6 nm and are supported by HRTEM. The local
+atomic arrangement from PDF analysis also does not show
+any significant changes when analyzed in powder form or
+when redispersed in aqueous media. Surface-adsorbed water
+content varied with particle size, as indicated by both PDF
+analysis and TGA. The results presented here provide the
+foundation for quantitatively testing previously proposed
+structural models for ferrihydrite and may lead to the
+development of a new structural model that better describes
+this phase. These ideas will be explored in future communications.
+Acknowledgment. This study is supported by the Center
+for Environmental Molecular Science (CEMS) and the National
+
+Michel et al.
+
+Science Foundation (NSF) (Awards CHE0221934, DMR045244, and EAR-0510501) and the U.S. Department of
+EducationthroughtheGAANNProgramSponsorID:P200A060248.
+High-energy XRD measurements were performed at X-ray
+Operation and Research (XOR) beamlines 1-ID-C and 11-ID-B
+at the Advanced Photon Source, Argonne National Laboratory.
+Use of the APS is supported by the U.S. Department of Energy
+(DOE), Office of Science, Office of Basic Energy Sciences,
+under Contract DE-AC02-06CH11357. Use of the HRTEM is
+supported by the U.S. DOE under Contract DE-AC0298CH10886.
+Supporting Information Available: G(r) versus r plots for 2
+nm ferrihydrite formed in different laboratories. This material is
+available free of charge via the internet at http://pubs.acs.org.
+CM062585N
+
+

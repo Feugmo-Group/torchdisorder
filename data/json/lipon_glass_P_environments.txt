@@ -1,0 +1,438 @@
+======================================================================
+P ENVIRONMENT SUMMARY FOR LiPON GLASS
+======================================================================
+
+Total atoms: 992
+Total P atoms: 128
+Cutoff (P-O/N): 1.950 Å
+
+Environment distribution (by P coordination):
+----------------------------------------------------------------------
+  PO4         :  68.75%  (count=88, priority=2.0)
+  PO3N        :  18.75%  (count=24, priority=3.0)
+  PO1N        :   6.25%  (count=8, priority=1.0)
+  PO2N        :   6.25%  (count=8, priority=1.5)
+
+======================================================================
+ORDER PARAMETER CONSTRAINTS BY ENVIRONMENT
+======================================================================
+
+
+PO1N environments (8 atoms, priority=1.0):
+----------------------------------------------------------------------
+  cn: target=4.0, tolerance=0.50, weight=1.0
+
+PO2N environments (8 atoms, priority=1.5):
+----------------------------------------------------------------------
+  cn: target=4.0, tolerance=0.50, weight=1.5
+
+PO3N environments (24 atoms, priority=3.0):
+----------------------------------------------------------------------
+  tet: target=0.85, range=[0.65, 1.00], weight=2.5
+  cn: target=4.0, tolerance=0.50, weight=2.0
+
+PO4 environments (88 atoms, priority=2.0):
+----------------------------------------------------------------------
+  tet: target=0.88, range=[0.70, 1.00], weight=2.0
+  cn: target=4.0, tolerance=0.50, weight=1.5
+
+======================================================================
+DETAILED P SITE INFORMATION
+======================================================================
+
+
+PO4 sites (88 atoms):
+----------------------------------------------------------------------
+  Index    376: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(2.468, 4.366, 3.088)
+      O neighbors: [552, 568, 584, 664]
+      N neighbors: []
+  Index    377: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(2.468, 4.366, 15.440)
+      O neighbors: [553, 569, 585, 665]
+      N neighbors: []
+  Index    378: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(2.468, 14.958, 3.088)
+      O neighbors: [554, 570, 586, 666]
+      N neighbors: []
+  Index    379: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(2.468, 14.958, 15.440)
+      O neighbors: [555, 571, 587, 667]
+      N neighbors: []
+  Index    380: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(12.313, 4.366, 3.088)
+      O neighbors: [556, 572, 588, 668]
+      N neighbors: []
+  Index    381: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(12.313, 4.366, 15.440)
+      O neighbors: [557, 573, 589, 669]
+      N neighbors: []
+  Index    382: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(12.313, 14.958, 3.088)
+      O neighbors: [558, 574, 590, 670]
+      N neighbors: []
+  Index    383: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(12.313, 14.958, 15.440)
+      O neighbors: [559, 575, 591, 671]
+      N neighbors: []
+  Index    392: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(2.468, 4.366, 9.264)
+      O neighbors: [608, 624, 648, 728]
+      N neighbors: []
+  Index    393: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(2.468, 4.366, 21.616)
+      O neighbors: [609, 625, 649, 729]
+      N neighbors: []
+  Index    394: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(2.468, 14.958, 9.264)
+      O neighbors: [610, 626, 650, 730]
+      N neighbors: []
+  Index    395: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(2.468, 14.958, 21.616)
+      O neighbors: [611, 627, 651, 731]
+      N neighbors: []
+  Index    396: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(12.313, 4.366, 9.264)
+      O neighbors: [612, 628, 652, 732]
+      N neighbors: []
+  Index    397: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(12.313, 4.366, 21.616)
+      O neighbors: [613, 629, 653, 733]
+      N neighbors: []
+  Index    398: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(12.313, 14.958, 9.264)
+      O neighbors: [614, 630, 654, 734]
+      N neighbors: []
+  Index    399: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(12.313, 14.958, 21.616)
+      O neighbors: [615, 631, 655, 735]
+      N neighbors: []
+  Index    408: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(2.468, 9.662, 3.088)
+      O neighbors: [546, 672, 688, 712]
+      N neighbors: []
+  Index    409: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(2.468, 9.662, 15.440)
+      O neighbors: [547, 673, 689, 713]
+      N neighbors: []
+  Index    410: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(2.468, 20.255, 3.088)
+      O neighbors: [544, 674, 690, 714]
+      N neighbors: []
+  Index    411: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(2.468, 20.255, 15.440)
+      O neighbors: [545, 675, 691, 715]
+      N neighbors: []
+  Index    412: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(12.313, 9.662, 3.088)
+      O neighbors: [550, 676, 692, 716]
+      N neighbors: []
+  Index    413: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(12.313, 9.662, 15.440)
+      O neighbors: [551, 677, 693, 717]
+      N neighbors: []
+  Index    414: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(12.313, 20.255, 3.088)
+      O neighbors: [548, 678, 694, 718]
+      N neighbors: []
+  Index    415: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(12.313, 20.255, 15.440)
+      O neighbors: [549, 679, 695, 719]
+      N neighbors: []
+  Index    416: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(0.007, 6.227, 0.000)
+      O neighbors: [576, 656, 761, 916]
+      N neighbors: []
+  Index    417: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(0.007, 6.227, 12.352)
+      O neighbors: [577, 657, 760, 917]
+      N neighbors: []
+  Index    418: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(0.007, 16.820, 0.000)
+      O neighbors: [578, 658, 763, 918]
+      N neighbors: []
+  Index    419: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(0.007, 16.820, 12.352)
+      O neighbors: [579, 659, 762, 919]
+      N neighbors: []
+  Index    420: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(9.852, 6.227, 0.000)
+      O neighbors: [580, 660, 765, 912]
+      N neighbors: []
+  Index    421: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(9.852, 6.227, 12.352)
+      O neighbors: [581, 661, 764, 913]
+      N neighbors: []
+  Index    422: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(9.852, 16.820, 0.000)
+      O neighbors: [582, 662, 767, 914]
+      N neighbors: []
+  Index    423: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(9.852, 16.820, 12.352)
+      O neighbors: [583, 663, 766, 915]
+      N neighbors: []
+  Index    424: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(2.468, 9.662, 9.264)
+      O neighbors: [602, 736, 752, 776]
+      N neighbors: []
+  Index    425: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(2.468, 9.662, 21.616)
+      O neighbors: [603, 737, 753, 777]
+      N neighbors: []
+  Index    426: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(2.468, 20.255, 9.264)
+      O neighbors: [600, 738, 754, 778]
+      N neighbors: []
+  Index    427: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(2.468, 20.255, 21.616)
+      O neighbors: [601, 739, 755, 779]
+      N neighbors: []
+  Index    428: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(12.313, 9.662, 9.264)
+      O neighbors: [606, 740, 756, 780]
+      N neighbors: []
+  Index    429: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(12.313, 9.662, 21.616)
+      O neighbors: [607, 741, 757, 781]
+      N neighbors: []
+  Index    430: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(12.313, 20.255, 9.264)
+      O neighbors: [604, 742, 758, 782]
+      N neighbors: []
+  Index    431: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(12.313, 20.255, 21.616)
+      O neighbors: [605, 743, 759, 783]
+      N neighbors: []
+  Index    432: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(0.007, 6.227, 6.176)
+      O neighbors: [640, 696, 720, 956]
+      N neighbors: []
+  Index    433: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(0.007, 6.227, 18.528)
+      O neighbors: [641, 697, 721, 957]
+      N neighbors: []
+  Index    434: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(0.007, 16.820, 6.176)
+      O neighbors: [642, 698, 722, 958]
+      N neighbors: []
+  Index    435: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(0.007, 16.820, 18.528)
+      O neighbors: [643, 699, 723, 959]
+      N neighbors: []
+  Index    436: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(9.852, 6.227, 6.176)
+      O neighbors: [644, 700, 724, 952]
+      N neighbors: []
+  Index    437: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(9.852, 6.227, 18.528)
+      O neighbors: [645, 701, 725, 953]
+      N neighbors: []
+  Index    438: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(9.852, 16.820, 6.176)
+      O neighbors: [646, 702, 726, 954]
+      N neighbors: []
+  Index    439: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(9.852, 16.820, 18.528)
+      O neighbors: [647, 703, 727, 955]
+      N neighbors: []
+  Index    440: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(7.391, 4.366, 3.088)
+      O neighbors: [800, 816, 840, 904]
+      N neighbors: []
+  Index    441: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(7.391, 4.366, 15.440)
+      O neighbors: [801, 817, 841, 905]
+      N neighbors: []
+  Index    442: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(7.391, 14.958, 3.088)
+      O neighbors: [802, 818, 842, 906]
+      N neighbors: []
+  Index    443: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(7.391, 14.958, 15.440)
+      O neighbors: [803, 819, 843, 907]
+      N neighbors: []
+  Index    444: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(17.236, 4.366, 3.088)
+      O neighbors: [804, 820, 844, 908]
+      N neighbors: []
+  Index    445: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(17.236, 4.366, 15.440)
+      O neighbors: [805, 821, 845, 909]
+      N neighbors: []
+  Index    446: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(17.236, 14.958, 3.088)
+      O neighbors: [806, 822, 846, 910]
+      N neighbors: []
+  Index    447: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(17.236, 14.958, 15.440)
+      O neighbors: [807, 823, 847, 911]
+      N neighbors: []
+  Index    448: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(4.929, 0.931, 0.000)
+      O neighbors: [560, 784, 873, 930]
+      N neighbors: []
+  Index    449: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(4.929, 0.931, 12.352)
+      O neighbors: [561, 785, 872, 931]
+      N neighbors: []
+  Index    450: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(4.929, 11.524, 0.000)
+      O neighbors: [562, 786, 875, 928]
+      N neighbors: []
+  Index    451: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(4.929, 11.524, 12.352)
+      O neighbors: [563, 787, 874, 929]
+      N neighbors: []
+  Index    452: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(14.774, 0.931, 0.000)
+      O neighbors: [564, 788, 877, 934]
+      N neighbors: []
+  Index    453: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(14.774, 0.931, 12.352)
+      O neighbors: [565, 789, 876, 935]
+      N neighbors: []
+  Index    454: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(14.774, 11.524, 0.000)
+      O neighbors: [566, 790, 879, 932]
+      N neighbors: []
+  Index    455: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(14.774, 11.524, 12.352)
+      O neighbors: [567, 791, 878, 933]
+      N neighbors: []
+  Index    464: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(4.929, 0.931, 6.176)
+      O neighbors: [616, 824, 848, 978]
+      N neighbors: []
+  Index    465: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(4.929, 0.931, 18.528)
+      O neighbors: [617, 825, 849, 979]
+      N neighbors: []
+  Index    466: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(4.929, 11.524, 6.176)
+      O neighbors: [618, 826, 850, 976]
+      N neighbors: []
+  Index    467: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(4.929, 11.524, 18.528)
+      O neighbors: [619, 827, 851, 977]
+      N neighbors: []
+  Index    468: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(14.774, 0.931, 6.176)
+      O neighbors: [620, 828, 852, 982]
+      N neighbors: []
+  Index    469: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(14.774, 0.931, 18.528)
+      O neighbors: [621, 829, 853, 983]
+      N neighbors: []
+  Index    470: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(14.774, 11.524, 6.176)
+      O neighbors: [622, 830, 854, 980]
+      N neighbors: []
+  Index    471: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(14.774, 11.524, 18.528)
+      O neighbors: [623, 831, 855, 981]
+      N neighbors: []
+  Index    480: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(4.929, 6.227, 0.000)
+      O neighbors: [680, 832, 896, 969]
+      N neighbors: []
+  Index    481: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(4.929, 6.227, 12.352)
+      O neighbors: [681, 833, 897, 968]
+      N neighbors: []
+  Index    482: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(4.929, 16.820, 0.000)
+      O neighbors: [682, 834, 898, 971]
+      N neighbors: []
+  Index    483: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(4.929, 16.820, 12.352)
+      O neighbors: [683, 835, 899, 970]
+      N neighbors: []
+  Index    484: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(14.774, 6.227, 0.000)
+      O neighbors: [684, 836, 900, 973]
+      N neighbors: []
+  Index    485: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(14.774, 6.227, 12.352)
+      O neighbors: [685, 837, 901, 972]
+      N neighbors: []
+  Index    486: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(14.774, 16.820, 0.000)
+      O neighbors: [686, 838, 902, 975]
+      N neighbors: []
+  Index    487: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(14.774, 16.820, 12.352)
+      O neighbors: [687, 839, 903, 974]
+      N neighbors: []
+  Index    496: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(4.929, 6.227, 6.176)
+      O neighbors: [744, 880, 920, 944]
+      N neighbors: []
+  Index    497: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(4.929, 6.227, 18.528)
+      O neighbors: [745, 881, 921, 945]
+      N neighbors: []
+  Index    498: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(4.929, 16.820, 6.176)
+      O neighbors: [746, 882, 922, 946]
+      N neighbors: []
+  Index    499: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(4.929, 16.820, 18.528)
+      O neighbors: [747, 883, 923, 947]
+      N neighbors: []
+  Index    500: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(14.774, 6.227, 6.176)
+      O neighbors: [748, 884, 924, 948]
+      N neighbors: []
+  Index    501: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(14.774, 6.227, 18.528)
+      O neighbors: [749, 885, 925, 949]
+      N neighbors: []
+  Index    502: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(14.774, 16.820, 6.176)
+      O neighbors: [750, 886, 926, 950]
+      N neighbors: []
+  Index    503: PO4 (orthophosphate tetrahedral)       CN=4 (nO=4, nN=0) xyz=(14.774, 16.820, 18.528)
+      O neighbors: [751, 887, 927, 951]
+      N neighbors: []
+
+PO3N sites (24 atoms):
+----------------------------------------------------------------------
+  Index    384: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(0.007, 0.931, 0.000)
+      O neighbors: [633, 706, 812]
+      N neighbors: [504]
+  Index    385: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(0.007, 0.931, 12.352)
+      O neighbors: [632, 707, 813]
+      N neighbors: [505]
+  Index    386: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(0.007, 11.524, 0.000)
+      O neighbors: [635, 704, 814]
+      N neighbors: [506]
+  Index    387: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(0.007, 11.524, 12.352)
+      O neighbors: [634, 705, 815]
+      N neighbors: [507]
+  Index    388: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(9.852, 0.931, 0.000)
+      O neighbors: [637, 710, 808]
+      N neighbors: [508]
+  Index    389: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(9.852, 0.931, 12.352)
+      O neighbors: [636, 711, 809]
+      N neighbors: [509]
+  Index    390: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(9.852, 11.524, 0.000)
+      O neighbors: [639, 708, 810]
+      N neighbors: [510]
+  Index    391: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(9.852, 11.524, 12.352)
+      O neighbors: [638, 709, 811]
+      N neighbors: [511]
+  Index    400: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(0.007, 0.931, 6.176)
+      O neighbors: [592, 770, 868]
+      N neighbors: [512]
+  Index    401: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(0.007, 0.931, 18.528)
+      O neighbors: [593, 771, 869]
+      N neighbors: [513]
+  Index    402: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(0.007, 11.524, 6.176)
+      O neighbors: [594, 768, 870]
+      N neighbors: [514]
+  Index    403: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(0.007, 11.524, 18.528)
+      O neighbors: [595, 769, 871]
+      N neighbors: [515]
+  Index    404: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(9.852, 0.931, 6.176)
+      O neighbors: [596, 774, 864]
+      N neighbors: [516]
+  Index    405: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(9.852, 0.931, 18.528)
+      O neighbors: [597, 775, 865]
+      N neighbors: [517]
+  Index    406: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(9.852, 11.524, 6.176)
+      O neighbors: [598, 772, 866]
+      N neighbors: [518]
+  Index    407: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(9.852, 11.524, 18.528)
+      O neighbors: [599, 773, 867]
+      N neighbors: [519]
+  Index    488: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(7.391, 9.662, 9.264)
+      O neighbors: [858, 960, 984]
+      N neighbors: [536]
+  Index    489: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(7.391, 9.662, 21.616)
+      O neighbors: [859, 961, 985]
+      N neighbors: [537]
+  Index    490: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(7.391, 20.255, 9.264)
+      O neighbors: [856, 962, 986]
+      N neighbors: [538]
+  Index    491: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(7.391, 20.255, 21.616)
+      O neighbors: [857, 963, 987]
+      N neighbors: [539]
+  Index    492: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(17.236, 9.662, 9.264)
+      O neighbors: [862, 964, 988]
+      N neighbors: [540]
+  Index    493: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(17.236, 9.662, 21.616)
+      O neighbors: [863, 965, 989]
+      N neighbors: [541]
+  Index    494: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(17.236, 20.255, 9.264)
+      O neighbors: [860, 966, 990]
+      N neighbors: [542]
+  Index    495: PO3N (N-substituted tetrahedral)       CN=4 (nO=3, nN=1) xyz=(17.236, 20.255, 21.616)
+      O neighbors: [861, 967, 991]
+      N neighbors: [543]
+
+PO2N sites (8 atoms):
+----------------------------------------------------------------------
+  Index    472: PO2N (defect, CN=3 O+N)                CN=3 (nO=2, nN=1) xyz=(7.391, 9.662, 3.088)
+      O neighbors: [794, 936]
+      N neighbors: [528]
+  Index    473: PO2N (defect, CN=3 O+N)                CN=3 (nO=2, nN=1) xyz=(7.391, 9.662, 15.440)
+      O neighbors: [795, 937]
+      N neighbors: [529]
+  Index    474: PO2N (defect, CN=3 O+N)                CN=3 (nO=2, nN=1) xyz=(7.391, 20.255, 3.088)
+      O neighbors: [792, 938]
+      N neighbors: [530]
+  Index    475: PO2N (defect, CN=3 O+N)                CN=3 (nO=2, nN=1) xyz=(7.391, 20.255, 15.440)
+      O neighbors: [793, 939]
+      N neighbors: [531]
+  Index    476: PO2N (defect, CN=3 O+N)                CN=3 (nO=2, nN=1) xyz=(17.236, 9.662, 3.088)
+      O neighbors: [798, 940]
+      N neighbors: [532]
+  Index    477: PO2N (defect, CN=3 O+N)                CN=3 (nO=2, nN=1) xyz=(17.236, 9.662, 15.440)
+      O neighbors: [799, 941]
+      N neighbors: [533]
+  Index    478: PO2N (defect, CN=3 O+N)                CN=3 (nO=2, nN=1) xyz=(17.236, 20.255, 3.088)
+      O neighbors: [796, 942]
+      N neighbors: [534]
+  Index    479: PO2N (defect, CN=3 O+N)                CN=3 (nO=2, nN=1) xyz=(17.236, 20.255, 15.440)
+      O neighbors: [797, 943]
+      N neighbors: [535]
+
+PO1N sites (8 atoms):
+----------------------------------------------------------------------
+  Index    456: PO1N (strongly defected)               CN=2 (nO=1, nN=1) xyz=(7.391, 4.366, 9.264)
+      O neighbors: [888]
+      N neighbors: [520]
+  Index    457: PO1N (strongly defected)               CN=2 (nO=1, nN=1) xyz=(7.391, 4.366, 21.616)
+      O neighbors: [889]
+      N neighbors: [521]
+  Index    458: PO1N (strongly defected)               CN=2 (nO=1, nN=1) xyz=(7.391, 14.958, 9.264)
+      O neighbors: [890]
+      N neighbors: [522]
+  Index    459: PO1N (strongly defected)               CN=2 (nO=1, nN=1) xyz=(7.391, 14.958, 21.616)
+      O neighbors: [891]
+      N neighbors: [523]
+  Index    460: PO1N (strongly defected)               CN=2 (nO=1, nN=1) xyz=(17.236, 4.366, 9.264)
+      O neighbors: [892]
+      N neighbors: [524]
+  Index    461: PO1N (strongly defected)               CN=2 (nO=1, nN=1) xyz=(17.236, 4.366, 21.616)
+      O neighbors: [893]
+      N neighbors: [525]
+  Index    462: PO1N (strongly defected)               CN=2 (nO=1, nN=1) xyz=(17.236, 14.958, 9.264)
+      O neighbors: [894]
+      N neighbors: [526]
+  Index    463: PO1N (strongly defected)               CN=2 (nO=1, nN=1) xyz=(17.236, 14.958, 21.616)
+      O neighbors: [895]
+      N neighbors: [527]

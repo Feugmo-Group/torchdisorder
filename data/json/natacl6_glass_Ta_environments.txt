@@ -1,0 +1,36 @@
+======================================================================
+Ta ENVIRONMENT SUMMARY FOR NaTaCl6
+======================================================================
+
+Total atoms : 2304
+Total Ta    : 288
+Cutoff Ta-Cl: 2.600 Å
+
+Environment distribution:
+----------------------------------------------------------------------
+  Ta6         : 100.00%  (count=288, priority=2.5)
+
+
+Ta6 sites (288 atoms):
+----------------------------------------------------------------------
+  Index    288: TaCl6 (octahedral)                   CN=6 xyz=(4.977, 2.007, 7.520)
+  Index    289: TaCl6 (octahedral)                   CN=6 xyz=(4.977, 2.007, 27.327)
+  Index    290: TaCl6 (octahedral)                   CN=6 xyz=(4.977, 9.111, 7.520)
+  Index    291: TaCl6 (octahedral)                   CN=6 xyz=(4.977, 9.111, 27.327)
+  Index    292: TaCl6 (octahedral)                   CN=6 xyz=(4.977, 16.214, 7.520)
+  Index    293: TaCl6 (octahedral)                   CN=6 xyz=(4.977, 16.214, 27.327)
+  Index    294: TaCl6 (octahedral)                   CN=6 xyz=(4.977, 23.318, 7.520)
+  Index    295: TaCl6 (octahedral)                   CN=6 xyz=(4.977, 23.318, 27.327)
+  Index    296: TaCl6 (octahedral)                   CN=6 xyz=(4.977, 30.421, 7.520)
+  Index    297: TaCl6 (octahedral)                   CN=6 xyz=(4.977, 30.421, 27.327)
+  Index    298: TaCl6 (octahedral)                   CN=6 xyz=(4.977, 37.525, 7.520)
+  Index    299: TaCl6 (octahedral)                   CN=6 xyz=(4.977, 37.525, 27.327)
+  Index    300: TaCl6 (octahedral)                   CN=6 xyz=(11.671, 2.007, 7.443)
+  Index    301: TaCl6 (octahedral)                   CN=6 xyz=(11.671, 2.007, 27.251)
+  Index    302: TaCl6 (octahedral)                   CN=6 xyz=(11.671, 9.111, 7.443)
+  Index    303: TaCl6 (octahedral)                   CN=6 xyz=(11.671, 9.111, 27.251)
+  Index    304: TaCl6 (octahedral)                   CN=6 xyz=(11.671, 16.214, 7.443)
+  Index    305: TaCl6 (octahedral)                   CN=6 xyz=(11.671, 16.214, 27.251)
+  Index    306: TaCl6 (octahedral)                   CN=6 xyz=(11.671, 23.318, 7.443)
+  Index    307: TaCl6 (octahedral)                   CN=6 xyz=(11.671, 23.318, 27.251)
+  ... (268 more)

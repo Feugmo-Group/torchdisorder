@@ -1,0 +1,1078 @@
+Chem. Mater. 2006, 18, 3889-3897
+
+3889
+
+High- and Low-Temperature Crystal and Magnetic Structures of
+E-Fe2O3 and Their Correlation to Its Magnetic Properties
+M. Gich,* C. Frontera, A. Roig, E. Taboada, and E. Molins
+Institut de Ciència de Materials de Barcelona, Consejo Superior de InVestigaciones Cientı́ficas,
+Campus de la UAB, 08193 Bellaterra, Catalunya, Spain
+
+H. R. Rechenberg
+Instituto de Fı́sica, UniVersidade de São Paulo, Caixa Postal 66318, 05315-970 São Paulo, Brazil
+
+J. D. Ardisson and W. A. A. Macedo
+
+Downloaded via UNIV OF WATERLOO on July 16, 2026 at 17:54:20 (UTC).
+See https://pubs.acs.org/sharingguidelines for options on how to legitimately share published articles.
+
+Laboratório de Fı́sica Aplicada, Centro de DesenVolVimento da Tecnologia Nuclear,
+31270-901 Belo Horizonte, Brazil
+
+C. Ritter
+Institut Laue-LangeVin, 6 rue Jules Horowitz, BP 156, 38042 Grenoble Cedex, France
+
+V. Hardy
+Laboratoire CRISMAT/ENSICAEN, UMR 6508 du CNRS, 6 Bd Marechal Juin, 14050 Caen, France
+
+J. Sort, V. Skumryev, and J. Nogués
+Institució Catalana de Recerca i Estudis AVançats (ICREA) and Departament de Fı́sica,
+UniVersitat Autònoma de Barcelona, 08193 Bellaterra, Catalunya, Spain
+ReceiVed April 28, 2006. ReVised Manuscript ReceiVed June 1, 2006
+
+The crystal and magnetic structures of orthorhombic -Fe2O3 have been studied by simultaneous Rietveld
+refinement of X-ray and neutron powder-diffraction data in combination with Mössbauer spectroscopy,
+as well as magnetization and heat-capacity measurements. It has been found that above 150 K, the -Fe2O3
+polymorph is a collinear ferrimagnet with magnetic moments directed along the a axis, whereas the
+magnetic ordering below 80 K is characterized by a square-wave incommensurate structure. The
+transformation between these two states is a second-order phase transition and involves subtle structural
+changes mostly affecting the coordination of the tetrahedral and one of the octahedral Fe sites. The
+temperature dependence of the -Fe2O3 magnetic properties is discussed in light of these results.
+
+I. Introduction
+Despite being known since 1934,1 -Fe2O3 has been much
+less studied than other iron(III) oxides, such as the R and γ
+polymorphs. For instance, it was not until quite recently that
+an agreement was reached on describing its crystalline
+structure with an orthorhombic cell in the Pna21 space
+group.2 The structure is isomorphous to GaFeO3 and AlFeO3
+and presents four different Fe sites, three in octahedral and
+one in tetrahedral oxygen coordination. From the magnetic
+point of view, -Fe2O3 has long been known to be paramagnetic above 510 K and to present below this temperature an
+antiparallel arrangement of the Fe3+ cations,2-5 characterized
+by a rather large anisotropy.5 However, no in-depth studies
+* To whom correspondence should be addressed. E-mail: mgich@icmab.es.
+
+(1) Forrestier, H.; Guiot-Guillain, G. C. C. R. Acad. Sci. 1934, 199, 720.
+(2) Tronc, E.; Chanéac, C.; Jolivet, J. P. J. Solid State Chem. 1998, 139,
+93.
+(3) Trautmann, J.-M.; Forestier, H. C. C. R. Acad. Sci. 1965, 261, 4423.
+(4) Schrader, R.; Buttner, G. Z. Anorg. Allg. Chem. 1963, 320, 220.
+(5) Dézsi, I.; Coey, J. M. D. Phys. Status Solidi A 1973, 15, 681.
+
+have been carried out up to now to determine its magnetic
+structure. The interest in the magnetic properties of this
+material has been revived because the scenario disclosed by
+recent studies is unexpectedly rich and complex. Indeed, this
+oxide exhibits a huge room-temperature coercivity of about
+20 kOe,6,7 and a magnetic transition at low temperature.8,9
+This low-temperature transition leads to about 5% diminution
+in the saturation magnetization, Ms, and a reduction in the
+squareness ratio, Mr/Ms, from 0.5 to 0.2 on cooling from 150
+to 85 K, where Mr is the remanent magnetization. Moreover,
+a large decrease in the coercivity, Hc, from 22.5 to 0.8 kOe
+is observed between 200 and 100 K9 (see Figure 1). In
+(6) Jin, J.; Ohkoshi, S.; Hashimoto, K. AdV. Mater. 2004, 16, 48.
+(7) Popovici, M.; Gich, M.; Nižňanský, D.; Roig, A.; Savii, C.; Casas,
+Ll.; Molins, E.; Zaveta, K.; Enache, C.; Sort, J.; de Brion, S.; Chouteau,
+G.; Nogués, J. Chem. Mater. 2004, 16, 5542.
+(8) Kurmoo, M.; Rehspringer, J.-L.; Hutlova, A.; D’O
+Ä rleans, C.; Vilminot,
+S.; Estournès, C.; Nižňanský, D. Chem. Mater. 2005, 17, 1106.
+(9) Gich, M.; Frontera, C.; Roig, A.; Savii, C.; Casas, Ll.; Molins, E.;
+Zaveta, K.; Enache, C.; Sort, J.; de Brion, S.; Chouteau, G.; Nogués,
+J. J. Appl. Phys. 2005, 98, 044307.
+
+10.1021/cm060993l CCC: $33.50 © 2006 American Chemical Society
+Published on Web 07/04/2006
+
+3890 Chem. Mater., Vol. 18, No. 16, 2006
+
+Gich et al.
+
+the coupling between magnetic and dielectric properties10
+that are observed in this oxide.
+Thus, the aim of this work is to elucidate the high
+temperature (HT) and low temperature (LT) structures of
+-Fe2O3 and to shed some light into the nature of this
+transition. We present here a refinement of the crystal and
+magnetic structures of -Fe2O3 from X-ray and neutron
+powder-diffraction data that is complemented by Mössbauer
+spectroscopy, magnetization, and heat-capacity measurements.
+Figure 1. Temperature dependence of the coercive field HC, the squareness
+ratio MR/MS, and the saturation magnetization MS; (inset) in -Fe2O3 (taken
+from ref 9).
+
+addition, the material presents a magnetoelectric coupling
+at about 100 K.10
+Tronc et al. studied the -Fe2O3 magnetic structure at 9 K
+by means of in-field Mössbauer spectroscopy and proposed
+a nearly collinear ferrimagnetic order at the octahedral sites
+and a misalignment with possible disorder at the tetrahedral
+sites.2 However, the presence of a magnetic transition, which
+is not observed in the GaFeO3 and AlFeO3 ferrimagnetic
+isomorphous systems,11,12 was somehow overlooked in their
+work, and the large thermal dependence presented by the
+hyperfine field of the Fe tetrahedral site was ascribed to
+dynamical phenomena. The two groups that first reported
+on this low-temperature transition have interpreted it quite
+differently.8,9 On the one hand, according to Kurmoo et al.,
+all Fe3+ cations in -Fe2O3 carry the same magnetic moment
+and its room-temperature magnetic structure is that of a
+canted antiferromagnet that, on cooling to below 150 K,
+would undergo a Morin-like transition resulting in a second
+canted antiferromagnetic phase with smaller canting angles.8
+A similar interpretation to the transition has been given by
+Sakurai et. al, who also studied the -Fe2O3 structure by
+X-ray diffraction in a 60-293 K temperature range, although
+they were not able to reveal any structural change along the
+transition.13 In contrast, we have proposed that at roomtemperature, -Fe2O3 is a collinear ferrimagnet with the net
+magnetization arising from the lower magnetic moment of
+the Fe3+ in tetrahedral coordination; we have related the
+anomalies in the magnetic properties at low temperatures to
+the appearance of an incommensurate magnetic order, already
+indicated by preliminary neutron-diffraction experiments.9
+In the context described above, besides clarifying the nature
+of the -Fe2O3 magnetic structure below 100 K, we need to
+investigate a second question of whether the eventual
+occurrence of structural changes is associated with the
+transition. Indeed, understanding the relationship between
+the structural and magnetic properties of -Fe2O3 can be
+crucial to comprehending both the magnetic softening9 and
+(10) Gich, M.; Frontera, C.; Roig, A.; Fontcuberta, J.; Molins, E.; Bellido,
+N.; Simon, Ch.; Fleta, C. Nanotechnology 2006, 17, 687.
+(11) Berthaut, E.; F.; Bassi, G.; Buisson, G.; Chappert, J.; Delapalme, A.;
+Pauthenet, R.; Rebouillat, H. P.; Aleonard, R. J. Phys. (Paris) 1966,
+7, 28.
+(12) Bouree, F.; Badour, J. L.; Elabraoui, E.; Musso, J.; Laurent, C.;
+Rousset, A. Acta Crystallogr., Sect. B 1996, 52, 217.
+(13) Sakurai, S.; Jin, J.; Hashimoto, K.; Ohkoshi, S. J. Phys. Soc. Jpn.
+2005, 74, 1946.
+
+II. Experimental Details
+For the present study, we have used the -Fe2O3/amorphous SiO2
+nanocomposite sample that was already investigated in our previous
+work.9 For the powder-diffraction measurements, new batches were
+prepared following the same procedure that has been described in
+detail elsewhere.7 In some of these samples, small amounts (<10
+wt %) of R-Fe2O3 were detected. To optimize the material structural
+characterization using diffraction, we removed the SiO2 amorphous
+matrix by continuously stirring the sample in a concentrated NaOH
+solution (∼12 M) at 80 °C. After 2 days, the solution was
+centrifuged; the sample was washed several times with distilled
+water until it achieved a neutral pH and was finally dried at 60 °C.
+X-ray diffraction analysis performed after this treatment revealed
+the complete removal of the SiO2 amorphous matrix, whereas the
+-Fe2O3 phase remained unaltered. Neutron powder-diffraction
+(NPD) patterns were collected in the D20 instrument at the Institut
+Laue Langevin (Grenoble, France) using a 2.42 Å wavelength on
+heating at 1.7 K/min between 10 and 300 K. Synchrotron X-ray
+powder-diffraction (SXRPD) measurements were performed at fixed
+temperatures on heating in the same temperature range using the
+ID31 diffractometer of ESRF (Grenoble, France) with a 0.500 Å
+wavelength. The patterns were refined by the Rietveld method using
+the FullProf14 program suite. The presence of small amounts of
+R-Fe2O3 was considered in the refinements, taking into account its
+different magnetic structure above and below the Morin transition
+(at about 240 K). However, this magnetic transition has not been
+further considered, because it takes place in a temperature well
+above the temperature range discussed herein. Mössbauer spectra
+were acquired at different temperatures between 10 and 300 K using
+a conventional transmission Mössbauer spectrometer with a 57Co/
+Rh source. Velocity calibration was done using a 6 µm foil of
+metallic iron, and the Mössbauer parameters are given relative
+to this standard at room temperature. The program package
+NORMOS15 was used to fit the spectra. Magnetization measurements were performed using a Quantum Design MPMS SQUID
+magnetometer. Measurements of the ac susceptibility (1 Oe, 331000 Hz) and heat capacity Cp, using a 2τ relaxation method, were
+carried out in a Quantum Design PPMS.
+
+III. Results and Discussion
+A. Neutron and X-ray Diffraction. In Figure 2, the NPD
+patterns of -Fe2O3 recorded at 200, 160, 80, and 10 K
+evidence a change in magnetic structure taking place between
+160 and 80 K that is characterized by the disappearance of
+the (011), (110), (111), and (120) magnetic reflections and
+the development of satellites at either sides of these reflec(14) Rodriguez-Carvajal, J. Physica B 1993, 192, 55.
+(15) Brand, R. A. Nucl. Instrum. Methods Phys. Res., Sect. B 1987, 28,
+398.
+
+Crystal and Magnetic Structures of -Fe2O3
+
+Chem. Mater., Vol. 18, No. 16, 2006 3891
+
+Figure 2. NPD patterns corresponding to the HT (200 and 160 K) and LT
+(80 and 10 K) phases of -Fe2O3. The up arrows indicate the satellites
+emerging in the LT phase.
+
+tions. The changes observed in the NPD patterns of Figure
+2 affect only some of the magnetic reflections, suggesting
+that the transformation does not involve major structural
+changes. Whereas the HT phase of -Fe2O3 (200 and 160 K
+patterns) can be refined using the magnetic and nuclear
+structures of AlFeO3 as a starting model,12 the new peaks
+that characterize the magnetic structure of the LT phase can
+be indexed with an incommensurate propagation vector k
+) (0, 0.1047, 0).
+The small crystallite size of the -Fe2O3 nanoparticles (less
+than 20 nm) causes a peak broadening and therefore a strong
+peak overlap, which reduces the number of effective reflections. A multipattern approach using both NPD and SXRPD
+patterns recorded at 200 and 10 K was used to attempt a
+reliable refinement of nuclear and magnetic structures of the
+HT and LT phases of -Fe2O3, respectively. Besides -Fe2O3,
+the nuclear and magnetic structures of R-Fe2O3, representing
+less than 10 wt % of the sample, were also considered in
+the refinements. The comparisons between the experimental
+and calculated data obtained with the joint Rietveld refinement of the SXRPD and NPD patterns at 200 and 10 K are
+presented in Figures 3 and 4, respectively. The refined atomic
+coordinates for the 10 nonequivalent atomic sites at 200 and
+10 K, together with the standard reliability factors, are given
+in Table 1. As is found for isostructural phases GaFeO3,
+AlFeO3, and κ-Al2O3, which have been previously refined,16,12,17 the cation coordination polyhedra are two
+distorted18 and one regular octahedra and one tetrahedron.
+Therefore, the different Fe3+ sites are hereafter referred as
+FeDO1, FeDO2, FeRO, and FeT (where DO stands for distorted
+octahedral, RO for regular octahedral and T for tetrahedral
+(16) Abrahams, S. C.; Reddy, J. M. Bernstein, J. L. J. Chem. Phys. 1965,
+42, 3957.
+(17) Smrèok, L.; Langer, V.; Halvarsson, M.; Ruppi, S. Z. Kristallogr. 2001,
+216, 409.
+(18) The distortion of a coordination polyhedron of a cation is defined as
+n
+1/n∑i)1
+[(di - 〈d〉)/〈d〉]2, where di is the distance to a given neighbor,
+〈d〉 the average distance to the first neighbor, and n is the coordination
+number. At 200 K, the distortions of FeDO-1, FeDO-2, FeRO, and FeT
+have been found to be 71.3 × 10-4, 58.4 × 10-4, 2.4 × 10-4, and 4.6
+× 10-4, respectively.
+
+Figure 3. Experimental (9), calculated (solid line), and difference (lower
+line) plots for the joint refinement of SXRPD and NPD patterns of -Fe2O3
+collected at 200 K (upper and lower panels, respectively). Reflection
+positions of the different phases are indicated by vertical bars in the
+following descending order: -Fe2O3, R-Fe2O3 for the upper panel and
+-Fe2O3, -Fe2O3 magnetic, R-Fe2O3 and R-Fe2O3 magnetic for the lower
+panel.
+
+coordinations). In Figure 5, the coordination octahedra of
+FeDO1 and FeDO2 are represented in black and dark gray,
+respectively, whereas the FeRO and FeT environments are
+represented in light gray. As expected, the changes between
+the asymmetric units of the HT and LT phases are in general
+small, although the z coordinate of O2 significantly increases
+on cooling from 200 to 10 K (see Table 1). As can be seen
+from Figure 5 (black spheres), the 0.3 Å displacement of
+O2 along c is responsible for the increased tilting of the FeDO1
+and FeT coordination polyhedra in the LT structure. The
+bonding distances and angles calculated from cell parameters
+and asymmetric units reported in Table 1 (see Tables 2 and
+3) reveal other features that can be relevant to understanding
+the HT f LT magnetic transition. On one hand, it is found
+that on cooling from 200 to 10 K, there is an increase in the
+bonding distances of both FeT with O4, O6 and FeDO2, FeRO
+with O2, the latter showing an average expansion of about
+1%. In the case of the tetrahedral site, the elongation of the
+apical FeT-O4 distance shows a 2.2% variation. On the other
+hand, the distortions of the FeT and FeDO1 polyhedra, which
+are more affected by the HT f LT transition, increase from
+2.4 × 10-4 to 6.8 × 10-4 and from 71.3 × 10-4 to 84.3 ×
+
+3892 Chem. Mater., Vol. 18, No. 16, 2006
+
+Gich et al.
+
+Table 1. Cell Parameters and Asymmetric Units of E-Fe2O3 at 200 and 10 K, Together with the Reliability Parameters of the Multipattern
+Rietveld Refinement Expressed in Percent (except for χ2)
+T ) 200 Ka
+
+T ) 10 Kb
+
+atom
+
+x/a
+
+y/b
+
+z/c
+
+atom
+
+x/a
+
+y/b
+
+z/c
+
+O1
+O2
+O3
+O4
+O5
+O6
+FeDO1
+FeDO2
+FeT
+FeRO
+
+0.978(2)
+0.515(2)
+0.650(3)
+0.160(3)
+0.841(3)
+0.527(2)
+0.1928(11)
+0.6826(6)
+0.1858(10)
+0.8104(7)
+
+0.3282(15)
+0.4907(17)
+0.9979(13)
+0.1637(15)
+0.1680(15)
+0.1637(19)
+0.1506(6)
+0.0291(3)
+0.1519(6)
+0.1580(4)
+
+0.4314(11)
+0.4187(16)
+0.1883(9)
+0.1956(7)
+0.6669(7)
+0.9362(9)
+0.5807(3)
+0.7897(5)
+0.0000
+0.3071(3)
+
+O1
+O2
+O3
+O4
+O5
+O6
+FeDO1
+FeDO2
+FeT
+FeRO
+
+0.978(4)
+0.512(3)
+0.646(4)
+0.159(4)
+0.858(3)
+0.523(4)
+0.1931(17)
+0.6867(10)
+0.1852(15)
+0.8098(10)
+
+0.331(3)
+0.4871(20)
+0.9943(20)
+0.162(2)
+0.157(3)
+0.161(3)
+0.1514(10)
+0.0283(4)
+0.1526(9)
+0.1592(6)
+
+0.4288(17)
+0.4489(14)
+0.1871(14)
+0.2002(11)
+0.6685(12)
+0.9257(15)
+0.5820(4)
+0.7938(8)
+0.0000
+0.3079(5)
+
+a Parameters: a ) 5.0885(5) Å, b ) 8.7802(14) Å, c ) 9.4709(13) Å. Reliability parameters (in % except for χ2): SXRPD R ) 2.26, R
+B
+wp ) 3.59, Rexp
+) 1.94, χ2 ) 3.43; NPD RB ) 1.41, RMag ) 1.89, Rwp ) 4.00, Rexp ) 1.33. b Parameters: a ) 5.085(1), b ) 8.774(2), c ) 9.468(2). Reliability parameters
+(in % except for χ2): SXRPD RB ) 2.98, Rwp ) 7.33, Rexp ) 3.66, χ2 ) 4.015. NPD RB ) 3.85, RMag ) 6.33, Rwp ) 7.60, Rexp ) 1.40.
+
+Figure 4. Experimental (9), calculated (solid line), and difference (lower
+line) plots for the joint refinement of SXRPD and NPD patterns of -Fe2O3
+collected at 10 K (upper and lower panels, respectively). Reflection
+positions of the different phases are indicated by vertical bars in the
+following descending order: -Fe2O3 and R-Fe2O3 for the upper panel and
+-Fe2O3, -Fe2O3 magnetic, R-Fe2O, and R-Fe2O3 magnetic for the lower
+panel.
+
+10-4, respectively, with the FeDO1-O2 distance decreasing
+by about 10%.
+Regarding the magnetic structures, the model that yielded
+the best fits for the HT phase is one in which the magnetic
+moments m are along the a axis with mHT(FeDO1) ) -3.9µB,
+mHT(FeDO2) ) 3.9µB, mHT(FeT) ) -2.4µB, and mHT(FeRO) )
+3.7µB. The refinement was performed using the constraint
+mHT(FeDO1) ) -mHT(FeDO2) suggested by Mössbauer spec-
+
+Figure 5. Perspective view of the -Fe2O3 HT and LT structures along
+the [100] direction (upper and lower panels, respectively).The coordination
+octahedra of FeDO1, FeDO2, and FeRO are black, gray, and light gray,
+respectively, and the oxygen atoms are represented by small spheres. The
+main structural changes concern the orientations of the coordination
+polyhedra of FeDO1 (black octahedron) and FeT (light gray tetrahedron) due
+to the displacement of O2 (in black) along c.
+
+troscopy measurements (see section B below). Thus, the
+-Fe2O3 HT magnetic structure presents the m′m2′ point
+group and is represented in Figure 6. The antiferromagnetic
+coupling between the different magnetic moments yields a
+net magnetization of 0.3µB per Fe3+, in agreement with the
+Ms values of -Fe2O3 at 200 K.9 It is interesting to note that
+the NPD data can be also simulated allowing small y and z
+components for the FeT and FeRO moments (i.e., a small
+canting), although this did not result in any improvement in
+the fit. However, the fact that the NPD data do not exclude
+small canting of the FeT and FeRO spins would be in
+agreement with the thermal fluctuations in these sites,
+
+Crystal and Magnetic Structures of -Fe2O3
+
+Chem. Mater., Vol. 18, No. 16, 2006 3893
+
+Table 2. Coupling Angles between the Different Fe Sites and Fe-O Distances (given in Å) at 200 K and 10 K (italics)
+O1
+FeDO1
+FeDO1b
+FeDO2a
+FeRO
+FeROb
+
+FeDO1
+
+FeDO1b
+
+FeDO2a
+
+FeRO
+
+FeROb
+
+2.372(13), 2.41(2)
+88.5(5), 86.8(9)
+171.5(5), 171.9(9)
+93.1(5), 92.5(9)
+90.1(5), 89.4(8)
+
+2.035(11), 2.056(20)
+94.6(5), 94.5(9)
+99.6(5), 98.8(9)
+167.2(5), 167.2(9)
+
+2.362(13), 2.31(2)
+94.2(5) 95.1(9)
+85.2(5), 87.6(8)
+
+2.085(12), 2.08(2)
+93.2(5), 93.5(9)
+
+2.064(11), 2.041(20)
+
+O2
+FeDO1b
+FeDO2a
+FeTa
+FeROb
+
+FeDO1b
+
+FeDO2a
+
+FeTa
+
+FeROb
+
+2.171(15), 1.976(17)
+102.0(6), 102.1(8)
+111.2(7), 125.0(10)
+102.7(6), 104.8(7)
+
+1.994(13), 2.149(16)
+122.4(6), 116.0(8)
+101.0(6), 91.0(7)
+
+1.908(15), 1.833(18)
+115.1(7), 112.2(8)
+
+1.976(14), 2.121(16)
+
+O3
+FeDO1c
+FeDO2c
+FeRO
+
+FeDO1c
+
+FeDO2c
+
+FeRO
+
+1.838(12), 1.817(19)
+124.2(7), 126.6(10)
+129.8(6), 128.6(9)
+
+1.960(14), 1.976(20)
+99.4(6), 97.8(8)
+
+1.977(12), 2.026(18)
+
+O4
+FeDO2c
+FeT
+FeRO
+FeROb
+
+FeDO2c
+
+FeT
+
+FeRO
+
+FeROb
+
+2.074(13), 2.047(18)
+110.8(5), 111.7(7)
+95.3(6), 96.1(8)
+105.0(5), 105.6(7)
+
+1.860(7), 1.902(11)
+124.6(5), 123.8(7)
+122.2(5), 120.6(7)
+
+2.069(14), 2.048(19)
+94.4(6), 95.0(8)
+
+2.038(13), 2.022(17)
+
+O5
+FeDO1
+FeDO1b
+FeDO2
+
+FeDO1
+
+FeDO1b
+
+FeDO2
+
+1.973(15), 1.891(17)
+104.0(7), 102.5(10)
+126.8(7), 133.2(10)
+
+1.942(14), 2.05(2)
+129.0(6), 124.2(10)
+
+1.868(12), 1.855(20)
+
+FeDO2
+
+FeT
+
+FeTb
+
+1.987(13), 1.90(2)
+124.8(6), 129.0(10)
+123.9(7), 124.2(11)
+
+1.841(11), 1.86(2)
+110.1(7), 106.6(11)
+
+1.908(16), 1.96(3)
+
+O6
+FeDO2
+FeT
+FeTb
+a Transformations:
+
+a ) (1/
+
+1
+1
+1
+1
+1
+2 - x, y - /2, z - /2); b ) ( /2 -x, /2 - y, z); c ) (-x, -y, z + /2).
+
+recently reported by Tronc et al.19 For the LT phase, different
+helimagnetic and sine-modulated structures have been tested
+to account for the magnetic structure associated with k. The
+best fit has been obtained for a sine-modulated structure with
+a periodicity of about 10 crystalline unit cells and with all
+the magnetic moments lying in the xy plane. As in the HT
+structure, mLT(FeDO1) and mLT(FeDO2) were constrained to be
+antiparallel and directed along the x direction, whereas
+mLT(FeT) and mLT(FeRO) are mainly oriented in opposite
+directions along x and present small y components. However,
+for the LT structure, the symmetry analysis imposes that all
+the magnetic atoms are split into two orbits, and the fact
+that the structure is sine-modulated introduces magnetic
+phases. This results in an increased number of refinable
+magnetic parameters that increase the difficulty of finding
+an appropriate model for the magnetic structure from the
+small number of measurable magnetic reflections. All the
+magnetic moments obtained in our best fit of the NPD pattern
+at LT using a simple sine-wave-modulated structure increase
+with respect to those of the HT structure. The values of some
+(19) Tronc, E.; Chanéac, C.; Jolivet, J. P.; Grenèche, J. M. J. Appl. Phys.
+2005, 98, 053901.
+
+of them are, however, clearly nonphysical, exceeding the 5µB
+expected for an Fe3+ cation.
+B. Mo1 ssbauer Spectroscopy. Mössbauer spectroscopy
+gives additional information that can be complementary to
+the NPD data. In Figure 7, it can be observed that the
+Mössbauer spectra of -Fe2O3 change on cooling through
+the HT f LT transition, especially because of the evolution
+of the FeT subspectrum (dotted line). According to the
+crystalline structure of -Fe2O3, the spectra were fitted
+assuming that each of the four Fe sites contributed to the
+spectra with a sextet. In particular, the spectra could be fitted
+by constraining the hyperfine fields, Bhf, and the widths of
+the FeDO1 and FeDO2 contributions to be equal, in accordance
+with the NPD results. Figure 8a shows the temperature
+dependence of the hyperfine parameters for the different Fe
+sites in the 10-200 K range. Between 150 and 80 K, most
+of the hyperfine parameters of the different Fe sites deviate
+from the thermal dependence displayed at higher temperatures. These anomalies are particularly important for FeT,
+which displays a 20% increase in Bhf between 140 and 100
+K and a shift in both the isomer shift, δ, and the quadrupole
+splitting, ∆, in the same temperature range. Below 150 K,
+
+3894 Chem. Mater., Vol. 18, No. 16, 2006
+
+Gich et al.
+
+Table 3. Bonding Angles in the Coordination Polyhedra for the four Fe Sites of E-Fe2O3 at 200 and 10 Ka
+200 K
+
+10 K
+
+O2a-FeT-O4
+O2a-FeT-O6
+O2a-FeT-O6b
+O4-FeT-O6
+O4-FeT-O6b
+O6-FeT-O6b
+
+113.9(10)
+114.5(10)
+106.0(13)
+113.0(8)
+103.8(9)
+104.3(10)
+
+105.0(12)
+116.1(17)
+109.5(18)
+116.1(13)
+107.0(13)
+102.7(18)
+
+O1-FeRO-O1b
+O1-FeRO-O2b
+O1-FeRO-O3
+O1-FeRO-O4
+O1-FeRO-O4b
+O1d-FeRO-O2b
+O1d-FeRO-O3
+O1d-FeRO-O4
+O1d-FeRO-O4b
+O2c-FeRO-O3
+O2c-FeRO-O4
+O2c-FeRO-O4b
+O3-FeRO-O4
+O3-FeRO-O4b
+O4-FeRO-O4b
+
+88.3(7)
+87.5(9)
+179.5(10)
+85.4(8)
+84.0(7)
+99.5(9)
+91.6(8)
+173.7(11)
+86.7(7)
+93.0(9)
+80.6(9)
+169.3(12)
+94.7(10)
+95.5(9)
+92.3(10)
+
+90.0(15)
+83.8(14)
+179.0(18)
+84.8(12)
+82.6(12)
+94.3(13)
+90.3(12)
+174.7(17)
+86.4(12)
+97.2(11)
+84.2(10)
+166.4(14)
+94.9(14)
+96.5(13)
+93.9(14)
+
+a Transformations:
+
+200 K
+
+10 K
+
+O1-FeDO1-O1b
+O1-FeDO1-O2b
+O1-FeDO1-O3c
+O1-FeDO1-O5
+O1-FeDO1-O5b
+O1b-FeDO1-O2b
+O1b-FeDO1-O3c
+O1b-FeDO1-O5
+O1b-FeDO1-O5b
+O2b-FeDO1-O3c
+O2b-FeDO1-O5
+O2b-FeDO1-O5b
+O3c-FeDO1-O5
+O3c-FeDO1-O5b
+O5-FeDO1-O5b
+
+81.6(7)
+76.2(8)
+175.9(10)
+77.2(7)
+83.7(7)
+81.9(8)
+98.0(8)
+158.0(11)
+86.6(8)
+99.7(10)
+87.6(9)
+158.1(12)
+102.7(11)
+100.4(10)
+96.6(11)
+
+81.1(13)
+78.9(13)
+175.8(17)
+80.5(12)
+83.7(12)
+85.6(13)
+96.9(13)
+159.8(15)
+86.1(13)
+97.3(12)
+82.8(11)
+161.6(17)
+100.9(15)
+100.0(17)
+100.0(15)
+
+O1a-FeDO2-O2a
+O1a-FeDO2-O3c
+O1a-FeDO2-O4c
+O1a-FeDO2-O5
+O1a-FeDO2-O6
+O2a-FeDO2-O3c
+O2a-FeDO2-O4c
+O2a-FeDO2-O5
+O2a-FeDO2-O6
+O3c-FeDO2-O4c
+O3c-FeDO2-O5
+O3c-FeDO2-O6
+O4c-FeDO2-O5
+O4c-FeDO2-O6
+O5-FeDO2-O6
+
+78.0(7)
+83.6(7)
+76.6(7)
+172.1(10)
+84.8(9)
+161.1(12)
+80.1(8)
+99.1(10)
+88.9(9)
+91.4(10)
+98.4(11)
+94.0(9)
+95.7(10)
+159.9(11)
+102.6(8)
+
+75.7(11)
+84.2(12)
+76.5(11)
+168.7(19)
+86.4(17)
+159.9(15)
+83.5(10)
+101.9(12)
+88.0(13)
+91.4(14)
+97.8(15)
+91.3(13)
+92.3(16)
+162.3(18)
+104.7(13)
+
+a ) (1/2 - x, y - 1/2, z - 1/2); b ) (1/2 - x, 1/2 - y, z); c ) (-x, -y, z + 1/2).
+
+Figure 6. Magnetic structure of the -Fe2O3 HT phase, where the FeDO1,
+FeDO2, FeRO, and FeT atoms are distinguished by plain, horizontal stripes,
+vertical stripes, and cross-hatch patterns, respectively. The magnetic
+moments of the FeDO1, FeDO2, FeRO, and FeT sites are schematically
+represented in the figure by black, gray, light gray, and dotted arrows,
+respectively.
+
+Bhf decreases by ∼4% for FeRO between 150 and 110 K and
+by ∼3.5% for FeDO1 and FeDO2 between 150 and 130 K. Note
+that for FeDO1, ∆ changes from negative to positive values
+in this interval of temperatures and that below 130 K, δ
+decreases with temperature for this particular site, in contrast
+with the usual temperature dependence of the isomer shift.
+The latter results suggest that on cooling below 150 K, some
+structural changes would affect the FeDO1 coordination
+octahedron, which, subsequently, would induce changes in
+the coordination of the FeT site. Indeed, this interpretation
+is compatible with the results obtained from the diffraction
+experiments, which revealed that the HT f LT transition
+results in an increased tilting and distortion of the FeDO1 and
+FeT coordination polyhedron. It is worth pointing out that
+large changes in ∆ can be also due to spin reorientations.
+Although the NPD results seem to indicate that the HT f
+
+Figure 7. Mössbauer spectra of -Fe2O3 at 200, 120, and 92 K. The
+subspectra correspond to the different Fe sites in the -Fe2O3 structure and
+are schematically presented at the top of the figure.
+
+LT transition has little effect in the direction of the FeDO1
+magnetic moment, the LT magnetic structure would be
+needed to ascribe the sign change in ∆ for this site
+exclusively to structural changes.
+
+Crystal and Magnetic Structures of -Fe2O3
+
+Chem. Mater., Vol. 18, No. 16, 2006 3895
+
+Figure 9. Simplified schematic representation of the square-wave magnetic
+structure of the LT phase of -Fe2O3. The magnetic moments of the FeDO1,
+FeDO2, FeRO, and FeT sites are schematically represented by black, gray,
+light gray, and dotted arrows, respectively.
+
+Figure 8. Temperature dependence of the (a) hyperfine field (Bhf),
+(b) isomer shift (δ), (c) sextet line width (width), and (d) quadrupolar
+splitting (4) of the different Fe sites of -Fe2O3 obtained from Mössbauer
+spectra.
+
+The structural transformations occurring below 150 K
+might be responsible for the magnetic softening of the system
+that is reported in Figure 1. Interestingly, the changes
+observed in ∆ for both the FeDO1 and FeT sites can be related
+to modifications in the spin-orbit coupling of the Fe cations,
+which are responsible for the magnetic anisotropy of a
+magnetic system. In contrast, in the case of the FeT site, the
+substantial elongation of the apical FeT-O4 occurring along
+the HT f LT transformation could be responsible for the
+large increase in Bhf observed at this site, which in turn
+indicates an increment of the FeT magnetic moment,20 also
+deduced from the analysis of the NPD data at 10 K. This
+can explain the Ms diminution observed below 150 K (see
+Figure 1 inset), because the FeT and FeRO are antiferromagnetically coupled and the increase in Bhf at the FeT site
+is larger than the Bhf increase experienced by FeRO. Regarding
+the hyperfine fields, it is also interesting to note that the ratio
+between the Bhf values for different Fe sites at 200 K (i.e.,
+Bhf(FeDO1)/Bhf(FeT) ) 1.63, Bhf(FeRO)/Bhf(FeT) ) 1.56) is in
+good agreement with the corresponding ratio of magnetic
+moments obtained from the analysis of the NPD data.
+Assuming that the proportionality between Bhf and m still
+holds for the LT phase and combining the mHT values
+obtained from the NPD pattern at 200 K with the Bhf at 10
+K, we can estimate the magnetic moments for the LT phase
+to be mLT(FeDO1) ) -4.2µB, mLT(FeDO2) ) 4.2µB, mLT(FeT)
+) -3.7µB, and mLT(FeRO) ) 4.1µB, in clear disagreement
+with the unrealistic values obtained from our best-fit model.
+(20) Preston, R. S.; Hanna, S. S.; Heberle, J. Phys. ReV. 1962, 128, 2207.
+
+In this regard, the temperature dependence of the Mössbauer
+subspectra line width (see Figure 8c) can shed some light
+on the deficiencies of our preliminary model for the LT
+magnetic structure of -Fe2O3. On cooling below 150 K, a
+sextet line width broadening is observed for all Fe sites but
+specially for FeT, which is due to the appearance of some
+disorder at the different crystallographic sites and indicates
+that the transformation is rather broad and that several phases
+can coexist in the 150-92 K interval. However, as T is
+further decreased, the line width values decrease progressively. Interestingly, at about 10 K, the line width values
+for all the sites are only slightly larger than those at 200 K,
+implying that the Mössbauer components for all the sites
+are quite narrow and, consequently, that the corresponding
+magnetic moments throughout the structure should be almost
+constant in modulus. However, this is not what one would
+expect if the LT magnetic structure of -Fe2O3 is supposed
+to be sine-modulated with a periodicity of about 10 unit cells.
+In this case, because for the Pna21 space group there is only
+one Wyckoff position of 4-fold multiplicity, an average of
+40 atoms for every Fe site with magnetic moments ranging
+from zero to a maximum value are involved in one period
+of the amplitude-modulated structure, which would yield a
+broad hyperfine field distribution. Because the helical or
+spiral structures with constant m modulus that could account
+for the narrow Mössbauer lines of the LT phase are not
+consistent with the NPD data, the only magnetic structure
+that can make both the Mössbauer and the diffraction data
+compatible is a square-wave-modulated structure, i.e., the
+superposition of a series of sine-modulated structures having
+the harmonics of k as propagation vectors. In fact, the
+exceedingly large magnetic moments obtained when a single
+sine wave was considered might be reduced by taking into
+account the amplitudes of the different Fourier components.
+Thus, to determine the exact magnetic structure, it would
+be necessary to identify the higher-order reflections and
+determine the new propagation vectors, but this cannot be
+carried out because of the peak overlapping and the low
+intensity of the harmonic reflections. However, on the
+grounds of the above discussion, one may consider the
+structure represented in Figure 9 to be a simplified schematic
+model of the LT magnetic cell.
+C. Magnetization and Heat-Capacity Measurements.
+The results presented in section B indicate that the HT f
+LT transformation in -Fe2O3 takes place in a broad
+temperature range and suggest that it consists of a succession
+of magnetic and structural changes. In this section, we present
+magnetic and heat-capacity measurements that give some
+details about the nature of the transition. Figure 10a shows
+the temperature dependence of the -Fe2O3 zero-field-cooling
+(ZFC) magnetization under 100 and 1000 Oe applied fields,
+
+3896 Chem. Mater., Vol. 18, No. 16, 2006
+
+Gich et al.
+
+Figure 11. Temperature dependence of the (120) magnetic reflection and
+its satellites of -Fe2O3.
+
+Figure 10. (a) Zero-field cooling (ZFC) and field cooling (FC) measurements of the temperature dependence of the magnetization in 100 and 1000
+Oe applied fields. (b) Temperature dependence of the in-phase (2) and
+out-of-phase (4) components of -Fe2O3 ac-susceptibility measured at 1000
+Hz and 10 Oe field amplitude. The solid line is the temperature derivative
+of the MZFC
+100 (T) curve presented in panel (a).
+ZFC
+MZFC
+100 (T) and M1000(T), respectively, together with the fieldcooling (FC) measurement in 1000 Oe, MFC
+1000(T). Upon
+heating from 10 K, MZFC
+(T)
+presents
+an
+important
+increase
+100
+between 85 and 150 K that takes place in three stages, if
+one considers the changes of the MZFC
+100 (T) slope, in three
+temperature ranges ∆T1 (85 K < T < 95 K), ∆T2 (95 K <
+T < 110 K) and ∆T3 (110 K < T < 147 K), the slope being
+much steeper in ∆T1 and ∆T2 than in ∆T3. When the ZFC
+magnetization is measured in a field 10 times larger (see
+the MZFC
+1000(T) curve), the larger magnetization step starts at a
+lower temperature and is more gradual; it is also no longer
+possible to clearly distinguish between the first two stages.
+In contrast, no shift is observed for the magnetization stage
+in ∆T3, which now presents a somewhat larger slope.
+Moreover, the FC measurement (see MFC
+1000(T) curve) shows
+that the magnetic behavior below 110 K is irreversible even
+for small fields such as 1000 Oe, in contrast to the
+reversibility observed above this temperature. These measurements suggest that on heating, the transition from the
+LT to the HT magnetic structure of -Fe2O3 takes place in
+three consecutive stages occurring in ∆T1, ∆T2, and ∆T3,
+hereafter referred as S1, S2, and S3, respectively. The
+measurements of Figure 10a evidence a distinct magnetic
+character of S1 and S2 as compared to S3, which is also
+confirmed by the temperature dependence of the magnetic
+AC susceptibility, χ. Namely, in Figure 10b, the temperature
+dependence of both the in-phase, χ′(T), and out of phase,
+χ′′(T), components of ac susceptibility present sharp peaks
+at about 91 and 101 K, signaling the S1 and S2 transformations, respectively. Indeed, the susceptibility peaks coincide
+
+Figure 12. Temperature dependence of the -Fe2O3 heat capacity vs
+temperature.
+
+with the maxima in the temperature derivative of MZFC
+100 (T)
+(solid line in Figure 10b), i.e., with the maximum slopes of
+MZFC
+100 (T) in ∆T1 and ∆T2. On the other hand, for ∆T3, only
+a barely observable shoulder occurs in χ′(T), whereas χ′′(T)
+is zero. The magnetic measurements presented in Figure 10
+are in agreement with the occurrence of magnetic and
+structural changes along ∆T3 that can be inferred from the
+anomalies in the Mössbauer hyperfine parameters in this
+temperature interval. Thus, S3 is to be associated to the latter
+transformation, which in turn induces S2 and S1 at lower
+temperatures, which are predominantly related to a magnetic
+transition displaying a field-dependent behavior. The distinct
+magnetic nature of S3 on the one hand and S2 + S1 on the
+other is also revealed in Figure 11 by the temperature
+dependence of the NPD patterns. On cooling below 200 K,
+the intensity of the (120) magnetic reflection slightly
+decreases, with this diminution becoming much more
+pronounced below 150 K, coinciding with the gradual
+appearance of the satellites that characterize an incommensurate order (S3). Below 110 K, the intensity of the
+satellites suddenly increases (S2 + S1), resulting in the LT
+magnetic structure of -Fe2O3, which is fully developed at
+about 80 K. Heat-capacity measurements provide an additional evidence of the different characteristics of S3 with
+respect to S2 and S1. The temperature dependence of Cp/T
+represented in Figure 12 shows an anomaly around 130 K
+(i.e., in S3) and two distinct regimes above and below this
+temperature. Because Cp/T ) -∂2G/∂T2, where G is the free
+
+Crystal and Magnetic Structures of -Fe2O3
+
+energy, the anomaly in Cp/T suggests that S3 is related with
+a second-order magnetic and structural transition, which is
+supported by the absence of thermal hysteresis both in the
+magnetic (Figure 10) and dielectric10 measurements.
+IV. Conclusion
+In conclusion, the HT magnetic structure of -Fe2O3 is
+that of a collinear ferrimagnetic material with the Fe3+
+magnetic moment antiferromagnetically coupled along a. The
+Fe3+ magnetic moments in the FeDO1 and FeDO2 distorted
+octahedral positions mutually cancel, and the net magnetization of this phase results from the uncompensated magnetic
+moment of the atoms in tetrahedral (FeT) and regular
+octahedral (FeRO) positions. Between 150 and 80 K, -Fe2O3
+undergoes magnetic and structural phase transformations that
+bring about a gradual decrease in the magnetic anisotropy.
+This transition takes place in at least three stages. Between
+150 and 110 K, there are evidences of a second-order
+structural transition presumably involving the changes in the
+
+Chem. Mater., Vol. 18, No. 16, 2006 3897
+
+coordination of the FeDO1 and FeT sites, occurring simultaneously with the emergence of an incommensurate magnetic
+order. The magnetic structure undergoes several transformations as the temperature is further decreased, but no additional
+changes are observed below 80 K. The combination of
+powder-diffraction and Mössbauer spectroscopy measurements indicate that Fe2O3 presents a square-wave incommensurate magnetic structure at LT.
+Acknowledgment. Financial support from Ministerio de
+Educación y Ciencia, Projects MAT2003-01052 and MAT200401679, and Generalitat de Catalunya, Projects 2005SGR00452
+and 2005SGR00401, is gratefully acknowledged. C.F. acknowledges financial support from MEC (Spain). W.A.A.M. acknowledges support from CNPq (Brazil). We acknowledge the ESRF
+and the ILL for the provision of X-ray and neutron beam time.
+We also thank F. Fauth for his assistance during XRD data
+collection.
+CM060993L
+
+

@@ -1,0 +1,2467 @@
+{
+  "statistics": {
+    "counts": {
+      "PO4": 88,
+      "PO3N": 24,
+      "PO1N": 8,
+      "PO2N": 8
+    },
+    "fractions": {
+      "PO4": 68.75,
+      "PO3N": 18.75,
+      "PO1N": 6.25,
+      "PO2N": 6.25
+    },
+    "total_p": 128
+  },
+  "classifications": {
+    "376": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        2.4682138761599997,
+        4.365617608921999,
+        3.0880680000000003
+      ],
+      "o_neighbors": [
+        552,
+        568,
+        584,
+        664
+      ],
+      "n_neighbors": []
+    },
+    "377": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        2.4682138761599997,
+        4.365617608921999,
+        15.440339999999999
+      ],
+      "o_neighbors": [
+        553,
+        569,
+        585,
+        665
+      ],
+      "n_neighbors": []
+    },
+    "378": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        2.468213876159999,
+        14.958421608921999,
+        3.0880680000000007
+      ],
+      "o_neighbors": [
+        554,
+        570,
+        586,
+        666
+      ],
+      "n_neighbors": []
+    },
+    "379": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        2.468213876159999,
+        14.958421608921999,
+        15.44034
+      ],
+      "o_neighbors": [
+        555,
+        571,
+        587,
+        667
+      ],
+      "n_neighbors": []
+    },
+    "380": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        12.31310987616,
+        4.365617608921999,
+        3.0880680000000007
+      ],
+      "o_neighbors": [
+        556,
+        572,
+        588,
+        668
+      ],
+      "n_neighbors": []
+    },
+    "381": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        12.31310987616,
+        4.365617608921999,
+        15.44034
+      ],
+      "o_neighbors": [
+        557,
+        573,
+        589,
+        669
+      ],
+      "n_neighbors": []
+    },
+    "382": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        12.313109876159999,
+        14.958421608921999,
+        3.0880680000000016
+      ],
+      "o_neighbors": [
+        558,
+        574,
+        590,
+        670
+      ],
+      "n_neighbors": []
+    },
+    "383": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        12.313109876159999,
+        14.958421608921999,
+        15.44034
+      ],
+      "o_neighbors": [
+        559,
+        575,
+        591,
+        671
+      ],
+      "n_neighbors": []
+    },
+    "384": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        0.006989876159999943,
+        0.9307843910779999,
+        5.742211273478857e-17
+      ],
+      "o_neighbors": [
+        633,
+        706,
+        812
+      ],
+      "n_neighbors": [
+        504
+      ]
+    },
+    "385": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        0.006989876159999943,
+        0.9307843910779999,
+        12.352272
+      ],
+      "o_neighbors": [
+        632,
+        707,
+        813
+      ],
+      "n_neighbors": [
+        505
+      ]
+    },
+    "386": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        0.006989876159999294,
+        11.523588391078,
+        7.060442883645525e-16
+      ],
+      "o_neighbors": [
+        635,
+        704,
+        814
+      ],
+      "n_neighbors": [
+        506
+      ]
+    },
+    "387": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        0.006989876159999294,
+        11.523588391078,
+        12.352272
+      ],
+      "o_neighbors": [
+        634,
+        705,
+        815
+      ],
+      "n_neighbors": [
+        507
+      ]
+    },
+    "388": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        9.85188587616,
+        0.9307843910779999,
+        6.602481314517176e-16
+      ],
+      "o_neighbors": [
+        637,
+        710,
+        808
+      ],
+      "n_neighbors": [
+        508
+      ]
+    },
+    "389": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        9.85188587616,
+        0.9307843910779999,
+        12.352272
+      ],
+      "o_neighbors": [
+        636,
+        711,
+        809
+      ],
+      "n_neighbors": [
+        509
+      ]
+    },
+    "390": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        9.85188587616,
+        11.523588391078,
+        1.3088703070814815e-15
+      ],
+      "o_neighbors": [
+        639,
+        708,
+        810
+      ],
+      "n_neighbors": [
+        510
+      ]
+    },
+    "391": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        9.85188587616,
+        11.523588391078,
+        12.352272000000001
+      ],
+      "o_neighbors": [
+        638,
+        709,
+        811
+      ],
+      "n_neighbors": [
+        511
+      ]
+    },
+    "392": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        2.4682138761599997,
+        4.365617608921999,
+        9.264204
+      ],
+      "o_neighbors": [
+        608,
+        624,
+        648,
+        728
+      ],
+      "n_neighbors": []
+    },
+    "393": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        2.4682138761599997,
+        4.365617608921999,
+        21.616476
+      ],
+      "o_neighbors": [
+        609,
+        625,
+        649,
+        729
+      ],
+      "n_neighbors": []
+    },
+    "394": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        2.468213876159999,
+        14.958421608921999,
+        9.264204000000001
+      ],
+      "o_neighbors": [
+        610,
+        626,
+        650,
+        730
+      ],
+      "n_neighbors": []
+    },
+    "395": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        2.468213876159999,
+        14.958421608921999,
+        21.616476
+      ],
+      "o_neighbors": [
+        611,
+        627,
+        651,
+        731
+      ],
+      "n_neighbors": []
+    },
+    "396": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        12.31310987616,
+        4.365617608921999,
+        9.264204000000001
+      ],
+      "o_neighbors": [
+        612,
+        628,
+        652,
+        732
+      ],
+      "n_neighbors": []
+    },
+    "397": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        12.31310987616,
+        4.365617608921999,
+        21.616476
+      ],
+      "o_neighbors": [
+        613,
+        629,
+        653,
+        733
+      ],
+      "n_neighbors": []
+    },
+    "398": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        12.313109876159999,
+        14.958421608921999,
+        9.264204000000001
+      ],
+      "o_neighbors": [
+        614,
+        630,
+        654,
+        734
+      ],
+      "n_neighbors": []
+    },
+    "399": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        12.313109876159999,
+        14.958421608921999,
+        21.616476
+      ],
+      "o_neighbors": [
+        615,
+        631,
+        655,
+        735
+      ],
+      "n_neighbors": []
+    },
+    "400": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        0.006989876159999943,
+        0.9307843910779999,
+        6.176136
+      ],
+      "o_neighbors": [
+        592,
+        770,
+        868
+      ],
+      "n_neighbors": [
+        512
+      ]
+    },
+    "401": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        0.006989876159999943,
+        0.9307843910779999,
+        18.528408
+      ],
+      "o_neighbors": [
+        593,
+        771,
+        869
+      ],
+      "n_neighbors": [
+        513
+      ]
+    },
+    "402": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        0.006989876159999294,
+        11.523588391078,
+        6.1761360000000005
+      ],
+      "o_neighbors": [
+        594,
+        768,
+        870
+      ],
+      "n_neighbors": [
+        514
+      ]
+    },
+    "403": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        0.006989876159999294,
+        11.523588391078,
+        18.528408
+      ],
+      "o_neighbors": [
+        595,
+        769,
+        871
+      ],
+      "n_neighbors": [
+        515
+      ]
+    },
+    "404": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        9.85188587616,
+        0.9307843910779999,
+        6.1761360000000005
+      ],
+      "o_neighbors": [
+        596,
+        774,
+        864
+      ],
+      "n_neighbors": [
+        516
+      ]
+    },
+    "405": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        9.85188587616,
+        0.9307843910779999,
+        18.528408
+      ],
+      "o_neighbors": [
+        597,
+        775,
+        865
+      ],
+      "n_neighbors": [
+        517
+      ]
+    },
+    "406": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        9.85188587616,
+        11.523588391078,
+        6.1761360000000005
+      ],
+      "o_neighbors": [
+        598,
+        772,
+        866
+      ],
+      "n_neighbors": [
+        518
+      ]
+    },
+    "407": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        9.85188587616,
+        11.523588391078,
+        18.528408
+      ],
+      "o_neighbors": [
+        599,
+        773,
+        867
+      ],
+      "n_neighbors": [
+        519
+      ]
+    },
+    "408": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        2.4682138761599997,
+        9.662019608921998,
+        3.0880680000000007
+      ],
+      "o_neighbors": [
+        546,
+        672,
+        688,
+        712
+      ],
+      "n_neighbors": []
+    },
+    "409": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        2.4682138761599997,
+        9.662019608921998,
+        15.440339999999999
+      ],
+      "o_neighbors": [
+        547,
+        673,
+        689,
+        713
+      ],
+      "n_neighbors": []
+    },
+    "410": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        2.4682138761599988,
+        20.254823608922,
+        3.088068000000001
+      ],
+      "o_neighbors": [
+        544,
+        674,
+        690,
+        714
+      ],
+      "n_neighbors": []
+    },
+    "411": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        2.4682138761599988,
+        20.254823608922,
+        15.44034
+      ],
+      "o_neighbors": [
+        545,
+        675,
+        691,
+        715
+      ],
+      "n_neighbors": []
+    },
+    "412": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        12.31310987616,
+        9.662019608921998,
+        3.088068000000001
+      ],
+      "o_neighbors": [
+        550,
+        676,
+        692,
+        716
+      ],
+      "n_neighbors": []
+    },
+    "413": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        12.31310987616,
+        9.662019608921998,
+        15.44034
+      ],
+      "o_neighbors": [
+        551,
+        677,
+        693,
+        717
+      ],
+      "n_neighbors": []
+    },
+    "414": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        12.313109876159999,
+        20.254823608922,
+        3.0880680000000016
+      ],
+      "o_neighbors": [
+        548,
+        678,
+        694,
+        718
+      ],
+      "n_neighbors": []
+    },
+    "415": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        12.313109876159999,
+        20.254823608922,
+        15.44034
+      ],
+      "o_neighbors": [
+        549,
+        679,
+        695,
+        719
+      ],
+      "n_neighbors": []
+    },
+    "416": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        0.0069898761599996185,
+        6.227186391078,
+        3.8173320054967055e-16
+      ],
+      "o_neighbors": [
+        576,
+        656,
+        761,
+        916
+      ],
+      "n_neighbors": []
+    },
+    "417": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        0.0069898761599996185,
+        6.227186391078,
+        12.352272
+      ],
+      "o_neighbors": [
+        577,
+        657,
+        760,
+        917
+      ],
+      "n_neighbors": []
+    },
+    "418": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        0.006989876159998971,
+        16.819990391078,
+        1.0303553761794345e-15
+      ],
+      "o_neighbors": [
+        578,
+        658,
+        763,
+        918
+      ],
+      "n_neighbors": []
+    },
+    "419": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        0.006989876159998971,
+        16.819990391078,
+        12.352272000000001
+      ],
+      "o_neighbors": [
+        579,
+        659,
+        762,
+        919
+      ],
+      "n_neighbors": []
+    },
+    "420": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        9.85188587616,
+        6.227186391078,
+        9.845592192665997e-16
+      ],
+      "o_neighbors": [
+        580,
+        660,
+        765,
+        912
+      ],
+      "n_neighbors": []
+    },
+    "421": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        9.85188587616,
+        6.227186391078,
+        12.352272000000001
+      ],
+      "o_neighbors": [
+        581,
+        661,
+        764,
+        913
+      ],
+      "n_neighbors": []
+    },
+    "422": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        9.851885876159999,
+        16.819990391078,
+        1.6331813948963636e-15
+      ],
+      "o_neighbors": [
+        582,
+        662,
+        767,
+        914
+      ],
+      "n_neighbors": []
+    },
+    "423": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        9.851885876159999,
+        16.819990391078,
+        12.352272000000001
+      ],
+      "o_neighbors": [
+        583,
+        663,
+        766,
+        915
+      ],
+      "n_neighbors": []
+    },
+    "424": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        2.4682138761599997,
+        9.662019608921998,
+        9.264204
+      ],
+      "o_neighbors": [
+        602,
+        736,
+        752,
+        776
+      ],
+      "n_neighbors": []
+    },
+    "425": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        2.4682138761599997,
+        9.662019608921998,
+        21.616476
+      ],
+      "o_neighbors": [
+        603,
+        737,
+        753,
+        777
+      ],
+      "n_neighbors": []
+    },
+    "426": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        2.4682138761599988,
+        20.254823608922,
+        9.264204000000001
+      ],
+      "o_neighbors": [
+        600,
+        738,
+        754,
+        778
+      ],
+      "n_neighbors": []
+    },
+    "427": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        2.4682138761599988,
+        20.254823608922,
+        21.616476
+      ],
+      "o_neighbors": [
+        601,
+        739,
+        755,
+        779
+      ],
+      "n_neighbors": []
+    },
+    "428": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        12.31310987616,
+        9.662019608921998,
+        9.264204000000001
+      ],
+      "o_neighbors": [
+        606,
+        740,
+        756,
+        780
+      ],
+      "n_neighbors": []
+    },
+    "429": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        12.31310987616,
+        9.662019608921998,
+        21.616476
+      ],
+      "o_neighbors": [
+        607,
+        741,
+        757,
+        781
+      ],
+      "n_neighbors": []
+    },
+    "430": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        12.313109876159999,
+        20.254823608922,
+        9.264204000000001
+      ],
+      "o_neighbors": [
+        604,
+        742,
+        758,
+        782
+      ],
+      "n_neighbors": []
+    },
+    "431": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        12.313109876159999,
+        20.254823608922,
+        21.616476000000002
+      ],
+      "o_neighbors": [
+        605,
+        743,
+        759,
+        783
+      ],
+      "n_neighbors": []
+    },
+    "432": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        0.0069898761599996185,
+        6.227186391078,
+        6.176136
+      ],
+      "o_neighbors": [
+        640,
+        696,
+        720,
+        956
+      ],
+      "n_neighbors": []
+    },
+    "433": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        0.0069898761599996185,
+        6.227186391078,
+        18.528408
+      ],
+      "o_neighbors": [
+        641,
+        697,
+        721,
+        957
+      ],
+      "n_neighbors": []
+    },
+    "434": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        0.006989876159998971,
+        16.819990391078,
+        6.1761360000000005
+      ],
+      "o_neighbors": [
+        642,
+        698,
+        722,
+        958
+      ],
+      "n_neighbors": []
+    },
+    "435": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        0.006989876159998971,
+        16.819990391078,
+        18.528408
+      ],
+      "o_neighbors": [
+        643,
+        699,
+        723,
+        959
+      ],
+      "n_neighbors": []
+    },
+    "436": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        9.85188587616,
+        6.227186391078,
+        6.1761360000000005
+      ],
+      "o_neighbors": [
+        644,
+        700,
+        724,
+        952
+      ],
+      "n_neighbors": []
+    },
+    "437": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        9.85188587616,
+        6.227186391078,
+        18.528408
+      ],
+      "o_neighbors": [
+        645,
+        701,
+        725,
+        953
+      ],
+      "n_neighbors": []
+    },
+    "438": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        9.851885876159999,
+        16.819990391078,
+        6.176136000000001
+      ],
+      "o_neighbors": [
+        646,
+        702,
+        726,
+        954
+      ],
+      "n_neighbors": []
+    },
+    "439": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        9.851885876159999,
+        16.819990391078,
+        18.528408
+      ],
+      "o_neighbors": [
+        647,
+        703,
+        727,
+        955
+      ],
+      "n_neighbors": []
+    },
+    "440": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        7.39066187616,
+        4.365617608921999,
+        3.0880680000000007
+      ],
+      "o_neighbors": [
+        800,
+        816,
+        840,
+        904
+      ],
+      "n_neighbors": []
+    },
+    "441": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        7.39066187616,
+        4.365617608921999,
+        15.440339999999999
+      ],
+      "o_neighbors": [
+        801,
+        817,
+        841,
+        905
+      ],
+      "n_neighbors": []
+    },
+    "442": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        7.390661876159999,
+        14.958421608921999,
+        3.088068000000001
+      ],
+      "o_neighbors": [
+        802,
+        818,
+        842,
+        906
+      ],
+      "n_neighbors": []
+    },
+    "443": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        7.390661876159999,
+        14.958421608921999,
+        15.44034
+      ],
+      "o_neighbors": [
+        803,
+        819,
+        843,
+        907
+      ],
+      "n_neighbors": []
+    },
+    "444": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        17.23555787616,
+        4.365617608921999,
+        3.088068000000001
+      ],
+      "o_neighbors": [
+        804,
+        820,
+        844,
+        908
+      ],
+      "n_neighbors": []
+    },
+    "445": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        17.23555787616,
+        4.365617608921999,
+        15.44034
+      ],
+      "o_neighbors": [
+        805,
+        821,
+        845,
+        909
+      ],
+      "n_neighbors": []
+    },
+    "446": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        17.23555787616,
+        14.958421608921999,
+        3.0880680000000016
+      ],
+      "o_neighbors": [
+        806,
+        822,
+        846,
+        910
+      ],
+      "n_neighbors": []
+    },
+    "447": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        17.23555787616,
+        14.958421608921999,
+        15.44034
+      ],
+      "o_neighbors": [
+        807,
+        823,
+        847,
+        911
+      ],
+      "n_neighbors": []
+    },
+    "448": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        4.92943787616,
+        0.9307843910779999,
+        3.588351220932531e-16
+      ],
+      "o_neighbors": [
+        560,
+        784,
+        873,
+        930
+      ],
+      "n_neighbors": []
+    },
+    "449": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        4.92943787616,
+        0.9307843910779999,
+        12.352272
+      ],
+      "o_neighbors": [
+        561,
+        785,
+        872,
+        931
+      ],
+      "n_neighbors": []
+    },
+    "450": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        4.929437876159999,
+        11.523588391078,
+        1.007457297723017e-15
+      ],
+      "o_neighbors": [
+        562,
+        786,
+        875,
+        928
+      ],
+      "n_neighbors": []
+    },
+    "451": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        4.929437876159999,
+        11.523588391078,
+        12.352272000000001
+      ],
+      "o_neighbors": [
+        563,
+        787,
+        874,
+        929
+      ],
+      "n_neighbors": []
+    },
+    "452": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        14.77433387616,
+        0.9307843910779999,
+        9.616611408101824e-16
+      ],
+      "o_neighbors": [
+        564,
+        788,
+        877,
+        934
+      ],
+      "n_neighbors": []
+    },
+    "453": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        14.77433387616,
+        0.9307843910779999,
+        12.352272000000001
+      ],
+      "o_neighbors": [
+        565,
+        789,
+        876,
+        935
+      ],
+      "n_neighbors": []
+    },
+    "454": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        14.77433387616,
+        11.523588391078,
+        1.6102833164399463e-15
+      ],
+      "o_neighbors": [
+        566,
+        790,
+        879,
+        932
+      ],
+      "n_neighbors": []
+    },
+    "455": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        14.77433387616,
+        11.523588391078,
+        12.352272000000001
+      ],
+      "o_neighbors": [
+        567,
+        791,
+        878,
+        933
+      ],
+      "n_neighbors": []
+    },
+    "456": {
+      "type": "PO1N",
+      "label": "PO1N (strongly defected)",
+      "cn": 2,
+      "n_o": 1,
+      "n_n": 1,
+      "coords": [
+        7.39066187616,
+        4.365617608921999,
+        9.264204
+      ],
+      "o_neighbors": [
+        888
+      ],
+      "n_neighbors": [
+        520
+      ]
+    },
+    "457": {
+      "type": "PO1N",
+      "label": "PO1N (strongly defected)",
+      "cn": 2,
+      "n_o": 1,
+      "n_n": 1,
+      "coords": [
+        7.39066187616,
+        4.365617608921999,
+        21.616476
+      ],
+      "o_neighbors": [
+        889
+      ],
+      "n_neighbors": [
+        521
+      ]
+    },
+    "458": {
+      "type": "PO1N",
+      "label": "PO1N (strongly defected)",
+      "cn": 2,
+      "n_o": 1,
+      "n_n": 1,
+      "coords": [
+        7.390661876159999,
+        14.958421608921999,
+        9.264204000000001
+      ],
+      "o_neighbors": [
+        890
+      ],
+      "n_neighbors": [
+        522
+      ]
+    },
+    "459": {
+      "type": "PO1N",
+      "label": "PO1N (strongly defected)",
+      "cn": 2,
+      "n_o": 1,
+      "n_n": 1,
+      "coords": [
+        7.390661876159999,
+        14.958421608921999,
+        21.616476
+      ],
+      "o_neighbors": [
+        891
+      ],
+      "n_neighbors": [
+        523
+      ]
+    },
+    "460": {
+      "type": "PO1N",
+      "label": "PO1N (strongly defected)",
+      "cn": 2,
+      "n_o": 1,
+      "n_n": 1,
+      "coords": [
+        17.23555787616,
+        4.365617608921999,
+        9.264204000000001
+      ],
+      "o_neighbors": [
+        892
+      ],
+      "n_neighbors": [
+        524
+      ]
+    },
+    "461": {
+      "type": "PO1N",
+      "label": "PO1N (strongly defected)",
+      "cn": 2,
+      "n_o": 1,
+      "n_n": 1,
+      "coords": [
+        17.23555787616,
+        4.365617608921999,
+        21.616476
+      ],
+      "o_neighbors": [
+        893
+      ],
+      "n_neighbors": [
+        525
+      ]
+    },
+    "462": {
+      "type": "PO1N",
+      "label": "PO1N (strongly defected)",
+      "cn": 2,
+      "n_o": 1,
+      "n_n": 1,
+      "coords": [
+        17.23555787616,
+        14.958421608921999,
+        9.264204000000001
+      ],
+      "o_neighbors": [
+        894
+      ],
+      "n_neighbors": [
+        526
+      ]
+    },
+    "463": {
+      "type": "PO1N",
+      "label": "PO1N (strongly defected)",
+      "cn": 2,
+      "n_o": 1,
+      "n_n": 1,
+      "coords": [
+        17.23555787616,
+        14.958421608921999,
+        21.616476000000002
+      ],
+      "o_neighbors": [
+        895
+      ],
+      "n_neighbors": [
+        527
+      ]
+    },
+    "464": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        4.92943787616,
+        0.9307843910779999,
+        6.176136
+      ],
+      "o_neighbors": [
+        616,
+        824,
+        848,
+        978
+      ],
+      "n_neighbors": []
+    },
+    "465": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        4.92943787616,
+        0.9307843910779999,
+        18.528408
+      ],
+      "o_neighbors": [
+        617,
+        825,
+        849,
+        979
+      ],
+      "n_neighbors": []
+    },
+    "466": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        4.929437876159999,
+        11.523588391078,
+        6.1761360000000005
+      ],
+      "o_neighbors": [
+        618,
+        826,
+        850,
+        976
+      ],
+      "n_neighbors": []
+    },
+    "467": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        4.929437876159999,
+        11.523588391078,
+        18.528408
+      ],
+      "o_neighbors": [
+        619,
+        827,
+        851,
+        977
+      ],
+      "n_neighbors": []
+    },
+    "468": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        14.77433387616,
+        0.9307843910779999,
+        6.1761360000000005
+      ],
+      "o_neighbors": [
+        620,
+        828,
+        852,
+        982
+      ],
+      "n_neighbors": []
+    },
+    "469": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        14.77433387616,
+        0.9307843910779999,
+        18.528408
+      ],
+      "o_neighbors": [
+        621,
+        829,
+        853,
+        983
+      ],
+      "n_neighbors": []
+    },
+    "470": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        14.77433387616,
+        11.523588391078,
+        6.176136000000001
+      ],
+      "o_neighbors": [
+        622,
+        830,
+        854,
+        980
+      ],
+      "n_neighbors": []
+    },
+    "471": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        14.77433387616,
+        11.523588391078,
+        18.528408
+      ],
+      "o_neighbors": [
+        623,
+        831,
+        855,
+        981
+      ],
+      "n_neighbors": []
+    },
+    "472": {
+      "type": "PO2N",
+      "label": "PO2N (defect, CN=3 O+N)",
+      "cn": 3,
+      "n_o": 2,
+      "n_n": 1,
+      "coords": [
+        7.390661876159999,
+        9.662019608921998,
+        3.0880680000000007
+      ],
+      "o_neighbors": [
+        794,
+        936
+      ],
+      "n_neighbors": [
+        528
+      ]
+    },
+    "473": {
+      "type": "PO2N",
+      "label": "PO2N (defect, CN=3 O+N)",
+      "cn": 3,
+      "n_o": 2,
+      "n_n": 1,
+      "coords": [
+        7.390661876159999,
+        9.662019608921998,
+        15.44034
+      ],
+      "o_neighbors": [
+        795,
+        937
+      ],
+      "n_neighbors": [
+        529
+      ]
+    },
+    "474": {
+      "type": "PO2N",
+      "label": "PO2N (defect, CN=3 O+N)",
+      "cn": 3,
+      "n_o": 2,
+      "n_n": 1,
+      "coords": [
+        7.390661876159999,
+        20.254823608922,
+        3.0880680000000016
+      ],
+      "o_neighbors": [
+        792,
+        938
+      ],
+      "n_neighbors": [
+        530
+      ]
+    },
+    "475": {
+      "type": "PO2N",
+      "label": "PO2N (defect, CN=3 O+N)",
+      "cn": 3,
+      "n_o": 2,
+      "n_n": 1,
+      "coords": [
+        7.390661876159999,
+        20.254823608922,
+        15.44034
+      ],
+      "o_neighbors": [
+        793,
+        939
+      ],
+      "n_neighbors": [
+        531
+      ]
+    },
+    "476": {
+      "type": "PO2N",
+      "label": "PO2N (defect, CN=3 O+N)",
+      "cn": 3,
+      "n_o": 2,
+      "n_n": 1,
+      "coords": [
+        17.23555787616,
+        9.662019608921998,
+        3.0880680000000016
+      ],
+      "o_neighbors": [
+        798,
+        940
+      ],
+      "n_neighbors": [
+        532
+      ]
+    },
+    "477": {
+      "type": "PO2N",
+      "label": "PO2N (defect, CN=3 O+N)",
+      "cn": 3,
+      "n_o": 2,
+      "n_n": 1,
+      "coords": [
+        17.23555787616,
+        9.662019608921998,
+        15.44034
+      ],
+      "o_neighbors": [
+        799,
+        941
+      ],
+      "n_neighbors": [
+        533
+      ]
+    },
+    "478": {
+      "type": "PO2N",
+      "label": "PO2N (defect, CN=3 O+N)",
+      "cn": 3,
+      "n_o": 2,
+      "n_n": 1,
+      "coords": [
+        17.23555787616,
+        20.254823608922,
+        3.088068000000002
+      ],
+      "o_neighbors": [
+        796,
+        942
+      ],
+      "n_neighbors": [
+        534
+      ]
+    },
+    "479": {
+      "type": "PO2N",
+      "label": "PO2N (defect, CN=3 O+N)",
+      "cn": 3,
+      "n_o": 2,
+      "n_n": 1,
+      "coords": [
+        17.23555787616,
+        20.254823608922,
+        15.44034
+      ],
+      "o_neighbors": [
+        797,
+        943
+      ],
+      "n_neighbors": [
+        535
+      ]
+    },
+    "480": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        4.92943787616,
+        6.227186391078,
+        6.83146209908135e-16
+      ],
+      "o_neighbors": [
+        680,
+        832,
+        896,
+        969
+      ],
+      "n_neighbors": []
+    },
+    "481": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        4.92943787616,
+        6.227186391078,
+        12.352272
+      ],
+      "o_neighbors": [
+        681,
+        833,
+        897,
+        968
+      ],
+      "n_neighbors": []
+    },
+    "482": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        4.929437876159999,
+        16.819990391078,
+        1.331768385537899e-15
+      ],
+      "o_neighbors": [
+        682,
+        834,
+        898,
+        971
+      ],
+      "n_neighbors": []
+    },
+    "483": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        4.929437876159999,
+        16.819990391078,
+        12.352272000000001
+      ],
+      "o_neighbors": [
+        683,
+        835,
+        899,
+        970
+      ],
+      "n_neighbors": []
+    },
+    "484": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        14.77433387616,
+        6.227186391078,
+        1.2859722286250642e-15
+      ],
+      "o_neighbors": [
+        684,
+        836,
+        900,
+        973
+      ],
+      "n_neighbors": []
+    },
+    "485": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        14.77433387616,
+        6.227186391078,
+        12.352272000000001
+      ],
+      "o_neighbors": [
+        685,
+        837,
+        901,
+        972
+      ],
+      "n_neighbors": []
+    },
+    "486": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        14.774333876159998,
+        16.819990391078,
+        1.9345944042548283e-15
+      ],
+      "o_neighbors": [
+        686,
+        838,
+        902,
+        975
+      ],
+      "n_neighbors": []
+    },
+    "487": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        14.774333876159998,
+        16.819990391078,
+        12.352272000000001
+      ],
+      "o_neighbors": [
+        687,
+        839,
+        903,
+        974
+      ],
+      "n_neighbors": []
+    },
+    "488": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        7.390661876159999,
+        9.662019608921998,
+        9.264204000000001
+      ],
+      "o_neighbors": [
+        858,
+        960,
+        984
+      ],
+      "n_neighbors": [
+        536
+      ]
+    },
+    "489": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        7.390661876159999,
+        9.662019608921998,
+        21.616476
+      ],
+      "o_neighbors": [
+        859,
+        961,
+        985
+      ],
+      "n_neighbors": [
+        537
+      ]
+    },
+    "490": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        7.390661876159999,
+        20.254823608922,
+        9.264204000000001
+      ],
+      "o_neighbors": [
+        856,
+        962,
+        986
+      ],
+      "n_neighbors": [
+        538
+      ]
+    },
+    "491": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        7.390661876159999,
+        20.254823608922,
+        21.616476
+      ],
+      "o_neighbors": [
+        857,
+        963,
+        987
+      ],
+      "n_neighbors": [
+        539
+      ]
+    },
+    "492": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        17.23555787616,
+        9.662019608921998,
+        9.264204000000001
+      ],
+      "o_neighbors": [
+        862,
+        964,
+        988
+      ],
+      "n_neighbors": [
+        540
+      ]
+    },
+    "493": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        17.23555787616,
+        9.662019608921998,
+        21.616476
+      ],
+      "o_neighbors": [
+        863,
+        965,
+        989
+      ],
+      "n_neighbors": [
+        541
+      ]
+    },
+    "494": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        17.23555787616,
+        20.254823608922,
+        9.264204000000001
+      ],
+      "o_neighbors": [
+        860,
+        966,
+        990
+      ],
+      "n_neighbors": [
+        542
+      ]
+    },
+    "495": {
+      "type": "PO3N",
+      "label": "PO3N (N-substituted tetrahedral)",
+      "cn": 4,
+      "n_o": 3,
+      "n_n": 1,
+      "coords": [
+        17.23555787616,
+        20.254823608922,
+        21.616476000000002
+      ],
+      "o_neighbors": [
+        861,
+        967,
+        991
+      ],
+      "n_neighbors": [
+        543
+      ]
+    },
+    "496": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        4.92943787616,
+        6.227186391078,
+        6.1761360000000005
+      ],
+      "o_neighbors": [
+        744,
+        880,
+        920,
+        944
+      ],
+      "n_neighbors": []
+    },
+    "497": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        4.92943787616,
+        6.227186391078,
+        18.528408
+      ],
+      "o_neighbors": [
+        745,
+        881,
+        921,
+        945
+      ],
+      "n_neighbors": []
+    },
+    "498": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        4.929437876159999,
+        16.819990391078,
+        6.1761360000000005
+      ],
+      "o_neighbors": [
+        746,
+        882,
+        922,
+        946
+      ],
+      "n_neighbors": []
+    },
+    "499": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        4.929437876159999,
+        16.819990391078,
+        18.528408
+      ],
+      "o_neighbors": [
+        747,
+        883,
+        923,
+        947
+      ],
+      "n_neighbors": []
+    },
+    "500": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        14.77433387616,
+        6.227186391078,
+        6.1761360000000005
+      ],
+      "o_neighbors": [
+        748,
+        884,
+        924,
+        948
+      ],
+      "n_neighbors": []
+    },
+    "501": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        14.77433387616,
+        6.227186391078,
+        18.528408
+      ],
+      "o_neighbors": [
+        749,
+        885,
+        925,
+        949
+      ],
+      "n_neighbors": []
+    },
+    "502": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        14.774333876159998,
+        16.819990391078,
+        6.176136000000001
+      ],
+      "o_neighbors": [
+        750,
+        886,
+        926,
+        950
+      ],
+      "n_neighbors": []
+    },
+    "503": {
+      "type": "PO4",
+      "label": "PO4 (orthophosphate tetrahedral)",
+      "cn": 4,
+      "n_o": 4,
+      "n_n": 0,
+      "coords": [
+        14.774333876159998,
+        16.819990391078,
+        18.528408000000002
+      ],
+      "o_neighbors": [
+        751,
+        887,
+        927,
+        951
+      ],
+      "n_neighbors": []
+    }
+  }
+}
