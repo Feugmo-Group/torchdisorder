@@ -164,6 +164,19 @@ def _load_potential(args, device, dtype, dtype_name):
         calc = SevenNetCalculator(args.model, device=str(device))
         return SevenNetModel(model=calc.model, device=device, dtype=dtype)
 
+    if args.potential == "graphpes":
+        from torch_sim.models.graphpes import GraphPESWrapper
+
+        # Unlike the branches above, --model here is a PATH to a local checkpoint,
+        # not a foundation-model name. The reason to want one: every universal
+        # potential we have tried reduces P(V) to P(IV) in a Li-P-S melt, forming
+        # P-P bonds and shedding sulfur as free S2-, and lowering the temperature
+        # far enough to suppress it leaves the crystal only half-melted. A model
+        # trained on the Li2S-P2S5 tie-line itself (LiPS-25) is the way out.
+        # GraphPESWrapper accepts the path directly and calls load_model on it.
+        return GraphPESWrapper(model=args.model, device=device, dtype=dtype,
+                               compute_forces=True, compute_stress=False)
+
     raise SystemExit(f"unknown potential: {args.potential}")
 
 
@@ -188,9 +201,11 @@ def main() -> None:
                    help="foundation model name/checkpoint for the chosen --potential "
                         "(default: medium-mpa-0, a MACE model)")
     p.add_argument("--potential", default="mace",
-                   choices=["mace", "mattersim", "orb", "sevennet"],
-                   help="which foundation potential to drive the dynamics. Each "
-                        "needs its own conda env -- they have conflicting e3nn pins.")
+                   choices=["mace", "mattersim", "orb", "sevennet", "graphpes"],
+                   help="which potential to drive the dynamics. Each needs its own "
+                        "conda env -- they have conflicting e3nn pins. Note that "
+                        "'graphpes' is not a foundation model: it loads a local "
+                        "checkpoint given by --model.")
     p.add_argument("--melt-temp", type=float, default=4000.0)
     p.add_argument("--quench-temp", type=float, default=300.0)
     p.add_argument("--melt-steps", type=int, default=30000)

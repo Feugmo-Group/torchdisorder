@@ -49,6 +49,13 @@ export PROJECT_ROOT PYTHONPATH="$PROJECT_ROOT"
 unset TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD
 cd "$PROJECT_ROOT"; mkdir -p logs
 
+# Triton JIT-compiles a CUDA shim on first use and takes the first compiler on
+# PATH, which on yemba is the NVIDIA HPC SDK's nvc. nvc rejects the gcc flags
+# Triton emits ("nvc-Error-Unknown switch: -Wno-psabi") and the job dies seconds
+# in, after the scheduler has already handed out a GPU. Harmless for MACE.
+export CC="${CC:-/usr/bin/gcc}"
+export CXX="${CXX:-/usr/bin/g++}"
+
 # 16G rather than the 80G used previously: the node has 250 GB total and one
 # over-reserved job blocks every other for its full walltime. Measured use of a
 # ~1000-atom MACE melt-quench is a few GB.
@@ -67,10 +74,20 @@ LABEL="${ENTRY%%|*}"; DESC="${ENTRY#*|}"
 # installing SevenNet downgraded nvidia-nccl-cu13 to 2.29.7 and left MatterSim's
 # torch unimportable with "undefined symbol: ncclCommResume". One env each.
 POTENTIAL="${POTENTIAL:-mace}"
+# LiPS-25 (Fragapane & Deringer, JCTC 2026) is a MACE model trained from scratch
+# on the Li2S-P2S5 tie-line, covering all three compositions here plus 1750
+# melt-quench cells generated specifically to be amorphous. It exists in this
+# list because every universal potential we have tried reduces P(V) to P(IV) in
+# the melt. Default is the paper's recommended 6 A cutoff, seed 1; the other
+# four seeds sit beside it and are the cheapest uncertainty estimate available.
+# Use the from-scratch models, NOT models/fine-tuned/ -- the paper's own result
+# is that fine-tuned foundation models were WORSE than zero-shot in the liquid.
+LIPS25=/data/scratch/conrard/lips25/lips-25/models/mace-models
 case "$POTENTIAL" in
   mace)      CONDA_ENV=torchdisorder; DEF_MODEL=medium-mpa-0 ;;
   mattersim) CONDA_ENV=mlip;          DEF_MODEL=MatterSim-v1.0.0-5M.pth ;;
   sevennet)  CONDA_ENV=sevennet;      DEF_MODEL=7net-mf-ompa ;;
+  graphpes)  CONDA_ENV=graphpes;      DEF_MODEL="$LIPS25/cutoff/model_mace_cutoff_6_1.pt" ;;
   *) echo "unknown POTENTIAL=$POTENTIAL" >&2; exit 1 ;;
 esac
 
