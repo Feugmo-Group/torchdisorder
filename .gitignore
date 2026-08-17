@@ -40,3 +40,16 @@ data/data/
 # Local-only files (not for the repo)
 CLAUDE.md
 Localsymmetrypredictors/
+
+# Local analysis virtualenv (1.3 GB, recreate with `uv venv .venv-analysis`)
+.venv-analysis/
+
+# Run artifacts -- regenerate by rerunning; never commit.
+# outputs/* rather than outputs/: git will not re-include a file whose parent
+# directory is excluded, so the README exception below needs the directory
+# itself to stay walkable.
+wandb/
+outputs/*
+!outputs/retired/
+outputs/retired/*
+!outputs/retired/README.md
