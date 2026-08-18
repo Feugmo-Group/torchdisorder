@@ -430,13 +430,32 @@ def main() -> None:
     print(f"\nwrote {out}")
 
     # ---- verdict -----------------------------------------------------------
+    # --expected-cn is a crystal number, and applying it to a glass rejected good
+    # runs: lips75 failed at 3.848 against 4.00 +/- 0.15, missing by 0.0025, when
+    # DFT puts a-Li3PS4 at 3.67. When --system names a composition with a
+    # published glass speciation, that value wins.
+    expected_cn, cn_tol = float(args.expected_cn), 0.15
+    if args.system:
+        spec_cn = GLASS_SYSTEMS[args.system].get("expected_cn")
+        if spec_cn is not None:
+            expected_cn, cn_tol = spec_cn, GLASS_SYSTEMS[args.system]["cn_tol"]
+            if abs(expected_cn - float(args.expected_cn)) > 1e-9:
+                print(f"\nusing the glass coordination for {args.system}: "
+                      f"{expected_cn:.2f} +/- {cn_tol} (not --expected-cn "
+                      f"{args.expected_cn:.2f}, which is the crystal's)")
+        else:
+            expected_cn = None
+            print(f"\nno published glass coordination for {args.system}; skipping "
+                  "the plateau-level check and leaving the verdict to the glass "
+                  "gate. The crystal's value would reject a good glass.")
+
     # bond_cutoff is not optional in practice: without it the plateau window
     # defaults to the Si-O bracket of 1.8-2.6 A, so a P-S first shell at 2.05 A
     # is judged against cutoffs that do not contain it and pristine crystalline
     # Li7P3S11 fails for want of a shell it plainly has.
     rep = validate_structure(glass, check_plateau=True, central=args.central,
-                             neighbour=args.neighbour, expected_cn=float(args.expected_cn),
-                             bond_cutoff=args.cutoff)
+                             neighbour=args.neighbour, expected_cn=expected_cn,
+                             cn_tol=cn_tol, bond_cutoff=args.cutoff)
     intra = angles(glass, cz, nz, args.cutoff)
     inter = angles(glass, nz, cz, args.cutoff)
     print(f"\n{args.neighbour}-{args.central}-{args.neighbour} = "

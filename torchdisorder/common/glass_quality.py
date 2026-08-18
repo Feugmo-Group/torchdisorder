@@ -55,6 +55,36 @@ twice: rattling the crystal moves std from 2.303 only to 1.709, barely a tenth o
 the way to the glass value of 0.134, while wrecking the coordination on the way.
 Displacement degrades a crystal without disordering it, which is why rattling is
 not one of the routes to an amorphous model.
+
+Raw std is not comparable between chemistries
+---------------------------------------------
+The table above is all oxides, whose central sublattice runs to 375-1728 atoms.
+A Li7P3S11 cell of 672 atoms contains only 96 P, and a g(r) built from 96 centres
+is far noisier -- so a *perfectly disordered* thiophosphate scores a std that
+would read as ordered on the oxide scale.  Measuring the counting-noise floor
+directly, by randomising positions in the same cell (:func:`noise_floor`):
+
+    structure                  N_a    std   noise   ratio   truth
+    sio2_glass_gap            1728  0.134   0.039    3.47   glass
+    SiO2_mq_hot_mpa            375  0.143   0.079    1.80   glass
+    geo2_glass_nnp            1080  0.130   0.049    2.66   glass
+    lips70 (LiPS-25)            96  0.504   0.309    1.63   disordered
+    Li3PS4_gamma               108  3.930   0.285   13.79   crystal
+    c-SiO2                     375  2.303   0.072   31.97   crystal
+    c-GeO2                     375  2.152   0.078   27.55   crystal
+
+lips70's std of 0.504 is almost entirely shot noise: its excess over the floor is
+*lower than every published glass reference*.  A flat 0.5 ceiling would have
+rejected a genuinely disordered structure for being dilute.
+
+But the ratio alone will not do either, because a glass holds std ~ 0.13 while
+noise falls as 1/sqrt(N_a) -- so the ratio grows with cell size, and the same
+silica glass scores 1.80 at 375 Si and 3.47 at 1728 Si.  A large enough glass
+would fail a fixed ratio test.
+
+The criterion is therefore ``std < max(LONG_STD_CEILING, 2 x noise_floor)``:
+the absolute term governs dense sublattices, the noise term rescues dilute ones,
+and neither rescues a crystal, which sits 14-32x over its own floor.
 """
 
 from __future__ import annotations
@@ -70,6 +100,7 @@ __all__ = [
     "partial_rdf",
     "sublattice_disorder",
     "forbidden_contacts",
+    "noise_floor",
 ]
 
 # Placed in the observed gap between glass (4-5, 0.12-0.13) and crystal
@@ -145,16 +176,69 @@ GLASS_SYSTEMS: dict[str, dict] = {
             # occurrences rather than forbidding them outright -- see the note
             # on `tolerated` below.
             ForbiddenRule("contact", "P", "P", 2.8, "P-P pairs"),
+            # An S-S bond at ~2.05 A is polysulfide: the potential has oxidised
+            # sulfide to S2(2-) or an S-S bridge. Added after LiPS-25 lips70,
+            # where 12 S-S bonds at 2.03-2.07 A accounted for 16 of the 18 P-free
+            # sulfurs -- so "P-free sulfur" was detecting the consequence while
+            # naming the wrong cause. Non-bonded S...S contacts start above 3.2 A,
+            # so 2.4 A separates a real bond cleanly.
+            ForbiddenRule("contact", "S", "S", 2.4, "S-S bonds (polysulfide)"),
             # Sulfur with no phosphorus neighbour has left the network as free
-            # S(2-), the other half of the same reduction.
+            # S(2-). Kept alongside the S-S rule because the two failures are
+            # different: sulfur can detach without pairing up.
             ForbiddenRule("unbonded", "S", "P", 2.8, "P-free sulfur"),
         ],
     },
 }
 
-# Aliases for the composition-specific names the LiPS runs actually use.
-for _alias in ("Li3PS4", "Li7P3S11", "LiPS_75", "lips75", "lips"):
-    GLASS_SYSTEMS[_alias] = GLASS_SYSTEMS["LiPS"]
+# Expected *glass* coordination of the central atom by its neighbour.
+#
+# This is not the crystal value, and the difference rejected two good runs. A
+# crystal target of 4.00 +/- 0.15 failed lips75 at 3.848 and lips70 at 3.771 --
+# the first by 0.0025 -- when both sit in the range a real glass should occupy.
+#
+# For a-Li3PS4, DFT BOMD gives PS4 : P2S6 : P2S7 ~ 6 : 2 : 1 by unit. Counting per
+# phosphorus: PS4 contributes 6 P at CN 4, P2S6 4 P at CN 3 (three S and one P),
+# P2S7 2 P at CN 4. So <CN> = (24 + 12 + 8) / 12 = 3.67, and a structure at 4.00
+# would be the under-melted one.
+#
+# None means "no published glass speciation for this composition" -- the check is
+# then skipped rather than being run against an invented number, and the glass
+# gate carries the verdict. Do not fill these in without a source.
+_GLASS_CN = {
+    # a-SiO2 and a-GeO2 are ~99% 4-fold; the tetrahedron survives vitrification.
+    "SiO2": (4.0, 0.15),
+    "GeO2": (4.0, 0.15),
+    # Li3PS4: from the 6:2:1 BOMD speciation above. The tolerance is wider than
+    # the oxides' because the speciation ratio itself is approximate.
+    "Li3PS4": (3.67, 0.30),
+    # Li7P3S11 and Li4P2S7: the crystals are all-4-fold (PS4 + P2S7), but no glass
+    # speciation is available, so how far below 4 a good glass sits is unknown.
+    "Li7P3S11": (None, None),
+    "Li4P2S7": (None, None),
+    "LiPS": (None, None),
+}
+
+for _system, (_cn, _tol) in _GLASS_CN.items():
+    if _system in GLASS_SYSTEMS:
+        GLASS_SYSTEMS[_system]["expected_cn"] = _cn
+        GLASS_SYSTEMS[_system]["cn_tol"] = _tol
+
+# Composition-specific entries share the Li-P-S rules but carry their own
+# expected coordination, so they cannot simply alias one dict.
+for _name in ("Li3PS4", "Li7P3S11", "Li4P2S7"):
+    GLASS_SYSTEMS[_name] = {
+        "sublattice": GLASS_SYSTEMS["LiPS"]["sublattice"],
+        "forbidden": GLASS_SYSTEMS["LiPS"]["forbidden"],
+        "expected_cn": _GLASS_CN[_name][0],
+        "cn_tol": _GLASS_CN[_name][1],
+    }
+
+# The labels the run scripts actually use, mapped to the composition they mean.
+for _alias, _target in (("lips75", "Li3PS4"), ("lips70", "Li7P3S11"),
+                        ("lips67", "Li4P2S7"), ("LiPS_75", "Li3PS4"),
+                        ("lips", "LiPS")):
+    GLASS_SYSTEMS[_alias] = GLASS_SYSTEMS[_target]
 
 
 @dataclass
@@ -173,6 +257,12 @@ class GlassReport:
     max_g: float
     long_std: float
     r_long: float
+    noise: float = float("nan")
+    """Counting-noise floor of ``long_std`` for this sublattice size; nan if not
+    measured.  ``long_std / noise`` is the size-independent read on disorder --
+    glasses observed at 1.6-3.5, crystals at 14-32."""
+    ceiling: float = float("nan")
+    """The limit ``long_std`` was actually judged against."""
     counts: dict = field(default_factory=dict)
     """Rule label -> number of offending atoms/pairs found."""
     chemistry_ok: bool = True
@@ -191,9 +281,16 @@ class GlassReport:
         verdict = "GLASS" if self else "NOT A GLASS"
         # Do not quote a limit against a number that was never measurable, or the
         # header reads as though the structure was judged and failed on it.
-        std = (f"std(r > {self.r_long:g} A) = {self.long_std:.3f} "
-               f"(limit {LONG_STD_CEILING})" if self.range_ok
-               else f"std(r > {self.r_long:g} A) = not measurable in this cell")
+        if not self.range_ok:
+            std = f"std(r > {self.r_long:g} A) = not measurable in this cell"
+        elif np.isnan(self.noise):
+            std = f"std(r > {self.r_long:g} A) = {self.long_std:.3f} (limit {self.ceiling:.3f})"
+        else:
+            # Quote the excess over noise, not just the raw std: it is the number
+            # that is comparable between a 1728-atom oxide sublattice and 96 P.
+            std = (f"std(r > {self.r_long:g} A) = {self.long_std:.3f} "
+                   f"= {self.long_std / self.noise:.2f}x noise floor "
+                   f"{self.noise:.3f} (limit {self.ceiling:.3f})")
         lines = [
             f"{verdict}  [{self.system}]  "
             f"{self.sublattice}-{self.sublattice} sublattice: "
@@ -229,8 +326,17 @@ def partial_rdf(atoms, a, b, rmax: float = 10.0, dr: float = DEFAULT_DR):
         raise ValueError(f"structure contains no {a}-{b} pairs to correlate")
 
     nbins = max(round(rmax / dr), 1)
-    i, j, d = neighbor_list("ijd", atoms, float(rmax))
-    m = (z[i] == za) & (z[j] == zb)
+
+    # Build the neighbour list over ONLY the two species involved, in the same
+    # cell, rather than over everything and masking afterwards. The pair count
+    # goes as (density x N), so restricting SiO2 to its 1/3 Si costs about a
+    # ninth as much for an identical result -- 13 s to 1.5 s on 1125 atoms, which
+    # is what makes the noise floor and the directory audit affordable.
+    keep = (z == za) | (z == zb)
+    sub = atoms[keep]
+    zs = sub.get_atomic_numbers()
+    i, j, d = neighbor_list("ijd", sub, float(rmax))
+    m = (zs[i] == za) & (zs[j] == zb)
     hist, edges = np.histogram(d[m], bins=nbins, range=(0.0, float(rmax)))
     r = 0.5 * (edges[:-1] + edges[1:])
 
@@ -259,6 +365,28 @@ def sublattice_disorder(atoms, species, rmax: float = 10.0,
         "long_std": float(long.std()) if long.size else float("nan"),
         "n_long_bins": int(long.size),
     }
+
+
+def noise_floor(atoms, species, rmax: float = 10.0, r_long: float = DEFAULT_R_LONG,
+                dr: float = DEFAULT_DR, seed: int = 0) -> float:
+    """The std of g(r > r_long) attributable to counting noise alone.
+
+    Measured by randomising every position while keeping the cell, the
+    composition and the number of central atoms -- so the result is an ideal gas
+    with this structure's sublattice size, whose g(r) is 1 everywhere apart from
+    shot noise.  Anything above this floor is genuine structure.
+
+    This matters because the raw std is not comparable between chemistries. A
+    Li7P3S11 cell of 672 atoms holds only 96 P, and its P-P g(r) therefore has a
+    noise floor of ~0.31, against ~0.04-0.08 for an oxide sublattice of 375-1728
+    atoms. Judged on raw std against a single ceiling, a perfectly disordered
+    thiophosphate reads as ordered purely because it is dilute.
+    """
+    rng = np.random.default_rng(seed)
+    shuffled = atoms.copy()
+    shuffled.set_scaled_positions(rng.random((len(atoms), 3)))
+    return sublattice_disorder(shuffled, species, rmax=rmax, r_long=r_long,
+                               dr=dr)["long_std"]
 
 
 def forbidden_contacts(atoms, rules) -> dict:
@@ -307,6 +435,8 @@ def assess_glass(
     max_g_ceiling: float = MAX_G_CEILING,
     long_std_ceiling: float = LONG_STD_CEILING,
     min_long_bins: int = 20,
+    check_noise: bool = True,
+    noise_multiple: float = 2.0,
     tolerated: dict | None = None,
 ) -> GlassReport:
     """Apply both glass tests and return a falsey report if either fails.
@@ -362,6 +492,9 @@ def assess_glass(
 
     dis = sublattice_disorder(atoms, species, rmax=rmax, r_long=r_long, dr=dr)
     disorder_ok = True
+    # nan rather than 0.0 when the cell is too small to reach the noise branch:
+    # a reported floor of zero would look like a measurement that came back clean.
+    floor = ceiling = float("nan")
     range_ok = r_long < half_min_cell and dis["n_long_bins"] >= min_long_bins
     if not range_ok:
         # Report *only* this. The std over zero bins is nan, and letting the
@@ -381,11 +514,37 @@ def assess_glass(
                 f"{species}-{species} g(r) peaks at {dis['max_g']:.2f} "
                 f"(> {max_g_ceiling}); a glass sits near 4-5, a crystal near 12-13"
             )
-        if not (dis["long_std"] < long_std_ceiling):
+        # The ceiling is the LARGER of the absolute limit and a multiple of this
+        # sublattice's own counting-noise floor. Both terms are needed:
+        #
+        #   - the noise term rescues dilute sublattices. lips70 measures std
+        #     0.504 against a noise floor of 0.309 -- an excess of 1.63x, lower
+        #     than every published glass reference -- so a flat 0.5 would reject
+        #     a genuinely disordered structure for being made of only 96 P atoms.
+        #   - the absolute term stops the noise term running away. Noise falls as
+        #     1/sqrt(N_a) while a real glass keeps std ~ 0.13, so the *ratio*
+        #     grows with cell size: the same silica glass scores 1.80 at 375 Si
+        #     and 3.47 at 1728 Si. A pure ratio test would fail large glasses.
+        #
+        # Crystals are not rescued by either: they sit 14-32x over their floor.
+        # Measuring the floor costs a second g(r) over a shuffled cell, so skip it
+        # when it cannot change the answer: the ceiling is max(absolute, k*noise),
+        # which is never below the absolute limit, so a std already under that
+        # limit passes whatever the noise turns out to be. This makes the common
+        # case -- a good glass, std ~ 0.13 against a limit of 0.5 -- free, and
+        # pays only when the verdict is genuinely in doubt.
+        ceiling = long_std_ceiling
+        if check_noise and dis["long_std"] >= long_std_ceiling:
+            floor = noise_floor(atoms, species, rmax=rmax, r_long=r_long, dr=dr)
+            ceiling = max(long_std_ceiling, noise_multiple * floor)
+        if not (dis["long_std"] < ceiling):
             disorder_ok = False
+            detail = (f"> {ceiling:.3f} = {noise_multiple:g} x noise floor "
+                      f"{floor:.3f}" if ceiling > long_std_ceiling
+                      else f"> {long_std_ceiling}")
             failures.append(
                 f"{species}-{species} g(r) beyond {r_long:g} A has std "
-                f"{dis['long_std']:.3f} (> {long_std_ceiling}); long-range order "
+                f"{dis['long_std']:.3f} ({detail}); long-range order "
                 "survived, so the melt did not destroy the crystal"
             )
 
@@ -410,6 +569,8 @@ def assess_glass(
         chemistry_ok=chemistry_ok,
         disorder_ok=disorder_ok,
         range_ok=range_ok,
+        noise=floor,
+        ceiling=ceiling,
         failures=failures,
         warnings=warnings,
     )
