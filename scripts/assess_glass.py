@@ -30,6 +30,8 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+import numpy as np
+
 
 def infer_system(atoms) -> str | None:
     """Guess the ruleset from the elements present.
@@ -71,9 +73,17 @@ def main() -> None:
             raise SystemExit(f"--tolerate wants LABEL=N, got {item!r}")
         tolerated[label.strip()] = int(n)
 
-    print(f"{'structure':32s} {'system':6s} {'N':>5s} {'max g':>6s} {'std>6':>7s} "
-          f"{'chem':>4s} {'dis':>4s}  verdict")
-    print("-" * 88)
+    # "x noise" is the column to read, not "std>6". The raw std is not comparable
+    # between chemistries -- 96 P and 1728 Si have different counting-noise floors
+    # -- so the same number means different things in different rows. Glasses sit
+    # at 1.6-3.5x their floor, crystals at 14-32x. Reading std alone once passed a
+    # partially melted GeO2 (0.346, under the 0.5 limit, but 4.04x its floor).
+    # 40, not 32: rejected runs are kept as "<name>_REJECTED.cif", which is 9
+    # characters longer than the name that was asked for and overflowed the old
+    # column, shifting every remaining field on exactly the rows worth reading.
+    print(f"{'structure':40s} {'system':6s} {'N':>5s} {'max g':>6s} {'std>6':>7s} "
+          f"{'x noise':>8s} {'chem':>4s} {'dis':>4s}  verdict")
+    print("-" * 105)
 
     # Counted separately: a structure nobody could judge is not a structure that
     # passed, and rolling the two together is how "15 passed" ends up describing a
@@ -83,22 +93,28 @@ def main() -> None:
         try:
             atoms = read(str(path))
         except Exception as exc:  # noqa: BLE001 - a bad file is a result, not a crash
-            print(f"{path.name:32s} {'-':6s} {'-':>5s}  unreadable: {type(exc).__name__}")
+            print(f"{path.name:40s} {'-':6s} {'-':>5s}  unreadable: {type(exc).__name__}")
             failed += 1
             continue
 
         system = args.system or infer_system(atoms)
         if system is None:
             formula = atoms.get_chemical_formula(mode="hill", empirical=True)
-            print(f"{path.name:32s} {'?':6s} {len(atoms):5d}  no ruleset for {formula} "
+            print(f"{path.name:40s} {'?':6s} {len(atoms):5d}  no ruleset for {formula} "
                   "-- pass --system to judge it")
             skipped += 1
             continue
 
         rep = assess_glass(atoms, system, tolerated=tolerated)
         verdict = "GLASS" if rep else "NOT A GLASS"
-        print(f"{path.name:32s} {system:6s} {len(atoms):5d} {rep.max_g:6.2f} "
-              f"{rep.long_std:7.3f} {'ok' if rep.chemistry_ok else 'FAIL':>4s} "
+        # nan floor means it was not measured (check_noise off, or the cell was
+        # too small to judge at all); print "-" rather than "nan", which reads as
+        # a failed measurement of a number that was never asked for.
+        excess = ("-" if np.isnan(rep.noise) or not rep.noise
+                  else f"{rep.long_std / rep.noise:.2f}x")
+        print(f"{path.name:40s} {system:6s} {len(atoms):5d} {rep.max_g:6.2f} "
+              f"{rep.long_std:7.3f} {excess:>8s} "
+              f"{'ok' if rep.chemistry_ok else 'FAIL':>4s} "
               f"{'ok' if rep.disorder_ok else 'FAIL':>4s}  {verdict}")
         if rep:
             passed += 1
@@ -108,7 +124,7 @@ def main() -> None:
             for line in rep.summary().splitlines()[1:]:
                 print(f"      {line.strip()}")
 
-    print("-" * 88)
+    print("-" * 105)
     tail = f", {skipped} not judged (no ruleset)" if skipped else ""
     print(f"{passed} glass, {failed} rejected{tail}")
     if failed:

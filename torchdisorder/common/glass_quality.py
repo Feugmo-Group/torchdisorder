@@ -101,6 +101,7 @@ __all__ = [
     "sublattice_disorder",
     "forbidden_contacts",
     "noise_floor",
+    "speciation",
 ]
 
 # Placed in the observed gap between glass (4-5, 0.12-0.13) and crystal
@@ -188,6 +189,10 @@ GLASS_SYSTEMS: dict[str, dict] = {
             # different: sulfur can detach without pairing up.
             ForbiddenRule("unbonded", "S", "P", 2.8, "P-free sulfur"),
         ],
+        # Reported beside the gates, never gated on -- see `speciation`. Present
+        # because the counts above cannot tell a real P2S6(4-) unit from P(V)
+        # reduction, and for Li-P-S that distinction is the whole question.
+        "speciation": {"central": "P", "ligand": "S"},
     },
 }
 
@@ -265,6 +270,11 @@ class GlassReport:
     """The limit ``long_std`` was actually judged against."""
     counts: dict = field(default_factory=dict)
     """Rule label -> number of offending atoms/pairs found."""
+    speciation: dict = field(default_factory=dict)
+    """Unit -> fraction of central atoms in it, from :func:`speciation`.  Empty
+    when the system has no speciation rule.  **Diagnostic only** -- it never
+    contributes to the verdict, because published models of the same material
+    disagree too much to support a threshold.  Read it beside the disorder gate."""
     chemistry_ok: bool = True
     disorder_ok: bool = True
     range_ok: bool = True
@@ -299,6 +309,11 @@ class GlassReport:
         if self.counts:
             found = ", ".join(f"{v} {k}" for k, v in self.counts.items())
             lines.append(f"  chemistry: {found}")
+        if self.speciation:
+            # Labelled "diagnostic" in the output itself, so nobody reads a
+            # speciation that looks wrong as though the verdict rested on it.
+            spec = ", ".join(f"{k} {100 * v:.0f}%" for k, v in self.speciation.items())
+            lines.append(f"  speciation (diagnostic, not gated): {spec}")
         for f in self.failures:
             lines.append(f"  - {f}")
         for w in self.warnings:
@@ -424,6 +439,116 @@ def forbidden_contacts(atoms, rules) -> dict:
     return counts
 
 
+def speciation(atoms, central: str = "P", ligand: str = "S",
+               bond_cutoff: float = 2.5, homo_cutoff: float = 2.8) -> dict:
+    """Classify every ``central`` atom by the structural unit it belongs to.
+
+    Returns ``{"counts": {unit: n}, "fractions": {unit: f}, "n_central": int}``
+    where the units are ``PS4``, ``P2S7``, ``P2S6`` and ``other``, and fractions
+    are **per central atom** (not per unit -- see the note below, it is an easy
+    factor-of-two trap).
+
+    Why this exists
+    ---------------
+    It replaces reading raw defect counts as a chemistry verdict, which is wrong
+    in two ways at once. Counts are *extensive*: the same a-Li3PS4 model shows 2
+    P-P pairs in a 62-P cell and **121** in a 1111-P cell, so any absolute
+    threshold is a statement about cell size rather than chemistry. And a count
+    *conflates opposite phenomena*: the P-P bond in a genuine P2S6(4-) unit and
+    the P-P bond left by a potential reducing P(V) to P(IV) are the same number
+    and opposite meanings. Speciation fractions are intensive, are what 31P NMR
+    measures, and separate the two cases by topology rather than by tally.
+
+    Classification is by local topology alone, which is what makes it applicable
+    to a structure that arrives as bare coordinates:
+
+    ==========  =========================================================
+    ``PS4``     4 ligands, none bridging, no homonuclear neighbour
+    ``P2S7``    4 ligands, exactly 1 bridging, no homonuclear neighbour
+    ``P2S6``    3 ligands, none bridging, exactly 1 homonuclear neighbour
+    ``other``   anything else -- under-coordinated, over-bridged, chained
+    ==========  =========================================================
+
+    A ligand is *bridging* when it touches two or more central atoms.
+
+    Validation
+    ----------
+    Checked atom-by-atom against a structure where the answer is known
+    independently: the PCCP class2 force-field a-Li3PS4 model encodes its
+    speciation in LAMMPS atom types, and this classifier reproduces all
+    **1111 / 1111** P assignments (647 PS4, 242 P2S6, 222 P2S7) from geometry
+    alone. That model's fixed bond topology makes it useless as *evidence* about
+    what speciation a real glass has -- the answer was an input -- but it is
+    exactly that fixed topology which makes it a ground-truth test fixture.
+
+    Do not gate on this
+    -------------------
+    Published models of the *same* material disagree far too much to support a
+    threshold: by P atom, a-Li3PS4 reads 58% PS4 (PCCP), 76% (Staacke, 500 K) and
+    90% (Staacke, as-quenched), against ~50% implied by the 6:2:1 literature
+    ratio. A structure at 90% PS4 is a genuine glass by g(r) and one at 98% is
+    not, so speciation cannot separate them on its own. Report it beside the
+    disorder gate; let a human read the two together.
+
+    Note on 6:2:1
+    -------------
+    The published PS4 : P2S6 : P2S7 ratio counts *units*. Per phosphorus it is 6
+    x 1P : 2 x 2P : 1 x 2P = 6 : 4 : 2 of 12 P, i.e. **50% / 33% / 17%** -- not
+    67 / 22 / 11. Compare like with like.
+    """
+    from ase.neighborlist import neighbor_list
+
+    z = np.array(atoms.get_chemical_symbols())
+    n = len(atoms)
+    units = ("PS4", "P2S7", "P2S6", "other")
+    counts = dict.fromkeys(units, 0)
+    n_central = int((z == central).sum())
+    if n_central == 0:
+        return {"counts": counts, "fractions": dict.fromkeys(units, float("nan")),
+                "n_central": 0}
+
+    i, j = neighbor_list("ij", atoms, float(bond_cutoff))
+    is_bond = (z[i] == central) & (z[j] == ligand)
+    # Ligands touching >= 2 central atoms are bridging; this is what separates
+    # P2S7 (one bridging S) from an isolated PS4 with the same ligand count.
+    central_per_ligand = np.bincount(j[is_bond], minlength=n)
+    n_ligands = np.bincount(i[is_bond], minlength=n)
+    bridging = is_bond & (central_per_ligand[j] >= 2)
+    n_bridging = np.bincount(i[bridging], minlength=n)
+
+    ii, jj = neighbor_list("ij", atoms, float(homo_cutoff))
+    is_homo = (z[ii] == central) & (z[jj] == central)
+    n_homo = np.bincount(ii[is_homo], minlength=n)
+
+    for k in np.flatnonzero(z == central):
+        lig, br, homo = n_ligands[k], n_bridging[k], n_homo[k]
+        if homo == 0 and lig == 4 and br == 0:
+            counts["PS4"] += 1
+        elif homo == 0 and lig == 4 and br == 1:
+            counts["P2S7"] += 1
+        elif homo == 1 and lig == 3 and br == 0:
+            counts["P2S6"] += 1
+        else:
+            counts["other"] += 1
+
+    return {
+        "counts": counts,
+        "fractions": {u: counts[u] / n_central for u in units},
+        "n_central": n_central,
+    }
+
+
+def _speciation_fractions(spec: dict | None, atoms) -> dict:
+    """Speciation fractions for a system that defines them, else ``{}``.
+
+    Split out of :func:`assess_glass` only to keep its branch count under the
+    complexity limit; it carries no logic of its own.
+    """
+    if not spec or not spec.get("speciation"):
+        return {}
+    return speciation(atoms, **spec["speciation"])["fractions"]
+
+
 def assess_glass(
     structure,
     system: str | None = None,
@@ -527,14 +652,32 @@ def assess_glass(
         #     and 3.47 at 1728 Si. A pure ratio test would fail large glasses.
         #
         # Crystals are not rescued by either: they sit 14-32x over their floor.
-        # Measuring the floor costs a second g(r) over a shuffled cell, so skip it
-        # when it cannot change the answer: the ceiling is max(absolute, k*noise),
-        # which is never below the absolute limit, so a std already under that
-        # limit passes whatever the noise turns out to be. This makes the common
-        # case -- a good glass, std ~ 0.13 against a limit of 0.5 -- free, and
-        # pays only when the verdict is genuinely in doubt.
+        #
+        # The floor is measured on EVERY assessment, including passes, and that
+        # is worth one extra g(r) over a shuffled cell. It was once skipped when
+        # it could not change the verdict -- the ceiling is max(absolute,
+        # k*noise), so a std already under the absolute limit passes whatever the
+        # noise turns out to be -- but a verdict is not the only output. Skipping
+        # it left `noise` nan on exactly the runs that passed, so `summary()` fell
+        # back to quoting the flat limit and every good result was reported
+        # against the wrong yardstick. Two real misreadings came from this:
+        #
+        #   - lips70 @ 1200 K printed "std = 0.489 (limit 0.500)", reading as a
+        #     2% squeak. Its floor is 0.312, so it passed at 1.57x excess against
+        #     an effective ceiling of 0.624 -- a comfortable margin.
+        #   - GeO2 with a 10 ps superheat printed "std = 0.346 (limit 0.500)" and
+        #     was taken for a glass. At 4.04x its floor of 0.086 it is partially
+        #     melted, well outside the 1.6-3.5x band glasses occupy.
+        #
+        # The ratio is the size-independent number and the only one comparable
+        # between a 1728-atom oxide sublattice and 96 P; the raw std is not.
+        # Report it always. Note this is deliberately reporting only -- the ratio
+        # does NOT gate, because it grows with sublattice size (the same silica
+        # glass scores 1.80 at 375 Si and 3.47 at 1728 Si), so any fixed ratio
+        # threshold would repeat the size-blindness this whole block exists to
+        # fix. Read it against the benchmarks; do not turn it into a limit.
         ceiling = long_std_ceiling
-        if check_noise and dis["long_std"] >= long_std_ceiling:
+        if check_noise:
             floor = noise_floor(atoms, species, rmax=rmax, r_long=r_long, dr=dr)
             ceiling = max(long_std_ceiling, noise_multiple * floor)
         if not (dis["long_std"] < ceiling):
@@ -566,6 +709,10 @@ def assess_glass(
         long_std=dis["long_std"],
         r_long=r_long,
         counts=counts,
+        # Computed after the verdict is already settled and deliberately not fed
+        # back into it: a diagnostic for whoever reads the report, not a
+        # criterion. See `speciation` for why no threshold is defensible.
+        speciation=_speciation_fractions(spec, atoms),
         chemistry_ok=chemistry_ok,
         disorder_ok=disorder_ok,
         range_ok=range_ok,

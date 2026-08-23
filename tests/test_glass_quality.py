@@ -21,6 +21,7 @@ from torchdisorder.common.glass_quality import (
     assess_glass,
     forbidden_contacts,
     partial_rdf,
+    speciation,
     sublattice_disorder,
 )
 
@@ -335,3 +336,180 @@ def test_published_models_agree_with_our_best():
     a = sublattice_disorder(read(str(ours)), "Si")["long_std"]
     b = sublattice_disorder(read(str(published)), "Si")["long_std"]
     assert a == pytest.approx(b, abs=0.05), f"ours {a:.3f} vs published {b:.3f}"
+
+
+def _tripod(origin, axis, bond=2.05):
+    """Three ligand positions completing a tetrahedron whose fourth bond is `axis`.
+
+    The remaining three bonds sit at the tetrahedral angle from `axis`, i.e. with
+    component -1/3 along it.  Used to build speciation fixtures analytically so
+    they do not depend on any data file.
+    """
+    axis = np.asarray(axis, float)
+    axis /= np.linalg.norm(axis)
+    # any two unit vectors perpendicular to `axis`
+    tmp = np.array([0.0, 0.0, 1.0]) if abs(axis[2]) < 0.9 else np.array([1.0, 0.0, 0.0])
+    u = np.cross(axis, tmp)
+    u /= np.linalg.norm(u)
+    v = np.cross(axis, u)
+    out = []
+    for theta in (0.0, 2 * np.pi / 3, 4 * np.pi / 3):
+        d = -axis / 3.0 + np.sqrt(8.0) / 3.0 * (np.cos(theta) * u + np.sin(theta) * v)
+        out.append(np.asarray(origin, float) + bond * d)
+    return out
+
+
+def _speciation_fixture():
+    """One PS4, one P2S7 and one P2S6 unit, far apart in a big box.
+
+    Built by construction rather than taken from a file, so the expected answer
+    is known exactly: 1 P in PS4, 2 in P2S7, 2 in P2S6.
+    """
+    sym, pos = [], []
+
+    # PS4: P at centre, four S at tetrahedral corners.
+    d = 2.05 / np.sqrt(3.0)
+    sym.append("P")
+    pos.append([0.0, 0.0, 0.0])
+    for c in ([d, d, d], [d, -d, -d], [-d, d, -d], [-d, -d, d]):
+        sym.append("S")
+        pos.append(c)
+
+    # P2S7: two P bridged by a shared S, each carrying three terminal S.
+    # `axis` is the bond the P already has, so it points from the P *towards* its
+    # partner -- hence -sign here, not +sign. Getting this backwards aims the
+    # tripod at the partner and the unit classifies as "other".
+    o = np.array([15.0, 0.0, 0.0])
+    sym.append("S")
+    pos.append(o)                       # bridging S
+    for sign in (-1.0, 1.0):
+        p = o + np.array([sign * 2.05, 0.0, 0.0])
+        sym.append("P")
+        pos.append(p)
+        for t in _tripod(p, [-sign, 0.0, 0.0]):
+            sym.append("S")
+            pos.append(t)
+
+    # P2S6: two P bonded directly, each carrying three terminal S.
+    o = np.array([0.0, 15.0, 0.0])
+    for sign in (-1.0, 1.0):
+        p = o + np.array([0.0, sign * 1.1, 0.0])
+        sym.append("P")
+        pos.append(p)
+        for t in _tripod(p, [0.0, -sign, 0.0]):
+            sym.append("S")
+            pos.append(t)
+
+    atoms = Atoms(symbols=sym, positions=np.array(pos), cell=[30.0] * 3, pbc=True)
+
+    # Self-check the fixture: a silently malformed unit would make the classifier
+    # look wrong when it is the test that is broken -- which is what happened.
+    from ase.neighborlist import neighbor_list
+
+    i, j, d = neighbor_list("ijd", atoms, 3.0)
+    z = np.array(atoms.get_chemical_symbols())
+    ps = d[(z[i] == "P") & (z[j] == "S")]
+    ss = d[(z[i] == "S") & (z[j] == "S")]
+    assert ps.min() == pytest.approx(2.05, abs=1e-6), f"P-S is {ps.min():.3f} A"
+    # Empty is the good case here -- well-separated units have no S-S pair inside
+    # 3 A at all -- so guard the reduction rather than letting it raise.
+    assert ss.size == 0 or ss.min() > 2.4, f"S-S contact at {ss.min():.3f} A"
+    return atoms
+
+
+def test_speciation_classifies_the_three_units():
+    """The classifier must separate PS4, P2S7 and P2S6 by topology alone.
+
+    P2S7 and PS4 have the SAME ligand count and are told apart only by whether a
+    ligand bridges
+    P2S6 is the one with a P-P bond.  Collapsing any pair of
+    these is what made raw defect counts useless as a chemistry verdict.
+    """
+    got = speciation(_speciation_fixture())
+    assert got["n_central"] == 5
+    assert got["counts"] == {"PS4": 1, "P2S7": 2, "P2S6": 2, "other": 0}
+
+
+def test_speciation_fractions_are_per_central_atom():
+    """Fractions must be per P, not per unit -- an easy factor-of-two error.
+
+    The fixture holds three *units* but five *phosphorus atoms*, so PS4 is 1/5
+    and not 1/3.  The published 6:2:1 ratio counts units and must be converted
+    before comparison
+    this test pins which convention the code uses.
+    """
+    fr = got = speciation(_speciation_fixture())["fractions"]
+    assert fr["PS4"] == pytest.approx(1 / 5)
+    assert fr["P2S7"] == pytest.approx(2 / 5)
+    assert fr["P2S6"] == pytest.approx(2 / 5)
+    assert sum(got.values()) == pytest.approx(1.0)
+
+
+def test_speciation_never_changes_the_verdict():
+    """Speciation is a diagnostic.  It must not gate, in either direction.
+
+    Published models of a-Li3PS4 disagree from 58% to 90% PS4 by phosphorus, so
+    no threshold is defensible
+    a structure at 90% is a real glass by g(r) and
+    one at 98% is not.  Turning a soft expectation into a hard criterion is how
+    <CN> passed three unmelted crystals.
+    """
+    rng = np.random.default_rng(0)
+    # A disordered, chemically clean Li-P-S cell built from intact PS4 units:
+    # speciation reads 100% PS4, far outside every published ratio.
+    sym, pos = [], []
+    d = 2.05 / np.sqrt(3.0)
+    corners = np.array([[d, d, d], [d, -d, -d], [-d, d, -d], [-d, -d, d]])
+    # 45 A rather than 34: the 6.5 A exclusion below is a hard-sphere condition,
+    # so at high density it builds a correlation peak of its own and max g climbs
+    # over the 8.0 ceiling -- the fixture would then fail the disorder gate for a
+    # reason that has nothing to do with what is being tested.
+    L = 45.0
+    centres = rng.random((90, 3)) * L
+
+    def far(c, k):
+        # Minimum image: without it two units can sit adjacent across the
+        # periodic boundary, their ligands cross-coordinate, and the fixture
+        # silently stops being all-PS4.
+        dv = c - k
+        dv -= L * np.round(dv / L)
+        return np.linalg.norm(dv) > 6.5
+
+    keep = []
+    for c in centres:
+        if all(far(c, k) for k in keep):
+            keep.append(c)
+    for c in keep:
+        sym.append("P")
+        pos.append(c)
+        for corner in corners:
+            sym.append("S")
+            pos.append(c + corner)
+    atoms = Atoms(symbols=sym, positions=np.array(pos), cell=[L] * 3, pbc=True)
+
+    rep = assess_glass(atoms, "LiPS")
+    # 100% PS4 is outside every published a-Li3PS4 ratio (58-90%), so if
+    # speciation gated at all, this structure would be rejected.
+    assert rep.speciation["PS4"] == pytest.approx(1.0), "fixture should be all PS4"
+    assert rep.disorder_ok and rep.chemistry_ok, rep.summary()
+    assert rep, "anomalous speciation must not reject a structure that passes both gates"
+    assert not any("specia" in f.lower() for f in rep.failures)
+
+
+def test_speciation_matches_an_independently_labelled_structure():
+    """Ground truth: a model whose speciation was assigned, not inferred.
+
+    The PCCP class2 force-field a-Li3PS4 encodes its speciation in LAMMPS atom
+    types, giving 647 PS4 / 242 P2S6 / 222 P2S7 phosphorus.  Its fixed bond
+    topology makes it useless as evidence about what a real glass contains --
+    the answer was an input -- but that is exactly what makes it a test fixture.
+    Skips when the file is absent: its licence is unresolved, so it is not
+    committed.  See the note in .gitignore for where to fetch it.
+    """
+    path = DATA / "ref_aLi3PS4_pccp.cif"
+    if not path.exists():
+        pytest.skip("PCCP reference structure not present")
+    from ase.io import read
+
+    got = speciation(read(str(path)))["counts"]
+    assert got == {"PS4": 647, "P2S6": 242, "P2S7": 222, "other": 0}

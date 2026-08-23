@@ -56,3 +56,18 @@ outputs/retired/*
 
 # Outreach drafts: contain third-party email addresses, and this repo is public.
 COLLABORATION_EMAILS.md
+
+# Third-party reference glasses, held out pending a licence check.
+#
+# a-Li3PS4 and a-Li7P3S11 from the PCCP class2 force-field study, converted to
+# CIF here. They are used as test fixtures only: the a-Li3PS4 model encodes its
+# speciation in LAMMPS atom types, which makes it ground truth for the
+# `speciation` classifier (647 PS4 / 242 P2S6 / 222 P2S7 P atoms), and both are
+# read as literature comparison points for the disorder gate. They are never
+# inputs to a result.
+#
+# Not committed because they came from a paper's supplementary data and the
+# terms are unresolved. Re-derive them from the published deposit rather than
+# passing the CIFs around. Tests that need them skip when they are absent --
+# see tests/test_glass_quality.py::test_speciation_matches_an_independently_labelled_structure.
+data/crystal-structures/ref_a*_pccp.cif
