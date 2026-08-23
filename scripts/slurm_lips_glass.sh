@@ -100,7 +100,19 @@ $PY -c "import torch; print('CUDA:', torch.cuda.is_available())"
 export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-6}"
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
-SEED="data/crystal-structures/${LABEL}_from_crystal.cif"
+# SEED is overridable because the default seed is not always the one you want.
+# lips75's default came from Li3PS4_gamma.cif, an 864-atom block whose cell is
+# 18.5 x 24.2 x 39.2 A -- so elongated that assess_glass clamps rmax to half the
+# short axis (9.23 A) and measures its disorder over a NARROWER r-window than
+# lips70's, making the two numbers incomparable at exactly the moment we wanted
+# to compare them. lips75_compact_from_crystal.cif is the same crystal retiled
+# 4x3x2 from the primitive cell: 768 atoms, 96 P (matching lips70 exactly),
+# 24.6 x 24.2 x 26.1 A, so rmax stays at the full 10 A.
+#
+# Do NOT reach for Li3PS4_beta.cif to build such a seed -- that file is broken:
+# eight Li sit 0.776 A from a sulfur and its P-S bonds are 1.748 A against a real
+# PS4 value of ~2.05 A. make_crystal_seed rejects it outright.
+SEED="${SEED:-data/crystal-structures/${LABEL}_from_crystal.cif}"
 # TAG keeps a second arm (e.g. a different foundation model) from overwriting
 # the first, so the two can be compared rather than one silently replacing.
 OUT="data/crystal-structures/${LABEL}_glass${TAG:-}.cif"
