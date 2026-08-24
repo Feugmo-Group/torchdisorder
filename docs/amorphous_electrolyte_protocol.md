@@ -168,6 +168,35 @@ The S–S rule was added late and mattered: LiPS-25 output showed 12 S–S bonds
 2.03–2.07 Å accounting for 16 of its 18 "P-free sulfurs". The older rule was
 detecting the *consequence* while naming the wrong cause. **Name the mechanism.**
 
+> ⚠️ **Known false negative — Gate A rejects a published glass.** Run against the
+> PCCP class2 a-Li₃PS₄ model, this gate FAILS it on 121 P–P pairs. Those pairs
+> are genuine P₂S₆ units: 22 % of its phosphorus sits in P₂S₆ by speciation, and
+> every P₂S₆ contains one P–P bond by construction. **Do not trust a Gate A
+> rejection on P–P alone.**
+>
+> The discriminator is orphaned sulfur, not the P–P count. A P–P bond *alone* is
+> P₂S₆; a P–P bond *together with* free S²⁻ is P(V)→P(IV) disproportionation:
+>
+> | | P–P pairs | P-free S |
+> |---|---|---|
+> | published a-Li₃PS₄ (legitimate) | 121 | **0** |
+> | published a-Li₇P₃S₁₁ (legitimate) | 91 | **0** |
+> | our reduced MACE runs | 7–19 | **32–39 (9–11 %)** |
+>
+> Counts are also *extensive* — the same model shows 2 P–P at 62 P and 121 at
+> 1111 P — so any absolute threshold is a statement about cell size.
+>
+> **This gate is being replaced by a speciation gate**, which enumerates the
+> *recognized* units of a chemistry rather than its forbidden contacts, and tests
+> intensive fractions: orphaned ligands, and central atoms in no recognized unit.
+> That inversion is what makes the gate survive mixed anions — in Li₃PS₄₋ₓOₓ the
+> mixed PS₃O / PS₂O₂ / PSO₃ tetrahedra *are* the material, an O and an S on the
+> same P sit ~2.7 Å apart as a legitimate edge, and no distance cutoff can
+> separate that from phase separation. Topology can. A forbidden list also only
+> catches failures you anticipated; anything unclassifiable lands in `other`,
+> which is what a novel chemistry needs. See `speciation()` in
+> `glass_quality.py`, already implemented and reported as a diagnostic.
+
 ### Gate B — disorder (did it actually melt?)
 
 Central-atom sublattice g(r), judged **beyond 6 Å**. Long-range order is what
@@ -196,6 +225,48 @@ published glass reference*.
 a pure ratio test fails large glasses, since noise falls as 1/N_a while a glass
 holds std ≈ 0.13, so the same silica scores 1.80 at 375 Si and 3.47 at 1728 Si.
 Crystals are rescued by neither, sitting 14–32× over their own floor.
+
+**The ratio is not comparable between cell sizes either — calibrate before you
+judge.** Noise falls as 1/√N_a while a glass holds roughly constant structural
+signal, so the *same* material scores higher in a bigger cell. The published
+a-Li₃PS₄ reads **4.15× at 1111 P and 1.36× at ~100 P**. Comparing a candidate
+against a published reference measured in its own much larger cell compares
+nothing, and it is easy to do by accident — an early claim here that our GeO₂
+"beat the published NNP model, 1.86× vs 2.38×" was exactly this mistake, and it
+reverses once both are measured at the same size.
+
+So for any new chemistry, carve a published model down to the cell size you
+actually generate and measure *that*:
+
+```bash
+poetry run python scripts/calibrate_disorder_gate.py \
+    --reference data/crystal-structures/sio2_glass_gap.cif \
+    --like      data/crystal-structures/SiO2_mq_hot_mpa.cif \
+    --species Si
+```
+
+(The two `ref_a*_pccp.cif` Li-P-S references used for the Li rows below are
+**not** in the repo — their licence is unresolved, so they must be re-derived
+from the published supplementary data. See the note in `.gitignore`. The oxide
+references *do* ship, so the command above runs on a fresh clone.)
+
+It reports a bracket, because carving has a seam that scrambles genuine
+long-range correlation and therefore *understates* a real glass (a-Li₃PS₄:
+signal 0.344 full-cell, 0.256 carved). Lower bound = carved; upper bound =
+full-cell signal recombined with the carved noise floor.
+
+| chemistry | reference model | real-glass band **at our cell size** | ours | standing |
+|---|---|---|---|---|
+| SiO₂ | GAP (Erhard 2022) | 1.54–1.93× | 1.80× | inside |
+| GeO₂ | NNP (Kasamatsu 2024) | 1.37–1.73× | 1.86× | just above |
+| Li₇P₃S₁₁ | PCCP class2 | 1.29–1.45× | 1.57× | just above |
+| Li₃PS₄ | PCCP class2 | 1.36–1.60× | 2.49× best of 10 | **fails** |
+
+Read "just above" as *at the ordered edge of what a real glass looks like*, not
+as a failure — the sub-box spread is ±0.10–0.18 and our side is a single
+measurement. Note also that the Li-P-S references are fixed-bond-topology force
+field models, which cannot recrystallise and so may be more disordered than a
+real glass; the oxide references carry no such caveat.
 
 **Fail closed.** A cell too small to have a beyond-6 Å range must FAIL, not pass:
 crystalline Li₃PS₄ is 32 atoms in a 6 Å cell, giving one histogram bin whose std
@@ -332,13 +403,24 @@ correct the criterion on evidence, not to bend the model toward it.
 
 ---
 
-## Current status (2026-08-18)
+## Current status (2026-08-24)
+
+All disorder figures below are judged against that chemistry's own reference band
+at matched cell size, per Gate B.
 
 | System | Status |
 |---|---|
-| **SiO₂** | ✅ Done. `SiO2_mq_hot_mpa.cif` (4.54 / 0.143 vs published GAP 4.61 / 0.134) |
-| **GeO₂** | ⏳ Single-temperature route exhausted; two-stage melt in flight (job 1252) |
-| **Li–P–S** | ⏳ Melting solved by LiPS-25; blocked on polysulfide across both compositions |
+| **SiO₂** | ✅ Done. `SiO2_mq_hot_mpa.cif` — 1.80×, inside the 1.54–1.93× band. The strongest result. |
+| **GeO₂** | ✅ Done. `GeO2_glass_mq_o2repaired.cif` — 1.86× vs a 1.37–1.73× band. **Hand-repaired**, not raw simulation output: see `PROVENANCE_GeO2_glass_mq_o2repaired.md` and `scripts/repair_o2_defect.py`. Melt-quench reliably leaves 1–3 trapped O₂; the repair is licensed only because the molecule does not re-form under relaxation. |
+| **Li₇P₃S₁₁** | ✅ Done. `lips70_glass_lips25_1200.cif` — 1.57× vs a 1.29–1.45× band. Unmodified melt-quench output, LiPS-25 at 1200 K. |
+| **Li₃PS₄** | ❌ Not reachable by this route. 10 runs; best 2.49× against a 1.36–1.60× target. Cause understood: the 1200 K liquid never disorders (melt-stage std plateaus at 0.60–0.70 and stays), and hotter melts cost chemistry — S–S bonds appear in under 1 ps above ~1600 K. A superheat scan at 1361–1736 K made it *worse*, monotonically. |
+| **Li₄P₂S₇** | Untouched; its seed is separately broken. |
+
+**The Li₃PS₄ negative result is calibrated, not merely repeated.** The gate was
+the prime suspect and was cleared: a genuine a-Li₃PS₄ at the same cell size
+scores 1.36–1.60×, so the rejections are real. Note 75Li₂S·25P₂S₅ is made
+experimentally by ball-milling rather than melt-quenching — a poor glass former
+at that composition — so this may be the simulation reproducing real physics.
 
 ## See also
 

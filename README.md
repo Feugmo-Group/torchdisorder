@@ -143,6 +143,21 @@ trainer now refuses to start from a structure with overlapping atoms. The suppor
 route from a crystal to a physically plausible glass is an MLIP melt-quench, which
 has been validated against published models for both SiO₂ and GeO₂.
 
+### The validated structures
+
+Three glasses ship with the repo, each judged against a published model of the
+same chemistry **carved to the same cell size** (ratios are not comparable
+between cell sizes — see `docs/amorphous_electrolyte_protocol.md` §5):
+
+| file | system | disorder | real-glass band | notes |
+|---|---|---|---|---|
+| `SiO2_mq_hot_mpa.cif` | a-SiO₂ | 1.80× | 1.54–1.93× | raw melt-quench output |
+| `GeO2_glass_mq_o2repaired.cif` | a-GeO₂ | 1.86× | 1.37–1.73× | **hand-repaired** — see its `PROVENANCE_*.md` |
+| `lips70_glass_lips25_1200.cif` | a-Li₇P₃S₁₁ | 1.57× | 1.29–1.45× | raw output, LiPS-25 potential |
+
+a-Li₃PS₄ is **not** achieved and no file claims to be one — ten runs reach 2.49×
+against a 1.36–1.60× target. The protocol doc explains why.
+
 ### Reproducing the validated SiO₂ and GeO₂ glasses
 
 ```bash
@@ -179,8 +194,27 @@ Melt temperature is chemistry-specific. 4000 K suits the oxides; Li₂S–P₂S�
 ### Verifying the result
 
 The health gate built into the build script only proves the structure is not broken —
-a hot crystal passes it too. To show you have a *glass*, score it against a published
-model on quantities the route never fitted:
+a hot crystal passes it too. **⟨CN⟩ cannot tell a glass from an unmelted crystal: a
+crystal that never melted scores a *perfect* ⟨CN⟩.** Start with the two-gate audit:
+
+```bash
+# chemistry + disorder gates, with the noise-aware ratio
+poetry run python scripts/assess_glass.py \
+    data/crystal-structures/SiO2_mq_hot_mpa.cif \
+    data/crystal-structures/GeO2_glass_mq_o2repaired.cif \
+    data/crystal-structures/lips70_glass_lips25_1200.cif --verbose
+
+# what a REAL glass of this chemistry scores at your cell size
+poetry run python scripts/calibrate_disorder_gate.py \
+    --reference data/crystal-structures/sio2_glass_gap.cif \
+    --like      data/crystal-structures/SiO2_mq_hot_mpa.cif --species Si
+```
+
+Read the `x noise` column, not the raw `std>6`: the raw value is not comparable
+between chemistries or cell sizes. Run the calibration before trusting any
+threshold on a chemistry it was not tuned for.
+
+Then score against a published model on quantities the route never fitted:
 
 ```bash
 # numbers
