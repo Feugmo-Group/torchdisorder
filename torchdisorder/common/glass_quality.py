@@ -21,11 +21,28 @@ and a printed warning turned out to be no substitute for a check.
 Two independent tests, both required
 ------------------------------------
 ``chemistry``
-    Species that should not exist, counted explicitly.  A mean hides them: seven
-    free O2 molecules in a 3000-atom GeO2 cell move <CN> by less than 0.01.  The
-    rules are per-system because the forbidden species are -- molecular O2 at
-    1.21 A in an oxide, P-P pairs and P-free sulfur in a thiophosphate, both of
-    which are the signature of a universal potential reducing P(V) to P(IV).
+    Is the network chemically intact?  Two halves, both required.
+
+    *Speciation* (:func:`speciation`) enumerates the units a chemistry
+    legitimately forms, classifies every central atom by local topology, and
+    gates on the residual: the fraction of ligands no central atom claims, and
+    the fraction of central atoms in no recognized unit.  Both are intensive, so
+    neither moves when the cell is doubled.  The distribution over the valid
+    units is reported but never gated -- published models of a-Li3PS4 span 58%
+    to 90% PS4, so no threshold on it is defensible.
+
+    *Absolute rules* (:class:`ForbiddenRule`) count species that are
+    illegitimate at any concentration: molecular O2 at 1.21 A in an oxide, an
+    S-S polysulfide bond in a thiophosphate.  A mean hides these -- seven free O2
+    in a 3000-atom GeO2 cell move <CN> by less than 0.01 -- and so does a
+    fraction, since a single O2 among 750 O is 0.27% orphan oxygen and still a
+    broken oxide.
+
+    The split is what each half can see.  An absolute count catches a rare but
+    fatal species; a fraction catches network damage nobody enumerated in
+    advance.  Getting this backwards is what rejected the published a-Li3PS4
+    reference: its 121 "P-P pairs" were the genuine P2S6(4-) units the material
+    contains, counted by a rule that could not tell them from P(V) reduction.
 
 ``disorder``
     The central-atom sublattice g(r), judged *beyond 6 A*.  Long-range order is
@@ -96,6 +113,10 @@ import numpy as np
 __all__ = [
     "GlassReport",
     "GLASS_SYSTEMS",
+    "MAX_ORPHAN_FRACTION",
+    "MAX_UNCLASSIFIED_FRACTION",
+    "ForbiddenRule",
+    "RecognizedUnit",
     "assess_glass",
     "partial_rdf",
     "sublattice_disorder",
@@ -139,6 +160,14 @@ class ForbiddenRule:
     ``"unbonded"``
         Atoms of ``a`` with no ``b`` neighbour within ``rmax``.  Detects a
         network former shedding its ligands: free S(2-) in Li-P-S.
+
+    Reserved for species that are illegitimate at *any* concentration, because
+    the count is absolute and therefore extensive -- doubling the cell doubles
+    it.  Anything that a real glass contains at some finite fraction belongs in
+    a :class:`RecognizedUnit` list instead, judged by intensive fractions.  The
+    ``"P-P pairs"`` rule was the counter-example that forced this split: it
+    rejected the published a-Li3PS4 reference, whose P-P bonds are the genuine
+    P2S6(4-) units the material is known to contain.
     """
 
     kind: str
@@ -146,6 +175,82 @@ class ForbiddenRule:
     b: str
     rmax: float
     label: str
+
+
+@dataclass(frozen=True)
+class RecognizedUnit:
+    """A structural unit a central atom may legitimately belong to.
+
+    Matching is on local topology alone -- ligand count, how many of those
+    ligands bridge to another central atom, and how many homonuclear central
+    neighbours -- never on ligand *species*.  That blindness is the point: a
+    mixed-anion unit such as PS3F(2-) or PO2S2(3-) is the same topology as PS4
+    and matches the same entry, so supporting a new anion needs no new rule.
+    Enumerating what is recognized also fails safe in a way that enumerating
+    what is forbidden does not: an unforeseen species lands in ``other`` and is
+    counted against the structure, rather than passing unnoticed.
+
+    Each field is a tuple of accepted values, so one entry can cover a unit with
+    a range of connectivities.
+    """
+
+    label: str
+    n_ligands: tuple[int, ...]
+    n_bridging: tuple[int, ...]
+    n_homo: tuple[int, ...] = (0,)
+
+    def matches(self, n_ligands: int, n_bridging: int, n_homo: int) -> bool:
+        """True when a central atom with this local topology is this unit."""
+        return (n_ligands in self.n_ligands
+                and n_bridging in self.n_bridging
+                and n_homo in self.n_homo)
+
+
+# Ceilings on the two intensive chemistry measures.  Both are fractions, so
+# neither moves when the cell is doubled -- which is the whole reason they
+# replaced the absolute counts.
+#
+# Measured across every structure on hand (see `speciation` for the full table):
+#
+#                              orphan ligand   unclassified central
+#   accepted structures            0.00%            0.00 - 2.08%
+#   GeO2_mq (20 free O, bad)       2.67%            5.07%
+#
+# The orphan ceiling sits inside a 0.00 -> 2.67% gap and the unclassified one
+# inside 2.08 -> 5.07%.  The second gap is the narrower of the two and the
+# margin above lips70's 2.08% is about two of its 96 P, so a Li-P-S cell this
+# dilute is granular here: one further broken P moves the fraction by 1.04%.
+# That is a limit on resolution, not a bias -- a defect either exists or does
+# not -- but it is the reason to prefer a larger cell when the verdict is close.
+MAX_ORPHAN_FRACTION = 0.01
+MAX_UNCLASSIFIED_FRACTION = 0.04
+
+# Li-P-S network anions, by topology.  The first three are the classical
+# thiophosphate series; the fourth is the polymeric chain/ring unit, and leaving
+# it out is what made 6 of lips70's 96 P read as defects when they are ordinary
+# two-corner-sharing tetrahedra.
+_LIPS_UNITS = (
+    # Isolated orthothiophosphate: four terminal S.
+    RecognizedUnit("PS4", (4,), (0,)),
+    # Pyro dimer: one S bridges the two P.
+    RecognizedUnit("P2S7", (4,), (1,)),
+    # Polymeric (PS3-)n metathiophosphate chain or ring: two corners shared.
+    RecognizedUnit("PS3-chain", (4,), (2,)),
+    # Hypodiphosphate: three S and a genuine P-P bond.  This unit is precisely
+    # what the retired absolute "P-P pairs" rule could not tell apart from
+    # P(V) -> P(IV) reduction, since both show the same bond at the same length;
+    # the difference is the rest of the coordination shell, which is topology.
+    RecognizedUnit("P2S6", (3,), (0,), (1,)),
+)
+
+# Corner-sharing MO4 networks.  Both accepted references and both published ones
+# measure 96.5-99.7% four-fold fully bridging, with five-fold M as the only
+# populated minority (1.1-3.2%, and well documented in a-GeO2). Every remaining
+# topology is under 0.3%.
+_OXIDE_UNITS = (
+    RecognizedUnit("MO4", (4,), (4,)),
+    RecognizedUnit("MO5", (5,), (5,)),
+)
 
 
 # Per-system glass-quality rules.  Note this is deliberately *not* the literature
@@ -161,38 +266,44 @@ GLASS_SYSTEMS: dict[str, dict] = {
             # shortest physical O...O contact in a tetrahedron (2.63 A).
             ForbiddenRule("contact", "O", "O", 1.35, "O2 molecules"),
         ],
+        "chemistry": {"central": "Si", "ligands": ("O",), "units": _OXIDE_UNITS,
+                      "bond_cutoff": 2.2, "homo_cutoff": 2.6},
     },
     "GeO2": {
         "sublattice": "Ge",
         "forbidden": [
             ForbiddenRule("contact", "O", "O", 1.35, "O2 molecules"),
         ],
+        "chemistry": {"central": "Ge", "ligands": ("O",), "units": _OXIDE_UNITS,
+                      "bond_cutoff": 2.4, "homo_cutoff": 2.8},
     },
     "LiPS": {
         "sublattice": "P",
         "forbidden": [
-            # A P-P bond is the fingerprint of P(V) -> P(IV) reduction, which
-            # every universal potential tried so far does to a Li-P-S melt.
-            # Real P2S6(4-) does contain a P-P bond at ~2.2 A, so this counts
-            # occurrences rather than forbidding them outright -- see the note
-            # on `tolerated` below.
-            ForbiddenRule("contact", "P", "P", 2.8, "P-P pairs"),
             # An S-S bond at ~2.05 A is polysulfide: the potential has oxidised
             # sulfide to S2(2-) or an S-S bridge. Added after LiPS-25 lips70,
             # where 12 S-S bonds at 2.03-2.07 A accounted for 16 of the 18 P-free
             # sulfurs -- so "P-free sulfur" was detecting the consequence while
             # naming the wrong cause. Non-bonded S...S contacts start above 3.2 A,
             # so 2.4 A separates a real bond cleanly.
+            #
+            # This one stays absolute because polysulfide is never a legitimate
+            # constituent of a thiophosphate glass at any fraction.  The two
+            # rules that used to sit beside it did not meet that test and have
+            # moved into the speciation gate:
+            #
+            #   "P-P pairs"      counted the P-P bond of a real P2S6(4-) unit and
+            #                    the P-P bond of P(V) reduction identically, and
+            #                    so rejected the published a-Li3PS4 reference at
+            #                    121 pairs.  Now recognized as P2S6 by topology.
+            #   "P-free sulfur"  was the right failure mode but the wrong kind of
+            #                    number: an absolute count of a quantity that
+            #                    scales with cell size.  Now the intensive
+            #                    orphan-ligand fraction.
             ForbiddenRule("contact", "S", "S", 2.4, "S-S bonds (polysulfide)"),
-            # Sulfur with no phosphorus neighbour has left the network as free
-            # S(2-). Kept alongside the S-S rule because the two failures are
-            # different: sulfur can detach without pairing up.
-            ForbiddenRule("unbonded", "S", "P", 2.8, "P-free sulfur"),
         ],
-        # Reported beside the gates, never gated on -- see `speciation`. Present
-        # because the counts above cannot tell a real P2S6(4-) unit from P(V)
-        # reduction, and for Li-P-S that distinction is the whole question.
-        "speciation": {"central": "P", "ligand": "S"},
+        "chemistry": {"central": "P", "ligands": ("S",), "units": _LIPS_UNITS,
+                      "bond_cutoff": 2.5, "homo_cutoff": 2.8},
     },
 }
 
@@ -235,6 +346,7 @@ for _name in ("Li3PS4", "Li7P3S11", "Li4P2S7"):
     GLASS_SYSTEMS[_name] = {
         "sublattice": GLASS_SYSTEMS["LiPS"]["sublattice"],
         "forbidden": GLASS_SYSTEMS["LiPS"]["forbidden"],
+        "chemistry": GLASS_SYSTEMS["LiPS"]["chemistry"],
         "expected_cn": _GLASS_CN[_name][0],
         "cn_tol": _GLASS_CN[_name][1],
     }
@@ -272,9 +384,16 @@ class GlassReport:
     """Rule label -> number of offending atoms/pairs found."""
     speciation: dict = field(default_factory=dict)
     """Unit -> fraction of central atoms in it, from :func:`speciation`.  Empty
-    when the system has no speciation rule.  **Diagnostic only** -- it never
-    contributes to the verdict, because published models of the same material
-    disagree too much to support a threshold.  Read it beside the disorder gate."""
+    when the system declares no chemistry block.  The distribution over the
+    *recognized* units is diagnostic only -- published models of the same
+    material disagree too much to support a threshold on it.  The residual is
+    not: see ``unclassified_fraction``."""
+    orphan_fraction: float = float("nan")
+    """Ligand atoms with no central neighbour, as a fraction of all ligand atoms.
+    Gated against :data:`MAX_ORPHAN_FRACTION`."""
+    unclassified_fraction: float = float("nan")
+    """Central atoms matching no recognized unit, as a fraction of all central
+    atoms.  Gated against :data:`MAX_UNCLASSIFIED_FRACTION`."""
     chemistry_ok: bool = True
     disorder_ok: bool = True
     range_ok: bool = True
@@ -310,10 +429,18 @@ class GlassReport:
             found = ", ".join(f"{v} {k}" for k, v in self.counts.items())
             lines.append(f"  chemistry: {found}")
         if self.speciation:
-            # Labelled "diagnostic" in the output itself, so nobody reads a
-            # speciation that looks wrong as though the verdict rested on it.
+            # The split between the two is marked in the output itself: the
+            # distribution over recognized units is not gated and a reader must
+            # not take an unusual-looking one as the reason for a verdict, while
+            # the two residual fractions beside it are exactly what was judged.
             spec = ", ".join(f"{k} {100 * v:.0f}%" for k, v in self.speciation.items())
-            lines.append(f"  speciation (diagnostic, not gated): {spec}")
+            lines.append(f"  speciation (distribution not gated): {spec}")
+            lines.append(
+                f"  gated: orphan ligand {100 * self.orphan_fraction:.2f}% "
+                f"(limit {100 * MAX_ORPHAN_FRACTION:g}%), "
+                f"unclassified {100 * self.unclassified_fraction:.2f}% "
+                f"(limit {100 * MAX_UNCLASSIFIED_FRACTION:g}%)"
+            )
         for f in self.failures:
             lines.append(f"  - {f}")
         for w in self.warnings:
@@ -439,14 +566,22 @@ def forbidden_contacts(atoms, rules) -> dict:
     return counts
 
 
-def speciation(atoms, central: str = "P", ligand: str = "S",
-               bond_cutoff: float = 2.5, homo_cutoff: float = 2.8) -> dict:
+def speciation(atoms, central: str = "P", ligands: tuple = ("S",),
+               units: tuple = _LIPS_UNITS,
+               bond_cutoff: float = 2.5, homo_cutoff: float = 2.8,
+               ligand: str | None = None) -> dict:
     """Classify every ``central`` atom by the structural unit it belongs to.
 
-    Returns ``{"counts": {unit: n}, "fractions": {unit: f}, "n_central": int}``
-    where the units are ``PS4``, ``P2S7``, ``P2S6`` and ``other``, and fractions
-    are **per central atom** (not per unit -- see the note below, it is an easy
-    factor-of-two trap).
+    Returns ``{"counts": {unit: n}, "fractions": {unit: f}, "n_central": int,
+    "n_ligand": int, "orphan": int, "orphan_fraction": f,
+    "unclassified_fraction": f}``.  Unit fractions are **per central atom** (not
+    per unit -- see the note below, it is an easy factor-of-two trap).
+
+    ``units`` is a tuple of :class:`RecognizedUnit`, tried in order, first match
+    winning; a central atom matching none is counted as ``other``.  ``ligands``
+    may name several species at once, which is what lets one unit list cover a
+    mixed-anion glass: PS3F(2-) has the topology of PS4 and matches the same
+    entry.  ``ligand=`` is accepted as a deprecated singular alias.
 
     Why this exists
     ---------------
@@ -459,17 +594,38 @@ def speciation(atoms, central: str = "P", ligand: str = "S",
     and opposite meanings. Speciation fractions are intensive, are what 31P NMR
     measures, and separate the two cases by topology rather than by tally.
 
-    Classification is by local topology alone, which is what makes it applicable
-    to a structure that arrives as bare coordinates:
+    Classification is by local topology alone -- ligand count, bridging-ligand
+    count, homonuclear-neighbour count -- which is what makes it applicable to a
+    structure that arrives as bare coordinates.  A ligand is *bridging* when it
+    touches two or more central atoms.
 
-    ==========  =========================================================
-    ``PS4``     4 ligands, none bridging, no homonuclear neighbour
-    ``P2S7``    4 ligands, exactly 1 bridging, no homonuclear neighbour
-    ``P2S6``    3 ligands, none bridging, exactly 1 homonuclear neighbour
-    ``other``   anything else -- under-coordinated, over-bridged, chained
-    ==========  =========================================================
+    The two gated quantities
+    ------------------------
+    ``orphan_fraction``
+        Ligand atoms with no central neighbour, over all ligand atoms.  The
+        intensive replacement for the old absolute ``"P-free sulfur"`` count.
+    ``unclassified_fraction``
+        Central atoms matching no recognized unit, over all central atoms.
 
-    A ligand is *bridging* when it touches two or more central atoms.
+    Measured on every structure available, which is what set the ceilings in
+    :data:`MAX_ORPHAN_FRACTION` and :data:`MAX_UNCLASSIFIED_FRACTION`:
+
+        structure                        orphan   unclassified   truth
+        ref_aLi3PS4_pccp (published)      0.00%          0.00%   glass
+        ref_aLi7P3S11_pccp (published)    0.00%          0.08%   glass
+        lips70_glass_lips25_1200          0.00%          2.08%   glass
+        sio2_glass_gap (published)        0.00%          0.18%   glass
+        SiO2_mq_hot_mpa                   0.00%          0.27%   glass
+        geo2_glass_nnp (published)        0.00%          0.09%   glass
+        GeO2_glass_mq_o2repaired          0.00%          0.27%   glass
+        GeO2_mq (20 free O)               2.67%          5.07%   bad chemistry
+        retired glass_*Li2S (18 files)   40-53%        83-100%   invalid
+
+    The accepted structures all sit at exactly zero orphan ligands, and the
+    largest unclassified fraction among them is lips70's 2.08% -- which is two
+    genuinely three-coordinate P out of 96, not a cutoff artifact: its 4th S sits
+    at 3.22 and 3.43 A while the other 94 P have theirs at 2.05-2.16 A, with no
+    P-S distance anywhere between 2.2 and 3.2 A.
 
     Validation
     ----------
@@ -481,14 +637,20 @@ def speciation(atoms, central: str = "P", ligand: str = "S",
     what speciation a real glass has -- the answer was an input -- but it is
     exactly that fixed topology which makes it a ground-truth test fixture.
 
-    Do not gate on this
-    -------------------
-    Published models of the *same* material disagree far too much to support a
-    threshold: by P atom, a-Li3PS4 reads 58% PS4 (PCCP), 76% (Staacke, 500 K) and
-    90% (Staacke, as-quenched), against ~50% implied by the 6:2:1 literature
-    ratio. A structure at 90% PS4 is a genuine glass by g(r) and one at 98% is
-    not, so speciation cannot separate them on its own. Report it beside the
-    disorder gate; let a human read the two together.
+    What is gated and what is not
+    -----------------------------
+    The *distribution* over recognized units is reported, never gated. Published
+    models of the same material disagree far too much to support a threshold on
+    it: by P atom, a-Li3PS4 reads 58% PS4 (PCCP), 76% (Staacke, 500 K) and 90%
+    (Staacke, as-quenched), against ~50% implied by the 6:2:1 literature ratio.
+    A structure at 90% PS4 is a genuine glass by g(r) and one at 98% is not, so
+    the ratio between legitimate units cannot separate them.
+
+    What *is* gated is the residual -- the fraction that is no recognized unit at
+    all, plus the orphaned ligands. That distinction is the whole design: how the
+    network divides itself among valid anions is a property of the material and
+    the quench rate, while a central atom belonging to nothing is a defect
+    regardless of which valid units surround it.
 
     Note on 6:2:1
     -------------
@@ -498,17 +660,25 @@ def speciation(atoms, central: str = "P", ligand: str = "S",
     """
     from ase.neighborlist import neighbor_list
 
+    if ligand is not None:
+        ligands = (ligand,)
+
     z = np.array(atoms.get_chemical_symbols())
     n = len(atoms)
-    units = ("PS4", "P2S7", "P2S6", "other")
-    counts = dict.fromkeys(units, 0)
-    n_central = int((z == central).sum())
+    labels = (*(u.label for u in units), "other")
+    counts = dict.fromkeys(labels, 0)
+    is_central = z == central
+    is_ligand = np.isin(z, list(ligands))
+    n_central = int(is_central.sum())
+    n_ligand = int(is_ligand.sum())
     if n_central == 0:
-        return {"counts": counts, "fractions": dict.fromkeys(units, float("nan")),
-                "n_central": 0}
+        return {"counts": counts, "fractions": dict.fromkeys(labels, float("nan")),
+                "n_central": 0, "n_ligand": n_ligand, "orphan": 0,
+                "orphan_fraction": float("nan"),
+                "unclassified_fraction": float("nan")}
 
     i, j = neighbor_list("ij", atoms, float(bond_cutoff))
-    is_bond = (z[i] == central) & (z[j] == ligand)
+    is_bond = is_central[i] & is_ligand[j]
     # Ligands touching >= 2 central atoms are bridging; this is what separates
     # P2S7 (one bridging S) from an isolated PS4 with the same ligand count.
     central_per_ligand = np.bincount(j[is_bond], minlength=n)
@@ -517,36 +687,110 @@ def speciation(atoms, central: str = "P", ligand: str = "S",
     n_bridging = np.bincount(i[bridging], minlength=n)
 
     ii, jj = neighbor_list("ij", atoms, float(homo_cutoff))
-    is_homo = (z[ii] == central) & (z[jj] == central)
+    is_homo = is_central[ii] & is_central[jj]
     n_homo = np.bincount(ii[is_homo], minlength=n)
 
-    for k in np.flatnonzero(z == central):
-        lig, br, homo = n_ligands[k], n_bridging[k], n_homo[k]
-        if homo == 0 and lig == 4 and br == 0:
-            counts["PS4"] += 1
-        elif homo == 0 and lig == 4 and br == 1:
-            counts["P2S7"] += 1
-        elif homo == 1 and lig == 3 and br == 0:
-            counts["P2S6"] += 1
+    for k in np.flatnonzero(is_central):
+        lig, br, homo = int(n_ligands[k]), int(n_bridging[k]), int(n_homo[k])
+        for unit in units:
+            if unit.matches(lig, br, homo):
+                counts[unit.label] += 1
+                break
         else:
             counts["other"] += 1
 
+    # A ligand no central atom claims. Counted over ligand atoms rather than over
+    # all atoms so the Li content of a thiophosphate cannot dilute it.
+    orphan = int((is_ligand & (central_per_ligand == 0)).sum())
+
     return {
         "counts": counts,
-        "fractions": {u: counts[u] / n_central for u in units},
+        "fractions": {u: counts[u] / n_central for u in labels},
         "n_central": n_central,
+        "n_ligand": n_ligand,
+        "orphan": orphan,
+        "orphan_fraction": orphan / n_ligand if n_ligand else float("nan"),
+        "unclassified_fraction": counts["other"] / n_central,
     }
 
 
-def _speciation_fractions(spec: dict | None, atoms) -> dict:
-    """Speciation fractions for a system that defines them, else ``{}``.
+def _speciation_report(spec: dict | None, atoms) -> dict | None:
+    """Full speciation for a system that declares a chemistry block, else None.
 
     Split out of :func:`assess_glass` only to keep its branch count under the
     complexity limit; it carries no logic of its own.
     """
-    if not spec or not spec.get("speciation"):
-        return {}
-    return speciation(atoms, **spec["speciation"])["fractions"]
+    if not spec or not spec.get("chemistry"):
+        return None
+    return speciation(atoms, **spec["chemistry"])
+
+
+def _speciation_failures(sp: dict, max_orphan: float,
+                         max_unclassified: float) -> list[str]:
+    """The chemistry gate proper: two intensive fractions, each with a ceiling.
+
+    Both messages quote the raw counts alongside the fraction. The fraction is
+    what is judged -- that is the point of the measure -- but a reader needs the
+    count to know whether "3.1% unclassified" is 3 atoms of 96 or 300 of 9600,
+    which decides whether the next move is to inspect them or to reheat.
+    """
+    failures = []
+    if sp["n_central"] == 0:
+        return failures
+    if sp["n_ligand"] and sp["orphan_fraction"] > max_orphan:
+        failures.append(
+            f"{sp['orphan']} of {sp['n_ligand']} ligand atoms have no central "
+            f"neighbour ({100 * sp['orphan_fraction']:.2f}% > "
+            f"{100 * max_orphan:g}%); the network has shed ligands"
+        )
+    if sp["unclassified_fraction"] > max_unclassified:
+        n_other = sp["counts"]["other"]
+        recognized = ", ".join(k for k in sp["counts"] if k != "other")
+        failures.append(
+            f"{n_other} of {sp['n_central']} central atoms match no recognized "
+            f"unit ({100 * sp['unclassified_fraction']:.2f}% > "
+            f"{100 * max_unclassified:g}%); recognized here are {recognized}"
+        )
+    return failures
+
+
+def _chemistry_failures(spec, atoms, system, tolerated, sp,
+                        max_orphan: float, max_unclassified: float
+                        ) -> tuple[dict, list[str], list[str]]:
+    """The chemistry verdict: absolute rules plus the speciation gate.
+
+    Returns ``(counts, failures, warnings)``.  The two halves are complementary
+    and both are needed.  The absolute rules catch a species that is
+    illegitimate at any concentration but too rare to move a fraction -- a
+    single O2 among 750 O is 0.27% orphan oxygen, under any sane ceiling, and is
+    still a broken oxide.  The speciation gate catches network damage that no
+    enumerated contact anticipates, using numbers that do not change when the
+    cell does.
+    """
+    counts: dict[str, int] = {}
+    failures: list[str] = []
+    warnings: list[str] = []
+    if spec:
+        counts = forbidden_contacts(atoms, spec["forbidden"])
+        # An allowance for a rule this system does not have is almost always a
+        # command line that outlived the rule it was written for -- every Li-P-S
+        # caller in the repo passed `--tolerate "P-P pairs=N"` until that rule
+        # moved into the speciation gate. Silently ignoring it would leave the
+        # caller believing they had relaxed something.
+        warnings.extend(
+            f"allowance given for {label!r}, which is not a rule of system "
+            f"{system!r} (its rules: {sorted(counts) or 'none'}) -- the "
+            "allowance had no effect"
+            for label in tolerated if label not in counts
+        )
+        for label, n in counts.items():
+            allowed = int(tolerated.get(label, 0))
+            if n > allowed:
+                extra = f" (allowance {allowed})" if allowed else ""
+                failures.append(f"{n} {label}{extra}")
+    if sp is not None:
+        failures.extend(_speciation_failures(sp, max_orphan, max_unclassified))
+    return counts, failures, warnings
 
 
 def assess_glass(
@@ -563,6 +807,8 @@ def assess_glass(
     check_noise: bool = True,
     noise_multiple: float = 2.0,
     tolerated: dict | None = None,
+    max_orphan_fraction: float = MAX_ORPHAN_FRACTION,
+    max_unclassified_fraction: float = MAX_UNCLASSIFIED_FRACTION,
 ) -> GlassReport:
     """Apply both glass tests and return a falsey report if either fails.
 
@@ -581,10 +827,13 @@ def assess_glass(
         to mean anything.  Fewer is a failure, not a pass -- see the note in the
         body.
     tolerated
-        Rule label -> count that is acceptable.  Needed because a real glass is
-        not defect-free: amorphous Li3PS4 genuinely contains P2S6(4-), whose P-P
-        bond the ``"P-P pairs"`` rule counts.  Anything above the allowance is a
-        failure; the default of zero is right for the oxides.
+        Rule label -> count that is acceptable for a :class:`ForbiddenRule`.
+        Only the absolute rules remain, and those name species that are never
+        legitimate, so the default of zero is now right for every system.  Kept
+        because a chemistry can still have a tolerable trace of one.
+    max_orphan_fraction, max_unclassified_fraction
+        Ceilings for the speciation gate; see :func:`speciation` for the
+        measurements behind the defaults.
     """
     from .validation import _atoms_from
 
@@ -691,16 +940,13 @@ def assess_glass(
                 "survived, so the melt did not destroy the crystal"
             )
 
-    counts: dict[str, int] = {}
-    chemistry_ok = True
-    if spec:
-        counts = forbidden_contacts(atoms, spec["forbidden"])
-        for label, n in counts.items():
-            allowed = int(tolerated.get(label, 0))
-            if n > allowed:
-                chemistry_ok = False
-                extra = f" (allowance {allowed})" if allowed else ""
-                failures.append(f"{n} {label}{extra}")
+    sp = _speciation_report(spec, atoms)
+    counts, chem_failures, chem_warnings = _chemistry_failures(
+        spec, atoms, system, tolerated, sp,
+        max_orphan_fraction, max_unclassified_fraction)
+    chemistry_ok = not chem_failures
+    failures.extend(chem_failures)
+    warnings.extend(chem_warnings)
 
     return GlassReport(
         system=system or f"{species} sublattice only",
@@ -709,10 +955,10 @@ def assess_glass(
         long_std=dis["long_std"],
         r_long=r_long,
         counts=counts,
-        # Computed after the verdict is already settled and deliberately not fed
-        # back into it: a diagnostic for whoever reads the report, not a
-        # criterion. See `speciation` for why no threshold is defensible.
-        speciation=_speciation_fractions(spec, atoms),
+        speciation=sp["fractions"] if sp is not None else {},
+        orphan_fraction=sp["orphan_fraction"] if sp is not None else float("nan"),
+        unclassified_fraction=(sp["unclassified_fraction"] if sp is not None
+                               else float("nan")),
         chemistry_ok=chemistry_ok,
         disorder_ok=disorder_ok,
         range_ok=range_ok,

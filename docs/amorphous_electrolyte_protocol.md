@@ -152,50 +152,90 @@ python scripts/build_glass_melt_quench.py ... \
 Implemented in `torchdisorder/common/glass_quality.py`; run via `--system` on the
 builder, or `scripts/assess_glass.py` for structures already on disk.
 
-### Gate A — chemistry (species that should not exist)
+### Gate A — chemistry (speciation)
 
-**Count them explicitly; never average.** Seven free O₂ in a 3000-atom cell move
-⟨CN⟩ by less than 0.01.
+Gate A asks whether the network is chemically intact. It runs in two halves,
+and a structure must clear both.
+
+**A1 — recognized units, judged by intensive fractions.** Enumerate the units a
+chemistry legitimately forms, classify every central atom by local topology, and
+gate on what is left over:
+
+| Measure | Limit | Meaning |
+|---|---|---|
+| orphan-ligand fraction | 1 % | ligand atoms no central atom claims — the network shed them |
+| unclassified-central fraction | 4 % | central atoms in no recognized unit |
+
+Classification uses ligand count, how many of those ligands bridge to a second
+central atom, and how many homonuclear neighbours — never the ligand *species*.
+Recognized units are `PS4`, `P2S7`, `PS3-chain`, `P2S6` for Li–P–S, and `MO4`,
+`MO5` for the oxides.
+
+The *distribution* over those units is reported but never gated: published
+models of a-Li₃PS₄ range from 58 % to 90 % PS₄ by phosphorus, so no threshold on
+it is defensible. Only the residual is judged. How a network divides itself
+among valid anions is a property of the material and the quench rate; a central
+atom belonging to nothing is a defect either way.
+
+**A2 — absolute rules, for species illegitimate at any concentration.**
 
 | System | Forbidden | Meaning |
 |---|---|---|
 | SiO₂ / GeO₂ | O–O < 1.35 Å | molecular O₂ (1.21 Å) — thermal reduction |
-| Li–P–S | P–P < 2.8 Å | P(V) → P(IV) reduction (but real P₂S₆ has one — allow a budget) |
-| Li–P–S | **S–S < 2.4 Å** | **polysulfide** — sulfide oxidised. Clean PS₄ has S···S edges at 3.3 Å |
-| Li–P–S | S with no P within 2.8 Å | sulfur left the network |
+| Li–P–S | S–S < 2.4 Å | polysulfide — sulfide oxidised. Clean PS₄ has S···S edges at 3.3 Å |
 
-The S–S rule was added late and mattered: LiPS-25 output showed 12 S–S bonds at
-2.03–2.07 Å accounting for 16 of its 18 "P-free sulfurs". The older rule was
-detecting the *consequence* while naming the wrong cause. **Name the mechanism.**
+Both halves are needed. A single O₂ among 750 O is 0.27 % orphan oxygen, under
+any sane fraction ceiling, and is still a broken oxide — A1 cannot catch it. A1
+catches network damage that no enumerated contact anticipates, with numbers that
+do not move when the cell size does.
 
-> ⚠️ **Known false negative — Gate A rejects a published glass.** Run against the
-> PCCP class2 a-Li₃PS₄ model, this gate FAILS it on 121 P–P pairs. Those pairs
-> are genuine P₂S₆ units: 22 % of its phosphorus sits in P₂S₆ by speciation, and
-> every P₂S₆ contains one P–P bond by construction. **Do not trust a Gate A
-> rejection on P–P alone.**
->
-> The discriminator is orphaned sulfur, not the P–P count. A P–P bond *alone* is
-> P₂S₆; a P–P bond *together with* free S²⁻ is P(V)→P(IV) disproportionation:
->
-> | | P–P pairs | P-free S |
-> |---|---|---|
-> | published a-Li₃PS₄ (legitimate) | 121 | **0** |
-> | published a-Li₇P₃S₁₁ (legitimate) | 91 | **0** |
-> | our reduced MACE runs | 7–19 | **32–39 (9–11 %)** |
->
-> Counts are also *extensive* — the same model shows 2 P–P at 62 P and 121 at
-> 1111 P — so any absolute threshold is a statement about cell size.
->
-> **This gate is being replaced by a speciation gate**, which enumerates the
-> *recognized* units of a chemistry rather than its forbidden contacts, and tests
-> intensive fractions: orphaned ligands, and central atoms in no recognized unit.
-> That inversion is what makes the gate survive mixed anions — in Li₃PS₄₋ₓOₓ the
-> mixed PS₃O / PS₂O₂ / PSO₃ tetrahedra *are* the material, an O and an S on the
-> same P sit ~2.7 Å apart as a legitimate edge, and no distance cutoff can
-> separate that from phase separation. Topology can. A forbidden list also only
-> catches failures you anticipated; anything unclassifiable lands in `other`,
-> which is what a novel chemistry needs. See `speciation()` in
-> `glass_quality.py`, already implemented and reported as a diagnostic.
+**Why this replaced a forbidden-contact list.** Two rules were retired:
+
+- `P-P pairs` **rejected the published literature.** The PCCP a-Li₃PS₄ model
+  failed on 121 P–P pairs and a-Li₇P₃S₁₁ on 91, when those bonds are the genuine
+  P₂S₆ units the material is known to contain — every P₂S₆ has one by
+  construction. The rule counted a real unit and a reduced phosphorus
+  identically because they are the same bond at the same length; the difference
+  is the rest of the coordination shell, which is topology. Both references now
+  pass, and `tests/test_glass_quality.py` pins that so it cannot regress.
+- `P-free sulfur` was the right failure mode expressed as the wrong kind of
+  number. Counts are *extensive* — the same model shows 2 P–P at 62 P and 121 at
+  1111 P — so any absolute threshold is a statement about cell size. It is now
+  the orphan-ligand fraction.
+
+The `--tolerate "P-P pairs=N"` allowance that Li–P–S callers passed is therefore
+gone, and needs no replacement: a real P₂S₆ now costs nothing and a reduced P
+still fails, so there is no budget to guess at. An allowance naming a rule that
+no longer exists is reported as a warning rather than silently ignored.
+
+**Why topology, for mixed anions.** In Li₃PS₄₋ₓOₓ the mixed PS₃O / PS₂O₂ / PSO₃
+tetrahedra *are* the material; an O and an S on the same P sit ~2.7 Å apart as a
+legitimate edge, and no distance cutoff separates that from phase separation.
+Topology does — PS₃F²⁻ has the topology of PS₄ and matches the same entry once F
+is named a ligand, with no new rule. Enumerating what is *recognized* also fails
+safe where enumerating what is *forbidden* does not: an unforeseen species lands
+in `other` and counts against the structure rather than passing unnoticed.
+
+**Calibration.** Measured across every structure on hand:
+
+| | orphan ligand | unclassified |
+|---|---|---|
+| both published PCCP references | 0.00 % | 0.00–0.08 % |
+| our four accepted glasses | 0.00 % | 0.09–2.08 % |
+| GeO₂_mq (20 free O) | 2.67 % | 5.07 % |
+| retired invalid LiPS glasses (18 files) | 40–53 % | 83–100 % |
+
+Both limits sit in the observed gaps. The narrower gap is the unclassified one,
+and the margin above lips70's 2.08 % is about two of its 96 P — a Li–P–S cell
+that dilute is granular here, since one further broken P moves the fraction by
+1.04 %. That is a limit on resolution, not a bias; prefer a larger cell when the
+verdict is close.
+
+> **Caveat on the negatives.** The reduced MACE runs that motivated this work
+> (32–39 orphan S, 9–11 %) live on remote scratch and were *not* re-measured
+> against the new gate. The negatives in the table above are the ones available
+> locally. Those reduced runs also carried 12 S–S polysulfide bonds, so rule A2
+> catches them independently of anything A1 does.
 
 ### Gate B — disorder (did it actually melt?)
 

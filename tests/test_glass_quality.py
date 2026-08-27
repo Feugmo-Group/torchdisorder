@@ -18,6 +18,7 @@ from ase.build import bulk
 
 from torchdisorder.common.glass_quality import (
     GLASS_SYSTEMS,
+    ForbiddenRule,
     assess_glass,
     forbidden_contacts,
     partial_rdf,
@@ -96,18 +97,19 @@ def test_polysulfide_is_detected():
 
     From LiPS-25 lips70: 12 such bonds at 2.03-2.07 A. Non-bonded S...S contacts
     in an intact thiophosphate start above 3.2 A, so the two are far apart and the
-    rule needs no tuning. Both sulfurs here are bonded to the P, so the older
-    "P-free sulfur" rule sees nothing -- this rule is not redundant with it.
+    rule needs no tuning. Both sulfurs here are bonded to the P, so neither is an
+    orphan ligand -- which is exactly why polysulfide keeps an absolute rule
+    instead of being left to the speciation gate.
     """
     # Equilateral triangle of side 2.05: both sulfurs are bonded to the P, so the
-    # older rule is satisfied, and yet they are bonded to each other.
+    # orphan-ligand fraction is zero, and yet they are bonded to each other.
     atoms = Atoms("PSS", positions=[[0, 0, 0],
                                     [2.05, 0, 0],
                                     [2.05 * 0.5, 2.05 * np.sqrt(3) / 2, 0]],
                   cell=[20, 20, 20], pbc=True)
     counts = forbidden_contacts(atoms, GLASS_SYSTEMS["LiPS"]["forbidden"])
     assert counts["S-S bonds (polysulfide)"] == 1
-    assert counts["P-free sulfur"] == 0, "both S are within 2.8 A of the P"
+    assert speciation(atoms)["orphan"] == 0, "both S are bonded to the P"
 
 
 def test_intact_thiophosphate_has_no_polysulfide():
@@ -126,17 +128,27 @@ def test_intact_thiophosphate_has_no_polysulfide():
     assert min(edges) > 3.2, f"PS4 S...S edge is {min(edges):.2f} A"
     counts = forbidden_contacts(atoms, GLASS_SYSTEMS["LiPS"]["forbidden"])
     assert counts["S-S bonds (polysulfide)"] == 0
-    assert counts["P-free sulfur"] == 0
-    assert counts["P-P pairs"] == 0
+    sp = speciation(atoms)
+    assert sp["orphan"] == 0
+    assert sp["counts"]["PS4"] == 1, "an ideal tetrahedron is a PS4 unit"
 
 
-def test_forbidden_unbonded_counts_atoms():
-    """One sulfur in range of the P, one stranded -> exactly one offender."""
+def test_orphan_ligand_fraction_is_intensive():
+    """The measure that replaced the absolute "P-free sulfur" count.
+
+    One sulfur in range of the P, one stranded. The fraction is what is judged,
+    so the same structure tiled into a larger cell must give the same number --
+    that invariance is the entire reason the count was retired.
+    """
     atoms = Atoms("PSS", positions=[[0, 0, 0], [2.0, 0, 0], [9, 9, 9]],
                   cell=[20, 20, 20], pbc=True)
-    counts = forbidden_contacts(atoms, GLASS_SYSTEMS["LiPS"]["forbidden"])
-    assert counts["P-free sulfur"] == 1
-    assert counts["P-P pairs"] == 0
+    sp = speciation(atoms)
+    assert sp["orphan"] == 1
+    assert sp["orphan_fraction"] == pytest.approx(0.5)
+
+    doubled = speciation(atoms.repeat((2, 1, 1)))
+    assert doubled["orphan"] == 2, "the count doubles with the cell"
+    assert doubled["orphan_fraction"] == pytest.approx(0.5), "the fraction does not"
 
 
 def test_chemistry_failure_is_independent_of_disorder():
@@ -156,29 +168,36 @@ def test_chemistry_failure_is_independent_of_disorder():
 
 
 def test_tolerated_allowance():
-    """A real Li3PS4 glass contains P2S6, so its P-P bonds must be allowable.
+    """An allowance silences the rule it names, and only that rule.
 
-    The phosphorus here sits on a 5 A grid rather than at random positions, and
-    that matters: the P-P rule has a 2.8 A range, so a random P gas dense enough
-    to give a usable g(r) generates hundreds of accidental "P-P bonds" and the
-    count stops meaning anything.  Real Li3PS4 has a P number density of
-    0.0063/A^3 -- a mean P-P separation of 5.4 A -- so close P pairs are genuinely
-    rare and the rule is only meaningful at that dilution.  Only chemistry is
-    asserted below; a grid is crystalline and fails the disorder test by design.
+    Asserted on the individual failure rather than on ``chemistry_ok``, because
+    this fixture is a random Ge gas with an O2 glued in: it has no oxide network
+    at all, so the speciation gate rejects it at 100% unclassified and is right
+    to.  Requiring the whole chemistry verdict to go green would be testing the
+    fixture's realism, not the allowance.
     """
-    grid = np.stack(np.meshgrid(*[np.arange(6) * 5.0] * 3, indexing="ij"), -1)
-    atoms = Atoms(f"P{6**3}", positions=grid.reshape(-1, 3),
-                  cell=[30.0] * 3, pbc=True)
-    assert forbidden_contacts(atoms, GLASS_SYSTEMS["LiPS"]["forbidden"])[
-        "P-P pairs"] == 0, "grid spacing must exceed the 2.8 A P-P rule range"
+    atoms = random_cell(n=600, length=25.0, symbol="Ge")
+    atoms += Atoms("O2", positions=[[12.4, 12.4, 12.4], [13.61, 12.4, 12.4]])
 
-    atoms += Atoms("P", positions=[[2.2, 0.0, 0.0]])  # one deliberate P-P bond
-    strict = assess_glass(atoms, "LiPS")
-    assert not strict.chemistry_ok
-    assert strict.counts["P-P pairs"] == 1
+    def o2_failures(rep):
+        return [f for f in rep.failures if "O2 molecules" in f]
 
-    lenient = assess_glass(atoms, "LiPS", tolerated={"P-P pairs": 5})
-    assert lenient.chemistry_ok, lenient.summary()
+    assert o2_failures(assess_glass(atoms, "GeO2")) == ["1 O2 molecules"]
+    lenient = assess_glass(atoms, "GeO2", tolerated={"O2 molecules": 1})
+    assert o2_failures(lenient) == [], lenient.summary()
+
+
+def test_allowance_for_a_retired_rule_is_not_silently_ignored():
+    """Every Li-P-S caller in the repo passed --tolerate "P-P pairs=N".
+
+    That rule moved into the speciation gate, so the allowance now names nothing.
+    Accepting it quietly would leave a caller believing they had relaxed a check
+    that is no longer there, which is worse than the original strictness.
+    """
+    atoms = random_cell(n=600, length=25.0, symbol="Ge")
+    rep = assess_glass(atoms, "GeO2", tolerated={"P-P pairs": 8})
+    assert any("P-P pairs" in w for w in rep.warnings), rep.summary()
+    assert any("had no effect" in w for w in rep.warnings), rep.summary()
 
 
 def test_noise_floor_falls_with_sublattice_size():
@@ -427,7 +446,8 @@ def test_speciation_classifies_the_three_units():
     """
     got = speciation(_speciation_fixture())
     assert got["n_central"] == 5
-    assert got["counts"] == {"PS4": 1, "P2S7": 2, "P2S6": 2, "other": 0}
+    assert got["counts"] == {"PS4": 1, "P2S7": 2, "PS3-chain": 0, "P2S6": 2,
+                             "other": 0}
 
 
 def test_speciation_fractions_are_per_central_atom():
@@ -445,14 +465,16 @@ def test_speciation_fractions_are_per_central_atom():
     assert sum(got.values()) == pytest.approx(1.0)
 
 
-def test_speciation_never_changes_the_verdict():
-    """Speciation is a diagnostic.  It must not gate, in either direction.
+def test_the_distribution_over_recognized_units_never_gates():
+    """Only the residual gates; how the valid units divide up must not.
 
     Published models of a-Li3PS4 disagree from 58% to 90% PS4 by phosphorus, so
-    no threshold is defensible
-    a structure at 90% is a real glass by g(r) and
-    one at 98% is not.  Turning a soft expectation into a hard criterion is how
-    <CN> passed three unmelted crystals.
+    no threshold on the distribution is defensible
+    a structure at 90% is a real
+    glass by g(r) and one at 98% is not.  Turning a soft expectation into a hard
+    criterion is how <CN> passed three unmelted crystals.  What the gate judges
+    instead is the part that is no valid unit at all, which this fixture has none
+    of -- so an extreme distribution must still pass.
     """
     rng = np.random.default_rng(0)
     # A disordered, chemically clean Li-P-S cell built from intact PS4 units:
@@ -491,9 +513,9 @@ def test_speciation_never_changes_the_verdict():
     # 100% PS4 is outside every published a-Li3PS4 ratio (58-90%), so if
     # speciation gated at all, this structure would be rejected.
     assert rep.speciation["PS4"] == pytest.approx(1.0), "fixture should be all PS4"
+    assert rep.unclassified_fraction == 0.0 and rep.orphan_fraction == 0.0
     assert rep.disorder_ok and rep.chemistry_ok, rep.summary()
     assert rep, "anomalous speciation must not reject a structure that passes both gates"
-    assert not any("specia" in f.lower() for f in rep.failures)
 
 
 def test_speciation_matches_an_independently_labelled_structure():
@@ -505,6 +527,12 @@ def test_speciation_matches_an_independently_labelled_structure():
     the answer was an input -- but that is exactly what makes it a test fixture.
     Skips when the file is absent: its licence is unresolved, so it is not
     committed.  See the note in .gitignore for where to fetch it.
+
+    Adding the PS3-chain unit had to leave these assignments alone, and did: the
+    chain unit takes two bridging ligands and nothing here has more than one.
+    A new unit that quietly reclassified an atom the reference had already named
+    would mean the unit list had started fitting our structures rather than the
+    chemistry.
     """
     path = DATA / "ref_aLi3PS4_pccp.cif"
     if not path.exists():
@@ -512,4 +540,65 @@ def test_speciation_matches_an_independently_labelled_structure():
     from ase.io import read
 
     got = speciation(read(str(path)))["counts"]
-    assert got == {"PS4": 647, "P2S6": 242, "P2S7": 222, "other": 0}
+    assert got == {"PS4": 647, "P2S6": 242, "P2S7": 222, "PS3-chain": 0,
+                   "other": 0}
+
+
+@pytest.mark.parametrize(("name", "pp_pairs"),
+                         [("ref_aLi3PS4_pccp.cif", 121),
+                          ("ref_aLi7P3S11_pccp.cif", 91)])
+def test_published_references_pass_the_chemistry_gate(name, pp_pairs):
+    """The false negative that forced this design, pinned so it cannot return.
+
+    Both published PCCP models were rejected outright by the old absolute "P-P
+    pairs" rule -- 121 and 91 pairs -- when those P-P bonds are the genuine
+    P2S6(4-) units the material is known to contain.  A gate that rejects the
+    literature is measuring cell size, not chemistry.
+
+    Only chemistry is asserted.  Whether these cells pass the disorder gate is a
+    separate question with its own calibration, and coupling the two here would
+    make this test fail for reasons it is not about.
+    """
+    path = DATA / name
+    if not path.exists():
+        pytest.skip("PCCP reference structure not present")
+    from ase.io import read
+
+    atoms = read(str(path))
+    rep = assess_glass(atoms, "LiPS")
+    assert rep.chemistry_ok, rep.summary()
+    assert rep.orphan_fraction == 0.0
+    assert rep.unclassified_fraction < 0.01
+
+    # The bonds the retired rule counted really are still there; they are now
+    # recognized rather than forbidden. Without this the test could pass because
+    # the structure changed rather than because the gate did.
+    assert forbidden_contacts(
+        atoms, [ForbiddenRule("contact", "P", "P", 2.8, "P-P pairs")]
+    )["P-P pairs"] == pp_pairs
+    assert rep.speciation["P2S6"] > 0.1, "those P-P bonds are P2S6 units"
+
+
+def test_a_mixed_anion_unit_needs_no_new_rule():
+    """The reason the classifier is blind to ligand species.
+
+    Swapping one S of a PS4 tetrahedron for F gives PS3F(2-), a real unit in a
+    mixed-anion electrolyte and the kind of thing this workflow exists to model.
+    It has the topology of PS4 and must classify as PS4 once F is named a ligand
+    -- no new entry in the unit list, which is what makes the gate portable to a
+    chemistry nobody enumerated in advance.
+    """
+    d = 2.05 / np.sqrt(3.0)
+    corners = np.array([[d, d, d], [d, -d, -d], [-d, d, -d], [-d, -d, d]])
+    atoms = Atoms("PSSSF", positions=np.vstack([[0, 0, 0], corners]),
+                  cell=[20, 20, 20], pbc=True)
+
+    both = speciation(atoms, ligands=("S", "F"))
+    assert both["counts"]["PS4"] == 1, "topology is a tetrahedron regardless of F"
+    assert both["orphan"] == 0
+
+    # And the converse, so the test cannot pass by the ligand set being ignored:
+    # leave F out and the same atom is under-coordinated and unclassified.
+    s_only = speciation(atoms, ligands=("S",))
+    assert s_only["counts"]["other"] == 1
+    assert s_only["unclassified_fraction"] == pytest.approx(1.0)

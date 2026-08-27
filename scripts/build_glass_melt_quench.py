@@ -239,7 +239,11 @@ def main() -> None:
                         "unmelted crystal.")
     p.add_argument("--tolerate", action="append", default=[], metavar="LABEL=N",
                    help="allow N occurrences of a forbidden species, e.g. "
-                        "'P-P pairs=8' for the P2S6 units a real Li3PS4 glass has")
+                        "'O2 molecules=1'. Only species that are never legitimate "
+                        "still have absolute rules; anything a real glass contains "
+                        "at some fraction is judged by the speciation gate instead, "
+                        "which needs no allowance. An unknown label is reported as "
+                        "a warning rather than ignored")
     args = p.parse_args()
 
     if args.superheat_steps > 0 and args.superheat_temp is None:

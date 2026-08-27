@@ -19,8 +19,9 @@ Usage
     # one structure, system stated explicitly
     poetry run python scripts/assess_glass.py --system LiPS mystery.cif
 
-    # allow the P-P bonds a real Li3PS4 glass has
-    poetry run python scripts/assess_glass.py --tolerate "P-P pairs=8" lips75_glass.cif
+    # allow a species that has an absolute rule (unknown labels are warned about,
+    # not silently ignored -- P2S6's P-P bonds no longer need one, see speciation)
+    poetry run python scripts/assess_glass.py --tolerate "O2 molecules=1" geo2_mq.cif
 
 Exit status is 1 if any structure was rejected, so this can gate a pipeline.
 """

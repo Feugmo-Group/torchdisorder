@@ -131,7 +131,7 @@ $PY scripts/build_glass_melt_quench.py \
     --melt-temp "${MELT_T:-1500}" --quench-temp 300 \
     --melt-steps "${MELT:-30000}" --quench-steps "${QUENCH:-40000}" \
     --anneal-steps "${ANNEAL:-5000}" --log-every 2000 \
-    --system LiPS --tolerate "P-P pairs=${ALLOW_PP:-0}" \
+    --system LiPS \
     ${SUPERHEAT_T:+--superheat-temp "$SUPERHEAT_T" --superheat-steps "${SUPERHEAT:-5000}"} \
     || STATUS=$?
 
@@ -139,10 +139,11 @@ $PY scripts/build_glass_melt_quench.py \
 # reduced P(V) to P(IV), and write to *_REJECTED.cif. The overlap-only check that
 # used to live here passed all three of the runs later found to be invalid.
 #
-# ALLOW_PP: amorphous Li3PS4 genuinely contains P2S6(4-) units, each with one P-P
-# bond, so a real glass is not required to have zero. Leave it at 0 for a first
-# look -- the count is the diagnostic -- and raise it only once you know how many
-# P2S6 units the composition should have.
+# ALLOW_PP is gone, and needs no replacement. It existed because amorphous Li3PS4
+# genuinely contains P2S6(4-) units, each with one P-P bond, so an absolute P-P
+# count had to be relaxed by hand to a number nobody knew. The speciation gate
+# recognises P2S6 as a unit instead, so a real one costs nothing and a reduced P
+# still fails -- no allowance to guess at.
 #
 # SUPERHEAT_T: set it to run a brief hot stage before the melt, for the case where
 # 1500 K does not melt the crystal but a hotter melt degrades the chemistry.
