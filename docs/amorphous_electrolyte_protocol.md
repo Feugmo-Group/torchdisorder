@@ -231,11 +231,28 @@ that dilute is granular here, since one further broken P moves the fraction by
 1.04 %. That is a limit on resolution, not a bias; prefer a larger cell when the
 verdict is close.
 
-> **Caveat on the negatives.** The reduced MACE runs that motivated this work
-> (32–39 orphan S, 9–11 %) live on remote scratch and were *not* re-measured
-> against the new gate. The negatives in the table above are the ones available
-> locally. Those reduced runs also carried 12 S–S polysulfide bonds, so rule A2
-> catches them independently of anything A1 does.
+**The reduced MACE runs.** All 24 Li–P–S melt-quench outputs were pulled off
+remote scratch and re-measured. The three MACE-MPA runs that motivated this work
+land exactly where the old gate put them:
+
+| run | orphan S | unclassified | S–S | verdict |
+|---|---|---|---|---|
+| lips70_glass_mpa | 11.08 % | 29.17 % | 26 | chemistry FAIL |
+| lips67_glass_mpa | 9.52 % | 31.25 % | 28 | chemistry FAIL |
+| lips75_glass_mpa | 9.03 % | 13.89 % | 19 | chemistry FAIL |
+| lips70_glass_lips25_1200 | 0.00 % | 2.08 % | 0 | **GLASS** |
+
+**No structure moved from rejected to accepted.** Eight did have their chemistry
+verdict relax while still failing on disorder, and every one was rejected by the
+old rule over 1–4 orphaned sulfurs in a cell of ~384 — 0.26–0.93 %, which is the
+extensive-count problem the fractions exist to fix.
+
+One run is worth reading as a live case for keeping both halves of Gate A:
+`lips70_glass_mpa1200` has 0 P–P pairs and a single orphaned S (0.28 %, under the
+1 % limit) with 2.08 % unclassified — it clears A1 outright and is caught only by
+the absolute S–S rule, on one polysulfide bond. The nearest call in the other
+direction is `lips75_glass_sh1800x1`, which fails A1 on both counts at 1.04 % and
+4.17 %, just past each limit.
 
 ### Gate B — disorder (did it actually melt?)
 
