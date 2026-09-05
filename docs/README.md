@@ -35,3 +35,19 @@ marked as such.
 
 It also records where a potential is genuinely the suspect, and the evidence for
 and against fine-tuning one.
+
+## `amorphous_sse_faq.md`
+
+The companion to the protocol: what goes wrong, and how to tell. Sorted by the
+question you would actually ask — "my ⟨CN⟩ is 4.00, is it a glass?", "my χ² is
+excellent, is the structure good?", "is the potential to blame?" — with a
+measured number behind each answer.
+
+It exists because the protocol says what to do and this says why the plausible
+alternative is wrong. Traps that cost the most time here are the ones where a
+run completes, reports success, and is invalid: a crystal that never melted
+scoring a perfect coordination number, a cold thermostat blamed on the
+potential, constraints applied to the wrong atoms.
+
+A closing section lists what is still unknown, so a gap is not mistaken for a
+settled answer.

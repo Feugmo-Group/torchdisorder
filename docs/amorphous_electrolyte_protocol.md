@@ -141,9 +141,17 @@ python scripts/build_glass_melt_quench.py ... \
     --melt-temp 2400 --melt-steps 30000
 ```
 
-> ⚠️ **Unverified.** As of 2026-08-18 this is implemented and argument-tested but
-> the first real run (job 1252) is still in flight. Do not cite it as a working
-> method until that reports.
+> ⚠️ **Tested, and it has not yet produced an accepted glass.** Three runs:
+>
+> | test | outcome |
+> |---|---|
+> | GeO₂ 10 ps superheat @ 2900 K → 2400 K hold (job 1252) | rejected — still under-melted, 4.04× floor, 1 O₂ |
+> | GeO₂ 20 ps superheat (job 1254) | melted (1.51×) but 4 O₂ |
+> | Li₃PS₄ superheat scan, 1361–1736 K | disorder monotonically **worse** |
+>
+> The 20 ps GeO₂ run is the informative one: the superheat *can* finish the melt,
+> and the O₂ came with it, so the time-separation argument is not yet doing the
+> work it was proposed to do. Treat this as an open method, not a recipe.
 
 ---
 
