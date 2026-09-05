@@ -1,3 +1,7 @@
+# NOT BUILT YET — cif_path below does not resolve. Unlike the retired LiPS seeds
+# this is missing rather than broken: nothing was ever generated. The recipe below
+# also needs data/crystal-structures/Li3ScCl6.cif, which is not in the repo either, so
+# source the crystal first (Materials Project or ICSD), then run the generator.
 # Li₃ScCl₆ halide glass structure
 root_dir: ${oc.env:PROJECT_ROOT,./}/data
 

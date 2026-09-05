@@ -78,6 +78,7 @@ import json
 from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+from torchdisorder.constraints.fingerprint import atom_order_fingerprint
 
 import numpy as np
 from pymatgen.core import Structure
@@ -417,6 +418,9 @@ class Li2HfCl6ConstraintWriter:
 
         constraints["metadata"] = {
             "version": "v6",
+            "atom_order": atom_order_fingerprint(
+                self.structure, constraints["atom_constraints"].keys()
+            ),
             "structure_type": "li2hfcl6",
             "composition": comp,
             "total_atoms": self.structure.num_sites,

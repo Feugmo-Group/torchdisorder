@@ -526,6 +526,10 @@ Like `from_cif` but parses the CIF via pymatgen (handles more CIF dialects). Sam
 
 The JSON is produced by `lps_generator.py` and consumed by `EnvironmentConstrainedOptimizer`. Never edit it by hand — always regenerate it alongside the CIF.
 
+`atom_constraints` is keyed by atom *index*, so the file is only meaningful against the exact ordering it was generated from. That ordering is not a property of the CIF alone: pymatgen expands symmetry operations and groups sites by label, ASE reads the literal `atom_site` order, and for `c-SiO2.cif` the two disagree on 510 of 1125 sites. Pairing constraints with a same-named copy of the structure used to run to completion while applying every constraint to the wrong atom.
+
+`metadata.atom_order` closes that. Generators record the atom count, a hash of the element sequence, and 64 sampled `(index, symbol, fractional position)` triples drawn from the constrained atoms; `scripts/train.py` verifies all three before training and aborts on a mismatch. Coordinates are compared with a tolerance rather than hashed, so CIF round-trip noise and the density rescaling the trainer applies do not trip it — but a permutation among atoms of the same element, which the element check cannot see, does.
+
 ```json
 {
   "metadata": {
@@ -534,7 +538,13 @@ The JSON is produced by `lps_generator.py` and consumed by `EnvironmentConstrain
     "composition": "67Li2S-33P2S5",
     "supercell": [4, 2, 2],
     "n_p_atoms": 48,
-    "order_parameter_types": ["cn", "tet", "q4"]
+    "order_parameter_types": ["cn", "tet", "q4"],
+    "atom_order": {
+      "n_atoms": 1125,
+      "symbols_sha256": "872e11f0d59abd6e...",
+      "tolerance": 0.02,
+      "spot_checks": [[0, "Si", 0.4697, 0.0, 0.3333], "..."]
+    }
   },
   "cutoff": 3.5,
   "element_filter": [15, 16],
@@ -585,6 +595,7 @@ The JSON is produced by `lps_generator.py` and consumed by `EnvironmentConstrain
 | Section | Description |
 |---|---|
 | `atom_constraints` | Per-atom targets keyed by atom index in the CIF — only valid with `from_cif` init |
+| `metadata.atom_order` | Fingerprint of the atom ordering these indices refer to; the trainer refuses to run against a differently-ordered structure |
 | `environment_priorities` | Weight multiplier per environment type applied on top of per-OP weights |
 | `global_constraints.p_environment_distribution` | Global target fractions (%) — used by the auto-detection logic in `random_icp` mode |
 | `cutoff` | Neighbor cutoff used when the JSON was generated (should match `order_param_cutoff` in structure config) |

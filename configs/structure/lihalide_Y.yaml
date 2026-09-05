@@ -1,3 +1,7 @@
+# NOT BUILT YET — cif_path below does not resolve. Unlike the retired LiPS seeds
+# this is missing rather than broken: nothing was ever generated. The recipe below
+# also needs data/crystal-structures/Li3YCl6.cif, which is not in the repo either, so
+# source the crystal first (Materials Project or ICSD), then run the generator.
 # Li₃YCl₆ halide glass structure
 # Generate the CIF and constraint JSON with:
 #   python data/cif-generation/lihalide_generator.py \

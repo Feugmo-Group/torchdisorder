@@ -1,3 +1,10 @@
+# RETIRED SEED — cif_path below does not resolve; this config cannot run.
+# glass_67Li2S_noLi.cif was withdrawn on 2026-08-15 for atom overlaps: 124 pairs closer
+# than 1.2 A in 3227 atoms, shortest 0.273 A against a real P-S bond of ~2.0 A.
+# It now lives in data/crystal-structures/retired/, which records every measurement.
+# Do NOT repoint cif_path at the retired copy — refinement inherits the overlaps and
+# validate_structure refuses to start from one. The config is kept so results that
+# cited it stay traceable. See data/crystal-structures/retired/README.md.
 # 67Li2S-33P2S5 Glass — Li-free, full supercell
 # Supercell: 8×4×4 of Li7P3S11 (near-cubic ~50 Å), Li removed
 # Raw cell: 49.5×50.5×50.7 Å (within 2.4%)  |  MIC cutoff after density scaling: ~25.5 Å

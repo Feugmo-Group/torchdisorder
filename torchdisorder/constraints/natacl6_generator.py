@@ -43,6 +43,7 @@ from typing import Dict, List, Optional, Tuple
 import numpy as np
 from pymatgen.core import Structure
 from pymatgen.io.cif import CifWriter
+from torchdisorder.constraints.fingerprint import atom_order_fingerprint
 
 
 def create_supercell(
@@ -253,6 +254,9 @@ class NaTaCl6ConstraintWriter:
         }
         constraints["metadata"] = {
             "version": "v6",
+            "atom_order": atom_order_fingerprint(
+                self.structure, constraints["atom_constraints"].keys()
+            ),
             "structure_type": "natacl6",
             "total_atoms": self.structure.num_sites,
             "composition": str(self.structure.composition),

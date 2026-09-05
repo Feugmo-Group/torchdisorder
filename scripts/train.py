@@ -1649,6 +1649,29 @@ def main(cfg: DictConfig) -> None:
                         f"    structure:   {OmegaConf.select(cfg, 'structure.cif_path')}"
                     )
                 print(f"  Index check: all {len(_idx)} constrained atoms are {_central} ✓")
+
+            # The element check above is necessary but not sufficient: a permutation
+            # among atoms of the SAME element keeps every constrained index on the
+            # right element while still applying each constraint to the wrong atom.
+            # The generators record an atom-order fingerprint for exactly this case.
+            _fp = constraints_data.get('metadata', {}).get('atom_order')
+            if _fp:
+                from torchdisorder.constraints.fingerprint import verify_atom_order
+                _problems = verify_atom_order(_fp, atoms)
+                if _problems:
+                    raise SystemExit(
+                        "\n  Constraint/structure mismatch (atom order):\n"
+                        + "".join(f"    - {m}\n" for m in _problems)
+                        + f"  The constraints file and structure.cif_path must come from "
+                          f"the same generator run.\n"
+                          f"    constraints: {json_path}\n"
+                          f"    structure:   {OmegaConf.select(cfg, 'structure.cif_path')}"
+                    )
+                print(f"  Atom-order check: fingerprint matches "
+                      f"({len(_fp.get('spot_checks', []))} sites verified) ✓")
+            else:
+                print("  Atom-order check: skipped — this constraints file predates "
+                      "the fingerprint; regenerate it to enable the check")
             
             # Filter constraints
             filtered = filter_constraints(constraints_data, constraints_use_types, constraints_enabled)

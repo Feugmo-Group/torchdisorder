@@ -36,6 +36,7 @@ import argparse
 from typing import Dict, List, Tuple
 from collections import defaultdict
 import json
+from torchdisorder.constraints.fingerprint import atom_order_fingerprint
 
 
 class PEnvironmentClassifier:
@@ -593,6 +594,9 @@ class GlassStructureGenerator:
         # Add metadata
         constraints['metadata'] = {
             'version': 'v6',  # Mark as v6 format
+            'atom_order': atom_order_fingerprint(
+                self.structure, constraints['atom_constraints'].keys()
+            ),
             'structure_type': 'li_p_s_glass',
             'target_composition': self.target_composition,
             'total_atoms': self.structure.num_sites,

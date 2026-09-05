@@ -1,3 +1,7 @@
+# NOT BUILT YET — cif_path below does not resolve. Unlike the retired LiPS seeds
+# this is missing rather than broken: nothing was ever generated. The recipe below
+# also needs data/crystal-structures/Li6PS5Cl.cif, which is not in the repo either, so
+# source the crystal first (Materials Project or ICSD), then run the generator.
 # Li₆PS₅Cl argyrodite glass — Li-containing, full supercell
 # Generate the CIF and constraint JSON with:
 #   python data/cif-generation/argyrodite_generator.py \

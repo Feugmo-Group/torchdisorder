@@ -49,6 +49,7 @@ import argparse
 
 from pymatgen.core import Structure
 from pymatgen.io.cif import CifWriter
+from torchdisorder.constraints.fingerprint import atom_order_fingerprint
 
 
 def create_supercell(
@@ -424,6 +425,9 @@ class LiPONConstraintWriter:
 
         constraints["metadata"] = {
             "version": "v6",
+            "atom_order": atom_order_fingerprint(
+                self.structure, constraints["atom_constraints"].keys()
+            ),
             "structure_type": "lipon",
             "total_atoms": self.structure.num_sites,
             "composition": str(self.structure.composition),

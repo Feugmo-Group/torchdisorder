@@ -36,6 +36,7 @@ import argparse
 
 from pymatgen.core import Structure
 from pymatgen.io.cif import CifWriter
+from torchdisorder.constraints.fingerprint import atom_order_fingerprint
 
 
 def create_supercell(
@@ -405,6 +406,9 @@ class SiO2ConstraintWriter:
         # Metadata
         constraints["metadata"] = {
             "version": "v6",  # Mark as v6 format
+            "atom_order": atom_order_fingerprint(
+                self.structure, constraints["atom_constraints"].keys()
+            ),
             "structure_type": "sio2",
             "total_atoms": self.structure.num_sites,
             "composition": str(self.structure.composition),
